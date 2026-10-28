@@ -2,7 +2,7 @@
 // Pravi podaci: zapisnici RIJ i NVR (brojevi), dvije analizirane snimke (u1, u2).
 // Kad dođe backend, ovo se zamjenjuje stvarnom bazom.
 
-export const SEED_VERSION = 6;
+export const SEED_VERSION = 7;
 
 function rng(seed) {                       // deterministički PRNG (mulberry32)
   let a = seed >>> 0;
@@ -193,6 +193,24 @@ function build() {
   matches.filter(m => m.comp === "1-hmnl-2026-27" && m.round === 6).slice(0, 2)
     .forEach((m, i) => { m.youtube = "https://www.youtube.com/"; m.analysis = { status: i === 0 ? "processing" : "queued", progress: 0.42 }; });
 
+  // primjer označenih udaraca (izmišljeno) na jednoj utakmici 6. kola 1. HMNL
+  const sm = matches.find(m => m.comp === "1-hmnl-2026-27" && m.round === 6 && m.status === "finished");
+  if (sm) {
+    const goalsBy = { home: sm.events.filter(e => e.type === "goal" && e.side === "home"), away: sm.events.filter(e => e.type === "goal" && e.side === "away") };
+    let vt = 420;
+    for (const side of ["home", "away"]) {
+      const pool = sm.roster[side].players.filter(p => !sm.roster[side].gk.includes(p));
+      const n = 14 + Math.floor(R() * 10);
+      for (let i = 0; i < n; i++) {
+        const g = goalsBy[side][i];
+        const sec = g ? g.sec : Math.floor(R() * 1200), period = g ? g.period : (R() < 0.5 ? 1 : 2);
+        const r = R(), outcome = g ? "goal" : r < 0.38 ? "saved" : r < 0.66 ? "off" : r < 0.92 ? "blocked" : "woodwork";
+        const dist = 3 + R() * (outcome === "blocked" ? 12 : 14), ang = (R() - 0.5) * 2.4;
+        sm.events.push({ id: `sh${side}${i}`, type: "shot", side, outcome, player: g ? g.player : pick(pool), period, sec,
+          x: +(20 - dist * Math.cos(ang)).toFixed(2), y: +(dist * Math.sin(ang)).toFixed(2), vt: (period - 1) * 1700 + 300 + sec * 1.35 });
+      }
+    }
+  }
   const site = { name: "Šesterac", contact: "" };
   return { version: SEED_VERSION, site, leagues, seasons, halls, clubs, players, comps, matches };
 }

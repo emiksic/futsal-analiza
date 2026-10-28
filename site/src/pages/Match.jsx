@@ -5,6 +5,8 @@ import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analys
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
 import { MiniTable } from "../components/Side.jsx";
+import { Shots } from "./Shots.jsx";
+import { shotStats } from "../components/ShotMap.jsx";
 
 export function Match({ db, ix, id, tab }) {
   const m = ix.match[id];
@@ -12,11 +14,11 @@ export function Match({ db, ix, id, tab }) {
   if (!m) return <div className="page"><div className="panel empty">Utakmica ne postoji.</div></div>;
   const has = m.analysis?.status === "done";
   const t = tab || (has ? "analiza" : "detalji");
-  const TABS = [["analiza", "Video analiza"], ["detalji", "Detalji"], ["statistika", "Statistika"], ["postave", "Postave"]];
+  const TABS = [["analiza", "Video analiza"], ["detalji", "Detalji"], ["udarci", "Udarci"], ["statistika", "Statistika"], ["postave", "Postave"]];
   return (
     <div className="page">
       <Board m={m} ix={ix} />
-      <div className={t === "analiza" ? "" : "split"}>
+      <div className={t === "analiza" || t === "udarci" ? "" : "split"}>
       <section className="panel">
         <nav className="tabs" aria-label="Utakmica">
           {TABS.map(([k, n]) => <a key={k} href={href("utakmica", m.id, k)} aria-current={t === k ? "page" : undefined}>{n}</a>)}
@@ -25,9 +27,10 @@ export function Match({ db, ix, id, tab }) {
         {t === "analiza" && <AnalysisTab m={m} ix={ix} A={A} />}
         {t === "detalji" && <Incidents m={m} ix={ix} />}
         {t === "statistika" && <Stats m={m} ix={ix} A={A} />}
+        {t === "udarci" && <Shots m={m} ix={ix} />}
         {t === "postave" && <Lineups m={m} ix={ix} A={A} />}
       </section>
-      {t !== "analiza" && <aside className="col"><MiniTable db={db} ix={ix} comp={m.comp} mark={[m.home, m.away]} /></aside>}
+      {t !== "analiza" && t !== "udarci" && <aside className="col"><MiniTable db={db} ix={ix} comp={m.comp} mark={[m.home, m.away]} /></aside>}
       </div>
     </div>
   );
@@ -104,7 +107,7 @@ function AnalysisTab({ m, ix, A }) {
 
 function Incidents({ m, ix }) {
   if (m.status !== "finished" && !m.events.length) return <div className="empty">Utakmica još nije odigrana.</div>;
-  const evs = [...m.events].sort((a, b) => absSec(a) - absSec(b));
+  const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(a) - absSec(b));
   const cnt = { home: {}, away: {} }, sc = [0, 0], rows = [];
   let per = 0;
   for (const e of evs) {
@@ -171,6 +174,7 @@ function Stats({ m, ix, A }) {
   const s = score(m) || [0, 0];
   const st = A.D ? analysisStats(A.D, teamOrder(A.D, m)) : null;
   const per = perPlayerAllowed(ix, m.comp);
+  const sh = shotStats(m);
   const keyClub = st ? Object.fromEntries(Object.entries(m.analysis.teamMap || {}).map(([k, v]) => [k, v === "home" ? H : Aw])) : {};
   return (
     <>
@@ -182,6 +186,12 @@ function Stats({ m, ix, A }) {
         {st?.terr && <Cmp label="Lopta na protivničkoj polovini" a={st.terr[0]} b={st.terr[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />}
         <h4>Zapisnik</h4>
         <Cmp label="Golovi" a={s[0]} b={s[1]} ca={ca} cb={cb} />
+        {sh.home.shots + sh.away.shots > 0 && <>
+          <Cmp label="Udarci" a={sh.home.shots} b={sh.away.shots} ca={ca} cb={cb} />
+          <Cmp label="Udarci u okvir" a={sh.home.on} b={sh.away.on} ca={ca} cb={cb} />
+          <Cmp label="Obrane golmana" a={sh.home.saves} b={sh.away.saves} ca={ca} cb={cb} />
+          <Cmp label="Blokirani udarci" a={sh.home.blocked} b={sh.away.blocked} ca={ca} cb={cb} />
+        </>}
         <Cmp label="Prekršaji" a={c("foul", "home")} b={c("foul", "away")} ca={ca} cb={cb} />
         <Cmp label="Žuti kartoni" a={c("yellow", "home")} b={c("yellow", "away")} ca={ca} cb={cb} />
         <Cmp label="Time-out" a={c("timeout", "home")} b={c("timeout", "away")} ca={ca} cb={cb} />

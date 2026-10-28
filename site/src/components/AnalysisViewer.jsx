@@ -26,7 +26,7 @@ export const textOn = (hex) => { const n = parseInt(hex.slice(1), 16), r = n >> 
 const fmt = (s) => { s = Math.max(0, s); return Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0"); };
 
 let ytReady = null;
-function loadYT() {
+export function loadYT() {
   if (window.YT?.Player) return Promise.resolve(window.YT);
   if (!ytReady) ytReady = new Promise((res, rej) => {
     const prev = window.onYouTubeIframeAPIReady;

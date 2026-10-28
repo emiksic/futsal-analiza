@@ -4,6 +4,7 @@ import { update, uid } from "../lib/store.js";
 import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
 import { Jersey, Icon, Toast } from "../components/ui.jsx";
+import { ShotTagger } from "./ShotTagger.jsx";
 
 const toLocal = (iso) => { const d = new Date(iso), p = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
@@ -16,7 +17,7 @@ export function MatchEdit({ db, ix, id, tab = "osnovno" }) {
   if (!m) return <div className="panel empty">Utakmica ne postoji.</div>;
   const upd = (fn) => update((d) => fn(d.matches.find((x) => x.id === id), d));
   const s = score(m);
-  const TABS = [["osnovno", "Osnovno"], ["zapisnik", "Zapisnik"], ["dogadaji", "Događaji"], ["analiza", "Video analiza"]];
+  const TABS = [["osnovno", "Osnovno"], ["zapisnik", "Zapisnik"], ["dogadaji", "Događaji"], ["udarci", "Udarci"], ["analiza", "Video analiza"]];
   return (
     <>
       <a className="back" href={href("admin", "utakmice")}>Sve utakmice</a>
@@ -35,6 +36,7 @@ export function MatchEdit({ db, ix, id, tab = "osnovno" }) {
         {tab === "zapisnik" && <Roster db={db} ix={ix} m={m} upd={upd} />}
         {tab === "dogadaji" && <Events ix={ix} m={m} upd={upd} />}
         {tab === "analiza" && <Analysis ix={ix} m={m} upd={upd} />}
+        {tab === "udarci" && <ShotTagger ix={ix} m={m} upd={upd} />}
       </section>
     </>
   );
@@ -166,7 +168,7 @@ function Events({ ix, m, upd }) {
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
     setF((o) => ({ ...o, time: "", player: "", assist: "" }));
   };
-  const evs = [...m.events].sort((a, b) => absSec(b) - absSec(a));
+  const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(b) - absSec(a));
   const pl = roster(f.type === "owngoal" ? f.side : f.side);
   const L = Object.fromEntries(ETYPES);
   return (
