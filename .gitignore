@@ -1,0 +1,23 @@
+# video i slike
+*.mp4
+*.mkv
+*.webm
+*.mov
+*.jpg
+*.png
+!web/**/*.png
+# modeli i trening
+*.pt
+*.onnx
+*.engine
+runs/
+datasets/
+# međurezultati
+run/
+out*/
+work*/
+*.npz
+*.npy
+__pycache__/
+*.pyc
+.venv/

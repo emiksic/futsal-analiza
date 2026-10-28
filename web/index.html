@@ -1,0 +1,446 @@
+<title>Futsal Video Analiza</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: video stage left (overlay canvas + scrubber with clock-stopped bands), analysis panel right; stacks on phones. */
+:root {
+  --bg: #eef1ee; --surface: #ffffff; --surface-2: #e4e9e5; --line: #c9d2cc;
+  --fg: #16201b; --muted: #5d6b63; --accent: #e8641b; --accent-fg: #ffffff;
+  --court: #2f5d47; --court-line: #e8efe9; --stopped: #c9d2cc;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1311; --surface: #161d19; --surface-2: #1f2823; --line: #2c3731;
+  --fg: #e3eae5; --muted: #93a39a; --accent: #f07a35; --accent-fg: #160a03;
+  --court: #24473a; --court-line: #d7e3db; --stopped: #33403a; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e1311; --surface: #161d19; --surface-2: #1f2823; --line: #2c3731;
+  --fg: #e3eae5; --muted: #93a39a; --accent: #f07a35; --accent-fg: #160a03;
+  --court: #24473a; --court-line: #d7e3db; --stopped: #33403a; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.45 var(--body); }
+.wrap { max-width: 1320px; margin: 0 auto; padding-block: 20px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; }
+h1 { font: 700 28px/1 var(--display); letter-spacing: .02em; text-transform: uppercase; margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tab { font: 600 16px/1 var(--display); letter-spacing: .03em; padding: 9px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+.grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1060px) { .grid { grid-template-columns: minmax(0, 1fr) 370px; align-items: start; } }
+
+.stage { display: grid; gap: 10px; min-width: 0; }
+.video { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: #000; border-radius: var(--radius); overflow: hidden; }
+.video video, .video canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.video video { object-fit: contain; }
+.video canvas { pointer-events: none; }
+.bigplay { position: absolute; inset: 0; margin: auto; width: 72px; height: 72px; border-radius: 50%; border: 0;
+  background: rgba(0,0,0,.55); color: #fff; font-size: 28px; cursor: pointer; }
+
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.btn { font: 600 15px/1 var(--display); letter-spacing: .03em; border: 1px solid var(--line); background: var(--surface);
+  color: var(--fg); border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.btn.play { min-width: 92px; background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.time { font: 600 18px/1 var(--display); font-variant-numeric: tabular-nums; }
+.chip { font: 600 13px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; padding: 6px 9px; border-radius: 6px; }
+.chip.live { background: color-mix(in srgb, #2e9d5b 18%, transparent); color: #2e9d5b; }
+.chip.stop { background: color-mix(in srgb, #d0453a 16%, transparent); color: #d0453a; }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.tg { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); padding: 6px 9px;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer; user-select: none; }
+.tg input { accent-color: var(--accent); margin: 0; }
+select.btn { padding: 7px 8px; }
+
+.scrub { position: relative; height: 34px; }
+.scrub .band { position: absolute; left: 0; right: 0; top: 13px; height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.scrub .stopseg { position: absolute; top: 0; bottom: 0; background: var(--stopped);
+  background-image: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--muted) 35%, transparent) 3px 5px); }
+.scrub .prog { position: absolute; top: 0; bottom: 0; left: 0; background: var(--fg); opacity: .85; }
+.scrub .tick { position: absolute; top: 6px; width: 3px; height: 22px; margin-left: -1px; border-radius: 2px; background: var(--accent); }
+.scrub input { position: absolute; inset: 0; width: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.scrub input:focus-visible + .focusring { outline: 2px solid var(--accent); }
+.legend-line { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted); }
+.legend-line i { display: inline-block; width: 18px; height: 8px; border-radius: 3px; vertical-align: middle; margin-right: 5px; }
+
+.panel { display: grid; gap: 12px; min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.card h2 { font: 700 15px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.teams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.team { display: flex; align-items: center; gap: 8px; font: 700 26px/1 var(--display); letter-spacing: .02em; min-width: 0; }
+.team.r { justify-content: flex-end; }
+.sw { width: 12px; height: 26px; border-radius: 3px; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
+.vs { color: var(--muted); font: 600 14px/1 var(--display); }
+.poss { display: grid; gap: 6px; }
+.pbar { display: flex; height: 26px; border-radius: 6px; overflow: hidden; background: var(--surface-2); }
+.pbar div { display: flex; align-items: center; padding: 0 8px; font: 700 15px/1 var(--display); font-variant-numeric: tabular-nums;
+  white-space: nowrap; transition: flex-basis .25s ease; min-width: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+.pbar .b { justify-content: flex-end; }
+.note { font-size: 12px; color: var(--muted); }
+
+.lineup { display: grid; gap: 10px; }
+.lrow { display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 8px; }
+.lname { font: 700 17px/1 var(--display); display: flex; align-items: center; gap: 6px; }
+.lname .sw { width: 8px; height: 18px; }
+.nums { display: flex; flex-wrap: wrap; gap: 6px; }
+.num { font: 700 18px/1 var(--display); font-variant-numeric: tabular-nums; min-width: 40px; padding: 7px 8px; border-radius: 8px;
+  border: 2px solid var(--tc); background: color-mix(in srgb, var(--tc) 16%, var(--surface)); color: var(--fg); cursor: pointer; }
+.num.unseen { border-style: dashed; opacity: .55; }
+.num[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); opacity: 1; }
+.num.gk { font-size: 14px; letter-spacing: .05em; }
+.hl-info { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+
+.mini { width: 100%; max-width: 100%; aspect-ratio: 42 / 22; display: block; border-radius: 8px; background: var(--court); }
+
+.events { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 210px; overflow-y: auto; }
+.events button { width: 100%; text-align: left; display: grid; grid-template-columns: 44px 52px 1fr; gap: 8px; align-items: center;
+  padding: 7px 8px; border-radius: 6px; border: 0; background: transparent; color: var(--fg); cursor: pointer; font: inherit; }
+.events button:hover { background: var(--surface-2); }
+.events .et { font: 600 15px/1 var(--display); font-variant-numeric: tabular-nums; color: var(--muted); }
+.events .tm { font: 700 15px/1 var(--display); }
+.empty { font-size: 13px; color: var(--muted); }
+
+dl.keys { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; margin: 0; font-size: 13px; }
+dl.keys dt { display: flex; align-items: center; }
+dl.keys dd { margin: 0; color: var(--muted); }
+.k-box { width: 16px; height: 12px; border: 2px solid var(--fg); border-radius: 2px; }
+.k-ring { width: 12px; height: 12px; border: 2px solid var(--fg); border-radius: 50%; }
+.k-ball { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; }
+.k-dash { width: 18px; height: 12px; border: 2px dashed var(--muted); border-radius: 3px; }
+
+button:focus-visible, .tab:focus-visible, .tg:focus-within, .num:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.err { padding: 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+@media (prefers-reduced-motion: reduce) { .pbar div { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Futsal Video Analiza</h1>
+      <div class="sub">Automatska analiza snimke: igrači, brojevi, lopta, posjed i postava, sinkronizirano s videom.</div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Utakmica" id="tabs"></nav>
+  </header>
+
+  <div class="grid">
+    <section class="stage" aria-label="Video">
+      <div class="video" id="vwrap">
+        <video id="vid" playsinline muted preload="auto"></video>
+        <canvas id="ov"></canvas>
+        <button class="bigplay" id="bigplay" aria-label="Pokreni video">▶</button>
+      </div>
+      <div class="controls">
+        <button class="btn play" id="play" aria-label="Pokreni ili pauziraj">▶ Pokreni</button>
+        <span class="time" id="time">0:00 / 0:00</span>
+        <span class="chip live" id="clockchip">Sat teče</span>
+        <select class="btn" id="speed" aria-label="Brzina">
+          <option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option>
+        </select>
+        <div class="toggles">
+          <label class="tg"><input type="checkbox" id="t-box" checked> Okviri</label>
+          <label class="tg"><input type="checkbox" id="t-num" checked> Brojevi</label>
+          <label class="tg"><input type="checkbox" id="t-court" checked> Linije terena</label>
+          <label class="tg"><input type="checkbox" id="t-ball" checked> Lopta</label>
+        </div>
+      </div>
+      <div class="scrub">
+        <div class="band" id="band"><div class="prog" id="prog"></div></div>
+        <div id="ticks"></div>
+        <input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="Vrijeme u snimci">
+      </div>
+      <div class="legend-line">
+        <span><i style="background:var(--stopped)"></i>sat stoji (prekid igre)</span>
+      </div>
+    </section>
+
+    <aside class="panel" aria-label="Analiza">
+      <div class="card">
+        <div class="teams">
+          <div class="team" id="tA"></div><span class="vs">–</span><div class="team r" id="tB"></div>
+        </div>
+        <div class="poss">
+          <div class="pbar" id="pbar"><div class="a" id="pa"></div><div class="b" id="pb"></div></div>
+          <div class="note">Posjed do ovog trenutka. Broji se samo dok sat teče.</div>
+        </div>
+        <div class="note" id="matchnote"></div>
+      </div>
+
+      <div class="card">
+        <h2>Na terenu</h2>
+        <div class="lineup" id="lineup"></div>
+        <div class="hl-info" id="hlinfo">Klikni broj da istakneš igrača.</div>
+      </div>
+
+      <div class="card">
+        <h2>Mini-mapa</h2>
+        <canvas class="mini" id="mini" aria-label="Pozicije igrača na terenu, pogled odozgo"></canvas>
+      </div>
+
+
+      <div class="card">
+        <h2>Kako čitati</h2>
+        <dl class="keys">
+          <dt><span class="k-box"></span></dt><dd>Okvir u boji ekipe, iznad njega broj s dresa. „?” znači da broj još nije pročitan.</dd>
+          <dt><span class="k-dash"></span></dt><dd>Iscrtkani broj u postavi: igrač je na terenu, ali trenutno nije u kadru.</dd>
+          <dt><span class="k-ring"></span></dt><dd>Prazni krug na mini-mapi: procjena položaja golmana ili zadnja poznata pozicija igrača.</dd>
+          <dt><span class="k-ball"></span></dt><dd>Lopta i njezin trag. Trokut iznad igrača označava tko je ima.</dd>
+        </dl>
+        <div class="note">Analiza je automatska. Brojevi, postava i posjed mogu sadržavati greške.</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(() => {
+const MATCHES = [
+  { id: "u1", label: "RIJ – NVR", video: "data/u1.mp4", data: "data/u1.json",
+    note: "Rijeka – Novo Vrijeme, isječak 128.–148. s snimke (07:49–08:09 na satu). Brojevi su ograničeni na zapisnik." },
+  { id: "u2", label: "DIN – OLM", video: "data/u2.mp4", data: "data/u2.json",
+    note: "Cijeli isječak od 2:30. Boje ekipa su pretpostavka: plavi = Futsal Dinamo, zeleni = Olmissum." },
+];
+const $ = (id) => document.getElementById(id);
+const vid = $("vid"), ov = $("ov"), mini = $("mini");
+const octx = ov.getContext("2d"), mctx = mini.getContext("2d");
+let D = null, highlight = null, dur = 0, cache = {};
+
+/* ---------- pomoćne ---------- */
+const fmt = (s) => { s = Math.max(0, s); const m = Math.floor(s / 60); return m + ":" + String(Math.floor(s % 60)).padStart(2, "0"); };
+const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function frameAt(t) {
+  const F = D.frames; let lo = 0, hi = F.length - 1;
+  if (t <= F[0].t) return 0; if (t >= F[hi].t) return hi;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (F[m].t <= t) lo = m; else hi = m; }
+  return (t - F[lo].t) < (F[hi].t - t) ? lo : hi;
+}
+function proj(H, x, y) {            // teren (m) -> slika (1280x720), null iza kamere
+  const w = H[6] * x + H[7] * y + 1;
+  if (w <= 1e-6) return null;
+  return [(H[0] * x + H[1] * y + H[2]) / w, (H[3] * x + H[4] * y + H[5]) / w];
+}
+function courtPolys(c) {
+  const L = c.L / 2, W = c.W / 2, Dp = c.D, P = [];
+  P.push([[-L, -W], [L, -W], [L, W], [-L, W], [-L, -W]]);
+  P.push([[0, -W], [0, W]]);
+  for (const s of [-1, 1]) {
+    const g = s * L, arc = [];
+    for (let i = 0; i <= 16; i++) { const a = Math.PI / 2 * (1 - i / 16); arc.push([g - s * Dp * Math.cos(a), -1.5 - Dp * Math.sin(a)]); }
+    for (let i = 0; i <= 16; i++) { const a = Math.PI / 2 * (i / 16); arc.push([g - s * Dp * Math.cos(a), 1.5 + Dp * Math.sin(a)]); }
+    P.push(arc);
+    P.push([[g, -1.5], [g + s, -1.5], [g + s, 1.5], [g, 1.5]]);
+  }
+  return P.map(poly => { const out = []; for (let i = 0; i < poly.length - 1; i++)
+      for (let k = 0; k < 12; k++) { const u = k / 12; out.push([poly[i][0] + (poly[i + 1][0] - poly[i][0]) * u, poly[i][1] + (poly[i + 1][1] - poly[i][1]) * u]); }
+    out.push(poly[poly.length - 1]); return out; });
+}
+function fitCanvas(cv, ctx) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  const w = Math.max(1, Math.round(r.width * d)), h = Math.max(1, Math.round(r.height * d));
+  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+  return { w, h, d };
+}
+
+/* ---------- učitavanje utakmice ---------- */
+async function load(id) {
+  const M = MATCHES.find(m => m.id === id) || MATCHES[0];
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.id === M.id ? "true" : "false"));
+  if (!cache[M.id]) {
+    try { const r = await fetch(M.data); if (!r.ok) throw new Error(r.status); cache[M.id] = await r.json(); }
+    catch (e) { $("lineup").innerHTML = '<div class="err">Podaci analize se nisu učitali. Osvježi stranicu.</div>'; return; }
+  }
+  D = cache[M.id]; D._polys = courtPolys(D.court); highlight = null;
+  vid.src = M.video; vid.playbackRate = +$("speed").value;
+  $("matchnote").textContent = M.note;
+  const [A, B] = D.teams;
+  $("tA").innerHTML = `<span class="sw" style="background:${A.color}"></span>${A.name}`;
+  $("tB").innerHTML = `${B.name}<span class="sw" style="background:${B.color}"></span>`;
+  $("pa").style.background = A.color; $("pb").style.background = B.color;
+  $("pa").style.color = textOn(A.color); $("pb").style.color = textOn(B.color);
+  renderEvents(); lastL = -1;
+  vid.addEventListener("loadedmetadata", () => { dur = vid.duration || D.frames[D.frames.length - 1].t; renderBands(); draw(); }, { once: true });
+}
+function textOn(hex) {
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? "#111" : "#fff";
+}
+function renderBands() {
+  const band = $("band"); band.querySelectorAll(".stopseg").forEach(e => e.remove());
+  const F = D.frames; let s = null;
+  const add = (a, b) => { const d = document.createElement("div"); d.className = "stopseg";
+    d.style.left = (a / dur * 100) + "%"; d.style.width = ((b - a) / dur * 100) + "%"; band.prepend(d); };
+  for (const f of F) { if (!f.live && s === null) s = f.t; if (f.live && s !== null) { add(s, f.t); s = null; } }
+  if (s !== null) add(s, F[F.length - 1].t);
+  $("ticks").innerHTML = "";   // izmjene isključene dok detekcija nije pouzdana
+}
+function renderEvents() {
+  const ul = $("events"); if (!ul) return;
+  if (!D.events.length) { ul.innerHTML = '<li class="empty">U ovom isječku nije prepoznata nijedna izmjena.</li>'; return; }
+  ul.innerHTML = D.events.map(e => `<li><button data-t="${e.t}"><span class="et">${fmt(e.t)}</span>
+    <span class="tm" style="color:${D.teams[e.team].color}">${D.teams[e.team].name}</span>
+    <span>ulazi <b>${e.in}</b>, izlazi ${e.out}</span></button></li>`).join("");
+  ul.querySelectorAll("button").forEach(b => b.onclick = () => { vid.currentTime = Math.max(0, +b.dataset.t - 1.5); });
+}
+
+/* ---------- postava ---------- */
+let lastL = -1, lastHL = null;
+function renderLineup(f) {
+  if (f.L === lastL && highlight === lastHL) return;
+  lastL = f.L; lastHL = highlight;
+  const st = f.L != null ? D.states[f.L] : [[[], []], [[], []]];
+  $("lineup").innerHTML = [0, 1].map(ti => {
+    const T = D.teams[ti], on = st[0][ti], uns = new Set(st[1][ti]);
+    const btns = on.map(n => { const key = T.name + " " + n;
+      return `<button class="num${uns.has(n) ? " unseen" : ""}" style="--tc:${T.color}" data-k="${key}" aria-pressed="${highlight === key}"
+        title="${uns.has(n) ? "Na terenu, nije u kadru" : "Na terenu"}">${n}</button>`; }).join("");
+    return `<div class="lrow"><div class="lname"><span class="sw" style="background:${T.color}"></span>${T.name}</div>
+      <div class="nums">${btns || '<span class="empty">još nepoznato</span>'}</div></div>`;
+  }).join("");
+  $("lineup").querySelectorAll(".num").forEach(b => b.onclick = () => { highlight = highlight === b.dataset.k ? null : b.dataset.k; lastHL = "x"; draw(); });
+}
+
+/* ---------- crtanje ---------- */
+function draw() {
+  if (!D) return;
+  const t = vid.currentTime || 0, fi = frameAt(t), f = D.frames[fi];
+  const show = { box: $("t-box").checked, num: $("t-num").checked, court: $("t-court").checked, ball: $("t-ball").checked };
+  // video overlay
+  const { w, h } = fitCanvas(ov, octx);
+  octx.clearRect(0, 0, w, h);
+  const vw = vid.videoWidth || 16, vh = vid.videoHeight || 9;
+  const sc = Math.min(w / vw, h / vh), ox = (w - vw * sc) / 2, oy = (h - vh * sc) / 2;
+  const kx = vw * sc / D.img[0], ky = vh * sc / D.img[1];
+  const dpr = window.devicePixelRatio || 1, cssW = w / dpr;
+  const X = (x) => ox + x * kx, Y = (y) => oy + y * ky, S = dpr * Math.min(1.3, Math.max(0.6, cssW / 900));
+  const H = f.H;
+  if (show.court) {
+    octx.strokeStyle = "rgba(90,230,140,.75)"; octx.lineWidth = 1.6 * S;
+    for (const poly of D._polys) { octx.beginPath(); let pen = false;
+      for (const [x, y] of poly) { const p = proj(H, x, y);
+        if (!p || Math.abs(p[0]) > 5000 || Math.abs(p[1]) > 5000) { pen = false; continue; }
+        if (pen) octx.lineTo(X(p[0]), Y(p[1])); else { octx.moveTo(X(p[0]), Y(p[1])); pen = true; } }
+      octx.stroke(); }
+  }
+  const hlIdx = highlight ? D.players.indexOf(highlight) : -2;
+  let hlBox = null;
+  for (let i = 0; i < f.p.length; i++) {
+    const [ti, pi, gk, x1, y1, x2, y2] = f.p[i];
+    if (pi === hlIdx) hlBox = [X(x1), Y(y1), X(x2), Y(y2)];
+  }
+  if (hlBox) {                                             // reflektor na istaknutog igrača
+    octx.save(); octx.fillStyle = "rgba(0,0,0,.42)"; octx.fillRect(0, 0, w, h);
+    const cx = (hlBox[0] + hlBox[2]) / 2, cy = (hlBox[1] + hlBox[3]) / 2, r = Math.max(hlBox[3] - hlBox[1], 40 * S) * 0.85;
+    octx.globalCompositeOperation = "destination-out"; const g = octx.createRadialGradient(cx, cy, r * 0.55, cx, cy, r);
+    g.addColorStop(0, "rgba(0,0,0,1)"); g.addColorStop(1, "rgba(0,0,0,0)"); octx.fillStyle = g;
+    octx.beginPath(); octx.arc(cx, cy, r, 0, Math.PI * 2); octx.fill(); octx.restore();
+  }
+  octx.font = `700 ${Math.round(15 * S)}px "Barlow Condensed", sans-serif`; octx.textBaseline = "bottom";
+  for (let i = 0; i < f.p.length; i++) {
+    const [ti, pi, gk, x1, y1, x2, y2] = f.p[i], col = D.teams[ti].color, isHL = pi === hlIdx;
+    if (show.box || isHL) { octx.strokeStyle = isHL ? cssVar("--accent") : col; octx.lineWidth = (isHL ? 3.5 : 1.8) * S;
+      octx.strokeRect(X(x1), Y(y1), X(x2) - X(x1), Y(y2) - Y(y1)); }
+    if ((show.num || isHL) && ti < 2) {
+      const lab = gk ? "GK" : (pi >= 0 ? D.players[pi].split(" ").pop() : "?");
+      octx.lineWidth = 3.5 * S; octx.strokeStyle = "rgba(0,0,0,.8)"; octx.fillStyle = isHL ? cssVar("--accent") : col;
+      octx.strokeText(lab, X(x1), Y(y1) - 3 * S); octx.fillText(lab, X(x1), Y(y1) - 3 * S);
+    }
+  }
+  const trail = ballTrail(fi);
+  if (show.ball) {
+    octx.strokeStyle = cssVar("--accent"); octx.lineWidth = 2 * S;
+    for (let k = 1; k < trail.length; k++) {
+      if (trail[k].gap) continue;
+      const a = proj(H, trail[k - 1].x, trail[k - 1].y), b = proj(H, trail[k].x, trail[k].y);
+      if (!a || !b) continue; octx.globalAlpha = 0.25 + 0.75 * k / trail.length;
+      octx.beginPath(); octx.moveTo(X(a[0]), Y(a[1])); octx.lineTo(X(b[0]), Y(b[1])); octx.stroke();
+    }
+    octx.globalAlpha = 1;
+    if (f.b) { octx.lineWidth = 2.5 * S; octx.beginPath(); octx.arc(X(f.b[0]), Y(f.b[1]), 9 * S, 0, Math.PI * 2); octx.stroke(); }
+    if (f.h >= 0) { const p = f.p[f.h], cx = X((p[3] + p[5]) / 2), ty = Y(p[4]) - 20 * S;
+      octx.fillStyle = cssVar("--accent"); octx.beginPath(); octx.moveTo(cx - 7 * S, ty - 9 * S); octx.lineTo(cx + 7 * S, ty - 9 * S); octx.lineTo(cx, ty); octx.fill(); }
+  }
+  drawMini(f, trail, hlIdx);
+  // panel
+  const [a, b] = f.pc, tot = a + b, pa = tot ? Math.round(100 * a / tot) : 50;
+  $("pa").style.flexBasis = pa + "%"; $("pb").style.flexBasis = (100 - pa) + "%";
+  $("pa").textContent = tot ? pa + "%" : "–"; $("pb").textContent = tot ? (100 - pa) + "%" : "–";
+  const chip = $("clockchip"); chip.className = "chip " + (f.live ? "live" : "stop"); chip.textContent = f.live ? "Sat teče" : "Sat stoji";
+  renderLineup(f);
+  if (highlight) { const vis = f.p.some(p => p[1] === hlIdx);
+    $("hlinfo").textContent = `Istaknut: ${highlight}` + (vis ? "" : " (trenutno nije u kadru)"); }
+  else $("hlinfo").textContent = "Klikni broj da istakneš igrača.";
+  $("time").textContent = fmt(t) + " / " + fmt(dur);
+  const pr = dur ? t / dur : 0; $("prog").style.width = (pr * 100) + "%";
+  if (!seeking) $("seek").value = Math.round(pr * 1000);
+}
+function ballTrail(fi) {                      // zadnjih 1,5 s lopte; "gap" = ne spajaj s prethodnom točkom
+  const pts = [], F = D.frames, t = F[fi].t;
+  for (let k = fi; k >= 0 && t - F[k].t <= 1.5; k--) if (F[k].b) pts.unshift({ x: F[k].b[2], y: F[k].b[3], t: F[k].t });
+  for (let k = 0; k < pts.length; k++) pts[k].gap = k > 0 && pts[k].t - pts[k - 1].t > 0.3;
+  return pts;
+}
+function drawMini(f, trail, hlIdx) {
+  const { w, h } = fitCanvas(mini, mctx), c = D.court, m = 1.2;
+  const sx = w / (c.L + 2 * m), sy = h / (c.W + 2 * m), s = Math.min(sx, sy);
+  const MX = (x) => w / 2 + x * s, MY = (y) => h / 2 + y * s, R = Math.max(4, 0.42 * s);
+  mctx.fillStyle = cssVar("--court"); mctx.fillRect(0, 0, w, h);
+  mctx.strokeStyle = cssVar("--court-line"); mctx.lineWidth = Math.max(1, s * 0.08);
+  for (const poly of D._polys) { mctx.beginPath(); poly.forEach(([x, y], i) => i ? mctx.lineTo(MX(x), MY(y)) : mctx.moveTo(MX(x), MY(y))); mctx.stroke(); }
+  mctx.fillStyle = cssVar("--court-line");
+  for (const gx of [-c.L / 2, c.L / 2]) for (const d of [6, 10]) {               // kaznena točka 6 m i druga 10 m
+    mctx.beginPath(); mctx.arc(MX(gx - Math.sign(gx) * d), MY(0), Math.max(1.5, s * 0.12), 0, Math.PI * 2); mctx.fill(); }
+  mctx.beginPath(); mctx.arc(MX(0), MY(0), Math.max(1.5, s * 0.12), 0, Math.PI * 2); mctx.fill();
+  if ($("t-ball").checked && trail.length > 1) {
+    mctx.strokeStyle = cssVar("--accent"); mctx.lineWidth = Math.max(1.5, s * 0.12);
+    for (let k = 1; k < trail.length; k++) { if (trail[k].gap) continue;
+      mctx.globalAlpha = 0.25 + 0.75 * k / trail.length; mctx.beginPath();
+      mctx.moveTo(MX(trail[k - 1].x), MY(trail[k - 1].y)); mctx.lineTo(MX(trail[k].x), MY(trail[k].y)); mctx.stroke(); }
+    mctx.globalAlpha = 1;
+  }
+  for (const [ti, x, y] of f.g) { mctx.strokeStyle = D.teams[ti].color; mctx.lineWidth = 2; mctx.beginPath(); mctx.arc(MX(x), MY(y), R, 0, Math.PI * 2); mctx.stroke(); }
+  for (const p of f.p) {
+    const [ti, pi, gk, , , , , x, y] = p; const isHL = pi === hlIdx && hlIdx >= 0;
+    mctx.fillStyle = D.teams[ti].color; mctx.beginPath(); mctx.arc(MX(x), MY(y), ti === 2 ? R * 0.75 : R, 0, Math.PI * 2); mctx.fill();
+    mctx.strokeStyle = "rgba(0,0,0,.55)"; mctx.lineWidth = 1; mctx.stroke();
+    if (isHL) { mctx.strokeStyle = cssVar("--accent"); mctx.lineWidth = 3; mctx.beginPath(); mctx.arc(MX(x), MY(y), R + 5, 0, Math.PI * 2); mctx.stroke(); }
+    if (ti < 2 && pi >= 0 && R >= 6) { mctx.fillStyle = textOn(D.teams[ti].color); mctx.font = `700 ${Math.round(R * 1.15)}px "Barlow Condensed", sans-serif`;
+      mctx.textAlign = "center"; mctx.textBaseline = "middle"; mctx.fillText(D.players[pi].split(" ").pop(), MX(x), MY(y) + 0.5); mctx.textAlign = "start"; }
+  }
+  if (f.b && $("t-ball").checked) { mctx.fillStyle = cssVar("--accent"); mctx.beginPath(); mctx.arc(MX(f.b[2]), MY(f.b[3]), Math.max(3, R * 0.55), 0, Math.PI * 2); mctx.fill(); }
+}
+
+/* ---------- kontrole ---------- */
+let seeking = false;
+function setPlayUI() { const p = !vid.paused; $("play").textContent = p ? "❚❚ Pauza" : "▶ Pokreni"; $("bigplay").hidden = p; }
+$("play").onclick = $("bigplay").onclick = () => { vid.paused ? vid.play().catch(() => {}) : vid.pause(); };
+vid.addEventListener("play", setPlayUI); vid.addEventListener("pause", setPlayUI); vid.addEventListener("ended", setPlayUI);
+$("speed").onchange = () => { vid.playbackRate = +$("speed").value; };
+const seek = $("seek");
+seek.addEventListener("input", () => { seeking = true; if (dur) vid.currentTime = seek.value / 1000 * dur; });
+seek.addEventListener("change", () => { seeking = false; });
+["t-box", "t-num", "t-court", "t-ball"].forEach(id => $(id).addEventListener("change", draw));
+vid.addEventListener("seeked", draw); vid.addEventListener("timeupdate", () => { if (vid.paused) draw(); });
+document.addEventListener("keydown", (e) => {
+  if (e.target.closest("input, select, textarea")) return;
+  if (e.code === "Space") { e.preventDefault(); $("play").click(); }
+  if (e.code === "ArrowRight") vid.currentTime = Math.min(dur, vid.currentTime + 2);
+  if (e.code === "ArrowLeft") vid.currentTime = Math.max(0, vid.currentTime - 2);
+});
+(function loop() { if (D && !vid.paused) draw(); requestAnimationFrame(loop); })();
+new ResizeObserver(() => draw()).observe(document.querySelector(".wrap"));
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", draw);
+
+$("tabs").innerHTML = MATCHES.map(m => `<button class="tab" role="tab" data-id="${m.id}">${m.label}</button>`).join("");
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => { if (location.hash !== "#" + b.dataset.id) location.hash = b.dataset.id; else load(b.dataset.id); });
+window.addEventListener("hashchange", () => load(location.hash.slice(1)));
+load(location.hash.slice(1) || "u1");
+setPlayUI();
+})();
+</script>
