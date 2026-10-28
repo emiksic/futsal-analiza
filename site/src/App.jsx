@@ -1,0 +1,42 @@
+import { useMemo } from "react";
+import { useDB } from "./lib/store.js";
+import { useRoute, href } from "./lib/router.js";
+import { index } from "./lib/derive.js";
+import { Brand } from "./components/ui.jsx";
+import { Home } from "./pages/Home.jsx";
+import { League } from "./pages/League.jsx";
+import { Club } from "./pages/Club.jsx";
+import { Match } from "./pages/Match.jsx";
+import { Admin } from "./admin/Admin.jsx";
+
+export default function App() {
+  const db = useDB();
+  const ix = useMemo(() => index(db), [db]);
+  const r = useRoute();
+  const [page, ...rest] = r;
+  const cur = db.seasons[0].id;
+  let activeLeague = null;
+  if (page === "liga") activeLeague = rest[0];
+  if (page === "utakmica" && ix.match[rest[0]]) activeLeague = ix.comp[ix.match[rest[0]].comp].league;
+  return (
+    <>
+      <header className="top">
+        <div className="top-in">
+          <Brand />
+          <nav className="lnav" aria-label="Lige">
+            {db.leagues.map((l) => <a key={l.id} href={href("liga", l.id, cur)} aria-current={activeLeague === l.id ? "page" : undefined}>{l.name}</a>)}
+          </nav>
+          <a className="adm" href={href("admin")} aria-current={page === "admin" ? "page" : undefined}>Admin</a>
+        </div>
+      </header>
+      {db.matches.some((m) => m.demo) && page !== "admin" && (
+        <div className="demo-bar"><div>Pregled s primjerima: rezultati i raspored su izmišljeni. Prave su samo dvije video analize i zapisnici Rijeke i Novog Vremena.</div></div>
+      )}
+      {!page && <Home db={db} ix={ix} />}
+      {page === "liga" && <League db={db} ix={ix} leagueId={rest[0]} seasonId={rest[1] || cur} tab={rest[2]} roundArg={rest[3]} />}
+      {page === "klub" && <Club key={rest[0]} db={db} ix={ix} id={rest[0]} />}
+      {page === "utakmica" && <Match db={db} ix={ix} id={rest[0]} tab={rest[1]} />}
+      {page === "admin" && <Admin db={db} ix={ix} route={rest} />}
+    </>
+  );
+}
