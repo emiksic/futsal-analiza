@@ -1,5 +1,7 @@
-// Preglednik analize: čisti video + oznake nacrtane u pregledniku (canvas), sinkronizirano s vremenom videa.
-// Gledatelj sam bira što vidi (okviri, brojevi, linije terena, lopta). Podaci: izlaz export_web.py.
+// Preglednik analize, dva načina:
+//  mode="embed"   – YouTube player (bez ičega preko njega) + panel i mini-mapa sinkronizirani s playerom. Zadano.
+//  mode="overlay" – vlastiti video s oznakama nacrtanim u pregledniku; samo uz pisanu dozvolu vlasnika prijenosa.
+// Podaci: izlaz export_web.py. ytOffset = sekunda YouTube videa koja odgovara t=0 u podacima.
 import { useEffect, useRef } from "react";
 import { Icon } from "./ui.jsx";
 
@@ -23,13 +25,35 @@ export function courtPolys(c) {
 export const textOn = (hex) => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? "#111" : "#fff"; };
 const fmt = (s) => { s = Math.max(0, s); return Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0"); };
 
-export function AnalysisViewer({ D, video, order, names, note, youtube }) {
+let ytReady = null;
+function loadYT() {
+  if (window.YT?.Player) return Promise.resolve(window.YT);
+  if (!ytReady) ytReady = new Promise((res, rej) => {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { prev?.(); res(window.YT); };
+    const sc = document.createElement("script"); sc.src = "https://www.youtube.com/iframe_api"; sc.onerror = rej;
+    document.head.appendChild(sc); setTimeout(() => rej(new Error("timeout")), 8000);
+  });
+  return ytReady;
+}
+export function ytIdOf(url) {
+  const m = /(?:youtu\.be\/|v=|embed\/|live\/|shorts\/)([\w-]{11})/.exec(url || ""); return m ? m[1] : null;
+}
+
+export function AnalysisViewer({ D, video, order, names, note, youtube, mode = "embed", ytOffset = 0, perPlayer = true }) {
+  const embed = mode === "embed";
+  const ytId = ytIdOf(youtube);
   const root = useRef(null);
   useEffect(() => {
     if (!D) return;
     const el = root.current, $ = (k) => el.querySelector(`[data-k="${k}"]`);
     const vid = $("vid"), ov = $("ov"), mini = $("mini");
-    const octx = ov.getContext("2d"), mctx = mini.getContext("2d");
+    const octx = ov ? ov.getContext("2d") : null, mctx = mini.getContext("2d");
+    let yt = null;
+    const clk = embed
+      ? { t: () => (yt?.getCurrentTime ? yt.getCurrentTime() - ytOffset : D.frames[0].t), paused: () => !(yt?.getPlayerState && yt.getPlayerState() === 1),
+          seek: (x) => yt?.seekTo && yt.seekTo(x + ytOffset, true) }
+      : { t: () => vid.currentTime || 0, paused: () => vid.paused, seek: (x) => { vid.currentTime = x; } };
     const polys = courtPolys(D.court);
     let highlight = null, dur = 0, seeking = false, lastL = -1, lastHL = null, raf = 0, alive = true;
     const css = (n) => getComputedStyle(el).getPropertyValue(n).trim();
@@ -75,8 +99,16 @@ export function AnalysisViewer({ D, video, order, names, note, youtube }) {
       return pts;
     }
     function draw() {
-      const t = vid.currentTime || 0, fi = frameAt(t), f = D.frames[fi];
-      const show = { box: $("t-box").checked, num: $("t-num").checked, court: $("t-court").checked, ball: $("t-ball").checked };
+      const t = clk.t(), fi = frameAt(t), f = D.frames[fi];
+      const t0 = D.frames[0].t, t1 = D.frames[D.frames.length - 1].t, outside = t < t0 - 0.5 || t > t1 + 0.5;
+      const show = { box: !embed && $("t-box").checked, num: !embed && $("t-num").checked, court: !embed && $("t-court").checked, ball: $("t-ball").checked };
+      if ($("range")) $("range").hidden = !outside;
+      if (octx) drawOverlay(f, fi, show);
+      const trail = trailAt(fi);
+      drawMini(f, trail, highlight ? D.players.indexOf(highlight) : -2, show.ball);
+      panel(f, t);
+    }
+    function drawOverlay(f, fi, show) {
       const { w, h } = fit(ov); octx.clearRect(0, 0, w, h);
       const vw = vid.videoWidth || 16, vh = vid.videoHeight || 9;
       const sc = Math.min(w / vw, h / vh), ox = (w - vw * sc) / 2, oy = (h - vh * sc) / 2;
@@ -123,16 +155,18 @@ export function AnalysisViewer({ D, video, order, names, note, youtube }) {
         if (f.h >= 0 && f.p[f.h]) { const p = f.p[f.h], cx = X((p[3] + p[5]) / 2), ty = Y(p[4]) - 20 * S;
           octx.fillStyle = sig; octx.beginPath(); octx.moveTo(cx - 7 * S, ty - 9 * S); octx.lineTo(cx + 7 * S, ty - 9 * S); octx.lineTo(cx, ty); octx.fill(); }
       }
-      drawMini(f, trail, hlIdx, show.ball);
+    }
+    function panel(f, t) {
+      const hlIdx = highlight ? D.players.indexOf(highlight) : -2;
       const a = f.pc[order[0]], b = f.pc[order[1]], tot = a + b, pa = tot ? Math.round(100 * a / tot) : 50;
       $("pa").style.flexBasis = pa + "%"; $("pb").style.flexBasis = (100 - pa) + "%";
       $("pa").textContent = tot ? pa + "%" : "–"; $("pb").textContent = tot ? (100 - pa) + "%" : "–";
       const chip = $("clock"); chip.className = "chip " + (f.live ? "run" : "stop"); chip.textContent = f.live ? "Sat teče" : "Sat stoji";
       lineup(f);
       if (highlight) { const vis = f.p.some((p) => p[1] === hlIdx); $("hl").textContent = `Istaknut ${highlight}` + (vis ? "" : ", trenutno nije u kadru"); }
-      else $("hl").textContent = "Klikni broj da istakneš igrača u videu i na mini-mapi.";
+      else $("hl").textContent = embed ? "Klikni broj da istakneš igrača na mini-mapi." : "Klikni broj da istakneš igrača u videu i na mini-mapi.";
       $("time").textContent = fmt(t) + " / " + fmt(dur);
-      const pr = dur ? t / dur : 0; $("prog").style.width = (pr * 100) + "%";
+      const pr = dur ? Math.min(1, Math.max(0, t / dur)) : 0; $("prog").style.width = (pr * 100) + "%";
       if (!seeking) $("seek").value = Math.round(pr * 1000);
     }
     function drawMini(f, trail, hlIdx, showBall) {
@@ -163,15 +197,28 @@ export function AnalysisViewer({ D, video, order, names, note, youtube }) {
       if (f.b && showBall) { mctx.fillStyle = sig; mctx.beginPath(); mctx.arc(MX(f.b[2]), MY(f.b[3]), Math.max(3, R * 0.55), 0, Math.PI * 2); mctx.fill();
         mctx.strokeStyle = "rgba(0,0,0,.6)"; mctx.lineWidth = 1; mctx.stroke(); }
     }
+    const seek = $("seek");
+    seek.oninput = () => { seeking = true; if (dur) clk.seek(seek.value / 1000 * dur); draw(); };
+    seek.onchange = () => { seeking = false; };
+    ["t-box", "t-num", "t-court", "t-ball"].forEach((k) => { if ($(k)) $(k).onchange = draw; });
+    const loop = () => { if (!alive) return; if (!clk.paused()) draw(); raf = requestAnimationFrame(loop); };
+    const ro = new ResizeObserver(() => draw()); ro.observe(el);
+    if (embed) {
+      dur = D.frames[D.frames.length - 1].t; bands(); draw(); loop();
+      if (!ytId) $("yterr").hidden = false;
+      else loadYT().then((YT) => {
+        if (!alive) return;
+        yt = new YT.Player($("yt"), { videoId: ytId, width: "100%", height: "100%", host: "https://www.youtube-nocookie.com",
+          playerVars: { start: Math.max(0, Math.floor(ytOffset + D.frames[0].t)), rel: 0, playsinline: 1 },
+          events: { onReady: draw, onStateChange: draw } });
+      }).catch(() => { if (alive) $("yterr").hidden = false; });
+      return () => { alive = false; cancelAnimationFrame(raf); ro.disconnect(); try { yt?.destroy(); } catch { /* */ } };
+    }
     const setUI = () => { const p = !vid.paused; $("play").innerHTML = p ? "Pauza" : "Pokreni"; $("big").hidden = p; };
     const toggle = () => { vid.paused ? vid.play().catch(() => {}) : vid.pause(); };
     $("play").onclick = toggle; $("big").onclick = toggle;
     vid.addEventListener("play", setUI); vid.addEventListener("pause", setUI); vid.addEventListener("ended", setUI);
     $("speed").onchange = () => { vid.playbackRate = +$("speed").value; };
-    const seek = $("seek");
-    seek.oninput = () => { seeking = true; if (dur) vid.currentTime = seek.value / 1000 * dur; };
-    seek.onchange = () => { seeking = false; };
-    ["t-box", "t-num", "t-court", "t-ball"].forEach((k) => $(k).onchange = draw);
     const onMeta = () => { dur = vid.duration || D.frames[D.frames.length - 1].t; bands(); draw(); };
     vid.addEventListener("loadedmetadata", onMeta);
     vid.addEventListener("seeked", draw); vid.addEventListener("timeupdate", () => { if (vid.paused) draw(); });
@@ -183,21 +230,43 @@ export function AnalysisViewer({ D, video, order, names, note, youtube }) {
       if (e.code === "ArrowLeft") vid.currentTime = Math.max(0, vid.currentTime - 2);
     };
     document.addEventListener("keydown", key);
-    const loop = () => { if (!alive) return; if (!vid.paused) draw(); raf = requestAnimationFrame(loop); }; loop();
-    const ro = new ResizeObserver(() => draw()); ro.observe(el);
+    loop();
     vid.src = video; if (vid.readyState >= 1) onMeta(); else { dur = D.frames[D.frames.length - 1].t; bands(); draw(); }
     setUI();
     return () => { alive = false; cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener("keydown", key); vid.pause(); };
-  }, [D, video]);
+  }, [D, video, mode, ytId, ytOffset]);
+
+  const miniCard = (
+    <section className="panel">
+      <div className="ph"><h3>Mini-mapa</h3>{embed && <label className="tg"><input type="checkbox" data-k="t-ball" defaultChecked /> Lopta</label>}</div>
+      <div className="pb"><canvas className="mini" data-k="mini" aria-label="Pozicije igrača na terenu, pogled odozgo" /></div>
+    </section>);
 
   return (
     <div className="viewer" ref={root}>
       <section className="stage" aria-label="Video s oznakama">
-        <div className="video">
-          <video data-k="vid" playsInline muted preload="auto" />
-          <canvas data-k="ov" />
-          <button className="bigplay" data-k="big" aria-label="Pokreni video">{Icon.play(30)}</button>
-        </div>
+        {embed ? (
+          <div className="video">
+            <div data-k="yt" />
+            <div className="yterr" data-k="yterr" hidden>
+              <span>YouTube player se ovdje ne može učitati.</span>
+              {youtube && <a className="btn sm" href={youtube} target="_blank" rel="noreferrer">Otvori snimku na YouTubeu</a>}
+            </div>
+          </div>
+        ) : (
+          <div className="video">
+            <video data-k="vid" playsInline muted preload="auto" />
+            <canvas data-k="ov" />
+            <button className="bigplay" data-k="big" aria-label="Pokreni video">{Icon.play(30)}</button>
+          </div>
+        )}
+        {embed ? (
+          <div className="vctl">
+            <span className="vtime" data-k="time" />
+            <span className="chip run" data-k="clock" />
+            <span className="small muted" data-k="range" hidden>Video je izvan dijela koji je analiziran.</span>
+          </div>
+        ) : (
         <div className="vctl">
           <button className="btn dark" data-k="play" style={{ minWidth: 92 }} />
           <span className="vtime" data-k="time" />
@@ -211,12 +280,14 @@ export function AnalysisViewer({ D, video, order, names, note, youtube }) {
             <label className="tg"><input type="checkbox" data-k="t-court" defaultChecked /> Linije terena</label>
             <label className="tg"><input type="checkbox" data-k="t-ball" defaultChecked /> Lopta</label>
           </div>
-        </div>
+        </div>)}
         <div className="scrub">
           <div className="band" data-k="band"><div className="prog" data-k="prog" /></div>
           <input type="range" data-k="seek" min="0" max="1000" defaultValue="0" step="1" aria-label="Vrijeme u snimci" />
         </div>
-        <div className="note">Prugasti dijelovi trake: sat stoji, posjed se tada ne broji. Razmaknica pokreće i zaustavlja, strelice premotavaju 2 s.</div>
+        <div className="note">{embed ? "Traka prikazuje analizirani dio snimke, klik premotava YouTube player. Prugasti dijelovi: sat stoji, posjed se tada ne broji."
+          : "Prugasti dijelovi trake: sat stoji, posjed se tada ne broji. Razmaknica pokreće i zaustavlja, strelice premotavaju 2 s."}</div>
+        {embed && miniCard}
         {note && <div className="callout"><span>{note}{youtube && <> <a href={youtube} target="_blank" rel="noreferrer" style={{ color: "var(--primary)", fontWeight: 600 }}>Cijela snimka na YouTubeu</a></>}</span></div>}
       </section>
       <aside className="side">
@@ -231,18 +302,15 @@ export function AnalysisViewer({ D, video, order, names, note, youtube }) {
           <div className="ph"><h3>Na terenu</h3></div>
           <div className="pb"><div data-k="lineup" /><div className="note" data-k="hl" style={{ marginTop: 10, minHeight: "1.4em" }} /></div>
         </section>
-        <section className="panel">
-          <div className="ph"><h3>Mini-mapa</h3></div>
-          <div className="pb"><canvas className="mini" data-k="mini" aria-label="Pozicije igrača na terenu, pogled odozgo" /></div>
-        </section>
+        {!embed && miniCard}
         <section className="panel">
           <div className="ph"><h3>Kako čitati</h3></div>
           <div className="pb">
             <dl className="keys">
-              <dt><span className="k-box" /></dt><dd>Okvir u boji ekipe, iznad njega broj s dresa. Upitnik znači da broj još nije pročitan.</dd>
+              {!embed && <><dt><span className="k-box" /></dt><dd>Okvir u boji ekipe, iznad njega broj s dresa. Upitnik znači da broj još nije pročitan.</dd></>}
               <dt><span className="k-dash" /></dt><dd>Iscrtkani broj: igrač je na terenu, ali trenutno nije u kadru.</dd>
               <dt><span className="k-ring" /></dt><dd>Prazni krug na mini-mapi: procijenjeni položaj golmana.</dd>
-              <dt><span className="k-ball" /></dt><dd>Lopta i njezin trag. Trokut iznad igrača označava tko je ima.</dd>
+              <dt><span className="k-ball" /></dt><dd>{embed ? "Lopta i njezin trag na mini-mapi." : "Lopta i njezin trag. Trokut iznad igrača označava tko je ima."}</dd>
             </dl>
             <div className="note" style={{ marginTop: 10 }}>Analiza je automatska, pa brojevi, postava i posjed mogu sadržavati greške.</div>
           </div>

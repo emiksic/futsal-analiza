@@ -2,7 +2,7 @@
 // Pravi podaci: zapisnici RIJ i NVR (brojevi), dvije analizirane snimke (u1, u2).
 // Kad dođe backend, ovo se zamjenjuje stvarnom bazom.
 
-export const SEED_VERSION = 4;
+export const SEED_VERSION = 5;
 
 function rng(seed) {                       // deterministički PRNG (mulberry32)
   let a = seed >>> 0;
@@ -175,12 +175,14 @@ function build() {
       { id: "u1g3", type: "goal", side: "home", period: 2, sec: 241, player: P("rijeka", "44"), assist: P("rijeka", "4") },
       { id: "u1g4", type: "goal", side: "home", period: 2, sec: 1090, player: P("rijeka", "7") });
     u1.analysis = { status: "done", clip: "u1", video: "media/u1.mp4", data: "media/u1.json", from: 128, to: 148,
+      rights: "overlay", rightsNote: "Interni pregled. Prije javne objave treba pisana dozvola kluba ili prijenosnika.", ytOffset: null,
       note: "Isječak od 20 s (128.–148. s snimke, 07:49–08:09 na satu). Brojevi su ograničeni na zapisnik.",
       teamMap: { RIJ: "home", NVR: "away" } };
     u1.youtube = "https://www.youtube.com/watch?v=eCDieI6ctu0";
   }
   if (u2) {
     u2.analysis = { status: "done", clip: "u2", video: "media/u2.mp4", data: "media/u2.json", from: 0, to: 150,
+      rights: "overlay", rightsNote: "Interni pregled. Prije javne objave treba pisana dozvola kluba ili prijenosnika.", ytOffset: null,
       note: "Isječak od 2:30. Zapisnik još nije unesen, a boje ekipa su pretpostavka (plavi = Futsal Dinamo, zeleni = Olmissum).",
       teamMap: { DIN: "home", OLM: "away" }, kitUnconfirmed: true };
     u2.youtube = "https://www.youtube.com/watch?v=pNdDlCB2PT8";
@@ -191,7 +193,8 @@ function build() {
   matches.filter(m => m.comp === "1-hmnl-2026-27" && m.round === 6).slice(0, 2)
     .forEach((m, i) => { m.youtube = "https://www.youtube.com/"; m.analysis = { status: i === 0 ? "processing" : "queued", progress: 0.42 }; });
 
-  return { version: SEED_VERSION, leagues, seasons, halls, clubs, players, comps, matches };
+  const site = { name: "Šesterac", contact: "" };
+  return { version: SEED_VERSION, site, leagues, seasons, halls, clubs, players, comps, matches };
 }
 
 export default build();

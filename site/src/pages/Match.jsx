@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { href } from "../lib/router.js";
-import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls } from "../lib/derive.js";
+import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
@@ -91,9 +91,13 @@ function AnalysisTab({ m, ix, A }) {
   if (A.error) return <div className="empty">Podaci analize se nisu učitali. Osvježi stranicu.</div>;
   if (!A.D) return <div className="empty">Učitavam analizu…</div>;
   const order = teamOrder(A.D, m);
+  const mode = a.rights === "overlay" && a.video ? "overlay" : "embed";
   return (
-    <div className="pb" style={{ paddingTop: 16 }}>
-      <AnalysisViewer D={A.D} video={a.video} order={order} names={[ix.club[m.home].short, ix.club[m.away].short]} note={a.note} youtube={m.youtube} />
+    <div className="pb" style={{ paddingTop: 16, display: "grid", gap: 12 }}>
+      {mode === "embed" && a.ytOffset == null && <div className="callout warn">Analiza još nije vremenski usklađena s YouTube snimkom, pa panel može kasniti ili žuriti. Uskladi je u adminu.</div>}
+      {mode === "overlay" && a.rightsNote && <div className="callout warn">{a.rightsNote}</div>}
+      <AnalysisViewer D={A.D} video={a.video} order={order} names={[ix.club[m.home].short, ix.club[m.away].short]} note={a.note} youtube={m.youtube}
+        mode={mode} ytOffset={a.ytOffset || 0} />
     </div>
   );
 }
@@ -166,6 +170,7 @@ function Stats({ m, ix, A }) {
   const c = (type, side) => m.events.filter((e) => e.type === type && e.side === side).length;
   const s = score(m) || [0, 0];
   const st = A.D ? analysisStats(A.D, teamOrder(A.D, m)) : null;
+  const per = perPlayerAllowed(ix, m.comp);
   const keyClub = st ? Object.fromEntries(Object.entries(m.analysis.teamMap || {}).map(([k, v]) => [k, v === "home" ? H : Aw])) : {};
   return (
     <>
@@ -182,7 +187,8 @@ function Stats({ m, ix, A }) {
         <Cmp label="Time-out" a={c("timeout", "home")} b={c("timeout", "away")} ca={ca} cb={cb} />
         {!st && <div className="src">Posjed i kretanje igrača pojavljuju se kad utakmica ima video analizu.</div>}
       </div>
-      {st && st.players.length > 0 && (
+      {st && !per && <div className="pb"><div className="note">U kadetskoj ligi ne prikazujemo podatke o kretanju pojedinih igrača.</div></div>}
+      {st && per && st.players.length > 0 && (
         <div className="pb">
           <h4 style={{ font: "600 13px/1 var(--body)", color: "var(--muted)", margin: "4px 0 8px" }}>Kretanje igrača s prepoznatim brojem</h4>
           <div className="tbl-wrap">
@@ -206,7 +212,8 @@ function Lineups({ m, ix, A }) {
   const H = ix.club[m.home], Aw = ix.club[m.away];
   const r = m.roster;
   const cv = useRef(null);
-  const D = A.D, order = D ? teamOrder(D, m) : null;
+  const per = perPlayerAllowed(ix, m.comp);
+  const D = per ? A.D : null, order = D ? teamOrder(D, m) : null;
   const keyOf = (side, pid) => {
     if (!D) return null; const p = ix.player[pid]; if (!p) return null;
     const code = Object.entries(m.analysis.teamMap || {}).find(([, v]) => v === side)?.[0];
@@ -252,7 +259,7 @@ function Lineups({ m, ix, A }) {
             return (
               <button key={side + pid} className="pp" style={pos(side === "home" ? x : -x, side === "home" ? y : -y)} aria-pressed={sel?.pid === pid}
                 onClick={() => click(side, pid)} title={keyOf(side, pid) ? "Prikaži toplinsku mapu" : playerName(p)}>
-                <Jersey kit={k2} size={34} num={p?.num} /><span>{p?.name || (gk ? "golman" : "")}</span>
+                <Jersey kit={k2} size={34} num={p?.num} /><span>{(per && p?.name) || (gk ? "golman" : "")}</span>
               </button>);
           }))}
         </div>

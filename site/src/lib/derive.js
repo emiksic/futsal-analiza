@@ -66,7 +66,9 @@ export const fmtDate = (iso) => { const d = new Date(iso); return `${d.getDate()
 export const fmtTime = (iso) => { const d = new Date(iso); return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
 export const sameDay = (a, b) => new Date(a).toDateString() === new Date(b).toDateString();
 
-export const playerName = (p) => (p ? (p.name || `Igrač #${p.num}`) : "—");
+// kadeti (U-17, maloljetnici): javno se prikazuje samo broj
+export const playerName = (p) => (p ? ((p.cat !== "U-17" && p.name) || `Igrač #${p.num}`) : "—");
+export const perPlayerAllowed = (ix, compId) => ix.league[ix.comp[compId]?.league]?.category !== "U-17";
 export const ANALYSIS_LABEL = { none: "Bez analize", queued: "Čeka obradu", processing: "U obradi", done: "Analizirano", failed: "Greška u obradi" };
 export const STATUS_LABEL = { scheduled: "Zakazano", live: "Uživo", finished: "Kraj" };
 

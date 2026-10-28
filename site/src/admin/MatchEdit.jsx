@@ -8,6 +8,8 @@ import { Jersey, Icon, Toast } from "../components/ui.jsx";
 const toLocal = (iso) => { const d = new Date(iso), p = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
 const MAX_ROSTER = 14;
+const fmtHms = (s) => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
+const parseHms = (t) => { if (!t.trim()) return null; const p = t.trim().split(":").map(Number); if (p.some(isNaN)) return null; return p.reduce((a, b) => a * 60 + b, 0); };
 
 export function MatchEdit({ db, ix, id, tab = "osnovno" }) {
   const m = ix.match[id];
@@ -235,9 +237,21 @@ function Analysis({ ix, m, upd }) {
         <button className="btn primary" disabled={!m.youtube || a.status === "queued" || a.status === "processing"} onClick={() => ua((x) => { x.status = "queued"; })}>
           {Icon.video()} Stavi u red</button>
         <small>{m.youtube ? "Obrada kreće sljedeći put kad se pokrene analyze.py --queue." : "Prvo dodaj link snimke pod Osnovno."}</small></div>
+      <div className="field wide"><span>Prava na video</span>
+        <div className="seg">
+          <button type="button" aria-pressed={(a.rights || "embed") === "embed"} onClick={() => ua((x) => { x.rights = "embed"; })}>Samo YouTube embed</button>
+          <button type="button" aria-pressed={a.rights === "overlay"} onClick={() => ua((x) => { x.rights = "overlay"; })}>Imamo pisanu dozvolu</button>
+        </div>
+        <small>{a.rights === "overlay" ? "Prikazuje se vlastiti video s ucrtanim oznakama. Zapiši tko je dao dozvolu i kada." : "Javno se prikazuje originalni YouTube player, a analiza je u panelu i na mini-mapi pored njega. Ovo ne traži dozvolu."}</small>
+        {a.rights === "overlay" && <input className="input" value={a.rightsNote || ""} placeholder="npr. Dozvola: MNK Rijeka, mail 30. 10. 2026." onChange={(e) => ua((x) => { x.rightsNote = e.target.value; })} />}
+      </div>
+      <label className="field"><span>Početak analize na YouTubeu (mm:ss ili h:mm:ss)</span>
+        <input className="input" defaultValue={a.ytOffset == null ? "" : fmtHms(a.ytOffset)} placeholder="npr. 12:40"
+          onBlur={(e) => { const v = parseHms(e.target.value); ua((x) => { x.ytOffset = v; }); }} />
+        <small>Trenutak u YouTube snimci koji odgovara početku analiziranog videa. analyze.py ga upisuje sam kad video preuzme s YouTubea.</small></label>
       <label className="field"><span>Video za preglednik</span>
         <input className="input" value={a.video || ""} placeholder="https://video.…/utakmica.mp4" onChange={(e) => ua((x) => { x.video = e.target.value.trim(); })} />
-        <small>Čisti video bez oznaka, s vlastitog hostinga (npr. Cloudflare R2).</small></label>
+        <small>Samo uz dozvolu: čisti video s vlastitog hostinga (npr. Cloudflare R2).</small></label>
       <label className="field"><span>Podaci analize</span>
         <input className="input" value={a.data || ""} placeholder="https://…/analiza.json" onChange={(e) => ua((x) => { x.data = e.target.value.trim(); })} /></label>
       <div className="field wide"><span>Koja je ekipa koja boja</span>
