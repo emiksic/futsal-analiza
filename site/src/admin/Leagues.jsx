@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { update } from "../lib/store.js";
-import { compName } from "../lib/derive.js";
+import { compName, NAME_FORMATS } from "../lib/derive.js";
 import { Jersey, Icon, LeagueBadge } from "../components/ui.jsx";
 
 function roundRobin(ids) {
@@ -27,9 +27,10 @@ export function Leagues({ db, ix }) {
       <div className="ahead"><h1>Lige i sezone</h1></div>
       <section className="panel">
         <div className="ph"><h2>Lige</h2></div>
+        <div className="pb small muted">Prikaz imena vrijedi za javne stranice. U adminu se uvijek vidi puno ime. Za maloljetnike (kadeti) preporuka je samo broj i bez podataka po igraču.</div>
         <div className="tbl-wrap">
           <table className="atbl">
-            <thead><tr><th /><th>Naziv</th><th>Kategorija</th><th>Mjesta za doigravanje</th><th>Mjesta za ispadanje</th></tr></thead>
+            <thead><tr><th /><th>Naziv</th><th>Kategorija</th><th>Doigravanje</th><th>Ispadanje</th><th>Prikaz imena</th><th>Podaci po igraču</th></tr></thead>
             <tbody>{db.leagues.map((l) => (
               <tr key={l.id}>
                 <td><LeagueBadge league={l} /></td>
@@ -38,6 +39,11 @@ export function Leagues({ db, ix }) {
                   {["Seniori", "U-19", "U-17", "U-15", "Seniorke"].map((c) => <option key={c}>{c}</option>)}</select></td>
                 <td><input className="input sm num" type="number" min="0" value={l.zones?.playoff || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, playoff: +e.target.value }; })} aria-label="Doigravanje" /></td>
                 <td><input className="input sm num" type="number" min="0" value={l.zones?.relegation || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, relegation: +e.target.value }; })} aria-label="Ispadanje" /></td>
+                <td><select className="input sm" value={l.privacy?.names || "full"} onChange={(e) => ul(l.id, (x) => { x.privacy = { ...x.privacy, names: e.target.value }; })} aria-label="Prikaz imena">
+                  {Object.entries(NAME_FORMATS).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></td>
+                <td><label className="small" style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>
+                  <input type="checkbox" className="check" checked={l.privacy?.perPlayer !== false} onChange={(e) => ul(l.id, (x) => { x.privacy = { ...x.privacy, perPlayer: e.target.checked }; })} />
+                  toplinske mape, metri</label></td>
               </tr>))}</tbody>
           </table>
         </div>

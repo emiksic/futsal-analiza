@@ -1,6 +1,9 @@
 // Izvedeni podaci: rezultat, tablica, strijelci, formatiranje.
 
+// prikaz imena po kategoriji (postavka lige): full | initial | number
+let NAMES = {};
 export function index(db) {
+  NAMES = Object.fromEntries(db.leagues.map((l) => [l.category, l.privacy?.names || "full"]));
   const by = (arr) => Object.fromEntries(arr.map((x) => [x.id, x]));
   return { club: by(db.clubs), player: by(db.players), hall: by(db.halls), league: by(db.leagues), comp: by(db.comps), season: by(db.seasons), match: by(db.matches) };
 }
@@ -67,8 +70,15 @@ export const fmtTime = (iso) => { const d = new Date(iso); return `${String(d.ge
 export const sameDay = (a, b) => new Date(a).toDateString() === new Date(b).toDateString();
 
 // kadeti (U-17, maloljetnici): javno se prikazuje samo broj
-export const playerName = (p) => (p ? ((p.cat !== "U-17" && p.name) || `Igrač #${p.num}`) : "—");
-export const perPlayerAllowed = (ix, compId) => ix.league[ix.comp[compId]?.league]?.category !== "U-17";
+export function playerName(p) {
+  if (!p) return "—";
+  const fmt = NAMES[p.cat] || "full", n = (p.name || "").trim();
+  if (!n || fmt === "number") return `Igrač #${p.num}`;
+  if (fmt === "initial") { const parts = n.split(/\s+/); return parts.length > 1 ? `${parts[0][0]}. ${parts.slice(1).join(" ")}` : n; }
+  return n;
+}
+export const NAME_FORMATS = { full: "Ime i prezime", initial: "Inicijal i prezime", number: "Samo broj" };
+export const perPlayerAllowed = (ix, compId) => ix.league[ix.comp[compId]?.league]?.privacy?.perPlayer !== false;
 export const ANALYSIS_LABEL = { none: "Bez analize", queued: "Čeka obradu", processing: "U obradi", done: "Analizirano", failed: "Greška u obradi" };
 export const STATUS_LABEL = { scheduled: "Zakazano", live: "Uživo", finished: "Kraj" };
 

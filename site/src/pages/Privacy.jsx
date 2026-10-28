@@ -8,7 +8,7 @@ export function Privacy({ db }) {
           <p>{db.site?.name || "Ova stranica"} je neslužbena stranica o hrvatskim futsal ligama. Nije povezana s Hrvatskim nogometnim savezom ni s klubovima.</p>
           <h2>Koje podatke prikazujemo</h2>
           <ul>
-            <li>Rezultate, rasporede i zapisnike utakmica: brojeve na dresovima, a za seniore i juniore i imena igrača.</li>
+            <li>Rezultate, rasporede i zapisnike utakmica: brojeve na dresovima i imena igrača. Za seniore puno ime, za juniore inicijal i prezime.</li>
             <li>Statistiku iz automatske analize javno objavljenih prijenosa: posjed, položaje na terenu, prijeđenu udaljenost.</li>
             <li>U kadetskoj ligi (U-17) prikazujemo samo brojeve, bez imena i bez podataka o kretanju pojedinog igrača.</li>
           </ul>

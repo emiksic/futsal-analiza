@@ -2,7 +2,7 @@
 // Pravi podaci: zapisnici RIJ i NVR (brojevi), dvije analizirane snimke (u1, u2).
 // Kad dođe backend, ovo se zamjenjuje stvarnom bazom.
 
-export const SEED_VERSION = 5;
+export const SEED_VERSION = 6;
 
 function rng(seed) {                       // deterministički PRNG (mulberry32)
   let a = seed >>> 0;
@@ -11,9 +11,9 @@ function rng(seed) {                       // deterministički PRNG (mulberry32)
 }
 
 const leagues = [
-  { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, relegation: 1 } },
-  { id: "juniori", name: "1. HMNL juniori", category: "U-19", zones: { playoff: 4, relegation: 0 } },
-  { id: "kadeti", name: "1. HMNL kadeti", category: "U-17", zones: { playoff: 4, relegation: 0 } },
+  { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
+  { id: "juniori", name: "1. HMNL juniori", category: "U-19", zones: { playoff: 4, relegation: 0 }, privacy: { names: "initial", perPlayer: true } },
+  { id: "kadeti", name: "1. HMNL kadeti", category: "U-17", zones: { playoff: 4, relegation: 0 }, privacy: { names: "number", perPlayer: false } },
 ];
 const seasons = [
   { id: "2026-27", name: "2026./27." },

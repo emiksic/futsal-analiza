@@ -259,7 +259,7 @@ function Lineups({ m, ix, A }) {
             return (
               <button key={side + pid} className="pp" style={pos(side === "home" ? x : -x, side === "home" ? y : -y)} aria-pressed={sel?.pid === pid}
                 onClick={() => click(side, pid)} title={keyOf(side, pid) ? "Prikaži toplinsku mapu" : playerName(p)}>
-                <Jersey kit={k2} size={34} num={p?.num} /><span>{(per && p?.name) || (gk ? "golman" : "")}</span>
+                <Jersey kit={k2} size={34} num={p?.num} /><span>{(p?.name && !playerName(p).startsWith("Igrač #") ? playerName(p) : "") || (gk ? "golman" : "")}</span>
               </button>);
           }))}
         </div>
