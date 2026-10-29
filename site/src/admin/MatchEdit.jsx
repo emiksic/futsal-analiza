@@ -80,9 +80,16 @@ function Basic({ db, ix, m, upd }) {
           {m.result && <button className="btn sm ghost" onClick={() => upd((x) => { delete x.result; })}>Računaj iz golova</button>}
         </div>
         <small>Ako je upisan, vrijedi ovaj rezultat. Inače se računa iz golova pod Događaji.</small></div>
-      <label className="field wide"><span>Snimka na YouTubeu</span>
-        <input className="input" type="url" placeholder="https://www.youtube.com/watch?v=…" value={m.youtube || ""} onChange={(e) => upd((x) => { x.youtube = e.target.value.trim(); })} />
-        <small>Link prijenosa ili snimke. Iz njega se preuzima video za analizu.</small></label>
+      <div className="field wide"><span>Prijenos</span>
+        <div className="seg">
+          {[["yt", "YouTube"], ["max", "MAXsport"], ["none", "Nema"]].map(([k, n]) => {
+            const cur = m.tv ? "max" : (m.youtube || m.ytMode) ? "yt" : "none";
+            return <button type="button" key={k} aria-pressed={cur === k}
+              onClick={() => upd((x) => { if (k === "yt") { x.ytMode = true; delete x.tv; } if (k === "max") { x.youtube = ""; x.ytMode = false; x.tv = "MAXsport"; } if (k === "none") { x.youtube = ""; x.ytMode = false; delete x.tv; } })}>{n}</button>;
+          })}
+        </div>
+        {(m.youtube || m.ytMode) && <input className="input" type="url" placeholder="https://www.youtube.com/watch?v=…" value={m.youtube || ""} onChange={(e) => upd((x) => { x.youtube = e.target.value.trim(); })} />}
+        <small>{m.tv ? "TV prijenos: na stranici piše gdje se gleda, bez videa i analize." : "Iz YouTube linka se prikazuje snimka i preuzima video za analizu."}</small></div>
       <div className="wide small muted">Promjene se spremaju odmah.</div>
     </div>
   );

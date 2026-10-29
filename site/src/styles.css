@@ -111,6 +111,7 @@ h1 { font: 700 34px/1.02 var(--display); margin: 0; letter-spacing: .005em; text
 .mrow:hover { background: var(--surface-2); }
 .mrow .when { font-size: 12px; color: var(--muted); line-height: 1.25; text-align: center; }
 .mrow .when.fin { color: var(--muted); }
+.tvtag { margin-top: 3px; font-size: 10px; font-weight: 700; letter-spacing: .02em; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mrow .teams { display: grid; gap: 4px; min-width: 0; }
 .mrow .t { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .mrow .t span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

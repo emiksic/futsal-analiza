@@ -50,8 +50,9 @@ function Board({ m, ix }) {
         <a href={href("liga", comp.league, comp.season, "rezultati", m.round)}>{L.name}, {m.round}. kolo</a>
         <span>{fmtDay(m.date)} u {fmtTime(m.date)}</span>
         <span>{ix.hall[m.hall]?.name}, {ix.hall[m.hall]?.city}</span>
-        {m.youtube && <a className="r" href={m.youtube} target="_blank" rel="noreferrer" style={{ display: "inline-flex", gap: 6, alignItems: "center", color: "var(--band-fg)" }}>
-          Snimka na YouTubeu {Icon.ext()}</a>}
+        {m.youtube ? <a className="r" href={m.youtube} target="_blank" rel="noreferrer" style={{ display: "inline-flex", gap: 6, alignItems: "center", color: "var(--band-fg)" }}>
+          Prijenos na YouTubeu {Icon.ext()}</a>
+          : m.tv ? <span className="r">Prijenos: {m.tv}</span> : null}
       </div>
       <div className="board-main">
         <a className="bteam" href={href("klub", H.id)}><Jersey kit={H.kit} size={58} /><b>{H.name}</b></a>
@@ -81,7 +82,8 @@ function FoulBar({ n }) {
 
 function AnalysisTab({ m, ix, A }) {
   const a = m.analysis;
-  if (!a || a.status === "none") return <div className="empty" style={{ padding: 24 }}>Za ovu utakmicu nema video analize.{m.youtube ? " Snimka postoji, analiza se može pokrenuti iz admina." : ""}</div>;
+  if (!a || a.status === "none") return <div className="empty" style={{ padding: 24 }}>
+    {m.youtube ? "Za ovu utakmicu još nema video analize." : m.tv ? `Utakmica se prenosila na ${m.tv}. Video analizu radimo samo za utakmice s javnim prijenosom na YouTubeu.` : "Za ovu utakmicu nema video analize."}</div>;
   if (a.status === "queued" || a.status === "processing") return (
     <div className="pb" style={{ paddingTop: 16 }}>
       <div className="callout"><span className="an-dot processing">{Icon.video(14)}</span>
