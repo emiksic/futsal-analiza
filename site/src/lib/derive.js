@@ -92,14 +92,25 @@ export const fmtTime = (iso) => { const d = new Date(iso); return `${String(d.ge
 export const sameDay = (a, b) => new Date(a).toDateString() === new Date(b).toDateString();
 
 // kadeti (U-17, maloljetnici): javno se prikazuje samo broj
+// Prezime: ručno upisano (p.last) ili procjena iz punog imena ("Vitor Hugo de Lima da Silva" -> "de Lima da Silva")
+const PARTICLES = new Set(["de", "da", "do", "dos", "das", "del", "di", "van", "von", "le", "la"]);
+export function surnameOf(p) {
+  if (p?.last) return p.last;
+  const t = (p?.name || "").trim().split(/\s+/);
+  if (t.length < 2) return t[0] || "";
+  const i = t.findIndex((w, k) => k > 0 && PARTICLES.has(w.toLowerCase()));
+  return t.slice(i > 0 ? i : t.length - 1).join(" ");
+}
 export function playerName(p) {
   if (!p) return "—";
   const fmt = NAMES[p.cat] || "full", n = (p.name || "").trim();
   if (!n || fmt === "number") return `Igrač #${p.num}`;
-  if (fmt === "initial") { const parts = n.split(/\s+/); return parts.length > 1 ? `${parts[0][0]}. ${parts.slice(1).join(" ")}` : n; }
+  const last = surnameOf(p);
+  if (fmt === "last") return last;
+  if (fmt === "initial") return last && last !== n ? `${n[0]}. ${last}` : n;
   return n;
 }
-export const NAME_FORMATS = { full: "Ime i prezime", initial: "Inicijal i prezime", number: "Samo broj" };
+export const NAME_FORMATS = { full: "Ime i prezime", initial: "Inicijal i prezime", last: "Samo prezime", number: "Samo broj" };
 export const perPlayerAllowed = (ix, compId) => ix.league[ix.comp[compId]?.league]?.privacy?.perPlayer !== false;
 export const ANALYSIS_LABEL = { none: "Bez analize", queued: "Čeka obradu", processing: "U obradi", done: "Analizirano", failed: "Greška u obradi" };
 export const STATUS_LABEL = { scheduled: "Zakazano", live: "Uživo", finished: "Kraj" };

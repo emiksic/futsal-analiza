@@ -2,6 +2,7 @@ import { useState } from "react";
 import { href, go } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
 import { Jersey, Icon } from "../components/ui.jsx";
+import { surnameOf } from "../lib/derive.js";
 
 export function Clubs({ db, ix }) {
   const cur = db.seasons[0].id;
@@ -74,11 +75,12 @@ export function ClubEdit({ db, ix, id }) {
           {cats.length > 1 && <div className="seg">{cats.map((k) => <button key={k} aria-pressed={cat === k} onClick={() => setCat(k)}>{k}</button>)}</div>}</div>
         <div className="tbl-wrap">
           <table className="atbl">
-            <thead><tr><th>Broj</th><th>Ime i prezime</th><th>Golman</th><th /></tr></thead>
+            <thead><tr><th>Broj</th><th>Ime i prezime</th><th>Prezime</th><th>Golman</th><th /></tr></thead>
             <tbody>{squad.map((p) => (
               <tr key={p.id}>
                 <td><input className="input sm num" value={p.num} onChange={(e) => up(p.id, (q) => { q.num = e.target.value.replace(/\D/g, "").slice(0, 2); })} aria-label="Broj" /></td>
                 <td><input className="input sm" value={p.name} placeholder="Ime i prezime" onChange={(e) => up(p.id, (q) => { q.name = e.target.value; })} aria-label={`Ime, broj ${p.num}`} /></td>
+                <td><input className="input sm" value={p.last || ""} placeholder={surnameOf({ name: p.name }) || "prezime"} onChange={(e) => up(p.id, (q) => { q.last = e.target.value.trim() || undefined; })} aria-label={`Prezime, broj ${p.num}`} title="Upiši samo ako je automatska procjena prezimena kriva" /></td>
                 <td><input type="checkbox" className="check" checked={p.gk} onChange={(e) => up(p.id, (q) => { q.gk = e.target.checked; })} aria-label="Golman" /></td>
                 <td>{used(p.id) ? <span className="small muted">u zapisnicima</span> :
                   <button className="btn sm ghost danger" onClick={() => update((d) => { d.players = d.players.filter((q) => q.id !== p.id); })} aria-label={`Obriši igrača ${p.num}`}>{Icon.trash()}</button>}</td>

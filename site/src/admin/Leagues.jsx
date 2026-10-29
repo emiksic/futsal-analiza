@@ -27,7 +27,7 @@ export function Leagues({ db, ix }) {
       <div className="ahead"><h1>Lige i sezone</h1></div>
       <section className="panel">
         <div className="ph"><h2>Lige</h2></div>
-        <div className="pb small muted">Prikaz imena vrijedi za javne stranice. U adminu se uvijek vidi puno ime. Za maloljetnike (kadeti) preporuka je samo broj i bez podataka po igraču.</div>
+        <div className="pb small muted">U bazi se za svakog igrača čuvaju ime, prezime, klub i broj. Prikaz imena određuje samo što se vidi na javnim stranicama, a u adminu se uvijek vidi puno ime. Za kadete (maloljetnici) preporuka je samo broj i bez podataka po igraču.</div>
         <div className="tbl-wrap">
           <table className="atbl">
             <thead><tr><th /><th>Naziv</th><th>Kategorija</th><th>Doigravanje</th><th>Ispadanje</th><th>Prikaz imena</th><th>Podaci po igraču</th></tr></thead>
