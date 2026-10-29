@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { href } from "../lib/router.js";
+import { href, go } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
 import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
@@ -25,7 +25,19 @@ export function MatchEdit({ db, ix, id, tab = "osnovno" }) {
         <h1 style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <Jersey kit={ix.club[m.home].kit} size={30} />{ix.club[m.home].name} {s ? `${s[0]}:${s[1]}` : "–"} {ix.club[m.away].name}<Jersey kit={ix.club[m.away].kit} size={30} />
         </h1>
-        <div className="r"><a className="btn" href={href("utakmica", m.id)}>Javna stranica {Icon.ext()}</a></div>
+        <div className="r">
+          {m.draft ? (
+            <>
+              <button className="btn primary" onClick={() => { upd((x) => { delete x.draft; }); go("admin", "utakmice"); }}>Dodaj utakmicu</button>
+              <button className="btn" onClick={() => { update((d) => { d.matches = d.matches.filter((x) => x.id !== id); }); go("admin", "utakmice"); }}>Odustani</button>
+            </>
+          ) : (
+            <>
+              <a className="btn" href={href("utakmica", m.id)}>Javna stranica {Icon.ext()}</a>
+              <DeleteMatch onDelete={() => { update((d) => { d.matches = d.matches.filter((x) => x.id !== id); }); go("admin", "utakmice"); }} />
+            </>
+          )}
+        </div>
       </div>
       <section className="panel">
         <nav className="tabs" aria-label="Uređivanje">
@@ -40,6 +52,16 @@ export function MatchEdit({ db, ix, id, tab = "osnovno" }) {
       </section>
     </>
   );
+}
+
+function DeleteMatch({ onDelete }) {
+  const [ask, setAsk] = useState(false);
+  if (!ask) return <button className="btn danger" onClick={() => setAsk(true)}>{Icon.trash()} Obriši utakmicu</button>;
+  return (
+    <span className="confirm">Obrisati utakmicu sa svim događajima?
+      <button className="btn sm danger" onClick={onDelete}>Obriši</button>
+      <button className="btn sm ghost" onClick={() => setAsk(false)}>Odustani</button>
+    </span>);
 }
 
 function Basic({ db, ix, m, upd }) {

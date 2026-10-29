@@ -12,7 +12,7 @@ export function Matches({ db, ix }) {
   const queue = db.matches.filter((m) => ["queued", "processing"].includes(m.analysis?.status)).sort((a, b) => a.date.localeCompare(b.date));
   const add = () => {
     const id = uid("m-");
-    update((d) => { d.matches.push({ id, comp, round: round === "all" ? 1 : +round, date: new Date().toISOString(), home: C.teams[0], away: C.teams[1],
+    update((d) => { d.matches.push({ id, draft: true, comp, round: round === "all" ? 1 : +round, date: new Date().toISOString(), home: C.teams[0], away: C.teams[1],
       hall: ix.club[C.teams[0]].hall, status: "scheduled", youtube: "", roster: { home: null, away: null }, events: [], analysis: null }); });
     go("admin", "utakmica", id, "osnovno");
   };
