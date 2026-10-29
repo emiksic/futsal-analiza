@@ -1,216 +1,139 @@
-// Početni (demo) podaci. Sve što je ovdje izmišljeno označeno je s demo: true.
-// Pravi podaci: zapisnici RIJ i NVR (brojevi), dvije analizirane snimke (u1, u2).
-// Kad dođe backend, ovo se zamjenjuje stvarnom bazom.
+// Početni podaci (bez izmišljenih rezultata).
+// - 1. HMNL 2026./27.: pravi rezultati 1.–4. kola (HNS Semafor, prepisano ručno); postave/strijelci kad stignu linkovi
+// - 1. HMNL juniori: samo dvije analizirane snimke (rezultat nije unesen)
+// Boje dresova su procjena iz grbova i treba ih potvrditi u adminu.
 
-export const SEED_VERSION = 7;
-
-function rng(seed) {                       // deterministički PRNG (mulberry32)
-  let a = seed >>> 0;
-  return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
-}
+export const SEED_VERSION = 8;
 
 const leagues = [
   { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
   { id: "juniori", name: "1. HMNL juniori", category: "U-19", zones: { playoff: 4, relegation: 0 }, privacy: { names: "initial", perPlayer: true } },
   { id: "kadeti", name: "1. HMNL kadeti", category: "U-17", zones: { playoff: 4, relegation: 0 }, privacy: { names: "number", perPlayer: false } },
 ];
-const seasons = [
-  { id: "2026-27", name: "2026./27." },
-  { id: "2025-26", name: "2025./26." },
-];
+const seasons = [{ id: "2026-27", name: "2026./27." }];
 
 const halls = [
-  { id: "zamet", name: "Dvorana Zamet", city: "Rijeka", calibrated: true },
+  { id: "gripe", name: "SC Gripe", city: "Split", calibrated: false },
+  { id: "baldekin", name: "SD Baldekin", city: "Šibenik", calibrated: false },
+  { id: "maksimir", name: "Stadion Maksimir", city: "Zagreb", calibrated: false },
+  { id: "sutinska", name: "Sutinska Vrela", city: "Zagreb", calibrated: false },
+  { id: "makarska", name: "SC Makarska", city: "Makarska", calibrated: false },
+  { id: "zamet", name: "Sportska dvorana Zamet", city: "Rijeka", calibrated: true },
+  { id: "gospino", name: "Sportska dvorana Gospino polje", city: "Dubrovnik", calibrated: false },
+  { id: "omis", name: "Omiš", city: "Omiš", calibrated: false },
+  { id: "mate-parlov", name: "Dom sportova \"Mate Parlov\"", city: "Pula", calibrated: false },
+  { id: "zrinjevac", name: "ŠD Zrinjevac", city: "Osijek", calibrated: false },
   { id: "dom-sportova", name: "Dom sportova", city: "Zagreb", calibrated: true },
-  { id: "makarska", name: "Gradska sportska dvorana", city: "Makarska", calibrated: false },
-  { id: "omis", name: "Sportska dvorana Ribnjak", city: "Omiš", calibrated: false },
-  { id: "pula", name: "Dom mladosti", city: "Pula", calibrated: false },
-  { id: "dubrovnik", name: "Dvorana Gospino polje", city: "Dubrovnik", calibrated: false },
-  { id: "sibenik", name: "Dvorana Baldekin", city: "Šibenik", calibrated: false },
-  { id: "vrgorac", name: "Gradska dvorana", city: "Vrgorac", calibrated: false },
-  { id: "split", name: "Dvorana Gripe", city: "Split", calibrated: false },
-  { id: "osijek", name: "Dvorana Gradski vrt", city: "Osijek", calibrated: false },
 ];
 
-// kit: shirt = boja dresa, trim = rukavi/ovratnik, num = boja broja
+// kit: shirt = dres, trim = rukavi/ovratnik, num = broj (procjena)
 const clubs = [
-  { id: "rijeka", name: "Rijeka", short: "RIJ", city: "Rijeka", hall: "zamet", kit: { shirt: "#ffffff", trim: "#1f4f9c", num: "#2a6fd6" } },
-  { id: "novo-vrijeme", name: "Novo Vrijeme", short: "NVR", city: "Makarska", hall: "makarska", kit: { shirt: "#8c3cc8", trim: "#f2f2f2", num: "#ffffff" } },
-  { id: "futsal-dinamo", name: "Futsal Dinamo", short: "DIN", city: "Zagreb", hall: "dom-sportova", kit: { shirt: "#2a7de1", trim: "#0e2f66", num: "#ffffff" } },
-  { id: "olmissum", name: "Olmissum", short: "OLM", city: "Omiš", hall: "omis", kit: { shirt: "#3fae49", trim: "#ffffff", num: "#ffffff" } },
-  { id: "pula", name: "Futsal Pula", short: "PUL", city: "Pula", hall: "pula", kit: { shirt: "#0f2c5c", trim: "#e7c33a", num: "#e7c33a" } },
-  { id: "square", name: "Square", short: "SQU", city: "Dubrovnik", hall: "dubrovnik", kit: { shirt: "#d22f2f", trim: "#ffffff", num: "#ffffff" } },
-  { id: "crnica", name: "Crnica", short: "CRN", city: "Šibenik", hall: "sibenik", kit: { shirt: "#1b1b1b", trim: "#e9e9e9", num: "#f4d23c" } },
-  { id: "vrgorac", name: "Vrgorac", short: "VRG", city: "Vrgorac", hall: "vrgorac", kit: { shirt: "#f0f0f0", trim: "#c62828", num: "#c62828" } },
-  { id: "split", name: "Split", short: "SPL", city: "Split", hall: "split", kit: { shirt: "#f5f5f5", trim: "#13294b", num: "#13294b" } },
-  { id: "osijek", name: "Osijek", short: "OSI", city: "Osijek", hall: "osijek", kit: { shirt: "#1d3f8f", trim: "#f28c28", num: "#f28c28" } },
+  { id: "torcida", name: "Torcida", full: "MNK Torcida", short: "TOR", city: "Split", hall: "gripe", kit: { shirt: "#1d3c8f", trim: "#d62b2b", num: "#ffffff" } },
+  { id: "olmissum", name: "Olmissum", full: "MNK Olmissum", short: "OLM", city: "Omiš", hall: "omis", kit: { shirt: "#3fae49", trim: "#111111", num: "#ffffff" } },
+  { id: "crnica", name: "Crnica", full: "MNK Crnica", short: "CRN", city: "Šibenik", hall: "baldekin", kit: { shirt: "#d22f2f", trim: "#ffffff", num: "#ffffff" } },
+  { id: "osijek", name: "Osijek", full: "MNK Osijek", short: "OSI", city: "Osijek", hall: "zrinjevac", kit: { shirt: "#1d4f9c", trim: "#ffffff", num: "#ffffff" } },
+  { id: "futsal-dinamo", name: "Futsal Dinamo", full: "MNK Futsal Dinamo", short: "DIN", city: "Zagreb", hall: "sutinska", kit: { shirt: "#2a7de1", trim: "#0e2f66", num: "#ffffff" } },
+  { id: "pula", name: "Futsal Istra Pula", full: "MNK Futsal Istra Pula", short: "PUL", city: "Pula", hall: "mate-parlov", kit: { shirt: "#e7c22e", trim: "#2f7a32", num: "#2f7a32" } },
+  { id: "novo-vrijeme", name: "Novo Vrijeme", full: "MNK Novo Vrijeme", short: "NVR", city: "Makarska", hall: "makarska", kit: { shirt: "#8c3cc8", trim: "#f2f2f2", num: "#ffffff" } },
+  { id: "square", name: "Square", full: "MNK Square", short: "SQU", city: "Dubrovnik", hall: "gospino", kit: { shirt: "#d22f2f", trim: "#111111", num: "#ffffff" } },
+  { id: "rijeka", name: "Rijeka", full: "HMNK Rijeka", short: "RIJ", city: "Rijeka", hall: "zamet", kit: { shirt: "#ffffff", trim: "#21b3d6", num: "#1f6fb5" } },
+  { id: "hajduk", name: "Hajduk", full: "MNK Hajduk", short: "HAJ", city: "Split", hall: "gripe", kit: { shirt: "#ffffff", trim: "#c8102e", num: "#1d3c8f" } },
 ];
 
-// Pravi zapisnici (brojevi) za juniorsku utakmicu RIJ–NVR; imena nisu unesena.
-const REAL_SQUADS = {
-  "rijeka": { gk: ["1", "12"], nums: ["1", "4", "7", "8", "9", "12", "14", "24", "26", "29", "44", "55", "77", "99"], start: ["1", "4", "7", "26", "44"] },
-  "novo-vrijeme": { gk: ["17"], nums: ["4", "6", "7", "8", "9", "10", "11", "13", "14", "17"], start: ["17", "7", "9", "11", "14"] },
-  "futsal-dinamo": { gk: ["1", "12"], nums: ["1", "4", "5", "7", "8", "9", "10", "11", "12", "14", "17", "21"], demo: true },
-  "olmissum": { gk: ["1", "12"], nums: ["1", "2", "5", "6", "7", "9", "10", "11", "12", "14", "15", "19"], demo: true },
+// 1. HMNL 2026./27. — [kolo, "dd.mm.yyyy hh:mm", domaćin, gost, golovi D, golovi G, dvorana]
+const HMNL = [
+  [1, "25.09.2026 18:15", "torcida", "olmissum", 1, 7, "gripe"],
+  [1, "25.09.2026 20:15", "crnica", "osijek", 1, 4, "baldekin"],
+  [1, "27.09.2026 16:30", "futsal-dinamo", "pula", 1, 2, "maksimir"],
+  [1, "27.09.2026 18:00", "novo-vrijeme", "square", 3, 7, "makarska"],
+  [1, "28.09.2026 19:00", "rijeka", "hajduk", 4, 2, "zamet"],
+  [2, "02.10.2026 18:00", "square", "rijeka", 6, 4, "gospino"],
+  [2, "02.10.2026 20:15", "torcida", "futsal-dinamo", 1, 4, "gripe"],
+  [2, "03.10.2026 15:30", "olmissum", "hajduk", 5, 3, "omis"],
+  [2, "03.10.2026 20:30", "pula", "crnica", 4, 2, "mate-parlov"],
+  [2, "04.10.2026 18:30", "osijek", "novo-vrijeme", 9, 2, "zrinjevac"],
+  [3, "09.10.2026 20:15", "futsal-dinamo", "olmissum", 2, 2, "sutinska"],
+  [3, "10.10.2026 18:00", "rijeka", "osijek", 7, 3, "zamet"],
+  [3, "10.10.2026 20:15", "crnica", "torcida", 6, 0, "baldekin"],
+  [3, "11.10.2026 19:00", "novo-vrijeme", "pula", 7, 1, "makarska"],
+  [3, "11.10.2026 19:45", "hajduk", "square", 3, 3, "gripe"],
+  [4, "23.10.2026 18:15", "futsal-dinamo", "crnica", 4, 0, "sutinska"],
+  [4, "23.10.2026 20:15", "olmissum", "square", 7, 4, "omis"],
+  [4, "24.10.2026 17:45", "torcida", "novo-vrijeme", 2, 4, "gripe"],
+  [4, "24.10.2026 18:00", "pula", "rijeka", 2, 5, "mate-parlov"],
+  [4, "24.10.2026 20:15", "osijek", "hajduk", 2, 0, "zrinjevac"],
+];
+
+// Postave i strijelci (HNS Semafor). Ključ: id utakmice.
+// igrači: [broj, ime, GK?, početna petorka?]; golovi: [minuta, "home"|"away", broj]
+const DETAILS = {
+  "1-hmnl-2026-27-k1-torcida-olmissum": {
+    home: [[1, "Marin Jurić", 1, 1], [7, "Julian Esteban Clavijo Urquijo", 0, 1], [8, "Mijo Mišerda", 0, 1], [9, "Caio Alves Roque", 0, 1], [10, "Marko Žuljević", 0, 1],
+      [13, "Ivan Vranješ", 1, 0], [25, "Duje Krivošija", 1, 0], [3, "Duje Vladović", 0, 0], [14, "Borna Jurjević-Adžić", 0, 0], [18, "Bartul Ora", 0, 0],
+      [23, "Dario Vukasović", 0, 0], [37, "Karlo Vuković", 0, 0], [49, "Ante Perkušić", 0, 0], [99, "Nandi Eterović", 0, 0]],
+    away: [[1, "Vinko Rozga", 1, 1], [4, "Duje Kustura", 0, 1], [10, "Romeo Sušac", 0, 1], [11, "Ante Kovačević", 0, 1], [19, "Iiro Olavi Vanha", 0, 1],
+      [25, "Luka Pavlović", 1, 0], [7, "Uroš Đurić", 0, 0], [16, "Josip Juretić", 0, 0], [17, "Toni Kirevski", 0, 0], [18, "Ivan Kovačević", 0, 0],
+      [20, "David Barbarić", 0, 0], [24, "Jure Copić", 0, 0], [31, "Tomislav Milić", 0, 0], [77, "Igor Da Costa", 0, 0]],
+    goals: [[4, "away", 77], [6, "home", 10], [15, "away", 7], [19, "away", 10], [20, "away", 11], [34, "away", 7], [36, "away", 20], [38, "away", 11]],
+  },
 };
 
-function roundRobin(ids) {                  // metoda kruga, dvokružno
-  const t = [...ids]; if (t.length % 2) t.push(null);
-  const n = t.length, rounds = [];
-  for (let r = 0; r < n - 1; r++) {
-    const pairs = [];
-    for (let i = 0; i < n / 2; i++) {
-      const a = t[i], b = t[n - 1 - i];
-      if (a && b) pairs.push(r % 2 === 0 ? [a, b] : [b, a]);
-    }
-    rounds.push(pairs); t.splice(1, 0, t.pop());
-  }
-  return [...rounds, ...rounds.map(r => r.map(([a, b]) => [b, a]))];
-}
+// Juniori: pravi zapisnici (brojevi) za analiziranu utakmicu RIJ–NVR; imena nisu unesena.
+const JUN = {
+  rijeka: { gk: ["1", "12"], nums: ["1", "4", "7", "8", "9", "12", "14", "24", "26", "29", "44", "55", "77", "99"], start: ["1", "4", "7", "26", "44"] },
+  "novo-vrijeme": { gk: ["17"], nums: ["4", "6", "7", "8", "9", "10", "11", "13", "14", "17"], start: ["17", "7", "9", "11", "14"] },
+};
 
 function build() {
-  const R = rng(20261028);
-  const players = [];
-  const comps = [];
-  const matches = [];
-  const pick = (arr) => arr[Math.floor(R() * arr.length)];
+  const players = [], matches = [], comps = [];
+  const pid = (club, season, cat, n) => `${club}-${season}-${cat}-${n}`;
+  const date = (s) => { const [d, t] = s.split(" "); const [dd, mm, yy] = d.split("."); return new Date(`${yy}-${mm}-${dd}T${t}:00+02:00`).toISOString(); };
+  const toEv = (min) => ({ period: min <= 20 ? 1 : min <= 40 ? 2 : 3, sec: ((min - 1) % 20) * 60 + 30 });
 
-  // igrači po klubu i sezoni (samo brojevi; imena unosi admin)
-  const squadFor = (clubId, season, cat) => {
-    const real = cat === "U-19" && season === "2026-27" ? REAL_SQUADS[clubId] : null;
-    let nums, gk, demo = true;
-    if (real) { nums = real.nums; gk = real.gk; demo = !!real.demo; }
-    else {
-      const pool = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "17", "19", "21", "23", "77"];
-      nums = pool.filter(() => R() < 0.62); for (const g of ["1", "12"]) if (!nums.includes(g)) nums.push(g);
-      nums.sort((a, b) => a - b); gk = ["1", "12"];
-    }
-    return nums.map(n => ({ id: `${clubId}-${season}-${cat}-${n}`, club: clubId, season, cat, num: n, name: "", gk: gk.includes(n), demo }));
-  };
-
-  const setups = [
-    { league: "1-hmnl", season: "2026-27", cat: "Seniori", teams: clubs.map(c => c.id).filter(id => id !== "rijeka"), start: "2026-09-18T20:00", played: 6 },
-    { league: "juniori", season: "2026-27", cat: "U-19", teams: ["rijeka", "novo-vrijeme", "futsal-dinamo", "olmissum", "pula", "square", "split", "osijek"], start: "2026-09-19T12:00", played: 6 },
-    { league: "kadeti", season: "2026-27", cat: "U-17", teams: ["rijeka", "futsal-dinamo", "pula", "split", "osijek", "vrgorac"], start: "2026-09-20T11:00", played: 6 },
-    { league: "1-hmnl", season: "2025-26", cat: "Seniori", teams: clubs.map(c => c.id).filter(id => id !== "rijeka"), start: "2025-09-19T20:00", played: 99 },
-  ];
-
-  for (const S of setups) {
-    const compId = `${S.league}-${S.season}`;
-    for (const c of S.teams) players.push(...squadFor(c, S.season, S.cat));
-    let sched = roundRobin(S.teams);
-    // analizirane juniorske utakmice smjesti u odigrana kola, s pravim domaćinom
-    if (compId === "juniori-2026-27") {
-      const place = (h, a, round) => {   // pomakni samo ako je par u neodigranom kolu
-        const r = sched.findIndex(p => p.some(([x, y]) => (x === h && y === a) || (x === a && y === h)));
-        if (r + 1 <= 6) round = r + 1; else [sched[r], sched[round - 1]] = [sched[round - 1], sched[r]];
-        sched[round - 1] = sched[round - 1].map(([x, y]) => (x === a && y === h) ? [h, a] : [x, y]);
-        // drugi krug zrcali prvi
-        const half = sched.length / 2;
-        sched[round - 1 + half] = sched[round - 1].map(([x, y]) => [y, x]);
-        if (r < half && r !== round - 1) sched[r + half] = sched[r].map(([x, y]) => [y, x]);
-      };
-      place("rijeka", "novo-vrijeme", 6);
-      place("futsal-dinamo", "olmissum", 5);
-    }
-    comps.push({ id: compId, league: S.league, season: S.season, teams: S.teams, rounds: sched.length });
-    const t0 = new Date(S.start + ":00+02:00");
-    sched.forEach((pairs, ri) => {
-      pairs.forEach(([h, a], k) => {
-        const d = new Date(t0.getTime() + ri * 7 * 864e5 + (k % 2) * 864e5 + (k % 3) * 3600e3);
-        const id = `${compId}-k${ri + 1}-${h}-${a}`;
-        const m = { id, comp: compId, round: ri + 1, date: d.toISOString(), home: h, away: a,
-          hall: clubs.find(c => c.id === h).hall, status: "scheduled", youtube: "", demo: true,
-          roster: { home: null, away: null }, events: [], analysis: null };
-        if (ri + 1 <= S.played) {
-          m.status = "finished";
-          const sq = (cid) => players.filter(p => p.club === cid && p.season === S.season && p.cat === S.cat);
-          const mk = (cid) => { const s = sq(cid); const gk = s.filter(p => p.gk); const out = s.filter(p => !p.gk);
-            const pl = [gk[0], ...(gk[1] ? [gk[1]] : []), ...out.slice(0, 12)].filter(Boolean);
-            return { players: pl.map(p => p.id), start: [gk[0].id, ...out.slice(0, 4).map(p => p.id)], gk: gk.map(p => p.id) }; };
-          m.roster = { home: mk(h), away: mk(a) };
-          const goals = (lam) => { let n = 0, L = Math.exp(-lam), p = 1; do { n++; p *= R(); } while (p > L); return n - 1; };
-          const gh = goals(3.4), ga = goals(2.9);
-          for (const [side, n] of [["home", gh], ["away", ga]]) {
-            const pool = m.roster[side].players.filter(pid => !m.roster[side].gk.includes(pid));
-            for (let i = 0; i < n; i++) {
-              const sec = Math.floor(R() * 2400); const scorer = pick(pool);
-              const ast = R() < 0.6 ? pick(pool.filter(x => x !== scorer)) : null;
-              m.events.push({ id: `e${Math.floor(R() * 1e9)}`, type: "goal", side, period: sec < 1200 ? 1 : 2, sec: sec % 1200, player: scorer, assist: ast });
-            }
-          }
-          for (const side of ["home", "away"]) {
-            const pool = m.roster[side].players;
-            const nf = 2 + Math.floor(R() * 8);
-            for (let i = 0; i < nf; i++) { const sec = Math.floor(R() * 2400);
-              m.events.push({ id: `e${Math.floor(R() * 1e9)}`, type: "foul", side, period: sec < 1200 ? 1 : 2, sec: sec % 1200, player: pick(pool) }); }
-            if (R() < 0.5) { const sec = Math.floor(R() * 2400);
-              m.events.push({ id: `e${Math.floor(R() * 1e9)}`, type: "yellow", side, period: sec < 1200 ? 1 : 2, sec: sec % 1200, player: pick(pool) }); }
-            if (R() < 0.7) { const sec = 300 + Math.floor(R() * 800);
-              m.events.push({ id: `e${Math.floor(R() * 1e9)}`, type: "timeout", side, period: R() < 0.5 ? 1 : 2, sec }); }
-          }
+  // --- 1. HMNL seniori
+  const cid = "1-hmnl-2026-27";
+  comps.push({ id: cid, league: "1-hmnl", season: "2026-27", teams: clubs.map((c) => c.id), rounds: 18 });
+  for (const [round, when, home, away, gh, ga, hall] of HMNL) {
+    const id = `${cid}-k${round}-${home}-${away}`;
+    const m = { id, comp: cid, round, date: date(when), home, away, hall, status: "finished", youtube: "", source: "HNS Semafor",
+      roster: { home: null, away: null }, events: [], analysis: null, result: [gh, ga] };
+    const det = DETAILS[id];
+    if (det) {
+      for (const side of ["home", "away"]) {
+        const club = m[side], R = { players: [], start: [], gk: [] };
+        for (const [n, name, gk, st] of det[side]) {
+          const p = pid(club, "2026-27", "Seniori", n);
+          if (!players.some((x) => x.id === p)) players.push({ id: p, club, season: "2026-27", cat: "Seniori", num: String(n), name, gk: !!gk });
+          R.players.push(p); if (gk) R.gk.push(p); if (st) R.start.push(p);
         }
-        matches.push(m);
-      });
-    });
+        m.roster[side] = R;
+      }
+      det.goals.forEach(([min, side, n], i) => m.events.push({ id: `${id}-g${i}`, type: "goal", side, ...toEv(min), player: pid(m[side], "2026-27", "Seniori", n) }));
+      delete m.result;           // rezultat iz golova
+    }
+    matches.push(m);
   }
 
-  // prave analize
-  const u1 = matches.find(m => m.comp === "juniori-2026-27" && m.home === "rijeka" && m.away === "novo-vrijeme");
-  const u2 = matches.find(m => m.comp === "juniori-2026-27" && m.home === "futsal-dinamo" && m.away === "olmissum");
-  const pid = (club, n) => `${club}-2026-27-U-19-${n}`;
-  if (u1) {
-    const RS = REAL_SQUADS;
-    u1.roster = {
-      home: { players: RS.rijeka.nums.map(n => pid("rijeka", n)), start: RS.rijeka.start.map(n => pid("rijeka", n)), gk: RS.rijeka.gk.map(n => pid("rijeka", n)) },
-      away: { players: RS["novo-vrijeme"].nums.map(n => pid("novo-vrijeme", n)), start: RS["novo-vrijeme"].start.map(n => pid("novo-vrijeme", n)), gk: RS["novo-vrijeme"].gk.map(n => pid("novo-vrijeme", n)) },
-    };
-    // usklađeno sa snimkom: na satu 07:49 je 1:0 za RIJ, ostali golovi poslije isječka
-    u1.events = u1.events.filter(e => e.type !== "goal" && e.type !== "owngoal");
-    const P = (c, n) => pid(c, n);
-    u1.events.push(
-      { id: "u1g1", type: "goal", side: "home", period: 1, sec: 312, player: P("rijeka", "77"), assist: P("rijeka", "26") },
-      { id: "u1g2", type: "goal", side: "away", period: 1, sec: 905, player: P("novo-vrijeme", "9") },
-      { id: "u1g3", type: "goal", side: "home", period: 2, sec: 241, player: P("rijeka", "44"), assist: P("rijeka", "4") },
-      { id: "u1g4", type: "goal", side: "home", period: 2, sec: 1090, player: P("rijeka", "7") });
-    u1.analysis = { status: "done", clip: "u1", video: "media/u1.mp4", data: "media/u1.json", from: 128, to: 148,
+  // --- juniori: dvije analizirane snimke
+  const jid = "juniori-2026-27";
+  comps.push({ id: jid, league: "juniori", season: "2026-27", teams: ["rijeka", "novo-vrijeme", "futsal-dinamo", "olmissum"], rounds: 14 });
+  for (const [club, S] of Object.entries(JUN))
+    for (const n of S.nums) players.push({ id: pid(club, "2026-27", "U-19", n), club, season: "2026-27", cat: "U-19", num: n, name: "", gk: S.gk.includes(n) });
+  const jp = (c, n) => pid(c, "2026-27", "U-19", n);
+  const R = (c) => ({ players: JUN[c].nums.map((n) => jp(c, n)), start: JUN[c].start.map((n) => jp(c, n)), gk: JUN[c].gk.map((n) => jp(c, n)) });
+  matches.push({ id: `${jid}-rijeka-novo-vrijeme`, comp: jid, round: 6, date: "2026-10-24T10:00:00.000Z", home: "rijeka", away: "novo-vrijeme", hall: "zamet",
+    status: "finished", noScore: true, youtube: "https://www.youtube.com/watch?v=eCDieI6ctu0",
+    roster: { home: R("rijeka"), away: R("novo-vrijeme") }, events: [],
+    analysis: { status: "done", clip: "u1", video: "media/u1.mp4", data: "media/u1.json", from: 128, to: 148,
       rights: "overlay", rightsNote: "Interni pregled. Prije javne objave treba pisana dozvola kluba ili prijenosnika.", ytOffset: null,
-      note: "Isječak od 20 s (128.–148. s snimke, 07:49–08:09 na satu). Brojevi su ograničeni na zapisnik.",
-      teamMap: { RIJ: "home", NVR: "away" } };
-    u1.youtube = "https://www.youtube.com/watch?v=eCDieI6ctu0";
-  }
-  if (u2) {
-    u2.analysis = { status: "done", clip: "u2", video: "media/u2.mp4", data: "media/u2.json", from: 0, to: 150,
+      note: "Isječak od 20 s (128.–148. s snimke, 07:49–08:09 na satu). Brojevi su ograničeni na zapisnik.", teamMap: { RIJ: "home", NVR: "away" } } });
+  matches.push({ id: `${jid}-futsal-dinamo-olmissum`, comp: jid, round: 2, date: "2026-09-27T10:00:00.000Z", home: "futsal-dinamo", away: "olmissum", hall: "dom-sportova",
+    status: "finished", noScore: true, youtube: "https://www.youtube.com/watch?v=pNdDlCB2PT8", roster: { home: null, away: null }, events: [],
+    analysis: { status: "done", clip: "u2", video: "media/u2.mp4", data: "media/u2.json", from: 0, to: 150,
       rights: "overlay", rightsNote: "Interni pregled. Prije javne objave treba pisana dozvola kluba ili prijenosnika.", ytOffset: null,
       note: "Isječak od 2:30. Zapisnik još nije unesen, a boje ekipa su pretpostavka (plavi = Futsal Dinamo, zeleni = Olmissum).",
-      teamMap: { DIN: "home", OLM: "away" }, kitUnconfirmed: true };
-    u2.youtube = "https://www.youtube.com/watch?v=pNdDlCB2PT8";
-  }
-  // nekoliko utakmica u redu za analizu (sljedeće kolo)
-  matches.filter(m => m.comp === "1-hmnl-2026-27" && m.round === 7).slice(0, 3)
-    .forEach((m, i) => { m.youtube = "https://www.youtube.com/"; m.analysis = { status: i === 0 ? "queued" : "none" }; });
-  matches.filter(m => m.comp === "1-hmnl-2026-27" && m.round === 6).slice(0, 2)
-    .forEach((m, i) => { m.youtube = "https://www.youtube.com/"; m.analysis = { status: i === 0 ? "processing" : "queued", progress: 0.42 }; });
+      teamMap: { DIN: "home", OLM: "away" }, kitUnconfirmed: true } });
 
-  // primjer označenih udaraca (izmišljeno) na jednoj utakmici 6. kola 1. HMNL
-  const sm = matches.find(m => m.comp === "1-hmnl-2026-27" && m.round === 6 && m.status === "finished");
-  if (sm) {
-    const goalsBy = { home: sm.events.filter(e => e.type === "goal" && e.side === "home"), away: sm.events.filter(e => e.type === "goal" && e.side === "away") };
-    let vt = 420;
-    for (const side of ["home", "away"]) {
-      const pool = sm.roster[side].players.filter(p => !sm.roster[side].gk.includes(p));
-      const n = 14 + Math.floor(R() * 10);
-      for (let i = 0; i < n; i++) {
-        const g = goalsBy[side][i];
-        const sec = g ? g.sec : Math.floor(R() * 1200), period = g ? g.period : (R() < 0.5 ? 1 : 2);
-        const r = R(), outcome = g ? "goal" : r < 0.38 ? "saved" : r < 0.66 ? "off" : r < 0.92 ? "blocked" : "woodwork";
-        const dist = 3 + R() * (outcome === "blocked" ? 12 : 14), ang = (R() - 0.5) * 2.4;
-        sm.events.push({ id: `sh${side}${i}`, type: "shot", side, outcome, player: g ? g.player : pick(pool), period, sec,
-          x: +(20 - dist * Math.cos(ang)).toFixed(2), y: +(dist * Math.sin(ang)).toFixed(2), vt: (period - 1) * 1700 + 300 + sec * 1.35 });
-      }
-    }
-  }
   const site = { name: "Šesterac", contact: "" };
   return { version: SEED_VERSION, site, leagues, seasons, halls, clubs, players, comps, matches };
 }

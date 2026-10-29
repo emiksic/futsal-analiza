@@ -17,7 +17,7 @@ export function Rail({ db, active }) {
             </a>
           );
         })}
-        <div className="group">Arhiva</div>
+        {db.comps.some((c) => c.season !== cur) && <div className="group">Arhiva</div>}
         {db.comps.filter((c) => c.season !== cur).map((c) => {
           const l = db.leagues.find((x) => x.id === c.league), s = db.seasons.find((x) => x.id === c.season);
           return (

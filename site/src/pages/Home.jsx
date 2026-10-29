@@ -33,6 +33,7 @@ export function Home({ db, ix }) {
                     <span className="r">{days.join(", ")}</span>
                   </a>
                   {ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} />)}
+                  {!ms.length && <div className="empty">Raspored za {round}. kolo još nije unesen.</div>}
                 </div>
               );
             })}

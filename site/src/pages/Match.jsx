@@ -68,7 +68,7 @@ function Board({ m, ix }) {
             <div key={side}>{goals(side).map((e) => <span key={e.id}>{playerName(ix.player[e.player])}{e.type === "owngoal" ? " (ag)" : ""} {minute(e)}</span>)}</div>
           ))}
         </div>) : null}
-      {fin && (
+      {fin && m.events.some((e) => e.type === "foul") && (
         <div className="board-fouls" title="Akumulirani prekršaji u 2. poluvremenu. Od 6. prekršaja izvodi se kazneni udarac s 10 m.">
           <FoulBar n={f2[0]} /><span>Akumulirani prekršaji<br />2. poluvrijeme</span><FoulBar n={f2[1]} />
         </div>)}

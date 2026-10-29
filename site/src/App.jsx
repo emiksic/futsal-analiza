@@ -25,13 +25,13 @@ export default function App() {
         <div className="top-in">
           <Brand />
           <nav className="lnav" aria-label="Lige">
-            {db.leagues.map((l) => <a key={l.id} href={href("liga", l.id, cur)} aria-current={activeLeague === l.id ? "page" : undefined}>{l.name}</a>)}
+            {db.leagues.filter((l) => db.comps.some((c) => c.league === l.id && c.season === cur)).map((l) => <a key={l.id} href={href("liga", l.id, cur)} aria-current={activeLeague === l.id ? "page" : undefined}>{l.name}</a>)}
           </nav>
           <a className="adm" href={href("admin")} aria-current={page === "admin" ? "page" : undefined}>Admin</a>
         </div>
       </header>
-      {db.matches.some((m) => m.demo) && page !== "admin" && (
-        <div className="demo-bar"><div>Pregled s primjerima: rezultati i raspored su izmišljeni. Prave su samo dvije video analize i zapisnici Rijeke i Novog Vremena.</div></div>
+      {page !== "admin" && (
+        <div className="demo-bar"><div>Testna verzija. Podaci se još unose i mogu biti nepotpuni.</div></div>
       )}
       {!page && <Home db={db} ix={ix} />}
       {page === "liga" && <League db={db} ix={ix} leagueId={rest[0]} seasonId={rest[1] || cur} tab={rest[2]} roundArg={rest[3]} />}

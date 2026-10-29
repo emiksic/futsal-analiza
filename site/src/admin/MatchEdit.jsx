@@ -70,10 +70,20 @@ function Basic({ db, ix, m, upd }) {
         <select className="input" value={m.hall} onChange={(e) => upd((x) => { x.hall = e.target.value; })}>
           {db.halls.map((h) => <option key={h.id} value={h.id}>{h.name}, {h.city}</option>)}
         </select></label>
+      <div className="field"><span>Rezultat (ručno)</span>
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          <input className="input num" inputMode="numeric" value={m.result?.[0] ?? ""} aria-label="Golovi domaćina"
+            onChange={(e) => upd((x) => { const v = e.target.value.replace(/\D/g, ""); x.result = v === "" && (x.result?.[1] ?? "") === "" ? undefined : [+v || 0, x.result?.[1] ?? 0]; })} />
+          <b>:</b>
+          <input className="input num" inputMode="numeric" value={m.result?.[1] ?? ""} aria-label="Golovi gosta"
+            onChange={(e) => upd((x) => { const v = e.target.value.replace(/\D/g, ""); x.result = [x.result?.[0] ?? 0, +v || 0]; })} />
+          {m.result && <button className="btn sm ghost" onClick={() => upd((x) => { delete x.result; })}>Računaj iz golova</button>}
+        </div>
+        <small>Ako je upisan, vrijedi ovaj rezultat. Inače se računa iz golova pod Događaji.</small></div>
       <label className="field wide"><span>Snimka na YouTubeu</span>
         <input className="input" type="url" placeholder="https://www.youtube.com/watch?v=…" value={m.youtube || ""} onChange={(e) => upd((x) => { x.youtube = e.target.value.trim(); })} />
         <small>Link prijenosa ili snimke. Iz njega se preuzima video za analizu.</small></label>
-      <div className="wide small muted">Promjene se spremaju odmah. Rezultat se računa iz golova unesenih pod Događaji.</div>
+      <div className="wide small muted">Promjene se spremaju odmah.</div>
     </div>
   );
 }

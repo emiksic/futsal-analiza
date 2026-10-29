@@ -80,7 +80,7 @@ function Standings({ db, ix, comp, league }) {
       <div className="zones">
         {z.playoff ? <span><i style={{ background: "var(--zone-a)" }} />Doigravanje (1.–{z.playoff}.)</span> : null}
         {z.relegation ? <span><i style={{ background: "var(--zone-b)" }} />Ispadanje</span> : null}
-        <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova odlučuje gol-razlika.</span>
+        <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova odlučuju međusobne utakmice, zatim gol-razlika.</span>
       </div>
     </>
   );
@@ -105,6 +105,7 @@ function Rounds({ db, ix, comp, round }) {
         </select>
       </div>
       <div className="mlist">
+        {!ms.length && <div className="empty">Raspored za {r}. kolo još nije unesen.</div>}
         {days.map((d) => (
           <div key={d}>
             <div className="mgroup"><b>{d}</b></div>
@@ -151,7 +152,8 @@ function RoundCard({ db, ix, comp }) {
   return (
     <section className="panel">
       <div className="ph"><h2>{next}. kolo</h2><a className="more" href={href("liga", comp.league, comp.season, "rezultati", next)}>Sva kola</a></div>
-      <div className="mlist">{ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} showDay />)}</div>
+      <div className="mlist">{ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} showDay />)}
+        {!ms.length && <div className="empty">Raspored još nije unesen.</div>}</div>
     </section>
   );
 }
