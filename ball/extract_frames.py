@@ -63,7 +63,7 @@ def main():
         if not path.exists():
             print(f"preuzimam {vid} …")
             subprocess.run([sys.executable, "-m", "yt_dlp", "-f", f"bv*[height<={a.height}][ext=mp4]/bv*[height<={a.height}]",
-                            "--no-audio", "-o", str(path), url], check=True)
+                            "--no-audio", "-N", "6", "--retries", "30", "--fragment-retries", "30", "-o", str(path), url], check=True)
         cap = cv2.VideoCapture(str(path)); fps = cap.get(cv2.CAP_PROP_FPS) or 25; n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         dur = n / fps
         rnd = random.Random(vid)
