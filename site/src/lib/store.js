@@ -170,6 +170,25 @@ export async function importSeed() {
   await refresh();
 }
 
+// dodaje u bazu samo redove koji još ne postoje (postojeće izmjene ostaju netaknute)
+export async function importMissing() {
+  const s = clone(seed); let added = 0;
+  for (const t of ORDER) {
+    const have = new Set();
+    for (let from = 0; ; from += 1000) {
+      const { data, error } = await sb.from(t).select("id").range(from, from + 999); if (error) throw error;
+      data.forEach((r) => have.add(r.id)); if (data.length < 1000) break;
+    }
+    const rows = s[t].map((x, i) => toRow(t, x, i)).filter((r) => !have.has(r.id));
+    for (let i = 0; i < rows.length; i += 400) {
+      const { error } = await sb.from(t).insert(rows.slice(i, i + 400)); if (error) throw new Error(`${t}: ${error.message}`);
+    }
+    added += rows.length;
+  }
+  await refresh();
+  return added;
+}
+
 export function resetDB() { if (state.mode === "local") { set({ db: clone(seed) }); try { localStorage.removeItem(KEY); } catch { /* */ } } }
 
 // ---------- React ----------

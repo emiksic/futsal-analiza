@@ -102,3 +102,4 @@ insert into public.site (id, name, contact) values (1, '', '') on conflict (id) 
 -- ---------- ažuriranje 2026-10-29: zone tablice prema propozicijama ----------
 -- update public.leagues set zones = '{"playoff":8,"qual":1,"relegation":1}' where id = '1-hmnl';
 -- update public.leagues set zones = '{"direct":2,"playoff":6,"note":"Ispadanje se određuje zbirnom tablicom kadeta i juniora."}' where id in ('juniori','kadeti');
+-- kadeti: nakon pusha u adminu → Postavke stranice → "Dodaj što nedostaje"

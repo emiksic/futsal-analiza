@@ -5,8 +5,9 @@
 
 import HMNL from "../data/hmnl-2026-27.json";       // gradi: python3 data/build.py hmnl-2026-27 1-hmnl-2026-27 Seniori
 import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build.py juniori-2026-27 juniori-2026-27 U-19
+import KADETI from "../data/kadeti-2026-27.json";   // gradi: python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
 
-export const SEED_VERSION = 14;
+export const SEED_VERSION = 15;
 
 const leagues = [
   { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
@@ -86,6 +87,10 @@ function build() {
     analysis: { status: "done", clip: "u2", video: "media/u2.mp4", data: "media/u2.json", from: 0, to: 150, rights: "embed", ytOffset: null,
       note: "Isječak od 2:30. Utakmica i zapisnik još nisu utvrđeni, a boje ekipa su pretpostavka (plavi = Futsal Dinamo, zeleni = Olmissum).",
       teamMap: { DIN: "home", OLM: "away" }, kitUnconfirmed: true } });
+
+  // --- kadeti: isti raspored kao juniori, rezultati 1.–3. kola
+  comps.push({ id: "kadeti-2026-27", league: "kadeti", season: "2026-27", teams: [...new Set(KADETI.matches.flatMap((m) => [m.home, m.away]))], rounds: 22 });
+  matches.push(...KADETI.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
 
   const site = { name: "", contact: "" };   // naziv još nije odabran
   return { version: SEED_VERSION, site, leagues, seasons, halls, clubs, players, comps, matches };

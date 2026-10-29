@@ -77,7 +77,14 @@ export function standings(db, compId) {
   const H = {};
   for (const ids of Object.values(groups)) if (ids.length > 1) Object.assign(H, h2h(ids));
   const z = { pts: 0, gd: 0 };
-  return rows.map((r) => ({ ...r, fp: fp[r.club] || 0 })).sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf
+  // juniori: kod istih bodova prednost ima klub s bolje plasiranom kadetskom momčadi (propozicije čl. 32)
+  let K = {};
+  if (comp.league === "juniori") {
+    const kc = db.comps.find((c) => c.league === "kadeti" && c.season === comp.season);
+    if (kc) standings(db, kc.id).forEach((r, i) => { K[r.club] = i; });
+  }
+  const kr = (c) => (c in K ? K[c] : 99);
+  return rows.map((r) => ({ ...r, fp: fp[r.club] || 0 })).sort((a, b) => b.pts - a.pts || kr(a.club) - kr(b.club) || b.gd - a.gd || b.gf - a.gf
     || (H[b.club] || z).pts - (H[a.club] || z).pts || (H[b.club] || z).gd - (H[a.club] || z).gd
     || a.fp - b.fp || a.club.localeCompare(b.club));
 }

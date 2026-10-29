@@ -1,0 +1,133 @@
+# kolo|datum vrijeme|domaćin|gost|rezultat|dvorana|prijenos  (4.+ kolo: isti raspored kao juniori, kadeti igraju prvi)
+1|03.10.2026 12:00|crnica|olmissum|2:7|baldekin|
+1|04.10.2026 10:00|pula|square|2:3|mate-parlov|
+1|04.10.2026 10:20|gimka|hajduk|16:0|pescenica|
+1|04.10.2026 10:30|universitas|futsal-dinamo|2:7|lora|
+1|04.10.2026 12:30|osijek|novo-vrijeme|4:2|zrinjevac|
+1|04.10.2026 15:00|rijeka|torcida|12:1|mladosti|
+2|10.10.2026 18:00|torcida|gimka|2:6|gripe|
+2|11.10.2026 09:30|square|osijek|4:3|gospino|
+2|11.10.2026 10:00|novo-vrijeme|crnica|2:8|makarska|
+2|11.10.2026 10:15|olmissum|rijeka|7:8|omis|
+2|11.10.2026 10:30|universitas|pula|6:2|gripe|
+2|11.10.2026 15:00|futsal-dinamo|hajduk|10:0|domjanic|
+3|17.10.2026 10:00|hajduk|torcida|8:2|gripe|
+3|17.10.2026 12:00|crnica|square|3:6|baldekin|
+3|17.10.2026 12:30|gimka|olmissum|4:4|pescenica|
+3|17.10.2026 13:00|pula|futsal-dinamo|1:1|mate-parlov|
+3|18.10.2026 10:00|osijek|universitas|0:12|zrinjevac|
+3|18.10.2026 10:00|rijeka|novo-vrijeme|15:0|zamet|
+4|07.11.2026|futsal-dinamo|torcida||dom-sportova-2|
+4|07.11.2026|olmissum|hajduk||omis|
+4|07.11.2026|novo-vrijeme|gimka||makarska|
+4|07.11.2026|square|rijeka||gospino|
+4|07.11.2026|universitas|crnica||gripe|
+4|07.11.2026|pula|osijek||mate-parlov|
+5|14.11.2026|osijek|futsal-dinamo||zrinjevac|
+5|14.11.2026|crnica|pula||baldekin|
+5|14.11.2026|rijeka|universitas||mladosti|
+5|14.11.2026|gimka|square||zagreb|
+5|14.11.2026|hajduk|novo-vrijeme||gripe|
+5|14.11.2026|torcida|olmissum||gripe|
+6|21.11.2026|futsal-dinamo|olmissum||dom-sportova-2|
+6|21.11.2026|novo-vrijeme|torcida||makarska|
+6|21.11.2026|square|hajduk||gospino|
+6|21.11.2026|universitas|gimka||gripe|
+6|21.11.2026|pula|rijeka||mate-parlov|
+6|21.11.2026|osijek|crnica||zrinjevac|
+7|05.12.2026|crnica|futsal-dinamo||baldekin|
+7|05.12.2026|rijeka|osijek||mladosti|
+7|05.12.2026|gimka|pula||zagreb|
+7|05.12.2026|hajduk|universitas||gripe|
+7|05.12.2026|torcida|square||gripe|
+7|05.12.2026|olmissum|novo-vrijeme||omis|
+8|12.12.2026|futsal-dinamo|novo-vrijeme||dom-sportova-2|
+8|12.12.2026|square|olmissum||gospino|
+8|12.12.2026|universitas|torcida||gripe|
+8|12.12.2026|pula|hajduk||mate-parlov|
+8|12.12.2026|osijek|gimka||zrinjevac|
+8|12.12.2026|crnica|rijeka||baldekin|
+9|19.12.2026|rijeka|futsal-dinamo||mladosti|
+9|19.12.2026|gimka|crnica||zagreb|
+9|19.12.2026|hajduk|osijek||gripe|
+9|19.12.2026|torcida|pula||gripe|
+9|19.12.2026|olmissum|universitas||omis|
+9|19.12.2026|novo-vrijeme|square||makarska|
+10|09.01.2027|futsal-dinamo|square||dom-sportova-2|
+10|09.01.2027|universitas|novo-vrijeme||gripe|
+10|09.01.2027|pula|olmissum||mate-parlov|
+10|09.01.2027|osijek|torcida||zrinjevac|
+10|09.01.2027|crnica|hajduk||baldekin|
+10|09.01.2027|rijeka|gimka||mladosti|
+11|16.01.2027|gimka|futsal-dinamo||zagreb|
+11|16.01.2027|hajduk|rijeka||gripe|
+11|16.01.2027|torcida|crnica||gripe|
+11|16.01.2027|olmissum|osijek||omis|
+11|16.01.2027|novo-vrijeme|pula||makarska|
+11|16.01.2027|square|universitas||gospino|
+12|30.01.2027|futsal-dinamo|universitas||dom-sportova-2|
+12|30.01.2027|square|pula||gospino|
+12|30.01.2027|novo-vrijeme|osijek||makarska|
+12|30.01.2027|olmissum|crnica||omis|
+12|30.01.2027|torcida|rijeka||gripe|
+12|30.01.2027|hajduk|gimka||gripe|
+13|06.02.2027|hajduk|futsal-dinamo||gripe|
+13|06.02.2027|gimka|torcida||zagreb|
+13|06.02.2027|rijeka|olmissum||mladosti|
+13|06.02.2027|crnica|novo-vrijeme||baldekin|
+13|06.02.2027|osijek|square||zrinjevac|
+13|06.02.2027|pula|universitas||mate-parlov|
+14|13.02.2027|futsal-dinamo|pula||dom-sportova-2|
+14|13.02.2027|universitas|osijek||gripe|
+14|13.02.2027|square|crnica||gospino|
+14|13.02.2027|novo-vrijeme|rijeka||makarska|
+14|13.02.2027|olmissum|gimka||omis|
+14|13.02.2027|torcida|hajduk||gripe|
+15|20.02.2027|torcida|futsal-dinamo||gripe|
+15|20.02.2027|hajduk|olmissum||gripe|
+15|20.02.2027|gimka|novo-vrijeme||zagreb|
+15|20.02.2027|rijeka|square||mladosti|
+15|20.02.2027|crnica|universitas||baldekin|
+15|20.02.2027|osijek|pula||zrinjevac|
+16|27.02.2027|futsal-dinamo|osijek||dom-sportova-2|
+16|27.02.2027|pula|crnica||mate-parlov|
+16|27.02.2027|universitas|rijeka||gripe|
+16|27.02.2027|square|gimka||gospino|
+16|27.02.2027|novo-vrijeme|hajduk||makarska|
+16|27.02.2027|olmissum|torcida||omis|
+17|06.03.2027|olmissum|futsal-dinamo||omis|
+17|06.03.2027|torcida|novo-vrijeme||gripe|
+17|06.03.2027|hajduk|square||gripe|
+17|06.03.2027|gimka|universitas||zagreb|
+17|06.03.2027|rijeka|pula||mladosti|
+17|06.03.2027|crnica|osijek||baldekin|
+18|13.03.2027|futsal-dinamo|crnica||dom-sportova-2|
+18|13.03.2027|osijek|rijeka||zrinjevac|
+18|13.03.2027|pula|gimka||mate-parlov|
+18|13.03.2027|universitas|hajduk||gripe|
+18|13.03.2027|square|torcida||gospino|
+18|13.03.2027|novo-vrijeme|olmissum||makarska|
+19|20.03.2027|novo-vrijeme|futsal-dinamo||makarska|
+19|20.03.2027|olmissum|square||omis|
+19|20.03.2027|torcida|universitas||gripe|
+19|20.03.2027|hajduk|pula||gripe|
+19|20.03.2027|gimka|osijek||zagreb|
+19|20.03.2027|rijeka|crnica||mladosti|
+20|10.04.2027|futsal-dinamo|rijeka||dom-sportova-2|
+20|10.04.2027|crnica|gimka||baldekin|
+20|10.04.2027|osijek|hajduk||zrinjevac|
+20|10.04.2027|pula|torcida||mate-parlov|
+20|10.04.2027|universitas|olmissum||gripe|
+20|10.04.2027|square|novo-vrijeme||gospino|
+21|17.04.2027|square|futsal-dinamo||gospino|
+21|17.04.2027|novo-vrijeme|universitas||makarska|
+21|17.04.2027|olmissum|pula||omis|
+21|17.04.2027|torcida|osijek||gripe|
+21|17.04.2027|hajduk|crnica||gripe|
+21|17.04.2027|gimka|rijeka||zagreb|
+22|24.04.2027|futsal-dinamo|gimka||dom-sportova-2|
+22|24.04.2027|rijeka|hajduk||mladosti|
+22|24.04.2027|crnica|torcida||baldekin|
+22|24.04.2027|osijek|olmissum||zrinjevac|
+22|24.04.2027|pula|novo-vrijeme||mate-parlov|
+22|24.04.2027|universitas|square||gripe|

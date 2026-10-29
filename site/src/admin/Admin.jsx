@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { href } from "../lib/router.js";
-import { resetDB, useStore, signIn, signOut, importSeed } from "../lib/store.js";
+import { resetDB, useStore, signIn, signOut, importSeed, importMissing } from "../lib/store.js";
 import { Matches } from "./Matches.jsx";
 import { MatchEdit } from "./MatchEdit.jsx";
 import { Clubs, ClubEdit } from "./Clubs.jsx";
@@ -88,6 +88,8 @@ function AdminInner({ db, ix, route }) {
 
 function Settings({ db }) {
   const us = (fn) => update((d) => { d.site ||= {}; fn(d.site); });
+  const st = useStore();
+  const [imp, setImp] = useState("");
   return (
     <>
       <div className="ahead"><h1>Postavke stranice</h1></div>
@@ -98,6 +100,17 @@ function Settings({ db }) {
             <small>Prikazuje se na stranici o privatnosti. Igrači, roditelji i klubovi tu traže uklanjanje podataka.</small></label>
         </div>
       </section>
+      {st.mode === "remote" && (
+        <section className="panel">
+          <div className="ph"><h2>Novi podaci iz koda</h2></div>
+          <div className="pb" style={{ display: "grid", gap: 10 }}>
+            <div className="small muted">Kad u kod dodam novu ligu ili utakmice (npr. kadete), ovdje ih prebaciš u bazu. Dodaju se samo redovi kojih u bazi još nema, a postojeće izmjene ostaju kakve jesu.</div>
+            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+              <button className="btn" disabled={imp === "…"} onClick={async () => { setImp("…"); try { const n = await importMissing(); setImp(n ? `Dodano ${n} novih redova.` : "Sve je već u bazi."); } catch (e) { setImp("Greška: " + e.message); } }}>Dodaj što nedostaje</button>
+              {imp && imp !== "…" && <span className="small" role="status">{imp}</span>}
+            </div>
+          </div>
+        </section>)}
     </>
   );
 }

@@ -86,7 +86,7 @@ function Standings({ db, ix, comp, league }) {
         {z.qual ? <span><i style={{ background: "var(--zone-q)" }} />Kvalifikacije</span> : null}
         {z.relegation ? <span><i style={{ background: "var(--zone-b)" }} />Ispadanje</span> : null}
         {z.note ? <span>{z.note}</span> : null}
-        <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova: gol-razlika, više golova, međusobne utakmice, fair-play.</span>
+        <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova: {league.id === "juniori" ? "plasman kadetske momčadi, " : ""}gol-razlika, više golova, međusobne utakmice, fair-play.</span>
       </div>
     </>
   );
