@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Označavanje lopte</title>
+<style>
+  :root { --bg:#111418; --panel:#1a1f25; --line:#2a313a; --text:#e6e9ed; --muted:#8b95a1; --ball:#2fd36b; --sug:#ffcc33; --none:#5aa2ff; --skip:#c07cff; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--text); font:14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { display:grid; grid-template-columns:minmax(0,1fr) 300px; grid-template-rows:auto minmax(0,1fr); }
+  header { grid-column:1/3; display:flex; gap:14px; align-items:center; padding:8px 12px; border-bottom:1px solid var(--line); background:var(--panel); flex-wrap:wrap; }
+  header b { font-size:15px; }
+  button { background:#2a313a; color:var(--text); border:1px solid #3a434e; padding:6px 12px; font:inherit; cursor:pointer; border-radius:2px; }
+  button:hover { background:#333b45; }
+  button.primary { background:#2a6df4; border-color:#2a6df4; }
+  #stage { position:relative; overflow:hidden; display:grid; place-items:center; }
+  #view { max-width:100%; max-height:100%; cursor:crosshair; display:block; }
+  aside { border-left:1px solid var(--line); background:var(--panel); padding:12px; display:grid; gap:12px; align-content:start; overflow:auto; }
+  #mag { width:276px; height:276px; background:#000; border:1px solid var(--line); image-rendering:pixelated; }
+  .muted { color:var(--muted); }
+  .small { font-size:12px; }
+  .stat { display:grid; grid-template-columns:auto 1fr; gap:2px 10px; }
+  .stat i { display:inline-block; width:10px; height:10px; margin-right:6px; vertical-align:-1px; }
+  .keys kbd { justify-self:start; }
+  kbd { background:#2a313a; border:1px solid #3a434e; border-bottom-width:2px; padding:0 5px; font:12px ui-monospace, monospace; border-radius:2px; }
+  .keys { display:grid; grid-template-columns:auto 1fr; gap:4px 10px; font-size:13px; }
+  #state { font-weight:600; }
+  #intro { max-width:640px; padding:24px; }
+  #intro h1 { font-size:20px; margin:0 0 8px; }
+  #bar { height:4px; background:#2a313a; flex:1; min-width:120px; }
+  #bar > div { height:100%; background:var(--ball); width:0; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+<header>
+  <b>Označavanje lopte</b>
+  <button class="primary" id="open">Otvori mapu</button>
+  <span id="where" class="muted small"></span>
+  <div id="bar"><div></div></div>
+  <span id="prog" class="small"></span>
+  <span id="save" class="small muted"></span>
+  <button id="export" class="hidden">Preuzmi labels.json</button>
+</header>
+<div id="stage">
+  <div id="intro">
+    <h1>Kako se koristi</h1>
+    <p>Otvori mapu koju je napravio <code>extract_frames.py</code> (npr. <code>futsal-ball</code>, u njoj su <code>frames/</code> i <code>suggestions.json</code>). Oznake se spremaju u istu mapu kao <code>labels.json</code>, svakih par sekundi. Najbolje radi u Chromeu ili Edgeu.</p>
+    <p>Klikni točno u sredinu lopte. Ako je žuti prijedlog dobar, samo pritisni <kbd>Enter</kbd>. Ako se lopta ne vidi (skrivena iza igrača, izvan kadra), pritisni <kbd>N</kbd>. Ako slika nije igra (repriza, reklama, poluvrijeme, publika), pritisni <kbd>S</kbd>.</p>
+    <p class="muted">Lopta koja je djelomično skrivena, ali joj znaš sredinu, označi klikom. Zamućenu loptu u letu označi na sredini traga.</p>
+  </div>
+  <canvas id="view" class="hidden"></canvas>
+</div>
+<aside>
+  <canvas id="mag" width="276" height="276"></canvas>
+  <div>
+    <div id="name" class="small muted"></div>
+    <div id="state"></div>
+    <div id="sugInfo" class="small muted"></div>
+  </div>
+  <div class="keys">
+    <span>klik</span><span>lopta je ovdje</span>
+    <kbd>Enter</kbd><span>prihvati prijedlog / dalje</span>
+    <kbd>N</kbd><span>lopta se ne vidi</span>
+    <kbd>S</kbd><span>nije igra (preskoči)</span>
+    <kbd>Z</kbd><span>natrag na prethodnu</span>
+    <kbd>←</kbd> <span>prethodna &nbsp; <kbd>→</kbd> sljedeća</span>
+    <kbd>[</kbd> <span>manji okvir &nbsp; <kbd>]</kbd> veći</span>
+    <kbd>U</kbd><span>prva neoznačena</span>
+    <kbd>H</kbd><span>sakrij oznake dok držiš</span>
+  </div>
+  <div class="stat small" id="stats"></div>
+  <div class="small muted">Veličina okvira (promjer lopte): <b id="size"></b> px. Kotačić miša mijenja zum povećala.</div>
+</aside>
+<input type="file" id="dirInput" webkitdirectory multiple class="hidden">
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const view = $("#view"), ctx = view.getContext("2d"), mag = $("#mag"), mctx = mag.getContext("2d");
+let dir = null, files = new Map(), names = [], sug = {}, labels = {}, i = 0, img = null, mouse = null, zoom = 6, size = 18, hide = false;
+let dirty = false, saving = false, canWrite = false;
+const LS = "ball-labels-backup";
+
+// ---------- otvaranje ----------
+$("#open").onclick = async () => {
+  if (window.showDirectoryPicker) {
+    try { dir = await showDirectoryPicker({ mode: "readwrite" }); } catch { return; }
+    canWrite = true;
+    await loadFromHandle(dir);
+  } else $("#dirInput").click();
+};
+$("#dirInput").onchange = async (e) => {
+  const list = [...e.target.files];
+  for (const f of list) {
+    const p = f.webkitRelativePath.split("/");
+    if (p.includes("frames") && /\.jpe?g$/i.test(f.name)) files.set(f.name, f);
+    else if (f.name === "suggestions.json") sug = JSON.parse(await f.text());
+    else if (f.name === "labels.json") labels = JSON.parse(await f.text()).frames || {};
+  }
+  $("#where").textContent = list[0]?.webkitRelativePath.split("/")[0] + " (spremanje: gumb Preuzmi)";
+  $("#export").classList.remove("hidden");
+  start();
+};
+async function loadFromHandle(d) {
+  let fr = d;
+  try { fr = await d.getDirectoryHandle("frames"); } catch { /* slike su možda izravno u mapi */ }
+  for await (const [n, h] of fr.entries()) if (h.kind === "file" && /\.jpe?g$/i.test(n)) files.set(n, h);
+  try { sug = JSON.parse(await (await (await d.getFileHandle("suggestions.json")).getFile()).text()); } catch { sug = {}; }
+  try { labels = JSON.parse(await (await (await d.getFileHandle("labels.json")).getFile()).text()).frames || {}; } catch { labels = {}; }
+  // ako je u pregledniku ostala novija kopija (npr. zatvoren tab prije spremanja), spoji je
+  try { const b = JSON.parse(localStorage.getItem(LS) || "null"); if (b && b.dir === d.name) Object.assign(labels, b.frames); } catch { /* */ }
+  $("#where").textContent = d.name;
+  $("#export").classList.remove("hidden");
+  start();
+}
+function start() {
+  names = [...files.keys()].sort();
+  if (!names.length) { alert("U mapi nema slika (.jpg). Odaberi mapu koju je napravio extract_frames.py."); return; }
+  $("#intro").classList.add("hidden"); view.classList.remove("hidden");
+  i = firstUnlabeled(); show();
+}
+const firstUnlabeled = () => { const k = names.findIndex((n) => !(n in labels)); return k < 0 ? names.length - 1 : k; };
+
+// ---------- prikaz ----------
+const cache = new Map();
+async function bitmap(n) {
+  if (cache.has(n)) return cache.get(n);
+  const p = (async () => { const h = files.get(n); const f = h.getFile ? await h.getFile() : h; return createImageBitmap(f); })();
+  cache.set(n, p);
+  if (cache.size > 12) { const k = cache.keys().next().value; cache.get(k).then((b) => b.close?.()); cache.delete(k); }
+  return p;
+}
+async function show() {
+  const n = names[i];
+  img = await bitmap(n);
+  if (n !== names[i]) return;
+  if (view.width !== img.width || view.height !== img.height) { view.width = img.width; view.height = img.height; }
+  draw();
+  [1, 2, 3].forEach((d) => names[i + d] && bitmap(names[i + d]));
+  const L = labels[n], s = sug[n];
+  $("#name").textContent = `${i + 1} / ${names.length} · ${n}`;
+  $("#state").innerHTML = L === "none" ? '<span style="color:var(--none)">Lopta se ne vidi</span>' : L === "skip" ? '<span style="color:var(--skip)">Nije igra</span>'
+    : L ? '<span style="color:var(--ball)">Lopta označena</span>' : '<span class="muted">Neoznačeno</span>';
+  $("#sugInfo").textContent = s ? `Prijedlog modela: pouzdanost ${Math.round(s[2] * 100)} %` : "Model nije našao loptu.";
+  $("#size").textContent = size;
+  stats();
+}
+function draw() {
+  if (!img) return;
+  ctx.drawImage(img, 0, 0);
+  const n = names[i], L = labels[n], s = sug[n], k = view.width / 1920;
+  if (!hide) {
+    if (s && !Array.isArray(L)) ring(s[0], s[1], (size / 2 + 6) * Math.max(k, 0.6), "#ffcc33", [6, 4], 0.4 + 0.6 * Math.min(1, s[2] * 2));
+    if (Array.isArray(L)) { box(L[0], L[1], L[2], "#2fd36b"); }
+  }
+  drawMag();
+}
+function ring(x, y, r, c, dash, a = 1) { ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = c; ctx.lineWidth = 2; ctx.setLineDash(dash || []); ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.stroke(); ctx.restore(); }
+function box(x, y, s, c) { ctx.save(); ctx.strokeStyle = c; ctx.lineWidth = 2; ctx.strokeRect(x - s / 2, y - s / 2, s, s); ctx.restore(); }
+function drawMag() {
+  mctx.fillStyle = "#000"; mctx.fillRect(0, 0, mag.width, mag.height);
+  const n = names[i], L = labels[n], s = sug[n];
+  const c = mouse || (Array.isArray(L) ? { x: L[0], y: L[1] } : s ? { x: s[0], y: s[1] } : null);
+  if (!c || !img) return;
+  const w = mag.width / zoom;
+  mctx.imageSmoothingEnabled = false;
+  mctx.drawImage(img, c.x - w / 2, c.y - w / 2, w, w, 0, 0, mag.width, mag.height);
+  const toM = (x, y) => [(x - c.x) * zoom + mag.width / 2, (y - c.y) * zoom + mag.height / 2];
+  if (!hide) {
+    if (s && !Array.isArray(L)) { const [mx, my] = toM(s[0], s[1]); mctx.strokeStyle = "#ffcc33"; mctx.setLineDash([6, 4]); mctx.beginPath(); mctx.arc(mx, my, (size / 2 + 3) * zoom, 0, 7); mctx.stroke(); mctx.setLineDash([]); }
+    if (Array.isArray(L)) { const [mx, my] = toM(L[0], L[1]); mctx.strokeStyle = "#2fd36b"; mctx.lineWidth = 2; const h = L[2] * zoom / 2; mctx.strokeRect(mx - h, my - h, h * 2, h * 2); }
+  }
+  // križić i okvir trenutne veličine na mjestu miša
+  if (mouse) {
+    const m2 = mag.width / 2, h = size * zoom / 2;
+    mctx.strokeStyle = "rgba(255,255,255,.85)"; mctx.lineWidth = 1;
+    mctx.beginPath(); mctx.moveTo(m2 - h - 8, m2); mctx.lineTo(m2 - 3, m2); mctx.moveTo(m2 + 3, m2); mctx.lineTo(m2 + h + 8, m2);
+    mctx.moveTo(m2, m2 - h - 8); mctx.lineTo(m2, m2 - 3); mctx.moveTo(m2, m2 + 3); mctx.lineTo(m2, m2 + h + 8); mctx.stroke();
+    mctx.strokeStyle = "rgba(255,255,255,.35)"; mctx.strokeRect(m2 - h, m2 - h, h * 2, h * 2);
+  }
+}
+function stats() {
+  const v = Object.values(labels);
+  const b = v.filter(Array.isArray).length, nn = v.filter((x) => x === "none").length, sk = v.filter((x) => x === "skip").length;
+  const done = names.filter((n) => n in labels).length;
+  $("#prog").textContent = `${done} / ${names.length}`;
+  $("#bar > div").style.width = (100 * done / names.length) + "%";
+  const per = {};
+  for (const n of names) { const m = n.split("_")[0]; per[m] ||= [0, 0]; per[m][1]++; if (n in labels) per[m][0]++; }
+  $("#stats").innerHTML = `<span><i style="background:var(--ball)"></i>lopta</span><b>${b}</b>` +
+    `<span><i style="background:var(--none)"></i>ne vidi se</span><b>${nn}</b>` +
+    `<span><i style="background:var(--skip)"></i>nije igra</span><b>${sk}</b>` +
+    `<span class="muted" style="grid-column:1/3;margin-top:6px">Po utakmici</span>` +
+    Object.entries(per).map(([m, [d, t]]) => `<span class="muted">${m}</span><span>${d} / ${t}</span>`).join("");
+}
+
+// ---------- unos ----------
+function pos(e) { const r = view.getBoundingClientRect(); return { x: (e.clientX - r.left) * view.width / r.width, y: (e.clientY - r.top) * view.height / r.height }; }
+view.addEventListener("mousemove", (e) => { mouse = pos(e); drawMag(); });
+view.addEventListener("mouseleave", () => { mouse = null; drawMag(); });
+view.addEventListener("click", (e) => { const p = pos(e); set([Math.round(p.x * 10) / 10, Math.round(p.y * 10) / 10, size]); next(); });
+mag.addEventListener("wheel", (e) => { e.preventDefault(); zoom = Math.max(2, Math.min(16, zoom + (e.deltaY < 0 ? 1 : -1))); drawMag(); }, { passive: false });
+view.addEventListener("wheel", (e) => { e.preventDefault(); zoom = Math.max(2, Math.min(16, zoom + (e.deltaY < 0 ? 1 : -1))); drawMag(); }, { passive: false });
+function set(v) { labels[names[i]] = v; dirty = true; queueSave(); }
+function next() { if (i < names.length - 1) i++; show(); }
+function prev() { if (i > 0) i--; show(); }
+document.addEventListener("keydown", (e) => {
+  if (!names.length || e.ctrlKey || e.metaKey || e.altKey) return;
+  const n = names[i], k = e.key.toLowerCase();
+  if (k === "enter") { const s = sug[n]; if (!(n in labels) && s) set([s[0], s[1], size]); if (n in labels) next(); }
+  else if (k === "n") { set("none"); next(); }
+  else if (k === "s") { set("skip"); next(); }
+  else if (k === "z" || k === "backspace" || k === "arrowleft") { e.preventDefault(); prev(); }
+  else if (k === "arrowright") next();
+  else if (k === "u") { i = firstUnlabeled(); show(); }
+  else if (k === "[") { size = Math.max(6, size - 2); show(); }
+  else if (k === "]") { size = Math.min(60, size + 2); show(); }
+  else if (k === "h") { hide = true; draw(); }
+  else if (k === "delete") { delete labels[n]; dirty = true; queueSave(); show(); }
+  else return;
+});
+document.addEventListener("keyup", (e) => { if (e.key.toLowerCase() === "h") { hide = false; draw(); } });
+
+// ---------- spremanje ----------
+let t = 0;
+function queueSave() {
+  try { localStorage.setItem(LS, JSON.stringify({ dir: dir?.name || null, frames: labels })); } catch { /* */ }
+  if (!canWrite) { $("#save").textContent = "nespremljeno (Preuzmi labels.json)"; return; }
+  $("#save").textContent = "…"; clearTimeout(t); t = setTimeout(save, 1500);
+}
+async function save() {
+  if (saving || !dirty || !canWrite) return;
+  saving = true; dirty = false;
+  try {
+    const h = await dir.getFileHandle("labels.json", { create: true });
+    const w = await h.createWritable();
+    await w.write(JSON.stringify({ version: 1, size_ref: "promjer u pikselima izvornog okvira", frames: labels }));
+    await w.close();
+    $("#save").textContent = "spremljeno u labels.json";
+  } catch (err) { dirty = true; $("#save").textContent = "greška pri spremanju: " + err.message; }
+  saving = false;
+  if (dirty) queueSave();
+}
+$("#export").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify({ version: 1, frames: labels })], { type: "application/json" }));
+  a.download = "labels.json"; a.click();
+};
+window.addEventListener("beforeunload", (e) => { if (dirty) { save(); e.preventDefault(); } });
+</script>
+</body>
+</html>
