@@ -42,7 +42,7 @@ function Settings({ db }) {
       <div className="ahead"><h1>Postavke stranice</h1></div>
       <section className="panel">
         <div className="form-grid" style={{ paddingTop: 16 }}>
-          <label className="field"><span>Naziv stranice</span><input className="input" value={db.site?.name || ""} onChange={(e) => us((x) => { x.name = e.target.value; })} /></label>
+          <label className="field"><span>Naziv stranice</span><input className="input" placeholder="Futsal statistika" value={db.site?.name || ""} onChange={(e) => us((x) => { x.name = e.target.value; })} /></label>
           <label className="field"><span>Kontakt za ispravke i uklanjanje</span><input className="input" type="email" value={db.site?.contact || ""} placeholder="npr. kontakt@domena.hr" onChange={(e) => us((x) => { x.contact = e.target.value.trim(); })} />
             <small>Prikazuje se na stranici o privatnosti. Igrači, roditelji i klubovi tu traže uklanjanje podataka.</small></label>
         </div>

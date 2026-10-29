@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useDB } from "./lib/store.js";
 import { useRoute, href } from "./lib/router.js";
 import { index } from "./lib/derive.js";
@@ -14,6 +14,7 @@ import { Notice } from "./components/Notice.jsx";
 export default function App() {
   const db = useDB();
   const ix = useMemo(() => index(db), [db]);
+  useEffect(() => { document.title = db.site?.name || "Futsal statistika"; }, [db.site?.name]);
   const r = useRoute();
   const [page, ...rest] = r;
   const cur = db.seasons[0].id;
@@ -24,7 +25,7 @@ export default function App() {
     <>
       <header className="top">
         <div className="top-in">
-          <Brand />
+          <Brand name={db.site?.name} />
           <nav className="lnav" aria-label="Lige">
             {db.leagues.filter((l) => db.comps.some((c) => c.league === l.id && c.season === cur)).map((l) => <a key={l.id} href={href("liga", l.id, cur)} aria-current={activeLeague === l.id ? "page" : undefined}>{l.name}</a>)}
           </nav>

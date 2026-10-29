@@ -5,7 +5,7 @@
 
 import HMNL from "../data/hmnl-2026-27.json";   // gradi data/hmnl-2026-27/build.py
 
-export const SEED_VERSION = 11;
+export const SEED_VERSION = 12;
 
 const leagues = [
   { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
@@ -80,7 +80,7 @@ function build() {
       note: "Isječak od 2:30. Zapisnik još nije unesen, a boje ekipa su pretpostavka (plavi = Futsal Dinamo, zeleni = Olmissum).",
       teamMap: { DIN: "home", OLM: "away" }, kitUnconfirmed: true } });
 
-  const site = { name: "Šesterac", contact: "" };
+  const site = { name: "", contact: "" };   // naziv još nije odabran
   return { version: SEED_VERSION, site, leagues, seasons, halls, clubs, players, comps, matches };
 }
 

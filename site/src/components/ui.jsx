@@ -46,8 +46,8 @@ export const Icon = {
   ext: (s = 14) => (<svg width={s} height={s} viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5H5V6h5" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>),
 };
 
-export function Brand() {
-  // znak: šesterac (luk 6 m) i lopta
+export function Brand({ name }) {
+  // znak: luk kaznenog prostora (6 m) i lopta
   return (
     <a className="brand" href="#/">
       <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
@@ -55,7 +55,7 @@ export function Brand() {
         <path d="M4 5v20M4 9.5a9.5 6 0 0 1 9.5 5.5A9.5 6 0 0 1 4 20.5" fill="none" stroke="var(--band-fg)" strokeWidth="1.8" strokeLinecap="round" />
         <circle cx="21.5" cy="15" r="4" fill="var(--signal)" />
       </svg>
-      šesterac
+      {name || "Futsal statistika"}
     </a>
   );
 }
