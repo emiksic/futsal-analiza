@@ -136,7 +136,7 @@ export function AnalysisViewer({ D, video, order, names, note, youtube, mode = "
         g.addColorStop(0, "rgba(0,0,0,1)"); g.addColorStop(1, "rgba(0,0,0,0)"); octx.fillStyle = g;
         octx.beginPath(); octx.arc(cx, cy, r, 0, Math.PI * 2); octx.fill(); octx.restore();
       }
-      octx.font = `700 ${Math.round(15 * S)}px "Barlow Condensed", sans-serif`; octx.textBaseline = "bottom";
+      octx.font = `700 ${Math.round(15 * S)}px "Roboto Condensed", sans-serif`; octx.textBaseline = "bottom";
       for (const p of f.p) {
         const [ti, pi, gk, x1, y1, x2, y2] = p, col = T[ti].color, isHL = pi === hlIdx;
         if (show.box || isHL) { octx.strokeStyle = isHL ? sig : col; octx.lineWidth = (isHL ? 3.5 : 1.8) * S; octx.strokeRect(X(x1), Y(y1), X(x2) - X(x1), Y(y2) - Y(y1)); }
@@ -193,7 +193,7 @@ export function AnalysisViewer({ D, video, order, names, note, youtube, mode = "
         mctx.fillStyle = T[ti].color; mctx.beginPath(); mctx.arc(MX(x), MY(y), ti === 2 ? R * 0.75 : R, 0, Math.PI * 2); mctx.fill();
         mctx.strokeStyle = "rgba(0,0,0,.55)"; mctx.lineWidth = 1; mctx.stroke();
         if (isHL) { mctx.strokeStyle = sig; mctx.lineWidth = 3; mctx.beginPath(); mctx.arc(MX(x), MY(y), R + 5, 0, Math.PI * 2); mctx.stroke(); }
-        if (ti < 2 && pi >= 0 && R >= 6) { mctx.fillStyle = textOn(T[ti].color); mctx.font = `700 ${Math.round(R * 1.15)}px "Barlow Condensed", sans-serif`;
+        if (ti < 2 && pi >= 0 && R >= 6) { mctx.fillStyle = textOn(T[ti].color); mctx.font = `700 ${Math.round(R * 1.15)}px "Roboto Condensed", sans-serif`;
           mctx.textAlign = "center"; mctx.textBaseline = "middle"; mctx.fillText(D.players[pi].split(" ").pop(), MX(x), MY(y) + 0.5); mctx.textAlign = "start"; }
       }
       if (f.b && showBall) { mctx.fillStyle = sig; mctx.beginPath(); mctx.arc(MX(f.b[2]), MY(f.b[3]), Math.max(3, R * 0.55), 0, Math.PI * 2); mctx.fill();

@@ -15,8 +15,8 @@ export function MatchRow({ m, ix, showDay }) {
         {(m.youtube || m.tv) && <div className="tvtag" title={m.youtube ? "Prijenos na YouTubeu" : `Prijenos: ${m.tv}`}>{m.youtube ? "YouTube" : m.tv === "MAXsport" ? "MAX" : m.tv}</div>}
       </div>
       <div className="teams">
-        <div className={"t" + (lostH ? " lost" : "")}><Jersey kit={H.kit} size={20} /><span>{H.name}</span></div>
-        <div className={"t" + (lostA ? " lost" : "")}><Jersey kit={A.kit} size={20} /><span>{A.name}</span></div>
+        <div className={"t" + (lostH ? " lost" : lostA ? " won" : "")}><Jersey kit={H.kit} size={20} /><span>{H.name}</span></div>
+        <div className={"t" + (lostA ? " lost" : lostH ? " won" : "")}><Jersey kit={A.kit} size={20} /><span>{A.name}</span></div>
       </div>
       <div className="sc">
         {s ? <><span className={lostH ? "lost" : ""}>{s[0]}</span><span className={lostA ? "lost" : ""}>{s[1]}</span></> : <span className="muted small" style={{ fontFamily: "var(--body)", fontWeight: 400 }}>–</span>}

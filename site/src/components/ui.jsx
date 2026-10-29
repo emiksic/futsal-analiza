@@ -9,7 +9,7 @@ export function Jersey({ kit, size = 28, num, title }) {
         fill={k.shirt} stroke="rgba(0,0,0,.32)" strokeWidth="1" strokeLinejoin="round" />
       <path d="M1.8 12.6 6.4 19.2l2.4-1.7L4.2 11Z M38.2 12.6 33.6 19.2l-2.4-1.7L35.8 11Z" fill={k.trim} />
       <path d="M13 4.5Q20 9.5 27 4.5" fill="none" stroke={k.trim} strokeWidth="2.2" />
-      {num != null && <text x="20" y="29.5" textAnchor="middle" fontFamily="'Barlow Condensed', 'Arial Narrow', sans-serif" fontWeight="700"
+      {num != null && <text x="20" y="29.5" textAnchor="middle" fontFamily="'Roboto Condensed', 'Arial Narrow', sans-serif" fontWeight="700"
         fontSize={String(num).length > 1 ? 13 : 15} fill={k.num}>{num}</text>}
     </svg>
   );
