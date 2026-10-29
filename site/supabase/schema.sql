@@ -62,6 +62,8 @@ select p.id, p.club, p.season, p.cat, p.num, p.gk,
   case coalesce(f.fmt, 'full')
     when 'number' then null
     when 'last' then coalesce(p.last, public.surname_guess(p.name))
+    when 'initials' then case when p.name is null or p.name = '' then null
+                              else left(btrim(p.name), 1) || '. ' || left(coalesce(p.last, public.surname_guess(p.name)), 1) || '.' end
     when 'initial' then case when p.name is null or p.name = '' then null
                              else left(btrim(p.name), 1) || '. ' || coalesce(p.last, public.surname_guess(p.name)) end
     else p.name
@@ -103,3 +105,7 @@ insert into public.site (id, name, contact) values (1, '', '') on conflict (id) 
 -- update public.leagues set zones = '{"playoff":8,"qual":1,"relegation":1}' where id = '1-hmnl';
 -- update public.leagues set zones = '{"direct":2,"playoff":6,"note":"Ispadanje se određuje zbirnom tablicom kadeta i juniora."}' where id in ('juniori','kadeti');
 -- kadeti: nakon pusha u adminu → Postavke stranice → "Dodaj što nedostaje"
+
+-- ---------- ažuriranje 2026-10-29: kadeti s inicijalima ----------
+-- (pokreni ponovno blok "prezime i javno ime" iznad, pa ovo)
+-- update public.leagues set privacy = jsonb_set(privacy, '{names}', '"initials"') where id = 'kadeti';

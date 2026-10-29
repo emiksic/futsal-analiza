@@ -12,7 +12,7 @@ export function MatchRow({ m, ix, showDay }) {
       <div className={"when" + (fin ? " fin" : "")}>
         {showDay && <div>{fmtDay(m.date)}</div>}
         <div>{fin ? "Kraj" : m.timeTbd ? "—" : fmtTime(m.date)}</div>
-        {(m.youtube || m.tv) && <div className="tvtag" title={m.youtube ? "Prijenos na YouTubeu" : `Prijenos: ${m.tv}`}>{m.youtube ? "YouTube" : m.tv === "MAXsport" ? "MAX" : m.tv}</div>}
+        {(m.youtube || m.tv) && <div className="tvtag" title={m.youtube || m.tv === "YouTube" ? "Prijenos na YouTubeu" : `Prijenos: ${m.tv}`}>{m.youtube ? "YouTube" : m.tv}</div>}
       </div>
       <div className="teams">
         <div className={"t" + (lostH ? " lost" : lostA ? " won" : "")}><Jersey kit={H.kit} size={20} /><span>{H.name}</span></div>

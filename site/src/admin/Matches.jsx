@@ -13,7 +13,7 @@ export function Matches({ db, ix }) {
   const add = () => {
     const id = uid("m-");
     update((d) => { d.matches.push({ id, draft: true, comp, round: round === "all" ? 1 : +round, date: new Date().toISOString(), home: C.teams[0], away: C.teams[1],
-      hall: ix.club[C.teams[0]].hall, status: "scheduled", youtube: "", roster: { home: null, away: null }, events: [], analysis: null }); });
+      hall: ix.club[C.teams[0]].hall, status: "scheduled", youtube: "", tv: "YouTube", roster: { home: null, away: null }, events: [], analysis: null }); });
     go("admin", "utakmica", id, "osnovno");
   };
   const rosterOk = (m) => m.roster?.home?.players?.length && m.roster?.away?.players?.length;
@@ -60,7 +60,8 @@ export function Matches({ db, ix }) {
                   <td><span className="mt"><Jersey kit={ix.club[m.home].kit} size={18} />{ix.club[m.home].name}<span className="muted">–</span><Jersey kit={ix.club[m.away].kit} size={18} />{ix.club[m.away].name}</span></td>
                   <td className="nowrap" style={{ font: "700 17px/1 var(--display)" }}>{s && m.status === "finished" ? `${s[0]}:${s[1]}` : <span className="muted small" style={{ fontFamily: "var(--body)", fontWeight: 400 }}>zakazano</span>}</td>
                   <td>{rosterOk(m) ? <span className="pill done">unesen</span> : <span className="pill">nema</span>}</td>
-                  <td>{analysisPill(m.analysis) || <span className="small muted">{m.youtube ? "ima snimku" : "—"}</span>}</td>
+                  <td>{analysisPill(m.analysis) || (m.tv === "YouTube" && !m.youtube ? <span className="pill warn" title="Dodaj YouTube link ili prebaci prijenos na MAXsport">nema linka</span>
+                    : <span className="small muted">{m.youtube ? "ima snimku" : m.tv === "MAXsport" ? "MAXsport" : "—"}</span>)}</td>
                   <td className="nowrap"><a className="btn sm" href={href("admin", "utakmica", m.id, "osnovno")}>Uredi</a></td>
                 </tr>);
             })}</tbody>

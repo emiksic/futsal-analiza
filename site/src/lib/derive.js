@@ -124,16 +124,25 @@ export function surnameOf(p) {
   const i = t.findIndex((w, k) => k > 0 && PARTICLES.has(w.toLowerCase()));
   return t.slice(i > 0 ? i : t.length - 1).join(" ");
 }
+// mladi igrači često mijenjaju broj; zapisnik (roster.num) ima broj koji je igrač nosio na toj utakmici
+export function withMatchNumbers(ix, m) {
+  const nums = { ...(m.roster?.home?.num || {}), ...(m.roster?.away?.num || {}) };
+  if (!Object.keys(nums).length) return ix;
+  const player = { ...ix.player };
+  for (const [pid, n] of Object.entries(nums)) if (player[pid]) player[pid] = { ...player[pid], num: n };
+  return { ...ix, player };
+}
 export function playerName(p) {
   if (!p) return "—";
   const fmt = NAMES[p.cat] || "full", n = (p.name || "").trim();
   if (!n || fmt === "number") return `Igrač #${p.num}`;
   const last = surnameOf(p);
   if (fmt === "last") return last;
+  if (fmt === "initials") return `${n[0]}. ${(last || n)[0]}.${p.num ? ` #${p.num}` : ""}`;
   if (fmt === "initial") return last && last !== n ? `${n[0]}. ${last}` : n;
   return n;
 }
-export const NAME_FORMATS = { full: "Ime i prezime", initial: "Inicijal i prezime", last: "Samo prezime", number: "Samo broj" };
+export const NAME_FORMATS = { full: "Ime i prezime", initial: "Inicijal i prezime", last: "Samo prezime", initials: "Inicijali i broj", number: "Samo broj" };
 export const perPlayerAllowed = (ix, compId) => ix.league[ix.comp[compId]?.league]?.privacy?.perPlayer !== false;
 export const ANALYSIS_LABEL = { none: "Bez analize", queued: "Čeka obradu", processing: "U obradi", done: "Analizirano", failed: "Greška u obradi" };
 export const STATUS_LABEL = { scheduled: "Zakazano", live: "Uživo", finished: "Kraj" };

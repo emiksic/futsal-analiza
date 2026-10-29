@@ -7,12 +7,12 @@ import HMNL from "../data/hmnl-2026-27.json";       // gradi: python3 data/build
 import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build.py juniori-2026-27 juniori-2026-27 U-19
 import KADETI from "../data/kadeti-2026-27.json";   // gradi: python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
 
-export const SEED_VERSION = 15;
+export const SEED_VERSION = 17;
 
 const leagues = [
   { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
   { id: "juniori", name: "1. HMNL juniori", category: "U-19", zones: { direct: 2, playoff: 6, note: "Ispadanje se određuje zbirnom tablicom kadeta i juniora." }, privacy: { names: "initial", perPlayer: true } },
-  { id: "kadeti", name: "1. HMNL kadeti", category: "U-17", zones: { direct: 2, playoff: 6, note: "Ispadanje se određuje zbirnom tablicom kadeta i juniora." }, privacy: { names: "number", perPlayer: false } },
+  { id: "kadeti", name: "1. HMNL kadeti", category: "U-17", zones: { direct: 2, playoff: 6, note: "Ispadanje se određuje zbirnom tablicom kadeta i juniora." }, privacy: { names: "initials", perPlayer: false } },
 ];
 const seasons = [{ id: "2026-27", name: "2026./27." }];
 
@@ -52,15 +52,8 @@ const clubs = [
   { id: "hajduk", name: "Hajduk", full: "MNK Hajduk", short: "HAJ", city: "Split", hall: "gripe", kit: { shirt: "#ffffff", trim: "#c8102e", num: "#1d3c8f" } },
 ];
 
-// Juniori: pravi zapisnici (brojevi) za analiziranu utakmicu RIJ–NVR; imena nisu unesena.
-const JUN = {
-  rijeka: { gk: ["1", "12"], nums: ["1", "4", "7", "8", "9", "12", "14", "24", "26", "29", "44", "55", "77", "99"], start: ["1", "4", "7", "26", "44"] },
-  "novo-vrijeme": { gk: ["17"], nums: ["4", "6", "7", "8", "9", "10", "11", "13", "14", "17"], start: ["17", "7", "9", "11", "14"] },
-};
-
 function build() {
   const players = [], matches = [], comps = [];
-  const pid = (club, season, cat, n) => `${club}-${season}-${cat}-${n}`;
 
   // --- 1. HMNL seniori
   const cid = "1-hmnl-2026-27";
@@ -73,12 +66,9 @@ function build() {
   const jid = "juniori-2026-27";
   comps.push({ id: jid, league: "juniori", season: "2026-27", teams: [...new Set(JUNIORI.matches.flatMap((m) => [m.home, m.away]))], rounds: 22 });
   matches.push(...JUNIORI.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
-  for (const [club, S] of Object.entries(JUN))
-    for (const n of S.nums) players.push({ id: pid(club, "2026-27", "U-19", n), club, season: "2026-27", cat: "U-19", num: n, name: "", gk: S.gk.includes(n) });
-  const jp = (c, n) => pid(c, "2026-27", "U-19", n);
-  const R = (c) => ({ players: JUN[c].nums.map((n) => jp(c, n)), start: JUN[c].start.map((n) => jp(c, n)), gk: JUN[c].gk.map((n) => jp(c, n)) });
+  players.push(...JUNIORI.players);    // samo brojevi; imena su u privatnoj bazi
   const u1 = matches.find((m) => m.id === `${jid}-k3-rijeka-novo-vrijeme`);
-  Object.assign(u1, { roster: { home: R("rijeka"), away: R("novo-vrijeme") },
+  Object.assign(u1, {
     analysis: { status: "done", clip: "u1", video: "media/u1.mp4", data: "media/u1.json", from: 128, to: 148, rights: "embed", ytOffset: null,
       note: "Isječak od 20 s (07:49–08:09 na satu, 1:0 za Rijeku). Brojevi su ograničeni na zapisnik.", teamMap: { RIJ: "home", NVR: "away" } } });
   // drugi isječak (DIN–OLM): još nije utvrđeno s koje je utakmice, pa nije u rasporedu
@@ -90,6 +80,7 @@ function build() {
 
   // --- kadeti: isti raspored kao juniori, rezultati 1.–3. kola
   comps.push({ id: "kadeti-2026-27", league: "kadeti", season: "2026-27", teams: [...new Set(KADETI.matches.flatMap((m) => [m.home, m.away]))], rounds: 22 });
+  players.push(...KADETI.players);
   matches.push(...KADETI.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
 
   const site = { name: "", contact: "" };   // naziv još nije odabran

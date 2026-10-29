@@ -26,3 +26,6 @@ __pycache__/
 node_modules/
 dist/
 dist-single/
+
+# privatni podaci (puna imena mladih igrača) - nikad u repo
+data/private/

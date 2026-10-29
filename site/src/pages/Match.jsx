@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { href } from "../lib/router.js";
-import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed } from "../lib/derive.js";
+import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
@@ -9,8 +9,9 @@ import { Shots } from "./Shots.jsx";
 import { Player } from "../components/Player.jsx";
 import { shotStats } from "../components/ShotMap.jsx";
 
-export function Match({ db, ix, id, tab }) {
-  const m = ix.match[id];
+export function Match({ db, ix: ix0, id, tab }) {
+  const m = ix0.match[id];
+  const ix = m ? withMatchNumbers(ix0, m) : ix0;   // broj na dresu iz zapisnika ove utakmice
   const A = useAnalysis(m);
   if (!m) return <div className="page"><div className="panel empty">Utakmica ne postoji.</div></div>;
   const has = m.analysis?.status === "done";
@@ -95,7 +96,8 @@ function AnalysisTab({ m, ix, A }) {
   if (!a || a.status === "none") {
     if (m.youtube) return <PlainVideo m={m}><div className="note">Video analiza (igrači na terenu, posjed, mini-mapa) za ovu utakmicu još nije napravljena.</div></PlainVideo>;
     return <div className="empty" style={{ padding: 24 }}>
-      {m.tv ? `Utakmica se prenosila na ${m.tv}. Snimku i video analizu imamo samo za utakmice s javnim prijenosom na YouTubeu.` : "Za ovu utakmicu nema snimke."}</div>;
+      {m.tv === "YouTube" ? "Utakmica se prenosi na YouTubeu. Snimka će ovdje biti dostupna kad se doda link."
+        : m.tv ? `Utakmica se prenosila na ${m.tv}. Snimku i video analizu imamo samo za utakmice s javnim prijenosom na YouTubeu.` : "Za ovu utakmicu nema snimke."}</div>;
   }
   if (a.status === "queued" || a.status === "processing") return (
     <div className="pb" style={{ paddingTop: 16, display: "grid", gap: 12 }}>
@@ -147,9 +149,9 @@ function Incidents({ m, ix }) {
         if (r.head) return <div key={r.k} className="per">{r.head}{r.sc && <b>{r.sc[0]}:{r.sc[1]}</b>}</div>;
         const e = r.e, p = ix.player[e.player], as = ix.player[e.assist];
         let icon, main, sub;
-        if (e.type === "goal" || e.type === "owngoal") { icon = Icon.ball(20); main = playerName(p); sub = e.type === "owngoal" ? "autogol" : as ? `asistencija: ${playerName(as)}` : ""; }
+        if (e.type === "goal" || e.type === "owngoal") { icon = Icon.ball(20); main = playerName(p); sub = e.type === "owngoal" ? "autogol" : e.pen ? "kazneni udarac" : as ? `asistencija: ${playerName(as)}` : ""; }
         else if (e.type === "yellow") { icon = <span className="card-y" />; main = playerName(p); sub = "žuti karton"; }
-        else if (e.type === "red") { icon = <span className="card-r" />; main = playerName(p); sub = "crveni karton"; }
+        else if (e.type === "red") { icon = <span className="card-r" />; main = playerName(p); sub = e.secondYellow ? "drugi žuti karton" : "crveni karton"; }
         else if (e.type === "timeout") { icon = Icon.timeout(); main = "Time-out"; sub = ix.club[m[e.side]].name; }
         else if (e.type === "foul") { icon = Icon.whistle(); main = `${r.foulN}. akumulirani prekršaj`; sub = r.foulN >= 6 ? "kazneni udarac s 10 m" : "sljedeći prekršaj donosi udarac s 10 m"; }
         const body = (
@@ -285,7 +287,7 @@ function Lineups({ m, ix, A }) {
             return (
               <button key={side + pid} className="pp" style={pos(side === "home" ? x : -x, side === "home" ? y : -y)} aria-pressed={sel?.pid === pid}
                 onClick={() => click(side, pid)} title={keyOf(side, pid) ? "Prikaži toplinsku mapu" : playerName(p)}>
-                <Jersey kit={k2} size={34} num={p?.num} /><span>{(p?.name && !playerName(p).startsWith("Igrač #") ? playerName(p) : "") || (gk ? "golman" : "")}</span>
+                <Jersey kit={k2} size={34} num={p?.num} /><span>{(p?.name && !playerName(p).startsWith("Igrač #") ? playerName(p).replace(/ #\d+$/, "") : "") || (gk ? "golman" : "")}</span>
               </button>);
           }))}
         </div>
