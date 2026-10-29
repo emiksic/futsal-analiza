@@ -4,6 +4,7 @@
 // Podaci: izlaz export_web.py. ytOffset = sekunda YouTube videa koja odgovara t=0 u podacima.
 import { useEffect, useRef } from "react";
 import { Icon } from "./ui.jsx";
+import { useYTConsent, YTGate } from "./consent.jsx";
 
 export function courtPolys(c) {
   const L = c.L / 2, W = c.W / 2, Dp = c.D, P = [];
@@ -43,6 +44,7 @@ export function ytIdOf(url) {
 export function AnalysisViewer({ D, video, order, names, note, youtube, mode = "embed", ytOffset = 0, perPlayer = true }) {
   const embed = mode === "embed";
   const ytId = ytIdOf(youtube);
+  const consent = useYTConsent();
   const root = useRef(null);
   useEffect(() => {
     if (!D) return;
@@ -206,13 +208,14 @@ export function AnalysisViewer({ D, video, order, names, note, youtube, mode = "
     if (embed) {
       dur = D.frames[D.frames.length - 1].t; bands(); draw(); loop();
       if (!ytId) $("yterr").hidden = false;
-      else loadYT().then((YT) => {
+      else if (consent) loadYT().then((YT) => {
         if (!alive) return;
-        yt = new YT.Player($("yt"), { videoId: ytId, width: "100%", height: "100%", host: "https://www.youtube-nocookie.com",
+        const div = document.createElement("div"); $("yt").appendChild(div);
+        yt = new YT.Player(div, { videoId: ytId, width: "100%", height: "100%", host: "https://www.youtube-nocookie.com",
           playerVars: { start: Math.max(0, Math.floor(ytOffset + D.frames[0].t)), rel: 0, playsinline: 1 },
           events: { onReady: draw, onStateChange: draw } });
       }).catch(() => { if (alive) $("yterr").hidden = false; });
-      return () => { alive = false; cancelAnimationFrame(raf); ro.disconnect(); try { yt?.destroy(); } catch { /* */ } };
+      return () => { alive = false; cancelAnimationFrame(raf); ro.disconnect(); try { yt?.destroy(); } catch { /* */ } if ($("yt")) $("yt").innerHTML = ""; };
     }
     const setUI = () => { const p = !vid.paused; $("play").innerHTML = p ? "Pauza" : "Pokreni"; $("big").hidden = p; };
     const toggle = () => { vid.paused ? vid.play().catch(() => {}) : vid.pause(); };
@@ -234,7 +237,7 @@ export function AnalysisViewer({ D, video, order, names, note, youtube, mode = "
     vid.src = video; if (vid.readyState >= 1) onMeta(); else { dur = D.frames[D.frames.length - 1].t; bands(); draw(); }
     setUI();
     return () => { alive = false; cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener("keydown", key); vid.pause(); };
-  }, [D, video, mode, ytId, ytOffset]);
+  }, [D, video, mode, ytId, ytOffset, consent]);
 
   const miniCard = (
     <section className="panel">
@@ -247,7 +250,8 @@ export function AnalysisViewer({ D, video, order, names, note, youtube, mode = "
       <section className="stage" aria-label="Video s oznakama">
         {embed ? (
           <div className="video">
-            <div data-k="yt" />
+            <div data-k="yt" style={{ position: "absolute", inset: 0 }} />
+            {ytId && !consent && <YTGate youtube={youtube} />}
             <div className="yterr" data-k="yterr" hidden>
               <span>YouTube player se ovdje ne može učitati.</span>
               {youtube && <a className="btn sm" href={youtube} target="_blank" rel="noreferrer">Otvori snimku na YouTubeu</a>}

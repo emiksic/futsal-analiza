@@ -2,13 +2,15 @@
 // YouTube se učitava preko youtube-nocookie.com, ništa se ne crta preko playera.
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { loadYT, ytIdOf } from "./AnalysisViewer.jsx";
+import { useYTConsent, YTGate } from "./consent.jsx";
 
 export const Player = forwardRef(function Player({ youtube, video, start = 0 }, ref) {
   const host = useRef(null), vid = useRef(null), yt = useRef(null);
   const [err, setErr] = useState(false);
   const id = video ? null : ytIdOf(youtube);
+  const consent = useYTConsent();
   useEffect(() => {
-    if (video || !id) return;
+    if (video || !id || !consent) return;
     let alive = true; setErr(false);
     const div = document.createElement("div"); host.current.appendChild(div);
     loadYT().then((YT) => {
@@ -17,7 +19,7 @@ export const Player = forwardRef(function Player({ youtube, video, start = 0 }, 
         playerVars: { start: Math.max(0, Math.floor(start)), rel: 0, playsinline: 1 } });
     }).catch(() => { if (alive) setErr(true); });
     return () => { alive = false; try { yt.current?.destroy(); } catch { /* */ } yt.current = null; if (host.current) host.current.innerHTML = ""; };
-  }, [id, video]);
+  }, [id, video, consent]);
   useImperativeHandle(ref, () => ({
     time: () => (video ? (vid.current?.currentTime ?? null) : (yt.current?.getCurrentTime ? yt.current.getCurrentTime() : null)),
     seek: (s) => { if (video) { if (vid.current) vid.current.currentTime = Math.max(0, s); } else yt.current?.seekTo?.(Math.max(0, s), true); },
@@ -30,6 +32,7 @@ export const Player = forwardRef(function Player({ youtube, video, start = 0 }, 
       {video ? <video ref={vid} src={video} controls playsInline /> : (
         <>
           <div ref={host} style={{ position: "absolute", inset: 0 }} />
+          {id && !consent && <YTGate youtube={youtube} />}
           {(err || !id) && (
             <div className="yterr">
               <span>{id ? "YouTube player se ovdje ne može učitati." : "Za ovu utakmicu još nije povezana snimka."}</span>

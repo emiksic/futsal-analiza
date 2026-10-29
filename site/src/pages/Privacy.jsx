@@ -13,7 +13,7 @@ export function Privacy({ db }) {
             <li>U kadetskoj ligi (U-17) prikazujemo samo brojeve, bez imena i bez podataka o kretanju pojedinog igrača.</li>
           </ul>
           <h2>Video</h2>
-          <p>Snimke utakmica pripadaju klubovima i prijenosnicima. Prikazujemo ih kroz YouTube player u načinu bez kolačića za praćenje (youtube-nocookie.com).
+          <p>Snimke utakmica pripadaju klubovima i prijenosnicima. Prikazujemo ih kroz YouTube player (youtube-nocookie.com), koji se učitava tek kad klikneš "Učitaj YouTube video". Do tada stranica ništa ne učitava s YouTubea. Pristanak vrijedi do kraja posjete.
             Video s ucrtanim oznakama objavljujemo samo uz pisanu dozvolu vlasnika snimke.</p>
           <h2>Kolačići</h2>
           <p>Stranica ne koristi kolačiće za praćenje ni oglašavanje.</p>
