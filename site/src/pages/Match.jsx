@@ -280,7 +280,8 @@ function Lineups({ m, ix, A }) {
       <div className="bench">
         {["home", "away"].map((side) => {
           const c = ix.club[m[side]];
-          const list = r[side].players.filter((p) => !r[side].start.includes(p)).map((p) => ix.player[p]).filter(Boolean).sort((a, b) => a.num - b.num);
+          const list = r[side].players.filter((p) => !r[side].start.includes(p)).map((p) => ix.player[p]).filter(Boolean)
+            .sort((a, b) => (r[side].gk.includes(b.id) - r[side].gk.includes(a.id)) || (+a.num - +b.num));   // golmani prvi, zatim po broju
           return (
             <div key={side}>
               <h4><Jersey kit={c.kit} size={20} />{c.name}, klupa</h4>
