@@ -25,7 +25,7 @@ export function AnalysedCard({ db, ix, comp, limit = 3 }) {
                 </div>
                 <div className="feat-teams"><Jersey kit={H.kit} size={18} />{H.short}<span className="muted">–</span><Jersey kit={A.kit} size={18} />{A.short}
                   <span className="sc">{s ? `${s[0]}:${s[1]}` : ""}</span></div>
-                <div className="small muted">{ix.league[ix.comp[m.comp].league].name}, {m.round}. kolo, {fmtDay(m.date)}</div>
+                <div className="small muted">{ix.league[ix.comp[m.comp].league].name}, {m.round ? `${m.round}. kolo, ${fmtDay(m.date)}` : "isječak"}</div>
               </a>
             );
           })}

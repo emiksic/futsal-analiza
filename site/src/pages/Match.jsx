@@ -47,8 +47,8 @@ function Board({ m, ix }) {
   return (
     <section className="board" aria-label="Rezultat">
       <div className="board-top">
-        <a href={href("liga", comp.league, comp.season, "rezultati", m.round)}>{L.name}, {m.round}. kolo</a>
-        <span>{fmtDay(m.date)}{m.timeTbd ? "" : ` u ${fmtTime(m.date)}`}</span>
+        <a href={href("liga", comp.league, comp.season, "rezultati", m.round)}>{L.name}{m.round ? `, ${m.round}. kolo` : ", isječak"}</a>
+        {!m.extra && <span>{fmtDay(m.date)}{m.timeTbd ? "" : ` u ${fmtTime(m.date)}`}</span>}
         <span>{ix.hall[m.hall]?.name}, {ix.hall[m.hall]?.city}</span>
         {m.youtube ? <a className="r" href={m.youtube} target="_blank" rel="noreferrer" style={{ display: "inline-flex", gap: 6, alignItems: "center", color: "var(--band-fg)" }}>
           Prijenos na YouTubeu {Icon.ext()}</a>

@@ -1,11 +1,12 @@
 // Početni podaci (bez izmišljenih rezultata).
 // - 1. HMNL 2026./27.: raspored, rezultati, postave i strijelci (HNS Semafor), prijenosi (YouTube / MAXsport)
-// - 1. HMNL juniori: samo dvije analizirane snimke (rezultat nije unesen)
+// - 1. HMNL juniori 2026./27.: raspored i rezultati (HNS Semafor) + analiza isječka RIJ–NVR (3. kolo)
 // Boje dresova su procjena iz grbova i treba ih potvrditi u adminu.
 
-import HMNL from "../data/hmnl-2026-27.json";   // gradi data/hmnl-2026-27/build.py
+import HMNL from "../data/hmnl-2026-27.json";       // gradi: python3 data/build.py hmnl-2026-27 1-hmnl-2026-27 Seniori
+import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build.py juniori-2026-27 juniori-2026-27 U-19
 
-export const SEED_VERSION = 12;
+export const SEED_VERSION = 13;
 
 const leagues = [
   { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
@@ -28,6 +29,10 @@ const halls = [
   { id: "dom-sportova", name: "Dom sportova", city: "Zagreb", calibrated: true },
   { id: "dom-sportova-2", name: "Dom sportova, dvorana 2", city: "Zagreb", calibrated: false },
   { id: "mladosti", name: "Sportska dvorana Mladosti", city: "Rijeka", calibrated: false },
+  { id: "lora", name: "Lora", city: "Split", calibrated: false },
+  { id: "zagreb", name: "Zagreb", city: "Zagreb", calibrated: false },
+  { id: "pescenica", name: "Peščenica", city: "Zagreb", calibrated: false },
+  { id: "domjanic", name: "SD OŠ Dragutin Domjanić", city: "Zagreb", calibrated: false },
 ];
 
 // kit: shirt = dres, trim = rukavi/ovratnik, num = broj (procjena)
@@ -41,6 +46,8 @@ const clubs = [
   { id: "novo-vrijeme", name: "Novo Vrijeme", full: "MNK Novo Vrijeme", short: "NVR", city: "Makarska", hall: "makarska", kit: { shirt: "#8c3cc8", trim: "#f2f2f2", num: "#ffffff" } },
   { id: "square", name: "Square", full: "MNK Square", short: "SQU", city: "Dubrovnik", hall: "gospino", kit: { shirt: "#d22f2f", trim: "#111111", num: "#ffffff" } },
   { id: "rijeka", name: "Rijeka", full: "HMNK Rijeka", short: "RIJ", city: "Rijeka", hall: "zamet", kit: { shirt: "#ffffff", trim: "#21b3d6", num: "#1f6fb5" } },
+  { id: "universitas", name: "Universitas Split", full: "AMNK Universitas Split", short: "UNI", city: "Split", hall: "gripe", kit: { shirt: "#8fd3ee", trim: "#0e2f66", num: "#0e2f66" } },
+  { id: "gimka", name: "Uspinjača Gimka", full: "MNK Uspinjača Gimka", short: "GIM", city: "Zagreb", hall: "zagreb", kit: { shirt: "#1f3a6b", trim: "#ffffff", num: "#ffffff" } },
   { id: "hajduk", name: "Hajduk", full: "MNK Hajduk", short: "HAJ", city: "Split", hall: "gripe", kit: { shirt: "#ffffff", trim: "#c8102e", num: "#1d3c8f" } },
 ];
 
@@ -56,28 +63,28 @@ function build() {
 
   // --- 1. HMNL seniori
   const cid = "1-hmnl-2026-27";
-  comps.push({ id: cid, league: "1-hmnl", season: "2026-27", teams: clubs.map((c) => c.id), rounds: 18 });
+  const SEN = ["torcida", "olmissum", "crnica", "osijek", "futsal-dinamo", "pula", "novo-vrijeme", "square", "rijeka", "hajduk"];
+  comps.push({ id: cid, league: "1-hmnl", season: "2026-27", teams: SEN, rounds: 18 });
   players.push(...HMNL.players);
   matches.push(...HMNL.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
 
-  // --- juniori: dvije analizirane snimke
+  // --- juniori: raspored i rezultati + analiza isječka
   const jid = "juniori-2026-27";
-  comps.push({ id: jid, league: "juniori", season: "2026-27", teams: ["rijeka", "novo-vrijeme", "futsal-dinamo", "olmissum"], rounds: 14 });
+  comps.push({ id: jid, league: "juniori", season: "2026-27", teams: [...new Set(JUNIORI.matches.flatMap((m) => [m.home, m.away]))], rounds: 22 });
+  matches.push(...JUNIORI.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
   for (const [club, S] of Object.entries(JUN))
     for (const n of S.nums) players.push({ id: pid(club, "2026-27", "U-19", n), club, season: "2026-27", cat: "U-19", num: n, name: "", gk: S.gk.includes(n) });
   const jp = (c, n) => pid(c, "2026-27", "U-19", n);
   const R = (c) => ({ players: JUN[c].nums.map((n) => jp(c, n)), start: JUN[c].start.map((n) => jp(c, n)), gk: JUN[c].gk.map((n) => jp(c, n)) });
-  matches.push({ id: `${jid}-rijeka-novo-vrijeme`, comp: jid, round: 6, date: "2026-10-24T10:00:00.000Z", home: "rijeka", away: "novo-vrijeme", hall: "zamet",
-    status: "finished", noScore: true, youtube: "https://www.youtube.com/watch?v=eCDieI6ctu0",
-    roster: { home: R("rijeka"), away: R("novo-vrijeme") }, events: [],
-    analysis: { status: "done", clip: "u1", video: "media/u1.mp4", data: "media/u1.json", from: 128, to: 148,
-      rights: "embed", ytOffset: null,
-      note: "Isječak od 20 s (128.–148. s snimke, 07:49–08:09 na satu). Brojevi su ograničeni na zapisnik.", teamMap: { RIJ: "home", NVR: "away" } } });
-  matches.push({ id: `${jid}-futsal-dinamo-olmissum`, comp: jid, round: 2, date: "2026-09-27T10:00:00.000Z", home: "futsal-dinamo", away: "olmissum", hall: "dom-sportova",
-    status: "finished", noScore: true, youtube: "https://www.youtube.com/watch?v=pNdDlCB2PT8", roster: { home: null, away: null }, events: [],
-    analysis: { status: "done", clip: "u2", video: "media/u2.mp4", data: "media/u2.json", from: 0, to: 150,
-      rights: "embed", ytOffset: null,
-      note: "Isječak od 2:30. Zapisnik još nije unesen, a boje ekipa su pretpostavka (plavi = Futsal Dinamo, zeleni = Olmissum).",
+  const u1 = matches.find((m) => m.id === `${jid}-k3-rijeka-novo-vrijeme`);
+  Object.assign(u1, { roster: { home: R("rijeka"), away: R("novo-vrijeme") },
+    analysis: { status: "done", clip: "u1", video: "media/u1.mp4", data: "media/u1.json", from: 128, to: 148, rights: "embed", ytOffset: null,
+      note: "Isječak od 20 s (07:49–08:09 na satu, 1:0 za Rijeku). Brojevi su ograničeni na zapisnik.", teamMap: { RIJ: "home", NVR: "away" } } });
+  // drugi isječak (DIN–OLM): još nije utvrđeno s koje je utakmice, pa nije u rasporedu
+  matches.push({ id: "isjecak-futsal-dinamo-olmissum", comp: jid, round: null, extra: true, date: "2026-09-27T10:00:00.000Z", home: "futsal-dinamo", away: "olmissum", hall: "dom-sportova",
+    status: "finished", noScore: true, youtube: "", roster: { home: null, away: null }, events: [],
+    analysis: { status: "done", clip: "u2", video: "media/u2.mp4", data: "media/u2.json", from: 0, to: 150, rights: "embed", ytOffset: null,
+      note: "Isječak od 2:30. Utakmica i zapisnik još nisu utvrđeni, a boje ekipa su pretpostavka (plavi = Futsal Dinamo, zeleni = Olmissum).",
       teamMap: { DIN: "home", OLM: "away" }, kitUnconfirmed: true } });
 
   const site = { name: "", contact: "" };   // naziv još nije odabran

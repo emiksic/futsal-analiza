@@ -1,11 +1,13 @@
-"""Gradi site/src/data/hmnl-2026-27.json iz schedule.txt i kN-domacin-gost.txt (postave i golovi, HNS Semafor).
-python3 data/hmnl-2026-27/build.py
+"""Gradi site/src/data/<mapa>.json iz <mapa>/schedule.txt i <mapa>/kN-domacin-gost.txt (postave i golovi, HNS Semafor).
+python3 data/build.py hmnl-2026-27 1-hmnl-2026-27 Seniori
+python3 data/build.py juniori-2026-27 juniori-2026-27 U-19
 """
 import json, os, re, sys, unicodedata
 def slug(s): return re.sub(r"[^a-z0-9]+", "-", unicodedata.normalize("NFKD", s.replace("đ", "d").replace("Đ", "D")).encode("ascii", "ignore").decode().lower()).strip("-")
-D = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(D, "..", "..", "site", "src", "data", "hmnl-2026-27.json")
-CID, SEASON, CAT = "1-hmnl-2026-27", "2026-27", "Seniori"
+NAME, CID, CAT = sys.argv[1], sys.argv[2], sys.argv[3]
+SEASON = "2026-27"
+D = os.path.join(os.path.dirname(os.path.abspath(__file__)), NAME)
+OUT = os.path.join(D, "..", "..", "site", "src", "data", NAME + ".json")
 
 def parse_detail(path):
     sec, out = None, {"home": [], "away": [], "goals": []}

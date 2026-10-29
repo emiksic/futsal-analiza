@@ -1,0 +1,2435 @@
+{
+"matches": [
+{
+"id": "juniori-2026-27-k1-crnica-olmissum",
+"comp": "juniori-2026-27",
+"round": 1,
+"date": "2026-10-03T14:00:00+02:00",
+"home": "crnica",
+"away": "olmissum",
+"hall": "baldekin",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+3,
+8
+]
+},
+{
+"id": "juniori-2026-27-k1-pula-square",
+"comp": "juniori-2026-27",
+"round": 1,
+"date": "2026-10-04T12:00:00+02:00",
+"home": "pula",
+"away": "square",
+"hall": "mate-parlov",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+3,
+7
+]
+},
+{
+"id": "juniori-2026-27-k1-universitas-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 1,
+"date": "2026-10-04T12:30:00+02:00",
+"home": "universitas",
+"away": "futsal-dinamo",
+"hall": "lora",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+2,
+6
+]
+},
+{
+"id": "juniori-2026-27-k1-gimka-hajduk",
+"comp": "juniori-2026-27",
+"round": 1,
+"date": "2026-10-04T12:30:00+02:00",
+"home": "gimka",
+"away": "hajduk",
+"hall": "zagreb",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+3,
+2
+]
+},
+{
+"id": "juniori-2026-27-k1-rijeka-torcida",
+"comp": "juniori-2026-27",
+"round": 1,
+"date": "2026-10-04T13:00:00+02:00",
+"home": "rijeka",
+"away": "torcida",
+"hall": "mladosti",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+4,
+2
+]
+},
+{
+"id": "juniori-2026-27-k1-osijek-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 1,
+"date": "2026-10-04T15:00:00+02:00",
+"home": "osijek",
+"away": "novo-vrijeme",
+"hall": "zrinjevac",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+6,
+4
+]
+},
+{
+"id": "juniori-2026-27-k2-torcida-gimka",
+"comp": "juniori-2026-27",
+"round": 2,
+"date": "2026-10-10T20:00:00+02:00",
+"home": "torcida",
+"away": "gimka",
+"hall": "gripe",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+1,
+8
+]
+},
+{
+"id": "juniori-2026-27-k2-square-osijek",
+"comp": "juniori-2026-27",
+"round": 2,
+"date": "2026-10-11T11:30:00+02:00",
+"home": "square",
+"away": "osijek",
+"hall": "gospino",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+6,
+3
+]
+},
+{
+"id": "juniori-2026-27-k2-novo-vrijeme-crnica",
+"comp": "juniori-2026-27",
+"round": 2,
+"date": "2026-10-11T12:00:00+02:00",
+"home": "novo-vrijeme",
+"away": "crnica",
+"hall": "makarska",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+1,
+5
+]
+},
+{
+"id": "juniori-2026-27-k2-olmissum-rijeka",
+"comp": "juniori-2026-27",
+"round": 2,
+"date": "2026-10-11T12:15:00+02:00",
+"home": "olmissum",
+"away": "rijeka",
+"hall": "omis",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+6,
+3
+]
+},
+{
+"id": "juniori-2026-27-k2-universitas-pula",
+"comp": "juniori-2026-27",
+"round": 2,
+"date": "2026-10-11T12:30:00+02:00",
+"home": "universitas",
+"away": "pula",
+"hall": "gripe",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+2,
+7
+]
+},
+{
+"id": "juniori-2026-27-k2-futsal-dinamo-hajduk",
+"comp": "juniori-2026-27",
+"round": 2,
+"date": "2026-10-11T17:15:00+02:00",
+"home": "futsal-dinamo",
+"away": "hajduk",
+"hall": "domjanic",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+8,
+4
+]
+},
+{
+"id": "juniori-2026-27-k3-hajduk-torcida",
+"comp": "juniori-2026-27",
+"round": 3,
+"date": "2026-10-17T12:00:00+02:00",
+"home": "hajduk",
+"away": "torcida",
+"hall": "gripe",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+4,
+1
+]
+},
+{
+"id": "juniori-2026-27-k3-crnica-square",
+"comp": "juniori-2026-27",
+"round": 3,
+"date": "2026-10-17T14:00:00+02:00",
+"home": "crnica",
+"away": "square",
+"hall": "baldekin",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+1,
+3
+]
+},
+{
+"id": "juniori-2026-27-k3-gimka-olmissum",
+"comp": "juniori-2026-27",
+"round": 3,
+"date": "2026-10-17T14:30:00+02:00",
+"home": "gimka",
+"away": "olmissum",
+"hall": "pescenica",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+3,
+6
+]
+},
+{
+"id": "juniori-2026-27-k3-pula-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 3,
+"date": "2026-10-17T15:00:00+02:00",
+"home": "pula",
+"away": "futsal-dinamo",
+"hall": "mate-parlov",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+1,
+5
+]
+},
+{
+"id": "juniori-2026-27-k3-osijek-universitas",
+"comp": "juniori-2026-27",
+"round": 3,
+"date": "2026-10-18T12:00:00+02:00",
+"home": "osijek",
+"away": "universitas",
+"hall": "zrinjevac",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+3,
+1
+]
+},
+{
+"id": "juniori-2026-27-k3-rijeka-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 3,
+"date": "2026-10-18T12:00:00+02:00",
+"home": "rijeka",
+"away": "novo-vrijeme",
+"hall": "zamet",
+"status": "finished",
+"youtube": "https://www.youtube.com/watch?v=eCDieI6ctu0",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"result": [
+5,
+1
+]
+},
+{
+"id": "juniori-2026-27-k4-futsal-dinamo-torcida",
+"comp": "juniori-2026-27",
+"round": 4,
+"date": "2026-11-07T20:00:00+01:00",
+"home": "futsal-dinamo",
+"away": "torcida",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k4-olmissum-hajduk",
+"comp": "juniori-2026-27",
+"round": 4,
+"date": "2026-11-07T20:00:00+01:00",
+"home": "olmissum",
+"away": "hajduk",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k4-novo-vrijeme-gimka",
+"comp": "juniori-2026-27",
+"round": 4,
+"date": "2026-11-07T20:00:00+01:00",
+"home": "novo-vrijeme",
+"away": "gimka",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k4-square-rijeka",
+"comp": "juniori-2026-27",
+"round": 4,
+"date": "2026-11-07T20:00:00+01:00",
+"home": "square",
+"away": "rijeka",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k4-universitas-crnica",
+"comp": "juniori-2026-27",
+"round": 4,
+"date": "2026-11-07T20:00:00+01:00",
+"home": "universitas",
+"away": "crnica",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k4-pula-osijek",
+"comp": "juniori-2026-27",
+"round": 4,
+"date": "2026-11-07T20:00:00+01:00",
+"home": "pula",
+"away": "osijek",
+"hall": "mate-parlov",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k5-osijek-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 5,
+"date": "2026-11-14T20:00:00+01:00",
+"home": "osijek",
+"away": "futsal-dinamo",
+"hall": "zrinjevac",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k5-crnica-pula",
+"comp": "juniori-2026-27",
+"round": 5,
+"date": "2026-11-14T20:00:00+01:00",
+"home": "crnica",
+"away": "pula",
+"hall": "baldekin",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k5-rijeka-universitas",
+"comp": "juniori-2026-27",
+"round": 5,
+"date": "2026-11-14T20:00:00+01:00",
+"home": "rijeka",
+"away": "universitas",
+"hall": "mladosti",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k5-gimka-square",
+"comp": "juniori-2026-27",
+"round": 5,
+"date": "2026-11-14T20:00:00+01:00",
+"home": "gimka",
+"away": "square",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k5-hajduk-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 5,
+"date": "2026-11-14T20:00:00+01:00",
+"home": "hajduk",
+"away": "novo-vrijeme",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k5-torcida-olmissum",
+"comp": "juniori-2026-27",
+"round": 5,
+"date": "2026-11-14T20:00:00+01:00",
+"home": "torcida",
+"away": "olmissum",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k6-futsal-dinamo-olmissum",
+"comp": "juniori-2026-27",
+"round": 6,
+"date": "2026-11-21T20:00:00+01:00",
+"home": "futsal-dinamo",
+"away": "olmissum",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k6-novo-vrijeme-torcida",
+"comp": "juniori-2026-27",
+"round": 6,
+"date": "2026-11-21T20:00:00+01:00",
+"home": "novo-vrijeme",
+"away": "torcida",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k6-square-hajduk",
+"comp": "juniori-2026-27",
+"round": 6,
+"date": "2026-11-21T20:00:00+01:00",
+"home": "square",
+"away": "hajduk",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k6-universitas-gimka",
+"comp": "juniori-2026-27",
+"round": 6,
+"date": "2026-11-21T20:00:00+01:00",
+"home": "universitas",
+"away": "gimka",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k6-pula-rijeka",
+"comp": "juniori-2026-27",
+"round": 6,
+"date": "2026-11-21T20:00:00+01:00",
+"home": "pula",
+"away": "rijeka",
+"hall": "mate-parlov",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k6-osijek-crnica",
+"comp": "juniori-2026-27",
+"round": 6,
+"date": "2026-11-21T20:00:00+01:00",
+"home": "osijek",
+"away": "crnica",
+"hall": "zrinjevac",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k7-crnica-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 7,
+"date": "2026-12-05T20:00:00+01:00",
+"home": "crnica",
+"away": "futsal-dinamo",
+"hall": "baldekin",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k7-rijeka-osijek",
+"comp": "juniori-2026-27",
+"round": 7,
+"date": "2026-12-05T20:00:00+01:00",
+"home": "rijeka",
+"away": "osijek",
+"hall": "mladosti",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k7-gimka-pula",
+"comp": "juniori-2026-27",
+"round": 7,
+"date": "2026-12-05T20:00:00+01:00",
+"home": "gimka",
+"away": "pula",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k7-hajduk-universitas",
+"comp": "juniori-2026-27",
+"round": 7,
+"date": "2026-12-05T20:00:00+01:00",
+"home": "hajduk",
+"away": "universitas",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k7-torcida-square",
+"comp": "juniori-2026-27",
+"round": 7,
+"date": "2026-12-05T20:00:00+01:00",
+"home": "torcida",
+"away": "square",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k7-olmissum-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 7,
+"date": "2026-12-05T20:00:00+01:00",
+"home": "olmissum",
+"away": "novo-vrijeme",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k8-futsal-dinamo-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 8,
+"date": "2026-12-12T20:00:00+01:00",
+"home": "futsal-dinamo",
+"away": "novo-vrijeme",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k8-square-olmissum",
+"comp": "juniori-2026-27",
+"round": 8,
+"date": "2026-12-12T20:00:00+01:00",
+"home": "square",
+"away": "olmissum",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k8-universitas-torcida",
+"comp": "juniori-2026-27",
+"round": 8,
+"date": "2026-12-12T20:00:00+01:00",
+"home": "universitas",
+"away": "torcida",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k8-pula-hajduk",
+"comp": "juniori-2026-27",
+"round": 8,
+"date": "2026-12-12T20:00:00+01:00",
+"home": "pula",
+"away": "hajduk",
+"hall": "mate-parlov",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k8-osijek-gimka",
+"comp": "juniori-2026-27",
+"round": 8,
+"date": "2026-12-12T20:00:00+01:00",
+"home": "osijek",
+"away": "gimka",
+"hall": "zrinjevac",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k8-crnica-rijeka",
+"comp": "juniori-2026-27",
+"round": 8,
+"date": "2026-12-12T20:00:00+01:00",
+"home": "crnica",
+"away": "rijeka",
+"hall": "baldekin",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k9-rijeka-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 9,
+"date": "2026-12-19T20:00:00+01:00",
+"home": "rijeka",
+"away": "futsal-dinamo",
+"hall": "mladosti",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k9-gimka-crnica",
+"comp": "juniori-2026-27",
+"round": 9,
+"date": "2026-12-19T20:00:00+01:00",
+"home": "gimka",
+"away": "crnica",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k9-hajduk-osijek",
+"comp": "juniori-2026-27",
+"round": 9,
+"date": "2026-12-19T20:00:00+01:00",
+"home": "hajduk",
+"away": "osijek",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k9-torcida-pula",
+"comp": "juniori-2026-27",
+"round": 9,
+"date": "2026-12-19T20:00:00+01:00",
+"home": "torcida",
+"away": "pula",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k9-olmissum-universitas",
+"comp": "juniori-2026-27",
+"round": 9,
+"date": "2026-12-19T20:00:00+01:00",
+"home": "olmissum",
+"away": "universitas",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k9-novo-vrijeme-square",
+"comp": "juniori-2026-27",
+"round": 9,
+"date": "2026-12-19T20:00:00+01:00",
+"home": "novo-vrijeme",
+"away": "square",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k10-futsal-dinamo-square",
+"comp": "juniori-2026-27",
+"round": 10,
+"date": "2027-01-09T20:00:00+01:00",
+"home": "futsal-dinamo",
+"away": "square",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k10-universitas-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 10,
+"date": "2027-01-09T20:00:00+01:00",
+"home": "universitas",
+"away": "novo-vrijeme",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k10-pula-olmissum",
+"comp": "juniori-2026-27",
+"round": 10,
+"date": "2027-01-09T20:00:00+01:00",
+"home": "pula",
+"away": "olmissum",
+"hall": "mate-parlov",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k10-osijek-torcida",
+"comp": "juniori-2026-27",
+"round": 10,
+"date": "2027-01-09T20:00:00+01:00",
+"home": "osijek",
+"away": "torcida",
+"hall": "zrinjevac",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k10-crnica-hajduk",
+"comp": "juniori-2026-27",
+"round": 10,
+"date": "2027-01-09T20:00:00+01:00",
+"home": "crnica",
+"away": "hajduk",
+"hall": "baldekin",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k10-rijeka-gimka",
+"comp": "juniori-2026-27",
+"round": 10,
+"date": "2027-01-09T20:00:00+01:00",
+"home": "rijeka",
+"away": "gimka",
+"hall": "mladosti",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k11-gimka-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 11,
+"date": "2027-01-16T20:00:00+01:00",
+"home": "gimka",
+"away": "futsal-dinamo",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k11-hajduk-rijeka",
+"comp": "juniori-2026-27",
+"round": 11,
+"date": "2027-01-16T20:00:00+01:00",
+"home": "hajduk",
+"away": "rijeka",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k11-torcida-crnica",
+"comp": "juniori-2026-27",
+"round": 11,
+"date": "2027-01-16T20:00:00+01:00",
+"home": "torcida",
+"away": "crnica",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k11-olmissum-osijek",
+"comp": "juniori-2026-27",
+"round": 11,
+"date": "2027-01-16T20:00:00+01:00",
+"home": "olmissum",
+"away": "osijek",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k11-novo-vrijeme-pula",
+"comp": "juniori-2026-27",
+"round": 11,
+"date": "2027-01-16T20:00:00+01:00",
+"home": "novo-vrijeme",
+"away": "pula",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k11-square-universitas",
+"comp": "juniori-2026-27",
+"round": 11,
+"date": "2027-01-16T20:00:00+01:00",
+"home": "square",
+"away": "universitas",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k12-futsal-dinamo-universitas",
+"comp": "juniori-2026-27",
+"round": 12,
+"date": "2027-01-30T20:00:00+01:00",
+"home": "futsal-dinamo",
+"away": "universitas",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k12-square-pula",
+"comp": "juniori-2026-27",
+"round": 12,
+"date": "2027-01-30T20:00:00+01:00",
+"home": "square",
+"away": "pula",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k12-novo-vrijeme-osijek",
+"comp": "juniori-2026-27",
+"round": 12,
+"date": "2027-01-30T20:00:00+01:00",
+"home": "novo-vrijeme",
+"away": "osijek",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k12-olmissum-crnica",
+"comp": "juniori-2026-27",
+"round": 12,
+"date": "2027-01-30T20:00:00+01:00",
+"home": "olmissum",
+"away": "crnica",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k12-torcida-rijeka",
+"comp": "juniori-2026-27",
+"round": 12,
+"date": "2027-01-30T20:00:00+01:00",
+"home": "torcida",
+"away": "rijeka",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k12-hajduk-gimka",
+"comp": "juniori-2026-27",
+"round": 12,
+"date": "2027-01-30T20:00:00+01:00",
+"home": "hajduk",
+"away": "gimka",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k13-hajduk-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 13,
+"date": "2027-02-06T20:00:00+01:00",
+"home": "hajduk",
+"away": "futsal-dinamo",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k13-gimka-torcida",
+"comp": "juniori-2026-27",
+"round": 13,
+"date": "2027-02-06T20:00:00+01:00",
+"home": "gimka",
+"away": "torcida",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k13-rijeka-olmissum",
+"comp": "juniori-2026-27",
+"round": 13,
+"date": "2027-02-06T20:00:00+01:00",
+"home": "rijeka",
+"away": "olmissum",
+"hall": "mladosti",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k13-crnica-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 13,
+"date": "2027-02-06T20:00:00+01:00",
+"home": "crnica",
+"away": "novo-vrijeme",
+"hall": "baldekin",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k13-osijek-square",
+"comp": "juniori-2026-27",
+"round": 13,
+"date": "2027-02-06T20:00:00+01:00",
+"home": "osijek",
+"away": "square",
+"hall": "zrinjevac",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k13-pula-universitas",
+"comp": "juniori-2026-27",
+"round": 13,
+"date": "2027-02-06T20:00:00+01:00",
+"home": "pula",
+"away": "universitas",
+"hall": "mate-parlov",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k14-futsal-dinamo-pula",
+"comp": "juniori-2026-27",
+"round": 14,
+"date": "2027-02-13T20:00:00+01:00",
+"home": "futsal-dinamo",
+"away": "pula",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k14-universitas-osijek",
+"comp": "juniori-2026-27",
+"round": 14,
+"date": "2027-02-13T20:00:00+01:00",
+"home": "universitas",
+"away": "osijek",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k14-square-crnica",
+"comp": "juniori-2026-27",
+"round": 14,
+"date": "2027-02-13T20:00:00+01:00",
+"home": "square",
+"away": "crnica",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k14-novo-vrijeme-rijeka",
+"comp": "juniori-2026-27",
+"round": 14,
+"date": "2027-02-13T20:00:00+01:00",
+"home": "novo-vrijeme",
+"away": "rijeka",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k14-olmissum-gimka",
+"comp": "juniori-2026-27",
+"round": 14,
+"date": "2027-02-13T20:00:00+01:00",
+"home": "olmissum",
+"away": "gimka",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k14-torcida-hajduk",
+"comp": "juniori-2026-27",
+"round": 14,
+"date": "2027-02-13T20:00:00+01:00",
+"home": "torcida",
+"away": "hajduk",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k15-torcida-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 15,
+"date": "2027-02-20T20:00:00+01:00",
+"home": "torcida",
+"away": "futsal-dinamo",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k15-hajduk-olmissum",
+"comp": "juniori-2026-27",
+"round": 15,
+"date": "2027-02-20T20:00:00+01:00",
+"home": "hajduk",
+"away": "olmissum",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k15-gimka-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 15,
+"date": "2027-02-20T20:00:00+01:00",
+"home": "gimka",
+"away": "novo-vrijeme",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k15-rijeka-square",
+"comp": "juniori-2026-27",
+"round": 15,
+"date": "2027-02-20T20:00:00+01:00",
+"home": "rijeka",
+"away": "square",
+"hall": "mladosti",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k15-crnica-universitas",
+"comp": "juniori-2026-27",
+"round": 15,
+"date": "2027-02-20T20:00:00+01:00",
+"home": "crnica",
+"away": "universitas",
+"hall": "baldekin",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k15-osijek-pula",
+"comp": "juniori-2026-27",
+"round": 15,
+"date": "2027-02-20T20:00:00+01:00",
+"home": "osijek",
+"away": "pula",
+"hall": "zrinjevac",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k16-futsal-dinamo-osijek",
+"comp": "juniori-2026-27",
+"round": 16,
+"date": "2027-02-27T20:00:00+01:00",
+"home": "futsal-dinamo",
+"away": "osijek",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k16-pula-crnica",
+"comp": "juniori-2026-27",
+"round": 16,
+"date": "2027-02-27T20:00:00+01:00",
+"home": "pula",
+"away": "crnica",
+"hall": "mate-parlov",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k16-universitas-rijeka",
+"comp": "juniori-2026-27",
+"round": 16,
+"date": "2027-02-27T20:00:00+01:00",
+"home": "universitas",
+"away": "rijeka",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k16-square-gimka",
+"comp": "juniori-2026-27",
+"round": 16,
+"date": "2027-02-27T20:00:00+01:00",
+"home": "square",
+"away": "gimka",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k16-novo-vrijeme-hajduk",
+"comp": "juniori-2026-27",
+"round": 16,
+"date": "2027-02-27T20:00:00+01:00",
+"home": "novo-vrijeme",
+"away": "hajduk",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k16-olmissum-torcida",
+"comp": "juniori-2026-27",
+"round": 16,
+"date": "2027-02-27T20:00:00+01:00",
+"home": "olmissum",
+"away": "torcida",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k17-olmissum-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 17,
+"date": "2027-03-06T20:00:00+01:00",
+"home": "olmissum",
+"away": "futsal-dinamo",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k17-torcida-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 17,
+"date": "2027-03-06T20:00:00+01:00",
+"home": "torcida",
+"away": "novo-vrijeme",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k17-hajduk-square",
+"comp": "juniori-2026-27",
+"round": 17,
+"date": "2027-03-06T20:00:00+01:00",
+"home": "hajduk",
+"away": "square",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k17-gimka-universitas",
+"comp": "juniori-2026-27",
+"round": 17,
+"date": "2027-03-06T20:00:00+01:00",
+"home": "gimka",
+"away": "universitas",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k17-rijeka-pula",
+"comp": "juniori-2026-27",
+"round": 17,
+"date": "2027-03-06T20:00:00+01:00",
+"home": "rijeka",
+"away": "pula",
+"hall": "mladosti",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k17-crnica-osijek",
+"comp": "juniori-2026-27",
+"round": 17,
+"date": "2027-03-06T20:00:00+01:00",
+"home": "crnica",
+"away": "osijek",
+"hall": "baldekin",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k18-futsal-dinamo-crnica",
+"comp": "juniori-2026-27",
+"round": 18,
+"date": "2027-03-13T20:00:00+01:00",
+"home": "futsal-dinamo",
+"away": "crnica",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k18-osijek-rijeka",
+"comp": "juniori-2026-27",
+"round": 18,
+"date": "2027-03-13T20:00:00+01:00",
+"home": "osijek",
+"away": "rijeka",
+"hall": "zrinjevac",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k18-pula-gimka",
+"comp": "juniori-2026-27",
+"round": 18,
+"date": "2027-03-13T20:00:00+01:00",
+"home": "pula",
+"away": "gimka",
+"hall": "mate-parlov",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k18-universitas-hajduk",
+"comp": "juniori-2026-27",
+"round": 18,
+"date": "2027-03-13T20:00:00+01:00",
+"home": "universitas",
+"away": "hajduk",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k18-square-torcida",
+"comp": "juniori-2026-27",
+"round": 18,
+"date": "2027-03-13T20:00:00+01:00",
+"home": "square",
+"away": "torcida",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k18-novo-vrijeme-olmissum",
+"comp": "juniori-2026-27",
+"round": 18,
+"date": "2027-03-13T20:00:00+01:00",
+"home": "novo-vrijeme",
+"away": "olmissum",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k19-novo-vrijeme-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 19,
+"date": "2027-03-20T20:00:00+01:00",
+"home": "novo-vrijeme",
+"away": "futsal-dinamo",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k19-olmissum-square",
+"comp": "juniori-2026-27",
+"round": 19,
+"date": "2027-03-20T20:00:00+01:00",
+"home": "olmissum",
+"away": "square",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k19-torcida-universitas",
+"comp": "juniori-2026-27",
+"round": 19,
+"date": "2027-03-20T20:00:00+01:00",
+"home": "torcida",
+"away": "universitas",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k19-hajduk-pula",
+"comp": "juniori-2026-27",
+"round": 19,
+"date": "2027-03-20T20:00:00+01:00",
+"home": "hajduk",
+"away": "pula",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k19-gimka-osijek",
+"comp": "juniori-2026-27",
+"round": 19,
+"date": "2027-03-20T20:00:00+01:00",
+"home": "gimka",
+"away": "osijek",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k19-rijeka-crnica",
+"comp": "juniori-2026-27",
+"round": 19,
+"date": "2027-03-20T20:00:00+01:00",
+"home": "rijeka",
+"away": "crnica",
+"hall": "mladosti",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k20-futsal-dinamo-rijeka",
+"comp": "juniori-2026-27",
+"round": 20,
+"date": "2027-04-10T20:00:00+02:00",
+"home": "futsal-dinamo",
+"away": "rijeka",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k20-crnica-gimka",
+"comp": "juniori-2026-27",
+"round": 20,
+"date": "2027-04-10T20:00:00+02:00",
+"home": "crnica",
+"away": "gimka",
+"hall": "baldekin",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k20-osijek-hajduk",
+"comp": "juniori-2026-27",
+"round": 20,
+"date": "2027-04-10T20:00:00+02:00",
+"home": "osijek",
+"away": "hajduk",
+"hall": "zrinjevac",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k20-pula-torcida",
+"comp": "juniori-2026-27",
+"round": 20,
+"date": "2027-04-10T20:00:00+02:00",
+"home": "pula",
+"away": "torcida",
+"hall": "mate-parlov",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k20-universitas-olmissum",
+"comp": "juniori-2026-27",
+"round": 20,
+"date": "2027-04-10T20:00:00+02:00",
+"home": "universitas",
+"away": "olmissum",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k20-square-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 20,
+"date": "2027-04-10T20:00:00+02:00",
+"home": "square",
+"away": "novo-vrijeme",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k21-square-futsal-dinamo",
+"comp": "juniori-2026-27",
+"round": 21,
+"date": "2027-04-17T20:00:00+02:00",
+"home": "square",
+"away": "futsal-dinamo",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k21-novo-vrijeme-universitas",
+"comp": "juniori-2026-27",
+"round": 21,
+"date": "2027-04-17T20:00:00+02:00",
+"home": "novo-vrijeme",
+"away": "universitas",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k21-olmissum-pula",
+"comp": "juniori-2026-27",
+"round": 21,
+"date": "2027-04-17T20:00:00+02:00",
+"home": "olmissum",
+"away": "pula",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k21-torcida-osijek",
+"comp": "juniori-2026-27",
+"round": 21,
+"date": "2027-04-17T20:00:00+02:00",
+"home": "torcida",
+"away": "osijek",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k21-hajduk-crnica",
+"comp": "juniori-2026-27",
+"round": 21,
+"date": "2027-04-17T20:00:00+02:00",
+"home": "hajduk",
+"away": "crnica",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k21-gimka-rijeka",
+"comp": "juniori-2026-27",
+"round": 21,
+"date": "2027-04-17T20:00:00+02:00",
+"home": "gimka",
+"away": "rijeka",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k22-futsal-dinamo-gimka",
+"comp": "juniori-2026-27",
+"round": 22,
+"date": "2027-04-24T20:00:00+02:00",
+"home": "futsal-dinamo",
+"away": "gimka",
+"hall": "dom-sportova-2",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k22-rijeka-hajduk",
+"comp": "juniori-2026-27",
+"round": 22,
+"date": "2027-04-24T20:00:00+02:00",
+"home": "rijeka",
+"away": "hajduk",
+"hall": "mladosti",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k22-crnica-torcida",
+"comp": "juniori-2026-27",
+"round": 22,
+"date": "2027-04-24T20:00:00+02:00",
+"home": "crnica",
+"away": "torcida",
+"hall": "baldekin",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k22-osijek-olmissum",
+"comp": "juniori-2026-27",
+"round": 22,
+"date": "2027-04-24T20:00:00+02:00",
+"home": "osijek",
+"away": "olmissum",
+"hall": "zrinjevac",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k22-pula-novo-vrijeme",
+"comp": "juniori-2026-27",
+"round": 22,
+"date": "2027-04-24T20:00:00+02:00",
+"home": "pula",
+"away": "novo-vrijeme",
+"hall": "mate-parlov",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+},
+{
+"id": "juniori-2026-27-k22-universitas-square",
+"comp": "juniori-2026-27",
+"round": 22,
+"date": "2027-04-24T20:00:00+02:00",
+"home": "universitas",
+"away": "square",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+}
+],
+"players": []
+}
