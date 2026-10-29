@@ -9,9 +9,9 @@
 2|03.10.2026 15:30|olmissum|hajduk|5:3|omis|yt:O-Yh-nqsgOE
 2|03.10.2026 20:30|pula|crnica|4:2|mate-parlov|yt:P4-nXgAyYio
 2|04.10.2026 18:30|osijek|novo-vrijeme|9:2|zrinjevac|tv:MAXsport
-3|09.10.2026 20:15|futsal-dinamo|olmissum|2:2|sutinska|?
+3|09.10.2026 20:15|futsal-dinamo|olmissum|2:2|sutinska|tv:MAXsport
 3|10.10.2026 18:00|rijeka|osijek|7:3|zamet|yt:M3j5NTb1bhc
-3|10.10.2026 20:15|crnica|torcida|6:0|baldekin|?
+3|10.10.2026 20:15|crnica|torcida|6:0|baldekin|tv:MAXsport
 3|11.10.2026 19:00|novo-vrijeme|pula|7:1|makarska|yt:VKRdKgTSYIo
 3|11.10.2026 19:45|hajduk|square|3:3|gripe|yt:TLmLa6rbOfk
 4|23.10.2026 18:15|futsal-dinamo|crnica|4:0|sutinska|yt:Z4o0uQZ5Abw

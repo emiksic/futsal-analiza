@@ -5,7 +5,7 @@
 
 import HMNL from "../data/hmnl-2026-27.json";   // gradi data/hmnl-2026-27/build.py
 
-export const SEED_VERSION = 10;
+export const SEED_VERSION = 11;
 
 const leagues = [
   { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
