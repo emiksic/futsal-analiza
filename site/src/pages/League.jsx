@@ -52,6 +52,7 @@ export function League({ db, ix, leagueId, seasonId, tab = "tablica", roundArg }
 
 function Standings({ db, ix, comp, league }) {
   const rows = standings(db, comp.id), z = league.zones || {};
+  if (!rows.some((r) => r.p)) return <div className="empty">Rezultati za ovu ligu još nisu uneseni.</div>;
   return (
     <>
       <div className="tbl-wrap">
@@ -120,10 +121,11 @@ function Rounds({ db, ix, comp, round }) {
 function Scorers({ db, ix, comp }) {
   const list = scorers(db, comp.id);
   if (!list.length) return <div className="empty">Nema golova u ovoj sezoni.</div>;
+  const hasA = list.some((r) => r.assists);
   return (
     <div className="tbl-wrap">
       <table className="st">
-        <thead><tr><th>#</th><th className="l">Igrač</th><th className="l hide-s">Klub</th><th title="Golovi">G</th><th title="Asistencije">A</th><th title="Nastupi">Nast.</th></tr></thead>
+        <thead><tr><th>#</th><th className="l">Igrač</th><th className="l hide-s">Klub</th><th title="Golovi">G</th>{hasA && <th title="Asistencije">A</th>}<th title="Utakmice u zapisniku">Nast.</th></tr></thead>
         <tbody>{list.slice(0, 40).map((r, i) => {
           const p = ix.player[r.player], c = ix.club[r.club];
           return (
@@ -131,7 +133,7 @@ function Scorers({ db, ix, comp }) {
               <td className="pos">{i + 1}</td>
               <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={24} num={p?.num} />{playerName(p)}</a></td>
               <td className="l hide-s muted">{c.name}</td>
-              <td className="pts">{r.goals}</td><td>{r.assists}</td><td>{r.apps}</td>
+              <td className="pts">{r.goals}</td>{hasA && <td>{r.assists}</td>}<td>{r.apps}</td>
             </tr>
           );
         })}</tbody>

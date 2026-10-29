@@ -11,8 +11,8 @@ export function MatchRow({ m, ix, showDay }) {
     <a className="mrow" href={href("utakmica", m.id)}>
       <div className={"when" + (fin ? " fin" : "")}>
         {showDay && <div>{fmtDay(m.date)}</div>}
-        <div>{fin ? "Kraj" : fmtTime(m.date)}</div>
-        {(m.youtube || m.tv) && <div className="tvtag" title={m.youtube ? "Prijenos na YouTubeu" : `Prijenos: ${m.tv}`}>{m.youtube ? "YouTube" : m.tv}</div>}
+        <div>{fin ? "Kraj" : m.timeTbd ? "—" : fmtTime(m.date)}</div>
+        {(m.youtube || m.tv) && <div className="tvtag" title={m.youtube ? "Prijenos na YouTubeu" : `Prijenos: ${m.tv}`}>{m.youtube ? "YouTube" : m.tv === "MAXsport" ? "MAX" : m.tv}</div>}
       </div>
       <div className="teams">
         <div className={"t" + (lostH ? " lost" : "")}><Jersey kit={H.kit} size={20} /><span>{H.name}</span></div>

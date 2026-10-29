@@ -1,0 +1,40 @@
+HOME_PLAYERS
+33|Victor Lopez Gonzalez|GK|S
+10|Vitor Hugo de Lima da Silva|-|S
+20|Yuri Madruga|-|S
+23|Antonio Sekulić|-|S
+77|Nejc Hozjan|-|S
+1|Franko Jamičić|GK|B
+40|Tomislav Mioč|GK|B
+4|Matias Mijić|-|B
+7|Josip Šalaj|-|B
+8|Andrej Pandurević|-|B
+11|Lovro Trdin|-|B
+17|Ronaldo Aparecido Prado De Oliveira Junior|-|B
+18|Jakov Jurišić|-|B
+88|Josip Suton|-|B
+AWAY_PLAYERS
+1|Filip Bašković|GK|S
+7|Gabrijel Lasić|-|S
+9|Jonhn Lennon Felinto Silva|-|S
+27|Loren Radić|-|S
+33|Ante Silić|-|S
+20|Mijo Brzica|GK|B
+6|Jure Suban|-|B
+11|Muanis Duvnjak|-|B
+13|Kristijan Jurilj|-|B
+14|Marin Musinov|-|B
+15|Klemen Duščak|-|B
+80|Adrijan Trstenjak|-|B
+GOALS
+6|Antonio Sekulić|-
+10|Vitor Hugo de Lima da Silva|-
+12|Lovro Trdin|-
+15|Ronaldo Aparecido Prado De Oliveira Junior|AG
+18|Jonhn Lennon Felinto Silva|-
+19|Antonio Sekulić|-
+25|Yuri Madruga|-
+33|Nejc Hozjan|-
+36|Vitor Hugo de Lima da Silva|-
+37|Ronaldo Aparecido Prado De Oliveira Junior|-
+37|Vitor Hugo de Lima da Silva|-

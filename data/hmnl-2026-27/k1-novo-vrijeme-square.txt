@@ -1,0 +1,39 @@
+HOME_PLAYERS
+1|Filip Bašković|GK|S
+7|Gabrijel Lasić|-|S
+9|Jonhn Lennon Felinto Silva|-|S
+27|Loren Radić|-|S
+33|Ante Silić|-|S
+17|Antonio Džaja|GK|B
+5|Niko Radić|-|B
+11|Muanis Duvnjak|-|B
+14|Marin Musinov|-|B
+15|Klemen Duščak|-|B
+19|Ivan Pavao Staničić|-|B
+80|Adrijan Trstenjak|-|B
+AWAY_PLAYERS
+1|Zoran Primić|GK|S
+8|Matej Perović|-|S
+10|Marko Kuraja|-|S
+11|Anderson de Souza Santos|-|S
+19|Maro Đuraš|-|S
+12|Adriano Tomičić|GK|B
+5|Hrvoje Šijaković|-|B
+9|Andre-Luis Sasse|-|B
+13|Antonio Konsuo|-|B
+17|Antonio Lang|-|B
+18|Đivo Lobaš|-|B
+21|Mateo Kljunak|-|B
+23|Matuš Ševčik|-|B
+49|Ivor Jerinić|-|B
+GOALS
+6|Ante Silić|-
+8|Jonhn Lennon Felinto Silva|-
+8|Marko Kuraja|-
+14|Andre-Luis Sasse|-
+15|Klemen Duščak|-
+20|Antonio Lang|-
+26|Andre-Luis Sasse|-
+28|Maro Đuraš|-
+32|Anderson de Souza Santos|-
+37|Andre-Luis Sasse|-

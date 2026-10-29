@@ -1,0 +1,41 @@
+HOME_PLAYERS
+1|Zoran Primić|GK|S
+8|Matej Perović|-|S
+10|Marko Kuraja|-|S
+19|Maro Đuraš|-|S
+23|Matuš Ševčik|-|S
+12|Adriano Tomičić|GK|B
+5|Hrvoje Šijaković|-|B
+6|Ivo Čengić|-|B
+7|Haron Džanković|-|B
+9|Andre-Luis Sasse|-|B
+11|Anderson de Souza Santos|-|B
+13|Antonio Konsuo|-|B
+17|Antonio Lang|-|B
+18|Đivo Lobaš|-|B
+AWAY_PLAYERS
+21|Victor Karl Roberth Sääf|GK|S
+5|Manolo Bilić|-|S
+8|Teo Turk|-|S
+12|Đorđe Rosić|-|S
+19|Elvir Husarić|-|S
+31|Leon Tomić|GK|B
+55|Thomas Milić|GK|B
+4|Mihael Matijević|-|B
+7|Daniel Fernandez Garcia|-|B
+10|Rafael Ferreira Lima|-|B
+11|Savio Valadares-Pereira De Mendonca|-|B
+24|David Lučić|-|B
+77|Filip Kamauli|-|B
+87|Frane Beno|-|B
+GOALS
+8|Elvir Husarić|-
+15|Maro Đuraš|-
+17|Marko Kuraja|-
+17|Rafael Ferreira Lima|-
+18|Matej Perović|-
+20|Marko Kuraja|-
+36|Rafael Ferreira Lima|-
+39|Elvir Husarić|-
+40|Maro Đuraš|-
+40|Matej Perović|-

@@ -1,0 +1,37 @@
+HOME_PLAYERS
+23|Danijel Starčić|GK|S
+4|Daniel Moravac|-|S
+11|Bepo Paus|-|S
+16|Igor Đurić|-|S
+21|Niko Vukmir|-|S
+29|Edvin Lorber|GK|B
+77|Domagoj Šteko|GK|B
+6|Radenko Marković|-|B
+7|Teo Hajdaraj|-|B
+8|Kristijan Vasić|-|B
+9|Žan Janež|-|B
+10|David Pernić|-|B
+80|Frane Paus|-|B
+89|Stefano Galešić|-|B
+AWAY_PLAYERS
+21|Victor Karl Roberth Sääf|GK|S
+5|Manolo Bilić|-|S
+8|Teo Turk|-|S
+9|Luka Suton|-|S
+12|Đorđe Rosić|-|S
+31|Leon Tomić|GK|B
+55|Thomas Milić|GK|B
+4|Mihael Matijević|-|B
+11|Savio Valadares-Pereira De Mendonca|-|B
+19|Elvir Husarić|-|B
+24|David Lučić|-|B
+77|Filip Kamauli|-|B
+87|Frane Beno|-|B
+GOALS
+4|Elvir Husarić|-
+9|Đorđe Rosić|-
+11|Niko Vukmir|-
+22|Daniel Moravac|-
+30|Luka Suton|-
+37|Elvir Husarić|-
+39|Luka Suton|-

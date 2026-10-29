@@ -1,0 +1,40 @@
+HOME_PLAYERS
+21|Victor Karl Roberth Sääf|GK|S
+5|Manolo Bilić|-|S
+8|Teo Turk|-|S
+9|Luka Suton|-|S
+10|Rafael Ferreira Lima|-|S
+31|Leon Tomić|GK|B
+55|Thomas Milić|GK|B
+4|Mihael Matijević|-|B
+11|Savio Valadares-Pereira De Mendonca|-|B
+12|Đorđe Rosić|-|B
+19|Elvir Husarić|-|B
+77|Filip Kamauli|-|B
+87|Frane Beno|-|B
+AWAY_PLAYERS
+33|Victor Lopez Gonzalez|GK|S
+10|Vitor Hugo de Lima da Silva|-|S
+20|Yuri Madruga|-|S
+23|Antonio Sekulić|-|S
+77|Nejc Hozjan|-|S
+1|Franko Jamičić|GK|B
+2|Karlo Maloševac|GK|B
+4|Matias Mijić|-|B
+7|Josip Šalaj|-|B
+8|Andrej Pandurević|-|B
+11|Lovro Trdin|-|B
+17|Ronaldo Aparecido Prado De Oliveira Junior|-|B
+18|Jakov Jurišić|-|B
+88|Josip Suton|-|B
+GOALS
+2|Nejc Hozjan|-
+3|Nejc Hozjan|-
+4|Rafael Ferreira Lima|-
+6|Đorđe Rosić|-
+13|Mihael Matijević|-
+14|Mihael Matijević|-
+17|Teo Turk|-
+25|Antonio Sekulić|-
+40|Rafael Ferreira Lima|-
+40|Teo Turk|-

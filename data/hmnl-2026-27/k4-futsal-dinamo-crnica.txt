@@ -1,0 +1,31 @@
+HOME_PLAYERS
+30|Ante Piplica|GK|S
+4|Adnan Kalajdžić|-|S
+14|Mateo Mužar|-|S
+17|Kristian Čekol|-|S
+99|Filip Novak|-|S
+13|Marko Miletić|GK|B
+3|Nikola Gudasić|-|B
+5|Luka Čop|-|B
+8|Ivano Peruško|-|B
+11|Lovro Cigler|-|B
+19|Vito Horvat|-|B
+23|Mihael Čop|-|B
+27|Dominik Drmić|-|B
+AWAY_PLAYERS
+3|Mario Jarmanović|GK|S
+14|Bruno Žilić|-|S
+22|Arnon Santos Cassemiro|-|S
+23|Josip Radić|-|S
+27|Patrik Pasariček|-|S
+4|Nino Nakić|-|B
+5|Niko Škugor|-|B
+7|Luka Celić|-|B
+11|Dragan Vuković|-|B
+26|Ivan Jelić|GK|B
+36|Ivan Buva|-|B
+GOALS
+9|Adnan Kalajdžić|-
+27'3"|Kristian Čekol|-
+32'24"|Kristian Čekol|-
+35|Filip Novak|-

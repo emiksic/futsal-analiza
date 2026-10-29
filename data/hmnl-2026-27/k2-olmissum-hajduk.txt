@@ -1,0 +1,38 @@
+HOME_PLAYERS
+1|Vinko Rozga|GK|S
+4|Duje Kustura|-|S
+10|Romeo Sušac|-|S
+11|Ante Kovačević|-|S
+19|Iiro Olavi Vanha|-|S
+25|Luka Pavlović|GK|B
+7|Uroš Đurić|-|B
+16|Josip Juretić|-|B
+17|Toni Kirevski|-|B
+18|Ivan Kovačević|-|B
+20|David Barbarić|-|B
+24|Jure Copić|-|B
+31|Tomislav Milić|-|B
+77|Igor Da Costa|-|B
+AWAY_PLAYERS
+77|Nikola Čizmić|GK|S
+5|Jakov Hrstić|-|S
+7|Antonio Kulić|-|S
+10|Josip Jurlina|-|S
+11|Eric Fode Sylla|-|S
+2|Mario Zrno|GK|B
+36|Mate Vrdoljak|GK|B
+4|Mladen Burilović|-|B
+17|Vinko Vardić|-|B
+18|Josip Cikojević|-|B
+22|Ivor Šuljić|-|B
+78|Janio Robert Pereira De Almeida|-|B
+80|Antonio Blažević|-|B
+GOALS
+4|Ivan Kovačević|-
+16|David Barbarić|-
+20|Mladen Burilović|AG
+23|Josip Cikojević|-
+32|Janio Robert Pereira De Almeida|-
+33|Antonio Kulić|-
+36|Josip Juretić|-
+40|Iiro Olavi Vanha|-

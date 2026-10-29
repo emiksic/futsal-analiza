@@ -9,6 +9,7 @@ import { Club } from "./pages/Club.jsx";
 import { Match } from "./pages/Match.jsx";
 import { Admin } from "./admin/Admin.jsx";
 import { Privacy } from "./pages/Privacy.jsx";
+import { Notice } from "./components/Notice.jsx";
 
 export default function App() {
   const db = useDB();
@@ -39,6 +40,7 @@ export default function App() {
       {page === "utakmica" && <Match db={db} ix={ix} id={rest[0]} tab={rest[1]} />}
       {page === "admin" && <Admin db={db} ix={ix} route={rest} />}
       {page === "privatnost" && <Privacy db={db} />}
+      {page !== "admin" && page !== "privatnost" && <Notice name={db.site?.name || "Ova stranica"} />}
       {page !== "admin" && (
         <footer className="site-foot">
           <span>Neslužbena stranica, nije povezana s HNS-om ni s klubovima. Video prijenosi pripadaju njihovim vlasnicima i prikazuju se kroz YouTube player.</span>

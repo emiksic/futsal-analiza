@@ -1,0 +1,91 @@
+# kolo|datum vrijeme|domaćin|gost|rezultat|dvorana|prijenos
+1|25.09.2026 18:15|torcida|olmissum|1:7|gripe|yt:abzw169GFZo
+1|25.09.2026 20:15|crnica|osijek|1:4|baldekin|yt:wQ62N2uuhMY
+1|27.09.2026 16:30|futsal-dinamo|pula|1:2|maksimir|tv:MAXsport
+1|27.09.2026 18:00|novo-vrijeme|square|3:7|makarska|yt:KWVxgVncXHQ
+1|28.09.2026 19:00|rijeka|hajduk|4:2|zamet|tv:MAXsport
+2|02.10.2026 18:00|square|rijeka|6:4|gospino|yt:7g1c-gR2Sck
+2|02.10.2026 20:15|torcida|futsal-dinamo|1:4|gripe|tv:MAXsport
+2|03.10.2026 15:30|olmissum|hajduk|5:3|omis|yt:O-Yh-nqsgOE
+2|03.10.2026 20:30|pula|crnica|4:2|mate-parlov|yt:P4-nXgAyYio
+2|04.10.2026 18:30|osijek|novo-vrijeme|9:2|zrinjevac|tv:MAXsport
+3|09.10.2026 20:15|futsal-dinamo|olmissum|2:2|sutinska|?
+3|10.10.2026 18:00|rijeka|osijek|7:3|zamet|yt:M3j5NTb1bhc
+3|10.10.2026 20:15|crnica|torcida|6:0|baldekin|?
+3|11.10.2026 19:00|novo-vrijeme|pula|7:1|makarska|yt:VKRdKgTSYIo
+3|11.10.2026 19:45|hajduk|square|3:3|gripe|yt:TLmLa6rbOfk
+4|23.10.2026 18:15|futsal-dinamo|crnica|4:0|sutinska|yt:Z4o0uQZ5Abw
+4|23.10.2026 20:15|olmissum|square|7:4|omis|tv:MAXsport
+4|24.10.2026 17:45|torcida|novo-vrijeme|2:4|gripe|yt:Knn3tXmG0X8
+4|24.10.2026 18:00|pula|rijeka|2:5|mate-parlov|yt:vQBr6TEkinw
+4|24.10.2026 20:15|osijek|hajduk|2:0|zrinjevac|tv:MAXsport
+5|13.11.2026|crnica|olmissum||baldekin|
+5|13.11.2026|novo-vrijeme|futsal-dinamo||makarska|
+5|13.11.2026|rijeka|torcida||mladosti|
+5|13.11.2026|hajduk|pula||gripe|
+5|13.11.2026|square|osijek||gospino|
+6|20.11.2026|olmissum|osijek||omis|
+6|20.11.2026|pula|square||mate-parlov|
+6|20.11.2026|torcida|hajduk||gripe|
+6|20.11.2026|futsal-dinamo|rijeka||dom-sportova-2|
+6|20.11.2026|crnica|novo-vrijeme||baldekin|
+7|27.11.2026|novo-vrijeme|olmissum||makarska|
+7|27.11.2026|rijeka|crnica||mladosti|
+7|27.11.2026|hajduk|futsal-dinamo||gripe|
+7|27.11.2026|square|torcida||gospino|
+7|27.11.2026|osijek|pula||zrinjevac|
+8|11.12.2026|olmissum|pula||omis|
+8|11.12.2026|torcida|osijek||gripe|
+8|11.12.2026|futsal-dinamo|square||dom-sportova-2|
+8|11.12.2026|crnica|hajduk||baldekin|
+8|11.12.2026|novo-vrijeme|rijeka||makarska|
+9|18.12.2026|rijeka|olmissum||mladosti|
+9|18.12.2026|hajduk|novo-vrijeme||gripe|
+9|18.12.2026|square|crnica||gospino|
+9|18.12.2026|osijek|futsal-dinamo||zrinjevac|
+9|18.12.2026|pula|torcida||mate-parlov|
+10|15.01.2027|olmissum|torcida||omis|
+10|15.01.2027|pula|futsal-dinamo||mate-parlov|
+10|15.01.2027|osijek|crnica||zrinjevac|
+10|15.01.2027|square|novo-vrijeme||gospino|
+10|15.01.2027|hajduk|rijeka||gripe|
+11|22.01.2027|hajduk|olmissum||gripe|
+11|22.01.2027|rijeka|square||mladosti|
+11|22.01.2027|novo-vrijeme|osijek||makarska|
+11|22.01.2027|crnica|pula||baldekin|
+11|22.01.2027|futsal-dinamo|torcida||dom-sportova-2|
+12|29.01.2027|olmissum|futsal-dinamo||omis|
+12|29.01.2027|torcida|crnica||gripe|
+12|29.01.2027|pula|novo-vrijeme||mate-parlov|
+12|29.01.2027|osijek|rijeka||zrinjevac|
+12|29.01.2027|square|hajduk||gospino|
+13|05.02.2027|square|olmissum||gospino|
+13|05.02.2027|hajduk|osijek||gripe|
+13|05.02.2027|rijeka|pula||mladosti|
+13|05.02.2027|novo-vrijeme|torcida||makarska|
+13|05.02.2027|crnica|futsal-dinamo||baldekin|
+14|19.02.2027|olmissum|crnica||omis|
+14|19.02.2027|futsal-dinamo|novo-vrijeme||dom-sportova-2|
+14|19.02.2027|torcida|rijeka||gripe|
+14|19.02.2027|pula|hajduk||mate-parlov|
+14|19.02.2027|osijek|square||zrinjevac|
+15|05.03.2027|osijek|olmissum||zrinjevac|
+15|05.03.2027|square|pula||gospino|
+15|05.03.2027|hajduk|torcida||gripe|
+15|05.03.2027|rijeka|futsal-dinamo||mladosti|
+15|05.03.2027|novo-vrijeme|crnica||makarska|
+16|12.03.2027|olmissum|novo-vrijeme||omis|
+16|12.03.2027|crnica|rijeka||baldekin|
+16|12.03.2027|futsal-dinamo|hajduk||dom-sportova-2|
+16|12.03.2027|torcida|square||gripe|
+16|12.03.2027|pula|osijek||mate-parlov|
+17|02.04.2027|pula|olmissum||mate-parlov|
+17|02.04.2027|osijek|torcida||zrinjevac|
+17|02.04.2027|square|futsal-dinamo||gospino|
+17|02.04.2027|hajduk|crnica||gripe|
+17|02.04.2027|rijeka|novo-vrijeme||mladosti|
+18|23.04.2027|olmissum|rijeka||omis|
+18|23.04.2027|novo-vrijeme|hajduk||makarska|
+18|23.04.2027|crnica|square||baldekin|
+18|23.04.2027|futsal-dinamo|osijek||dom-sportova-2|
+18|23.04.2027|torcida|pula||gripe|

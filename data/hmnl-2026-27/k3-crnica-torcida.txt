@@ -1,0 +1,34 @@
+HOME_PLAYERS
+3|Mario Jarmanović|GK|S
+14|Bruno Žilić|-|S
+19|Franco Jelovčić|-|S
+23|Josip Radić|-|S
+27|Patrik Pasariček|-|S
+26|Ivan Jelić|GK|B
+7|Luka Celić|-|B
+9|Merwane Badahi|-|B
+10|Nairton Severiano Da Silva|-|B
+11|Dragan Vuković|-|B
+17|Toni Legčević|-|B
+22|Arnon Santos Cassemiro|-|B
+AWAY_PLAYERS
+1|Marin Jurić|GK|S
+3|Duje Vladović|-|S
+10|Marko Žuljević|-|S
+21|Petar Pedić|-|S
+37|Karlo Vuković|-|S
+13|Ivan Vranješ|GK|B
+25|Duje Krivošija|GK|B
+7|Julian Esteban Clavijo Urquijo|-|B
+8|Mijo Mišerda|-|B
+14|Borna Jurjević-Adžić|-|B
+18|Bartul Ora|-|B
+22|Dino Palada|-|B
+49|Ante Perkušić|-|B
+GOALS
+4|Toni Legčević|-
+5|Merwane Badahi|-
+13|Arnon Santos Cassemiro|-
+26|Petar Pedić|AG
+28|Luka Celić|-
+40|Toni Legčević|-

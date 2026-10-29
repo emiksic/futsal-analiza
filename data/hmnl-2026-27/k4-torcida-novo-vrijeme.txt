@@ -1,0 +1,36 @@
+HOME_PLAYERS
+1|Marin Jurić|GK|S
+3|Duje Vladović|-|S
+18|Bartul Ora|-|S
+21|Petar Pedić|-|S
+37|Karlo Vuković|-|S
+25|Duje Krivošija|GK|B
+7|Julian Esteban Clavijo Urquijo|-|B
+8|Mijo Mišerda|-|B
+9|Caio Alves Roque|-|B
+10|Marko Žuljević|-|B
+14|Borna Jurjević-Adžić|-|B
+23|Dario Vukasović|-|B
+49|Ante Perkušić|-|B
+99|Nandi Eterović|-|B
+AWAY_PLAYERS
+1|Filip Bašković|GK|S
+7|Gabrijel Lasić|-|S
+9|Jonhn Lennon Felinto Silva|-|S
+27|Loren Radić|-|S
+33|Ante Silić|-|S
+17|Antonio Džaja|GK|B
+20|Mijo Brzica|GK|B
+5|Niko Radić|-|B
+6|Jure Suban|-|B
+11|Muanis Duvnjak|-|B
+14|Marin Musinov|-|B
+15|Klemen Duščak|-|B
+80|Adrijan Trstenjak|-|B
+GOALS
+3|Adrijan Trstenjak|-
+9|Marko Žuljević|-
+23|Klemen Duščak|-
+24|Muanis Duvnjak|-
+31|Mijo Mišerda|-
+40|Filip Bašković|-

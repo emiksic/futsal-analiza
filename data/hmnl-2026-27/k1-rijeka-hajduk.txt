@@ -1,0 +1,36 @@
+HOME_PLAYERS
+21|Victor Karl Roberth Sääf|GK|S
+5|Manolo Bilić|-|S
+8|Teo Turk|-|S
+9|Luka Suton|-|S
+12|Đorđe Rosić|-|S
+31|Leon Tomić|GK|B
+4|Mihael Matijević|-|B
+7|Daniel Fernandez Garcia|-|B
+10|Rafael Ferreira Lima|-|B
+11|Savio Valadares-Pereira De Mendonca|-|B
+19|Elvir Husarić|-|B
+24|David Lučić|-|B
+77|Filip Kamauli|-|B
+87|Frane Beno|-|B
+AWAY_PLAYERS
+77|Nikola Čizmić|GK|S
+5|Jakov Hrstić|-|S
+7|Antonio Kulić|-|S
+10|Josip Jurlina|-|S
+11|Eric Fode Sylla|-|S
+2|Mario Zrno|GK|B
+36|Mate Vrdoljak|GK|B
+4|Mladen Burilović|-|B
+9|Stipe Dolić|-|B
+17|Vinko Vardić|-|B
+18|Josip Cikojević|-|B
+78|Janio Robert Pereira De Almeida|-|B
+80|Antonio Blažević|-|B
+GOALS
+6'35"|Rafael Ferreira Lima|-
+8|Josip Cikojević|-
+19'28"|Josip Cikojević|-
+33'19"|Manolo Bilić|-
+37'55"|Manolo Bilić|-
+38'47"|Rafael Ferreira Lima|-

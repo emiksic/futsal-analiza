@@ -1,0 +1,36 @@
+HOME_PLAYERS
+77|Nikola Čizmić|GK|S
+5|Jakov Hrstić|-|S
+10|Josip Jurlina|-|S
+18|Josip Cikojević|-|S
+78|Janio Robert Pereira De Almeida|-|S
+36|Mate Vrdoljak|GK|B
+4|Mladen Burilović|-|B
+7|Antonio Kulić|-|B
+8|Filipe Da Silva Santana|-|B
+9|Stipe Dolić|-|B
+11|Eric Fode Sylla|-|B
+17|Vinko Vardić|-|B
+22|Ivor Šuljić|-|B
+80|Antonio Blažević|-|B
+AWAY_PLAYERS
+1|Zoran Primić|GK|S
+8|Matej Perović|-|S
+10|Marko Kuraja|-|S
+19|Maro Đuraš|-|S
+23|Matuš Ševčik|-|S
+91|Lujo Jurišić|GK|B
+5|Hrvoje Šijaković|-|B
+6|Ivo Čengić|-|B
+7|Haron Džanković|-|B
+9|Andre-Luis Sasse|-|B
+11|Anderson de Souza Santos|-|B
+13|Antonio Konsuo|-|B
+17|Antonio Lang|-|B
+GOALS
+13|Jakov Hrstić|-
+21'5"|Josip Cikojević|-
+27'27"|Filipe Da Silva Santana|-
+30|Andre-Luis Sasse|-
+30'48"|Maro Đuraš|-
+38|Matuš Ševčik|-

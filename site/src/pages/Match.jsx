@@ -48,7 +48,7 @@ function Board({ m, ix }) {
     <section className="board" aria-label="Rezultat">
       <div className="board-top">
         <a href={href("liga", comp.league, comp.season, "rezultati", m.round)}>{L.name}, {m.round}. kolo</a>
-        <span>{fmtDay(m.date)} u {fmtTime(m.date)}</span>
+        <span>{fmtDay(m.date)}{m.timeTbd ? "" : ` u ${fmtTime(m.date)}`}</span>
         <span>{ix.hall[m.hall]?.name}, {ix.hall[m.hall]?.city}</span>
         {m.youtube ? <a className="r" href={m.youtube} target="_blank" rel="noreferrer" style={{ display: "inline-flex", gap: 6, alignItems: "center", color: "var(--band-fg)" }}>
           Prijenos na YouTubeu {Icon.ext()}</a>
@@ -58,8 +58,8 @@ function Board({ m, ix }) {
         <a className="bteam" href={href("klub", H.id)}><Jersey kit={H.kit} size={58} /><b>{H.name}</b></a>
         <div className="bscore">
           {s ? <div className="digits"><span className={lostH ? "lost" : ""}>{s[0]}</span><span className="sep">:</span><span className={lostA ? "lost" : ""}>{s[1]}</span></div>
-            : <div className="bkick">{fmtTime(m.date)}</div>}
-          <div className="bstate">{fin ? `Kraj${ht ? `, poluvrijeme ${ht[0]}:${ht[1]}` : ""}` : "Zakazano"}</div>
+            : <div className="bkick">{m.timeTbd ? "–:–" : fmtTime(m.date)}</div>}
+          <div className="bstate">{fin ? `Kraj${ht ? `, poluvrijeme ${ht[0]}:${ht[1]}` : ""}` : m.timeTbd ? "Satnica još nije objavljena" : "Zakazano"}</div>
         </div>
         <a className="bteam" href={href("klub", A.id)}><Jersey kit={A.kit} size={58} /><b>{A.name}</b></a>
       </div>
