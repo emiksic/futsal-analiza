@@ -6,12 +6,12 @@
 import HMNL from "../data/hmnl-2026-27.json";       // gradi: python3 data/build.py hmnl-2026-27 1-hmnl-2026-27 Seniori
 import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build.py juniori-2026-27 juniori-2026-27 U-19
 
-export const SEED_VERSION = 13;
+export const SEED_VERSION = 14;
 
 const leagues = [
-  { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
-  { id: "juniori", name: "1. HMNL juniori", category: "U-19", zones: { playoff: 4, relegation: 0 }, privacy: { names: "initial", perPlayer: true } },
-  { id: "kadeti", name: "1. HMNL kadeti", category: "U-17", zones: { playoff: 4, relegation: 0 }, privacy: { names: "number", perPlayer: false } },
+  { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
+  { id: "juniori", name: "1. HMNL juniori", category: "U-19", zones: { direct: 2, playoff: 6, note: "Ispadanje se određuje zbirnom tablicom kadeta i juniora." }, privacy: { names: "initial", perPlayer: true } },
+  { id: "kadeti", name: "1. HMNL kadeti", category: "U-17", zones: { direct: 2, playoff: 6, note: "Ispadanje se određuje zbirnom tablicom kadeta i juniora." }, privacy: { names: "number", perPlayer: false } },
 ];
 const seasons = [{ id: "2026-27", name: "2026./27." }];
 

@@ -1,11 +1,12 @@
 import { href, go } from "../lib/router.js";
-import { standings, scorers, currentRound, fmtDay, playerName } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, playerName, zoneOf } from "../lib/derive.js";
+import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
 import { AnalysedCard, ScorersCard, MiniTable } from "../components/Side.jsx";
 import { Jersey, LeagueBadge, Form, Icon } from "../components/ui.jsx";
 
-const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["analize", "Video analize"]];
+const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["analize", "Video analize"], ["pravila", "Pravila"]];
 
 export function League({ db, ix, leagueId, seasonId, tab = "tablica", roundArg }) {
   const L = ix.league[leagueId];
@@ -39,6 +40,7 @@ export function League({ db, ix, leagueId, seasonId, tab = "tablica", roundArg }
           {tab === "rezultati" && <Rounds db={db} ix={ix} comp={comp} round={roundArg ? +roundArg : null} />}
           {tab === "strijelci" && <Scorers db={db} ix={ix} comp={comp} />}
           {tab === "analize" && <Analysed db={db} ix={ix} comp={comp} />}
+          {tab === "pravila" && <Rules league={L} season={comp.season} />}
         </section>
       </main>
       <aside className="ctx col">
@@ -63,7 +65,7 @@ function Standings({ db, ix, comp, league }) {
           </tr></thead>
           <tbody>
             {rows.map((r, i) => {
-              const zone = i < (z.playoff || 0) ? "z-a" : i >= rows.length - (z.relegation || 0) ? "z-b" : "";
+              const zone = zoneOf(z, i, rows.length);
               const c = ix.club[r.club];
               return (
                 <tr key={r.club} className={zone}>
@@ -79,9 +81,12 @@ function Standings({ db, ix, comp, league }) {
         </table>
       </div>
       <div className="zones">
-        {z.playoff ? <span><i style={{ background: "var(--zone-a)" }} />Doigravanje (1.–{z.playoff}.)</span> : null}
+        {z.direct ? <span><i style={{ background: "var(--zone-a2)" }} />Izravno u polufinale (1.–{z.direct}.)</span> : null}
+        {z.playoff ? <span><i style={{ background: "var(--zone-a)" }} />{z.direct ? `Četvrtfinale (${z.direct + 1}.–${z.playoff}.)` : `Doigravanje (1.–${z.playoff}.)`}</span> : null}
+        {z.qual ? <span><i style={{ background: "var(--zone-q)" }} />Kvalifikacije</span> : null}
         {z.relegation ? <span><i style={{ background: "var(--zone-b)" }} />Ispadanje</span> : null}
-        <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova odlučuju međusobne utakmice, zatim gol-razlika.</span>
+        {z.note ? <span>{z.note}</span> : null}
+        <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova: gol-razlika, više golova, međusobne utakmice, fair-play.</span>
       </div>
     </>
   );
@@ -157,5 +162,21 @@ function RoundCard({ db, ix, comp }) {
       <div className="mlist">{ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} showDay />)}
         {!ms.length && <div className="empty">Raspored još nije unesen.</div>}</div>
     </section>
+  );
+}
+
+function Rules({ league, season }) {
+  const R = RULES[`${league.id}-${season}`];
+  if (!R) return <div className="empty">Sažetak propozicija za ovu ligu još nije unesen.</div>;
+  return (
+    <div className="prose rules">
+      <p className="muted small">Sažetak službenih propozicija HNS-a. Mjerodavan je izvorni dokument:{" "}
+        <a href={R.url} target="_blank" rel="noreferrer" style={{ color: "var(--primary)", fontWeight: 500 }}>{R.title}</a>.</p>
+      {R.sections.map(([h, items]) => (
+        <section key={h}>
+          <h2>{h}</h2>
+          <ul>{items.map((t, i) => <li key={i}>{t}</li>)}</ul>
+        </section>))}
+    </div>
   );
 }

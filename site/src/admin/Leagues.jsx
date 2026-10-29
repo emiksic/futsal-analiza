@@ -30,14 +30,16 @@ export function Leagues({ db, ix }) {
         <div className="pb small muted">U bazi se za svakog igrača čuvaju ime, prezime, klub i broj. Prikaz imena određuje samo što se vidi na javnim stranicama, a u adminu se uvijek vidi puno ime. Za kadete (maloljetnici) preporuka je samo broj i bez podataka po igraču.</div>
         <div className="tbl-wrap">
           <table className="atbl">
-            <thead><tr><th /><th>Naziv</th><th>Kategorija</th><th>Doigravanje</th><th>Ispadanje</th><th>Prikaz imena</th><th>Podaci po igraču</th></tr></thead>
+            <thead><tr><th /><th>Naziv</th><th>Kategorija</th><th title="Izravno u polufinale">Polufinale</th><th title="Ukupno mjesta u doigravanju">Doigravanje</th><th title="Mjesta za kvalifikacije (iznad ispadanja)">Kvalif.</th><th>Ispadanje</th><th>Prikaz imena</th><th>Podaci po igraču</th></tr></thead>
             <tbody>{db.leagues.map((l) => (
               <tr key={l.id}>
                 <td><LeagueBadge league={l} /></td>
                 <td><input className="input sm" value={l.name} onChange={(e) => ul(l.id, (x) => { x.name = e.target.value; })} aria-label="Naziv lige" /></td>
                 <td><select className="input sm" value={l.category} onChange={(e) => ul(l.id, (x) => { x.category = e.target.value; })} aria-label="Kategorija">
                   {["Seniori", "U-19", "U-17", "U-15", "Seniorke"].map((c) => <option key={c}>{c}</option>)}</select></td>
+                <td><input className="input sm num" type="number" min="0" value={l.zones?.direct || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, direct: +e.target.value }; })} aria-label="Izravno u polufinale" /></td>
                 <td><input className="input sm num" type="number" min="0" value={l.zones?.playoff || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, playoff: +e.target.value }; })} aria-label="Doigravanje" /></td>
+                <td><input className="input sm num" type="number" min="0" value={l.zones?.qual || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, qual: +e.target.value }; })} aria-label="Kvalifikacije" /></td>
                 <td><input className="input sm num" type="number" min="0" value={l.zones?.relegation || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, relegation: +e.target.value }; })} aria-label="Ispadanje" /></td>
                 <td><select className="input sm" value={l.privacy?.names || "full"} onChange={(e) => ul(l.id, (x) => { x.privacy = { ...x.privacy, names: e.target.value }; })} aria-label="Prikaz imena">
                   {Object.entries(NAME_FORMATS).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></td>

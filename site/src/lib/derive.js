@@ -8,6 +8,15 @@ export function index(db) {
   return { club: by(db.clubs), player: by(db.players), hall: by(db.halls), league: by(db.leagues), comp: by(db.comps), season: by(db.seasons), match: by(db.matches) };
 }
 
+// Zone tablice: direct = izravno u polufinale, playoff = ukupno u doigravanju, qual = kvalifikacije, relegation = ispadanje
+export function zoneOf(z = {}, i, n) {
+  if (i < (z.direct || 0)) return "z-a2";
+  if (i < (z.playoff || 0)) return "z-a";
+  if (z.relegation && i >= n - z.relegation) return "z-b";
+  if (z.qual && i >= n - (z.relegation || 0) - z.qual) return "z-q";
+  return "";
+}
+
 // Konačni rezultat: ručno upisan (m.result) ili iz golova. Međurezultat samo kad su uneseni svi golovi.
 export function score(m, upto = Infinity) {
   if (m.noScore) return null;
@@ -45,25 +54,32 @@ export function standings(db, compId) {
     else { H.d++; A.d++; H.pts++; A.pts++; H.form.push({ r: "D", m: m.id }); A.form.push({ r: "D", m: m.id }); }
   }
   const rows = Object.values(row).map((r) => ({ ...r, gd: r.gf - r.ga, form: r.form.slice(-5).reverse() }));
-  // isti broj bodova: prvo međusobne utakmice (bodovi, gol-razlika, golovi), zatim ukupna gol-razlika i golovi
+  // Kod istog broja bodova (propozicije SHMNL čl. 40, kadeti/juniori čl. 32):
+  // gol-razlika, više postignutih golova, međusobne utakmice (bodovi, gol-razlika), fair-play (žuti −1, crveni −3).
+  // Juniori/kadeti imaju i kriterij plasmana druge momčadi kluba, koji ovdje ne računamo.
+  const fp = {};
+  for (const m of ms) for (const e of m.events) {
+    if (e.type === "yellow") fp[m[e.side]] = (fp[m[e.side]] || 0) + 1;
+    if (e.type === "red") fp[m[e.side]] = (fp[m[e.side]] || 0) + 3;
+  }
   const h2h = (ids) => {
-    const t = Object.fromEntries(ids.map((i) => [i, { pts: 0, gd: 0, gf: 0 }]));
+    const t = Object.fromEntries(ids.map((i) => [i, { pts: 0, gd: 0 }]));
     for (const m of ms) {
       if (!t[m.home] || !t[m.away]) continue;
       const s = score(m); if (!s) continue;
-      t[m.home].gf += s[0]; t[m.away].gf += s[1]; t[m.home].gd += s[0] - s[1]; t[m.away].gd += s[1] - s[0];
+      t[m.home].gd += s[0] - s[1]; t[m.away].gd += s[1] - s[0];
       if (s[0] > s[1]) t[m.home].pts += 3; else if (s[0] < s[1]) t[m.away].pts += 3; else { t[m.home].pts++; t[m.away].pts++; }
     }
     return t;
   };
-  const byPts = {};
-  for (const r of rows) (byPts[r.pts] ||= []).push(r.club);
+  const groups = {};
+  for (const r of rows) (groups[`${r.pts}|${r.gd}|${r.gf}`] ||= []).push(r.club);
   const H = {};
-  for (const ids of Object.values(byPts)) if (ids.length > 1) Object.assign(H, h2h(ids));
-  const z = { pts: 0, gd: 0, gf: 0 };
-  return rows.sort((a, b) => b.pts - a.pts
-    || (H[b.club] || z).pts - (H[a.club] || z).pts || (H[b.club] || z).gd - (H[a.club] || z).gd || (H[b.club] || z).gf - (H[a.club] || z).gf
-    || b.gd - a.gd || b.gf - a.gf || a.club.localeCompare(b.club));
+  for (const ids of Object.values(groups)) if (ids.length > 1) Object.assign(H, h2h(ids));
+  const z = { pts: 0, gd: 0 };
+  return rows.map((r) => ({ ...r, fp: fp[r.club] || 0 })).sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf
+    || (H[b.club] || z).pts - (H[a.club] || z).pts || (H[b.club] || z).gd - (H[a.club] || z).gd
+    || a.fp - b.fp || a.club.localeCompare(b.club));
 }
 
 export function scorers(db, compId) {

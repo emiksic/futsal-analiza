@@ -98,3 +98,7 @@ insert into public.site (id, name, contact) values (1, '', '') on conflict (id) 
 -- 1) Authentication → Users → Add user: tvoj email + lozinka (Auto confirm)
 -- 2) ovdje upiši isti email i pokreni samo ovaj red:
 -- insert into public.admins (email) values ('TVOJ_EMAIL') on conflict do nothing;
+
+-- ---------- ažuriranje 2026-10-29: zone tablice prema propozicijama ----------
+-- update public.leagues set zones = '{"playoff":8,"qual":1,"relegation":1}' where id = '1-hmnl';
+-- update public.leagues set zones = '{"direct":2,"playoff":6,"note":"Ispadanje se određuje zbirnom tablicom kadeta i juniora."}' where id in ('juniori','kadeti');
