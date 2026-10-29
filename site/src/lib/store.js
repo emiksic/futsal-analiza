@@ -99,12 +99,23 @@ export async function refresh() {
 }
 
 if (sb) {
-  sb.auth.getSession().then(async ({ data }) => {
-    state.session = data.session; state.isAdmin = await checkAdmin(); await refresh();
-  }).catch(() => set({ status: "offline" }));
-  sb.auth.onAuthStateChange(async (_e, session) => {
+  // ako se baza ne javi u 8 s, radi dalje s ugrađenim podacima
+  const guard = setTimeout(() => { if (state.status === "loading") set({ status: "offline" }); }, 8000);
+  (async () => {
+    // javni podaci odmah, bez čekanja na prijavu
+    const { data } = await sb.auth.getSession().catch(() => ({ data: {} }));
+    state.session = data?.session || null;
+    state.isAdmin = state.session ? await checkAdmin() : false;
+    await refresh(); clearTimeout(guard);
+  })();
+  // VAŽNO: unutar ovog callbacka se ne smije čekati na druge Supabase pozive (zaključa se auth lock),
+  // zato se posao odgađa s setTimeout
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED") return;
     if ((session?.user?.id || null) === (state.session?.user?.id || null)) return;
-    state.session = session; state.isAdmin = await checkAdmin(); emit(); await refresh();
+    setTimeout(async () => {
+      state.session = session; state.isAdmin = session ? await checkAdmin() : false; emit(); await refresh();
+    }, 0);
   });
 } else set({ status: "offline" });
 
