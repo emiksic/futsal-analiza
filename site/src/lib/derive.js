@@ -121,6 +121,6 @@ export function compName(ix, compId) {
 }
 export function currentRound(db, compId) {
   const ms = db.matches.filter((m) => m.comp === compId);
-  const fin = ms.filter((m) => m.status === "finished").map((m) => m.round);
+  const fin = ms.filter((m) => m.status === "finished" && Number.isFinite(m.round)).map((m) => m.round);   // isječci bez kola se preskaču
   return fin.length ? Math.max(...fin) : 1;
 }
