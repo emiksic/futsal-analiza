@@ -6,6 +6,7 @@ import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
 import { MiniTable } from "../components/Side.jsx";
 import { Shots } from "./Shots.jsx";
+import { Player } from "../components/Player.jsx";
 import { shotStats } from "../components/ShotMap.jsx";
 
 export function Match({ db, ix, id, tab }) {
@@ -13,8 +14,8 @@ export function Match({ db, ix, id, tab }) {
   const A = useAnalysis(m);
   if (!m) return <div className="page"><div className="panel empty">Utakmica ne postoji.</div></div>;
   const has = m.analysis?.status === "done";
-  const t = tab || (has ? "analiza" : "detalji");
-  const TABS = [["analiza", "Video analiza"], ["detalji", "Detalji"], ["udarci", "Udarci"], ["statistika", "Statistika"], ["postave", "Postave"]];
+  const t = tab || (has || m.youtube ? "analiza" : "detalji");
+  const TABS = [["analiza", "Video"], ["detalji", "Detalji"], ["udarci", "Udarci"], ["statistika", "Statistika"], ["postave", "Postave"]];
   return (
     <div className="page">
       <Board m={m} ix={ix} />
@@ -80,12 +81,25 @@ function FoulBar({ n }) {
   return <span className="fbar" aria-label={`${n} prekršaja`}>{[1, 2, 3, 4, 5].map((i) => <i key={i} className={(i <= n ? "on" : "") + (n >= 5 ? " max" : "")} />)}<b style={{ marginLeft: 6, color: "var(--band-fg)" }}>{n}</b></span>;
 }
 
+// samo snimka (bez analize) uz kratku napomenu
+function PlainVideo({ m, children }) {
+  return (
+    <div className="pb" style={{ paddingTop: 16, display: "grid", gap: 10, maxWidth: 980 }}>
+      <Player youtube={m.youtube} />
+      {children}
+    </div>);
+}
+
 function AnalysisTab({ m, ix, A }) {
   const a = m.analysis;
-  if (!a || a.status === "none") return <div className="empty" style={{ padding: 24 }}>
-    {m.youtube ? "Za ovu utakmicu još nema video analize." : m.tv ? `Utakmica se prenosila na ${m.tv}. Video analizu radimo samo za utakmice s javnim prijenosom na YouTubeu.` : "Za ovu utakmicu nema video analize."}</div>;
+  if (!a || a.status === "none") {
+    if (m.youtube) return <PlainVideo m={m}><div className="note">Video analiza (igrači na terenu, posjed, mini-mapa) za ovu utakmicu još nije napravljena.</div></PlainVideo>;
+    return <div className="empty" style={{ padding: 24 }}>
+      {m.tv ? `Utakmica se prenosila na ${m.tv}. Snimku i video analizu imamo samo za utakmice s javnim prijenosom na YouTubeu.` : "Za ovu utakmicu nema snimke."}</div>;
+  }
   if (a.status === "queued" || a.status === "processing") return (
-    <div className="pb" style={{ paddingTop: 16 }}>
+    <div className="pb" style={{ paddingTop: 16, display: "grid", gap: 12 }}>
+      {m.youtube && <div style={{ maxWidth: 980 }}><Player youtube={m.youtube} /></div>}
       <div className="callout"><span className="an-dot processing">{Icon.video(14)}</span>
         <div><b>{a.status === "queued" ? "Utakmica čeka obradu." : "Analiza je u tijeku."}</b>
           <div className="muted small">Video se obrađuje noću. Kad obrada završi, ovdje se pojavljuju video s oznakama, postava na terenu, posjed i mini-mapa.</div>
