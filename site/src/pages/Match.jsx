@@ -188,6 +188,7 @@ function lineColors(hk, ak) {
 
 // Tijek rezultata: razlika u golovima kroz 40 minuta (gore domaćin vodi, dolje gost)
 function ScoreFlow({ m, ix }) {
+  const [hov, setHov] = useState(null);
   const f = flow(m);
   if (!f || f.seq.length < 2) return null;
   const W = 600, H = 120, X = (t) => 28 + (Math.min(t, 2400) / 2400) * (W - 40), max = Math.max(2, ...f.seq.map((g) => Math.abs(g.s[0] - g.s[1])));
@@ -205,14 +206,27 @@ function ScoreFlow({ m, ix }) {
   return (
     <div className="flow">
       <div className="flow-h"><span>Tijek rezultata{cb && <b className="cbnote">Preokret: {ix.club[m[cb.side]].name} s {sideScore(cb.from, cb.side)} na {sideScore(cb.lead, cb.side)}</b>}</span><span className="muted small">{ix.club[m.home].short || ix.club[m.home].name} gore, {ix.club[m.away].short || ix.club[m.away].name} dolje</span></div>
+      <div className="flow-plot">
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Tijek rezultata">
         <line x1={X(0)} x2={X(2400)} y1={Y(0)} y2={Y(0)} className="flow-0" />
         <line x1={X(1200)} x2={X(1200)} y1={6} y2={H - 6} className="flow-ht" />
         {[0, 10, 20, 30, 40].map((t) => <text key={t} x={X(t * 60)} y={H - 1} className="flow-t">{t}'</text>)}
         {segs.map((g) => <line key={g.k} x1={g.x1} x2={g.x2} y1={g.y1} y2={g.y2} className={"flow-seg" + (g.c ? "" : " tie")} style={g.c ? { stroke: g.c } : undefined} />)}
-        {f.seq.map((g, i) => <circle key={i} cx={X(g.t)} cy={Y(g.s[0] - g.s[1])} r={4.5} fill={g.home ? hk : ak} className="flow-dot">
-          <title>{goalTime(g.e)} {g.s[0]}:{g.s[1]}</title></circle>)}
+        {f.seq.map((g, i) => <circle key={i} cx={X(g.t)} cy={Y(g.s[0] - g.s[1])} r={hov === i ? 6.5 : 4.5} fill={g.home ? hk : ak} className="flow-dot" />)}
+        {f.seq.map((g, i) => <circle key={"h" + i} cx={X(g.t)} cy={Y(g.s[0] - g.s[1])} r={13} className="flow-hit"
+          onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)} onClick={() => setHov(hov === i ? null : i)} />)}
       </svg>
+      {hov !== null && (() => {
+        const g = f.seq[hov], side = g.home ? "home" : "away", c = ix.club[m[side]], p = ix.player[g.e.player];
+        const x = 100 * X(g.t) / W, y = 100 * Y(g.s[0] - g.s[1]) / H;
+        return (
+          <div className={"flow-tip" + (x > 70 ? " left" : x < 30 ? " right" : "") + (y < 45 ? " below" : "")} style={{ left: `${x}%`, top: `${y}%` }}>
+            <Jersey kit={c.kit} size={22} num={p?.num} />
+            <div><b>{p ? playerName(p) : c.name}{g.e.type === "owngoal" ? " (autogol)" : ""}</b>
+              <span className="muted small">{goalTime(g.e)} · {c.name} · {g.s[0]}:{g.s[1]}</span></div>
+          </div>);
+      })()}
+      </div>
     </div>
   );
 }

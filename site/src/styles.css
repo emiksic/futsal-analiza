@@ -580,7 +580,7 @@ table.st { font-size: 13px; }
 .cbnote { margin-left: 10px; color: var(--fg); font-weight: 700; text-transform: none; letter-spacing: 0; font-size: 12.5px; }
 .cbtag { display: inline-block; margin-left: 8px; vertical-align: 1px; font: 700 10.5px/1 var(--body); text-transform: uppercase; letter-spacing: .04em; color: var(--fg); background: color-mix(in srgb, var(--signal) 30%, transparent); padding: 3px 5px; border-radius: 2px; }
 .flow { padding: 10px 16px 6px; border-bottom: 1px solid var(--line); }
-.flow-h { display: flex; justify-content: space-between; align-items: baseline; font: 700 11.5px/1 var(--body); text-transform: uppercase; letter-spacing: .03em; color: var(--muted); margin-bottom: 6px; }
+.flow-h { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: space-between; align-items: baseline; font: 700 11.5px/1 var(--body); text-transform: uppercase; letter-spacing: .03em; color: var(--muted); margin-bottom: 6px; }
 .flow-h .small { text-transform: none; letter-spacing: 0; font-weight: 400; }
 .flow svg { width: 100%; height: auto; display: block; }
 .flow-0 { stroke: var(--line); stroke-width: 1; }
@@ -590,7 +590,18 @@ table.st { font-size: 13px; }
 .flow-seg.tie { stroke: #9aa4b2; }
 :root[data-theme="dark"] .flow-seg.tie { stroke: #ffffff; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .flow-seg.tie { stroke: #ffffff; } }
-.flow-dot { stroke: var(--fg); stroke-width: 1.2; }
+.flow-dot { stroke: var(--fg); stroke-width: 1.2; pointer-events: none; transition: r .12s; }
+.flow-hit { fill: transparent; cursor: pointer; }
+.flow-plot { position: relative; }
+.flow-tip { position: absolute; transform: translate(-50%, calc(-100% - 12px)); display: flex; gap: 8px; align-items: center; padding: 7px 10px; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 4px 14px rgba(0, 0, 0, .18); border-radius: 2px; white-space: nowrap; pointer-events: none; z-index: 5; font-size: 13px; }
+.flow-tip.left { transform: translate(calc(-100% + 12px), calc(-100% - 12px)); }
+.flow-tip.right { transform: translate(-12px, calc(-100% - 12px)); }
+.flow-tip > div { display: grid; gap: 2px; }
+.flow-tip { width: max-content; }
+.flow-tip > svg { flex: 0 0 22px; width: 22px; height: 22px; }
+.flow-tip.below { transform: translate(-50%, 14px); }
+.flow-tip.below.left { transform: translate(calc(-100% + 12px), 14px); }
+.flow-tip.below.right { transform: translate(-12px, 14px); }
 .wdl { white-space: nowrap; color: var(--muted); }
 .wdl b { color: var(--fg); font-weight: 700; }
 .cb-list { display: grid; }
