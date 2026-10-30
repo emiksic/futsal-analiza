@@ -127,3 +127,8 @@ on conflict (id) do update set public = true, allowed_mime_types = excluded.allo
 drop policy if exists "analysis: admin piše" on storage.objects;
 create policy "analysis: admin piše" on storage.objects for all to authenticated
   using (bucket_id = 'analysis' and public.is_admin()) with check (bucket_id = 'analysis' and public.is_admin());
+
+-- ---------- ažuriranje 2026-10-30: prava za secret ključ (scripts/upload_analysis.py i ostale skripte) ----------
+grant usage on schema public to service_role;
+grant select, insert, update, delete on all tables in schema public to service_role;
+alter default privileges in schema public grant select, insert, update, delete on tables to service_role;
