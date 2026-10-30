@@ -81,3 +81,5 @@ Traka s rezultatom na SHMNL YouTube prijenosima (vjerojatno ista na svim utakmic
   (položaji kratica, rezultata, sata, prekršaja), a profil se bira automatski usporedbom s predlošcima na prvim slikama
 - viđeno: Pula doma (tamnoplava traka, prekršaji kao kvadratići iznad kratica), Novo vrijeme doma (isti raspored,
   svjetloplava prozirna traka) → vjerojatno isti predložak; Hajduk doma: drugi stil
+- Torcida doma: `[grb] TOR | r - r | NVR [grb] | sat | P1`, ispod svake kratice uvijek 5 polja za prekršaje,
+  popunjena (tamna) = broj prekršaja → broji se popunjenost polja, a ne pojava kvadratića
