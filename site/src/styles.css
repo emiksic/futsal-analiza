@@ -586,7 +586,10 @@ table.st { font-size: 13px; }
 .flow-0 { stroke: var(--line); stroke-width: 1; }
 .flow-ht { stroke: var(--line); stroke-dasharray: 3 3; }
 .flow-t { font: 10px var(--body); fill: var(--muted); text-anchor: middle; }
-.flow-line { fill: none; stroke: var(--fg); stroke-width: 2; }
+.flow-seg { stroke-width: 3; stroke-linecap: round; }
+.flow-seg.tie { stroke: #9aa4b2; }
+:root[data-theme="dark"] .flow-seg.tie { stroke: #ffffff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .flow-seg.tie { stroke: #ffffff; } }
 .flow-dot { stroke: var(--fg); stroke-width: 1.2; }
 .wdl { white-space: nowrap; color: var(--muted); }
 .wdl b { color: var(--fg); font-weight: 700; }
