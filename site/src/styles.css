@@ -58,13 +58,15 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .lnav a[aria-current="page"] { color: var(--band); background: var(--band-fg); }
 .top .adm { font: 600 15px/1 var(--display); padding: 8px 12px; border: 1px solid var(--band-2); border-radius: var(--r-ctl); color: var(--band-fg); white-space: nowrap; }
 .top .adm[aria-current="page"] { background: var(--signal); color: #1b1600; border-color: var(--signal); }
+.top .theme { margin-left: auto; display: inline-grid; place-items: center; width: 34px; height: 32px; padding: 0; background: transparent; color: var(--band-fg); border: 1px solid var(--band-2); border-radius: var(--r-ctl); cursor: pointer; }
+.top .theme:hover { background: var(--band-2); }
 .demo-bar { background: color-mix(in srgb, var(--signal) 22%, var(--bg)); color: var(--fg); font-size: 13px; }
 .demo-bar > div { max-width: 1320px; margin: 0 auto; padding-block: 7px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 
 @media (max-width: 720px) {
   .top-in { flex-wrap: wrap; gap: 4px 12px; padding-block: 8px 6px; }
   .lnav { order: 3; flex-basis: 100%; margin-inline: -6px; }
-  .top .adm { margin-left: auto; }
+  .top .theme { margin-left: auto; }
 }
 /* ---------- page grid ---------- */
 .page { max-width: 1320px; margin: 0 auto; padding-block: 18px 48px;

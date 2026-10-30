@@ -10,6 +10,18 @@ import { Match } from "./pages/Match.jsx";
 import { Admin } from "./admin/Admin.jsx";
 import { Privacy } from "./pages/Privacy.jsx";
 import { Notice } from "./components/Notice.jsx";
+import { useTheme, toggleTheme } from "./lib/theme.js";
+
+function ThemeToggle() {
+  const t = useTheme(), dark = t === "dark";
+  return (
+    <button type="button" className="theme" onClick={toggleTheme} aria-label={dark ? "Prebaci na svijetli način" : "Prebaci na tamni način"} title={dark ? "Svijetli način" : "Tamni način"}>
+      {dark
+        ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5" /><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" /></svg>
+        : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z" /></svg>}
+    </button>
+  );
+}
 
 export default function App() {
   const db = useDB();
@@ -29,6 +41,7 @@ export default function App() {
           <nav className="lnav" aria-label="Lige">
             {db.leagues.filter((l) => db.comps.some((c) => c.league === l.id && c.season === cur)).map((l) => <a key={l.id} href={href("liga", l.id, cur)} aria-current={activeLeague === l.id ? "page" : undefined}>{l.name}</a>)}
           </nav>
+          <ThemeToggle />
           <a className="adm" href={href("admin")} aria-current={page === "admin" ? "page" : undefined}>Admin</a>
         </div>
       </header>
