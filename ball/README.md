@@ -57,3 +57,12 @@ Pošalji mi tu tablicu.
 python ball/extract_frames.py --per-match 400 --model ~/futsal-ball/runs/ball/weights/best.pt
 ```
 Doda nove okvire s prijedlozima novog modela, koji su puno bolji, pa je označavanje većinom samo Enter. Zatim ponovi trening.
+
+## 7. Ciljani krug (teški okviri)
+
+```
+python ball/extract_frames.py --per-match 200 --model ~/futsal-ball/runs/ball/weights/best.pt --hard 0.7 --delete-video
+```
+Za svaku utakmicu pregleda 4x više kandidata (`--pool 4`) i uzme 70 % onih na kojima je model najslabiji: ne nađe loptu,
+nesiguran je (pouzdanost < 0.5) ili je lopta u gornjem dijelu slike (druga strana terena, mala lopta). Ostatak je nasumičan,
+da skup ne postane jednostran. Novi okviri su barem 2 s udaljeni od već izvučenih. Zatim označavanje i trening kao gore.
