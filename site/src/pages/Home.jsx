@@ -6,8 +6,11 @@ import { Rail } from "../components/Rail.jsx";
 import { AnalysedCard, ScorersCard } from "../components/Side.jsx";
 import { LeagueBadge } from "../components/ui.jsx";
 
+// odabir (zadnje / sljedeće kolo) se pamti dok je kartica otvorena, pa ga povratak s utakmice ne poništi
+const getMode = () => { try { return sessionStorage.getItem("home-mode") || "rez"; } catch { return "rez"; } };
 export function Home({ db, ix }) {
-  const [mode, setMode] = useState("rez");
+  const [mode, setMode0] = useState(getMode);
+  const setMode = (v) => { setMode0(v); try { sessionStorage.setItem("home-mode", v); } catch { /* */ } };
   const cur = db.seasons[0].id;
   const comps = db.comps.filter((c) => c.season === cur);
   return (
