@@ -116,3 +116,14 @@ do $$ begin
     alter publication supabase_realtime add table public.matches;
   end if;
 end $$;
+
+-- ---------- ažuriranje 2026-10-30: javni bucket za podatke analize ----------
+-- Podaci analize (izlaz export_web.py, gzip) su javni čim postoje: analysis/<match_id>/data.json.gz
+-- Čita svatko preko javnog URL-a; piše samo admin (ili scripts/upload_analysis.py sa secret ključem, koji zaobilazi RLS).
+insert into storage.buckets (id, name, public, allowed_mime_types)
+values ('analysis', 'analysis', true, array['application/gzip', 'application/json'])
+on conflict (id) do update set public = true, allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "analysis: admin piše" on storage.objects;
+create policy "analysis: admin piše" on storage.objects for all to authenticated
+  using (bucket_id = 'analysis' and public.is_admin()) with check (bucket_id = 'analysis' and public.is_admin());

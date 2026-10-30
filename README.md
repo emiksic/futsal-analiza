@@ -49,6 +49,7 @@ Primjer za jednu snimku `clip.mp4` u radnoj mapi `run/`:
 | 10 | postava na terenu | `lineup.py --cfg [--init "RIJ:4,26,44,77;NVR:7,9,11,14"]` |
 | 11 | lopta | `ball_detect.py` → `ball_track.py` |
 | 12 | izlaz | `render_full.py` (video s oznakama) i/ili `export_web.py` (podaci za preglednik) |
+| 13 | objava na stranici | `upload_analysis.py run/web.json --match <id>` (javni Supabase bucket `analysis`, ključ u `.env`) |
 
 Svaka skripta ima opis i primjer poziva na vrhu datoteke.
 

@@ -2,6 +2,16 @@
 import { useEffect, useState } from "react";
 
 const cache = {};
+
+// JSON ili gzipani JSON (upload_analysis.py sprema .json.gz bez Content-Encoding, pa se raspakira ovdje)
+async function readJson(r) {
+  const buf = new Uint8Array(await r.arrayBuffer());
+  if (buf[0] === 0x1f && buf[1] === 0x8b) {
+    const s = new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"));
+    return JSON.parse(await new Response(s).text());
+  }
+  return JSON.parse(new TextDecoder().decode(buf));
+}
 export function useAnalysis(m) {
   const url = m?.analysis?.status === "done" ? m.analysis.data : null;
   const [st, setSt] = useState(() => (url && cache[url] ? { D: cache[url] } : { D: null }));
@@ -9,7 +19,7 @@ export function useAnalysis(m) {
     if (!url) { setSt({ D: null }); return; }
     if (cache[url]) { setSt({ D: cache[url] }); return; }
     let ok = true; setSt({ D: null, loading: true });
-    fetch(url).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    fetch(url).then((r) => { if (!r.ok) throw new Error(r.status); return readJson(r); })
       .then((d) => { cache[url] = d; if (ok) setSt({ D: d }); })
       .catch(() => { if (ok) setSt({ D: null, error: true }); });
     return () => { ok = false; };
