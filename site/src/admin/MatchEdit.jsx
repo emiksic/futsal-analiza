@@ -64,6 +64,27 @@ function DeleteMatch({ onDelete }) {
     </span>);
 }
 
+// Ručni rezultat: polja se čuvaju kao tekst; spremi se tek kad su oba broja upisana, a kad su oba prazna, rezultat se briše.
+function ResultField({ m, upd }) {
+  const [v, setV] = useState([m.result?.[0] ?? "", m.result?.[1] ?? ""].map(String));
+  const change = (k, raw) => {
+    const n = [...v]; n[k] = raw.replace(/\D/g, "").slice(0, 2); setV(n);
+    if (n[0] === "" && n[1] === "") upd((x) => { delete x.result; });
+    else if (n[0] !== "" && n[1] !== "") upd((x) => { x.result = [+n[0], +n[1]]; });
+  };
+  const clear = () => { setV(["", ""]); upd((x) => { delete x.result; if (x.status === "finished" && !x.events.some((e) => e.type === "goal" || e.type === "owngoal")) x.status = "scheduled"; }); };
+  return (
+    <div className="field"><span>Rezultat (ručno)</span>
+      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+        <input className="input num" inputMode="numeric" value={v[0]} aria-label="Golovi domaćina" onChange={(e) => change(0, e.target.value)} />
+        <b>:</b>
+        <input className="input num" inputMode="numeric" value={v[1]} aria-label="Golovi gosta" onChange={(e) => change(1, e.target.value)} />
+        {(m.result || v[0] !== "" || v[1] !== "") && <button className="btn sm ghost" onClick={clear}>Obriši rezultat</button>}
+      </div>
+      <small>Ako je upisan, vrijedi ovaj rezultat. Inače se računa iz golova pod Događaji. „Obriši rezultat” vraća utakmicu bez rezultata (i na „Zakazano” ako nema golova).</small></div>
+  );
+}
+
 function Basic({ db, ix, m, upd }) {
   const C = ix.comp[m.comp];
   return (
@@ -92,16 +113,8 @@ function Basic({ db, ix, m, upd }) {
         <select className="input" value={m.hall} onChange={(e) => upd((x) => { x.hall = e.target.value; })}>
           {db.halls.map((h) => <option key={h.id} value={h.id}>{h.name}, {h.city}</option>)}
         </select></label>
-      <div className="field"><span>Rezultat (ručno)</span>
-        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-          <input className="input num" inputMode="numeric" value={m.result?.[0] ?? ""} aria-label="Golovi domaćina"
-            onChange={(e) => upd((x) => { const v = e.target.value.replace(/\D/g, ""); x.result = v === "" && (x.result?.[1] ?? "") === "" ? undefined : [+v || 0, x.result?.[1] ?? 0]; })} />
-          <b>:</b>
-          <input className="input num" inputMode="numeric" value={m.result?.[1] ?? ""} aria-label="Golovi gosta"
-            onChange={(e) => upd((x) => { const v = e.target.value.replace(/\D/g, ""); x.result = [x.result?.[0] ?? 0, +v || 0]; })} />
-          {m.result && <button className="btn sm ghost" onClick={() => upd((x) => { delete x.result; })}>Računaj iz golova</button>}
-        </div>
-        <small>Ako je upisan, vrijedi ovaj rezultat. Inače se računa iz golova pod Događaji.</small></div>
+      <ResultField key={m.id} m={m} upd={upd} />
+
       <div className="field wide"><span>Prijenos</span>
         <div className="seg">
           {[["yt", "YouTube"], ["max", "MAXsport"], ["none", "Nema"]].map(([k, n]) => {
