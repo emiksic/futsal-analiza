@@ -13,9 +13,9 @@
 runs/
 datasets/
 # međurezultati
-run/
-out*/
-work*/
+/run/
+/out*/
+/work*/
 *.npz
 *.npy
 __pycache__/
