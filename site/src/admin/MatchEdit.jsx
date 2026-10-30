@@ -217,26 +217,29 @@ function Events({ ix, m, upd }) {
   const needsPlayer = !["timeout"].includes(f.type);
   const add = () => {
     if (sec == null) return;
-    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side: f.side, period: +f.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && f.assist ? { assist: f.assist } : {}) });
+    const side = f.type === "owngoal" ? other(f.side) : f.side;   // autogol: f.side = ekipa kojoj se pripisuje
+    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: +f.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && f.assist ? { assist: f.assist } : {}) });
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
     setF((o) => ({ ...o, time: "", player: "", assist: "" }));
   };
   const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(b) - absSec(a));
-  const pl = roster(f.type === "owngoal" ? f.side : f.side);
+  const other = (s) => (s === "home" ? "away" : "home");
+  const plSide = f.type === "owngoal" ? other(f.side) : f.side;
+  const pl = roster(plSide);
   const L = Object.fromEntries(ETYPES);
   return (
     <>
       <form className="evform" onSubmit={(e) => { e.preventDefault(); add(); }}>
         <div className="field" style={{ gridColumn: "1 / -1" }}><span>Vrsta</span>
           <div className="seg">{ETYPES.map(([k, n]) => <button type="button" key={k} aria-pressed={f.type === k} onClick={() => set("type", k)}>{n}</button>)}</div></div>
-        <div className="field"><span>Ekipa</span>
+        <div className="field"><span>{f.type === "owngoal" ? "Gol se pripisuje" : "Ekipa"}</span>
           <div className="seg">{["home", "away"].map((s) => <button type="button" key={s} aria-pressed={f.side === s} onClick={() => set("side", s)}>{ix.club[m[s]].short}</button>)}</div></div>
         <div className="field"><span>Poluvrijeme</span>
           <div className="seg">{[[1, "1."], [2, "2."], [3, "Prod."]].map(([k, n]) => <button type="button" key={k} aria-pressed={+f.period === k} onClick={() => set("period", k)}>{n}</button>)}</div></div>
         <label className="field"><span>Vrijeme (mm:ss)</span>
           <input className="input" value={f.time} onChange={(e) => set("time", e.target.value)} placeholder="12:34" inputMode="numeric" aria-invalid={f.time && sec == null} />
           <small>{f.time && sec == null ? "Upiši vrijeme do 20:00." : "proteklo vrijeme u poluvremenu"}</small></label>
-        {needsPlayer && <label className="field"><span>{f.type === "owngoal" ? "Igrač (autogol)" : "Igrač"}</span>
+        {needsPlayer && <label className="field"><span>{f.type === "owngoal" ? `Zabio u svoju mrežu (${ix.club[m[plSide]].short})` : "Igrač"}</span>
           <select className="input" value={f.player} onChange={(e) => set("player", e.target.value)}>
             <option value="">—</option>{pl.map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
           </select></label>}
@@ -246,7 +249,7 @@ function Events({ ix, m, upd }) {
           </select></label>}
         <button className="btn primary" type="submit" disabled={sec == null}>Dodaj događaj</button>
       </form>
-      {!pl.length && needsPlayer && <div className="pb"><div className="callout warn">Zapisnik za {ix.club[m[f.side]].name} nije unesen, pa igrača nije moguće odabrati.</div></div>}
+      {!pl.length && needsPlayer && <div className="pb"><div className="callout warn">Zapisnik za {ix.club[m[plSide]].name} nije unesen, pa igrača nije moguće odabrati.</div></div>}
       <div className="tbl-wrap">
         <table className="atbl">
           <thead><tr><th>Min.</th><th>Vrsta</th><th>Ekipa</th><th>Igrač</th><th /></tr></thead>
@@ -254,8 +257,8 @@ function Events({ ix, m, upd }) {
             <tr key={e.id}>
               <td style={{ font: "700 16px/1 var(--display)" }}>{minute(e)}</td>
               <td>{L[e.type]}</td>
-              <td><span className="mt"><Jersey kit={ix.club[m[e.side]].kit} size={18} />{ix.club[m[e.side]].short}</span></td>
-              <td>{e.player ? `${ix.player[e.player]?.num ?? ""} ${ix.player[e.player]?.name || ""}` : ""}{e.assist ? <span className="muted small">, asist. {ix.player[e.assist]?.num}</span> : null}</td>
+              <td><span className="mt">{(() => { const s = e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side; return <><Jersey kit={ix.club[m[s]].kit} size={18} />{ix.club[m[s]].short}</>; })()}</span></td>
+              <td>{e.player ? `${ix.player[e.player]?.num ?? ""} ${ix.player[e.player]?.name || ""}` : ""}{e.type === "owngoal" ? <span className="muted small"> ({ix.club[m[e.side]].short}, u svoju mrežu)</span> : null}{e.assist ? <span className="muted small">, asist. {ix.player[e.assist]?.num}</span> : null}</td>
               <td className="nowrap"><button className="btn sm ghost danger" onClick={() => upd((x) => { x.events = x.events.filter((q) => q.id !== e.id); })} aria-label="Obriši događaj">{Icon.trash()}</button></td>
             </tr>))}</tbody>
         </table>
