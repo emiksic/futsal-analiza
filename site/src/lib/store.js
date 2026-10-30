@@ -107,7 +107,14 @@ if (sb) {
     state.session = data?.session || null;
     state.isAdmin = state.session ? await checkAdmin() : false;
     await refresh(); clearTimeout(guard);
+    if (state.mode === "remote") live();
   })();
+  // nakon duljeg izbivanja (kartica u pozadini, mobitel zaključan) veza se zna prekinuti → povuci sve iznova
+  let hiddenAt = 0;
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { hiddenAt = Date.now(); return; }
+    if (hiddenAt && Date.now() - hiddenAt > 60000 && state.mode === "remote") refresh();
+  });
   // VAŽNO: unutar ovog callbacka se ne smije čekati na druge Supabase pozive (zaključa se auth lock),
   // zato se posao odgađa s setTimeout
   sb.auth.onAuthStateChange((event, session) => {
@@ -118,6 +125,32 @@ if (sb) {
     }, 0);
   });
 } else set({ status: "offline" });
+
+// ---------- uživo (Supabase Realtime) ----------
+// Svaka promjena u tablici matches (admin, program za analizu, unos uživo) odmah stiže svim posjetiteljima.
+const pushedAt = new Map();     // id → vrijeme kad smo ga sami spremili (da vlastiti odjek ne pregazi novije tipkanje)
+let channel = null, playersTimer = 0;
+function live() {
+  if (channel) return;
+  channel = sb.channel("utakmice")
+    .on("postgres_changes", { event: "*", schema: "public", table: "matches" }, (p) => {
+      const id = (p.new && p.new.id) || (p.old && p.old.id); if (!id) return;
+      if (base || Date.now() - (pushedAt.get(id) || 0) < 3000) return;   // naša izmjena u tijeku
+      const db = { ...state.db };
+      if (p.eventType === "DELETE") db.matches = db.matches.filter((m) => m.id !== id);
+      else {
+        const m = fromRow("matches", p.new), i = db.matches.findIndex((x) => x.id === id);
+        db.matches = i < 0 ? [...db.matches, m] : db.matches.map((x, k) => (k === i ? m : x));
+        // novi igrač u događajima (npr. unesen tek uživo) → osvježi igrače
+        const known = new Set(db.players.map((x) => x.id));
+        if ((m.events || []).some((e) => (e.player && !known.has(e.player)) || (e.assist && !known.has(e.assist)))) {
+          clearTimeout(playersTimer); playersTimer = setTimeout(refresh, 1500);
+        }
+      }
+      set({ db });
+    })
+    .subscribe((status) => { if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") { channel = null; setTimeout(live, 5000); } });
+}
 
 export const signIn = async (email, password) => {
   const { error } = await sb.auth.signInWithPassword({ email, password });
@@ -133,6 +166,7 @@ async function pushDiff(prev, next) {
     const rows = (next[t] || []).map((x, i) => toRow(t, x, i));
     const changed = rows.filter((r) => a[r.id] !== JSON.stringify(r));
     const gone = Object.keys(a).filter((id) => !rows.some((r) => r.id === id));
+    if (t === "matches") changed.forEach((r) => pushedAt.set(r.id, Date.now()));
     if (changed.length) { const { error } = await sb.from(t).upsert(changed); if (error) throw error; }
     if (gone.length) { const { error } = await sb.from(t).delete().in("id", gone); if (error) throw error; }
   }

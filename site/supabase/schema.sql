@@ -109,3 +109,10 @@ insert into public.site (id, name, contact) values (1, '', '') on conflict (id) 
 -- ---------- ažuriranje 2026-10-29: kadeti s inicijalima ----------
 -- (pokreni ponovno blok "prezime i javno ime" iznad, pa ovo)
 -- update public.leagues set privacy = jsonb_set(privacy, '{names}', '"initials"') where id = 'kadeti';
+
+-- ---------- ažuriranje 2026-10-30: promjene utakmica uživo (Realtime) ----------
+do $$ begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'matches') then
+    alter publication supabase_realtime add table public.matches;
+  end if;
+end $$;
