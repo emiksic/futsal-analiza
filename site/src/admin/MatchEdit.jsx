@@ -209,7 +209,9 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
 
 const ETYPES = [["goal", "Gol"], ["owngoal", "Autogol"], ["foul", "Prekršaj"], ["yellow", "Žuti"], ["red", "Crveni"], ["timeout", "Time-out"]];
 function Events({ ix, m, upd }) {
-  const [f, setF] = useState({ type: "goal", side: "home", period: 1, time: "", player: "", assist: "" });
+  const empty = { type: "goal", side: "home", period: 1, time: "", player: "", assist: "" };
+  const [f, setF] = useState(empty);
+  const [editing, setEditing] = useState(null);   // id događaja koji se uređuje
   const set = (k, v) => setF((o) => ({ ...o, [k]: v, ...(k === "side" || k === "type" ? { player: "", assist: "" } : {}) }));
   const roster = (side) => (m.roster[side]?.players || []).map((p) => ix.player[p]).filter(Boolean).sort((a, b) => a.num - b.num);
   const parse = (t) => { const mm = /^(\d{1,2})(?::(\d{1,2}))?$/.exec(t.trim()); if (!mm) return null; const sec = +mm[1] * 60 + (+mm[2] || 0); return sec <= 1200 ? sec : null; };
@@ -218,11 +220,23 @@ function Events({ ix, m, upd }) {
   const add = () => {
     if (sec == null) return;
     const side = f.type === "owngoal" ? other(f.side) : f.side;   // autogol: f.side = ekipa kojoj se pripisuje
+    if (editing) {
+      upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact"].includes(k))),
+        type: f.type, side, period: +f.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && f.assist ? { assist: f.assist } : {}) }); });
+      setEditing(null); setF((o) => ({ ...empty, type: o.type, side: o.side, period: o.period })); return;
+    }
     upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: +f.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && f.assist ? { assist: f.assist } : {}) });
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
     setF((o) => ({ ...o, time: "", player: "", assist: "" }));
   };
   const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(b) - absSec(a));
+  const edit = (e) => {
+    setEditing(e.id);
+    setF({ type: e.type, side: e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side, period: e.period,
+      time: `${Math.floor(e.sec / 60)}:${String(e.sec % 60).padStart(2, "0")}`, player: e.player || "", assist: e.assist || "" });
+    document.querySelector(".evform")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+  const setPlayer = (id, pid) => upd((x) => { x.events = x.events.map((q) => q.id !== id ? q : (pid ? { ...q, player: pid } : Object.fromEntries(Object.entries(q).filter(([k]) => k !== "player")))); });
   const other = (s) => (s === "home" ? "away" : "home");
   const plSide = f.type === "owngoal" ? other(f.side) : f.side;
   const pl = roster(plSide);
@@ -247,7 +261,10 @@ function Events({ ix, m, upd }) {
           <select className="input" value={f.assist} onChange={(e) => set("assist", e.target.value)}>
             <option value="">—</option>{pl.filter((p) => p.id !== f.player).map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
           </select></label>}
-        <button className="btn primary" type="submit" disabled={sec == null}>Dodaj događaj</button>
+        <div style={{ display: "flex", gap: 8, alignItems: "end" }}>
+          <button className="btn primary" type="submit" disabled={sec == null}>{editing ? "Spremi izmjene" : "Dodaj događaj"}</button>
+          {editing && <button className="btn ghost" type="button" onClick={() => { setEditing(null); setF(empty); }}>Odustani</button>}
+        </div>
       </form>
       {!pl.length && needsPlayer && <div className="pb"><div className="callout warn">Zapisnik za {ix.club[m[plSide]].name} nije unesen, pa igrača nije moguće odabrati.</div></div>}
       <div className="tbl-wrap">
@@ -258,8 +275,16 @@ function Events({ ix, m, upd }) {
               <td style={{ font: "700 16px/1 var(--display)" }}>{minute(e)}</td>
               <td>{L[e.type]}</td>
               <td><span className="mt">{(() => { const s = e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side; return <><Jersey kit={ix.club[m[s]].kit} size={18} />{ix.club[m[s]].short}</>; })()}</span></td>
-              <td>{e.player ? `${ix.player[e.player]?.num ?? ""} ${ix.player[e.player]?.name || ""}` : ""}{e.type === "owngoal" ? <span className="muted small"> ({ix.club[m[e.side]].short}, u svoju mrežu)</span> : null}{e.assist ? <span className="muted small">, asist. {ix.player[e.assist]?.num}</span> : null}</td>
-              <td className="nowrap"><button className="btn sm ghost danger" onClick={() => upd((x) => { x.events = x.events.filter((q) => q.id !== e.id); })} aria-label="Obriši događaj">{Icon.trash()}</button></td>
+              <td>{e.type === "timeout" ? "" : (
+                <span style={{ display: "inline-flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                  <select className="input sm" value={e.player || ""} onChange={(ev) => setPlayer(e.id, ev.target.value)} aria-label="Igrač" style={{ minWidth: 190 }}>
+                    <option value="">— nije upisan —</option>{roster(e.side).map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
+                  </select>
+                  {e.type === "owngoal" ? <span className="muted small">({ix.club[m[e.side]].short}, u svoju mrežu)</span> : null}
+                  {e.assist ? <span className="muted small">asist. {ix.player[e.assist]?.num}</span> : null}
+                </span>)}</td>
+              <td className="nowrap"><button className="btn sm ghost" onClick={() => edit(e)} aria-pressed={editing === e.id}>Uredi</button>
+                <button className="btn sm ghost danger" onClick={() => { if (editing === e.id) { setEditing(null); setF(empty); } upd((x) => { x.events = x.events.filter((q) => q.id !== e.id); }); }} aria-label="Obriši događaj">{Icon.trash()}</button></td>
             </tr>))}</tbody>
         </table>
         {!evs.length && <div className="empty">Još nema događaja.</div>}
