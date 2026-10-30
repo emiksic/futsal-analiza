@@ -17,7 +17,8 @@ from pathlib import Path
 
 def load(data):
     lab = json.load(open(data / "labels.json", encoding="utf-8"))["frames"]
-    return {n: v for n, v in lab.items() if v != "skip" and (data / "frames" / n).exists()}
+    # "skip" (nije igra) i "cam" (druga kamera) ne ulaze u trening lopte; "cam" kasnije služi za prepoznavanje rezova kamere
+    return {n: v for n, v in lab.items() if v not in ("skip", "cam") and (data / "frames" / n).exists()}
 
 def match_of(n): return n.split("_")[0]
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Označavanje lopte</title>
 <style>
-  :root { --bg:#111418; --panel:#1a1f25; --line:#2a313a; --text:#e6e9ed; --muted:#8b95a1; --ball:#2fd36b; --sug:#ffcc33; --none:#5aa2ff; --skip:#c07cff; }
+  :root { --bg:#111418; --panel:#1a1f25; --line:#2a313a; --text:#e6e9ed; --muted:#8b95a1; --ball:#2fd36b; --sug:#ffcc33; --none:#5aa2ff; --skip:#c07cff; --cam:#ff8a3d; }
   * { box-sizing: border-box; }
   html, body { margin:0; height:100%; background:var(--bg); color:var(--text); font:14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   body { display:grid; grid-template-columns:minmax(0,1fr) 300px; grid-template-rows:auto minmax(0,1fr); }
@@ -63,7 +63,8 @@
     <span>klik</span><span>lopta je ovdje</span>
     <kbd>Enter</kbd><span>prihvati prijedlog / dalje</span>
     <kbd>N</kbd><span>lopta se ne vidi</span>
-    <kbd>S</kbd><span>nije igra (preskoči)</span>
+    <kbd>S</kbd><span>nije igra (reklama, poluvrijeme)</span>
+    <kbd>K</kbd><span>druga kamera (nije glavna)</span>
     <kbd>Z</kbd><span>natrag na prethodnu</span>
     <kbd>←</kbd> <span>prethodna &nbsp; <kbd>→</kbd> sljedeća</span>
     <kbd>[</kbd> <span>manji okvir &nbsp; <kbd>]</kbd> veći</span>
@@ -140,7 +141,7 @@ async function show() {
   [1, 2, 3].forEach((d) => names[i + d] && bitmap(names[i + d]));
   const L = labels[n], s = sug[n];
   $("#name").textContent = `${i + 1} / ${names.length} · ${n}`;
-  $("#state").innerHTML = L === "none" ? '<span style="color:var(--none)">Lopta se ne vidi</span>' : L === "skip" ? '<span style="color:var(--skip)">Nije igra</span>'
+  $("#state").innerHTML = L === "none" ? '<span style="color:var(--none)">Lopta se ne vidi</span>' : L === "skip" ? '<span style="color:var(--skip)">Nije igra</span>' : L === "cam" ? '<span style="color:var(--cam)">Druga kamera</span>'
     : L ? '<span style="color:var(--ball)">Lopta označena</span>' : '<span class="muted">Neoznačeno</span>';
   $("#sugInfo").textContent = s ? `Prijedlog modela: pouzdanost ${Math.round(s[2] * 100)} %` : "Model nije našao loptu.";
   $("#size").textContent = size;
@@ -182,7 +183,7 @@ function drawMag() {
 }
 function stats() {
   const v = Object.values(labels);
-  const b = v.filter(Array.isArray).length, nn = v.filter((x) => x === "none").length, sk = v.filter((x) => x === "skip").length;
+  const b = v.filter(Array.isArray).length, nn = v.filter((x) => x === "none").length, sk = v.filter((x) => x === "skip").length, cm = v.filter((x) => x === "cam").length;
   const done = names.filter((n) => n in labels).length;
   $("#prog").textContent = `${done} / ${names.length}`;
   $("#bar > div").style.width = (100 * done / names.length) + "%";
@@ -191,6 +192,7 @@ function stats() {
   $("#stats").innerHTML = `<span><i style="background:var(--ball)"></i>lopta</span><b>${b}</b>` +
     `<span><i style="background:var(--none)"></i>ne vidi se</span><b>${nn}</b>` +
     `<span><i style="background:var(--skip)"></i>nije igra</span><b>${sk}</b>` +
+    `<span><i style="background:var(--cam)"></i>druga kamera</span><b>${cm}</b>` +
     `<span class="muted" style="grid-column:1/3;margin-top:6px">Po utakmici</span>` +
     Object.entries(per).map(([m, [d, t]]) => `<span class="muted">${m}</span><span>${d} / ${t}</span>`).join("");
 }
@@ -211,6 +213,7 @@ document.addEventListener("keydown", (e) => {
   if (k === "enter") { const s = sug[n]; if (!(n in labels) && s) set([s[0], s[1], size]); if (n in labels) next(); }
   else if (k === "n") { set("none"); next(); }
   else if (k === "s") { set("skip"); next(); }
+  else if (k === "k") { set("cam"); next(); }
   else if (k === "z" || k === "backspace" || k === "arrowleft") { e.preventDefault(); prev(); }
   else if (k === "arrowright") next();
   else if (k === "u") { i = firstUnlabeled(); show(); }
