@@ -66,3 +66,14 @@ Svaka skripta ima opis i primjer poziva na vrhu datoteke.
 - izmjene: još nema detekcije zone izmjene (zasad se pretpostavlja stalna postava u isječku)
 - profil dvorane je vezan uz referentni frame snimke; registracija novih snimki na spremljenu panoramu je TODO
 - YouTube embed: pravila YouTubea ne dopuštaju crtanje preko playera → za YouTube samo panel pored videa
+
+## Plan: očitavanje TV grafike (analyze.py za cijele utakmice)
+
+Traka s rezultatom na SHMNL YouTube prijenosima (vjerojatno ista na svim utakmicama 1. HMNL):
+`[poluvrijeme] P [sat] DOM r-r GOST`, a iznad kratica ekipa kvadratići akumuliranih prekršaja.
+
+- sat i poluvrijeme: već postoji (`scripts/find_clock.py`, `clock_state.py`)
+- rezultat: promjena = gol → događaj `goal` s točnom minutom i vremenom u videu (seek sa stranice)
+- akumulirani prekršaji: kvadratići se pojavljuju jedan po jedan (0 prekršaja = nema kvadratića);
+  broji se po svjetlini na fiksnim mjestima iznad kratice → svaki novi kvadratić = događaj `foul`
+- grafika se podesi jednom (položaj trake) i vrijedi za sve prijenose iste produkcije
