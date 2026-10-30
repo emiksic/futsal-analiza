@@ -1,11 +1,15 @@
 """Od sirovih detekcija lopte do putanje (u metrima na terenu).
 python3 ball_track.py ball_raw.json camera.json tracks.json mosaic_S.npy court.json out_ball.json [--vmax 28] [--jump 1.5]
+       [--clock clock.json]
 
 1. filtriranje: veličina/oblik, scoreboard, izvan terena (+ malo prostora oko njega)
 2. trackleti: detekcije se povezuju u metrima (pomak kamere je poništen), vrata rastu s rupom i --vmax
 3. putanja: niz trackleta koji se ne preklapaju s najvećom ukupnom pouzdanošću; prijelaz koji bi tražio
    brzinu iznad --vmax se kažnjava (--jump), pa nema teleportiranja preko terena
 4. izglađivanje unutar trackleta + linearno popunjavanje rupa do --max-gap s (samo ako je fizički moguće)
+5. mirna lopta: kad se detekcije oko nekog trenutka ne miču (raspon < 0.35 m, a dok sat stoji < 0.8 m),
+   pozicija se fiksira na medijan, pa trag ne "šara" po mjestu; dok sat stoji, ne popunjavaju se rupe dulje od 0.3 s
+   (lopta se tada uglavnom nosi rukom, izlazi iz igre ili se postavlja)
 Izlaz (za render_full.py / export_web.py): [{"t", "ball": [x, y] u slici, "ref": [x, y], "court": [x, y] m, "src": det|interp}]
 Projekcija pretpostavlja loptu na podu; lopta u zraku je u metrima pomaknuta, ali putanja ostaje neprekinuta.
 """
@@ -17,6 +21,7 @@ ap.add_argument("--vmax", type=float, default=28.0, help="najveća brzina lopte 
 ap.add_argument("--jump", type=float, default=1.5, help="kazna za nemoguć prijelaz (jedinice pouzdanosti)")
 ap.add_argument("--max-gap", type=float, default=0.8, help="najdulja rupa (s) koja se popunjava")
 ap.add_argument("--min-conf", type=float, default=0.1)
+ap.add_argument("--clock", help="clock.json iz clock_state.py (teče li sat)")
 a = ap.parse_args()
 
 raw = json.load(open(a.raw)); cam = json.load(open(a.camera))
@@ -44,6 +49,10 @@ for fr in raw:
         c.append({"g": np.array([gx, gy]), "conf": conf, "r": h / 2})
     frames.append({"t": t, "c": c})
 n = len(frames); dt = float(np.median(np.diff([f["t"] for f in frames])))
+if a.clock:
+    ck = json.load(open(a.clock)); ckt = np.array([c["t"] for c in ck]); ckr = np.array([bool(c["running"]) for c in ck])
+    running = [bool(ckr[int(np.argmin(abs(ckt - f["t"])))]) for f in frames]
+else: running = [True] * n
 print("frameova", n, " s kandidatom nakon filtra:", sum(bool(f["c"]) for f in frames))
 step_m = a.vmax * dt                                                 # najveći pomak po koraku (m)
 
@@ -101,11 +110,20 @@ for tr in chain:
     for k0, k1 in zip(ks, ks[1:]):                                   # rupe unutar trackleta
         for k in range(k0 + 1, k1):
             u = (k - k0) / (k1 - k0); pos[k] = pos[k0] + (pos[k1] - pos[k0]) * u; src[k] = "interp"; rad[k] = rad[k0]
-max_gap = int(round(a.max_gap / dt)); jumps = 0
+# mirna lopta -> medijan (prije popunjavanja rupa između trackleta)
+W = max(2, int(round(0.4 / dt))); fixed = list(pos)
+for k in range(n):
+    if src[k] != "det": continue
+    win = [pos[j] for j in range(max(0, k - W), min(n, k + W + 1)) if src[j] == "det"]
+    if len(win) < W: continue
+    med = np.median(win, 0)
+    if max(np.linalg.norm(w - med) for w in win) < (0.35 if running[k] else 0.8): fixed[k] = med
+pos = fixed
+max_gap = int(round(a.max_gap / dt)); jumps = 0; stop_gap = int(round(0.3 / dt))
 for p, b in zip(chain, chain[1:]):
     gap = b["k0"] - p["k1"]
     if not plausible(p, b): jumps += 1; continue
-    if gap > max_gap: continue
+    if gap > max_gap or (not running[p["k1"]] and not running[b["k0"]] and gap > stop_gap): continue
     g0, g1 = pos[p["k1"]], pos[b["k0"]]
     for k in range(p["k1"] + 1, b["k0"]):
         pos[k] = g0 + (g1 - g0) * (k - p["k1"]) / gap; src[k] = "interp"; rad[k] = rad[p["k1"]]

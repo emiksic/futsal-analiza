@@ -1,4 +1,5 @@
-"""Golman = track koji je većinu vremena u petercu. Ekipa po strani gola iz match.json ("gk": {"L": .., "R": ..});
+"""Golman = track koji je većinu vremena u petercu (bez obzira na boju: golmani imaju drukčiji dres, pa ih
+podjela po bojama često svrsta u suce, drugu ekipu ili "?"). Ekipa po strani gola iz match.json ("gk": {"L": .., "R": ..});
 ako nije zadano, procjena: ekipa čiji je igrač u polju češće najbliži nekom golu brani taj gol.
 python3 gk_fix.py tracks.json camera.json S.npy court.json out.json --cfg match.json
 """
@@ -9,6 +10,7 @@ from matchcfg import Match
 ap = argparse.ArgumentParser()
 for k in ("tracks", "camera", "S", "court", "out"): ap.add_argument(k)
 ap.add_argument("--cfg", required=True); ap.add_argument("--min-share", type=float, default=0.6)
+ap.add_argument("--max-depth", type=float, default=6.0, help="medijan udaljenosti od gol-linije (m)")
 a = ap.parse_args()
 Mt = Match(a.cfg)
 d = json.load(open(a.tracks)); tl = d["timeline"]; cam = json.load(open(a.camera))
@@ -33,14 +35,14 @@ def on_court(x, y): return abs(x) <= hl + 2 and -hw - 2 <= y <= hw + 0.5
 stat = defaultdict(Counter); gdist = defaultdict(list); span = {}
 for fr in tl:
     for p in fr["players"]:
-        if p["team"] in ("sudac", "klupa", "osoblje") or not on_court(*p["court"]): continue
+        if p["team"] in ("klupa", "osoblje") or not on_court(*p["court"]): continue
         side = in_box(*p["court"]); stat[p["id"]][side] += 1; stat[p["id"]]["n"] += 1
         if side: gdist[(p["id"], side)].append(hl - abs(p["court"][0]))
         sp = span.setdefault(p["id"], [fr["t"], fr["t"]]); sp[1] = fr["t"]
 cand = []
 for tid, s in stat.items():
     for side in ("L", "R"):
-        if s["n"] >= 10 and s[side] / s["n"] >= a.min_share and np.median(gdist[(tid, side)]) <= 3.5:
+        if s["n"] >= 8 and s[side] / s["n"] >= a.min_share and np.median(gdist[(tid, side)]) <= a.max_depth:
             cand.append((s[side], tid, side))
 gks = {}; taken = defaultdict(list)                         # jedan golman po golu u isto vrijeme
 for score, tid, side in sorted(cand, reverse=True):
@@ -51,7 +53,7 @@ sides = dict(Mt.gk)
 if set(sides) != {"L", "R"}:
     deep = {"L": Counter(), "R": Counter()}
     for fr in tl:
-        out = [p for p in fr["players"] if p["team"] in Mt.teams and p["id"] not in gks and on_court(*p["court"])]
+        out = [p for p in fr["players"] if p["team"] in Mt.teams[:2] and p["id"] not in gks and on_court(*p["court"])]
         if len(out) < 4: continue
         deep["L"][min(out, key=lambda p: p["court"][0])["team"]] += 1
         deep["R"][max(out, key=lambda p: p["court"][0])["team"]] += 1
