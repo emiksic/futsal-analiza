@@ -99,15 +99,15 @@ export function flow(m) {
   const goals = m.events.map((e, i) => [e, i]).filter(([e]) => e.type === "goal" || e.type === "owngoal")
     .sort((a, b) => absSec(a[0]) - absSec(b[0]) || a[1] - b[1]).map(([e]) => e);
   if (goals.length !== fin[0] + fin[1]) return null;
-  const s = [0, 0], seq = [], worst = { home: [0, 0], away: [0, 0] }, def = { home: 0, away: 0 };
+  const s = [0, 0], seq = [], worst = { home: [0, 0], away: [0, 0] }, def = { home: 0, away: 0 }, wi = { home: -1, away: -1 };
   for (const e of goals) {
     const h = (e.side === "home") !== (e.type === "owngoal");
     s[h ? 0 : 1]++;
     seq.push({ e, t: absSec(e), s: [...s], home: h });
-    if (s[1] - s[0] > def.home) { def.home = s[1] - s[0]; worst.home = [...s]; }
-    if (s[0] - s[1] > def.away) { def.away = s[0] - s[1]; worst.away = [...s]; }
+    if (s[1] - s[0] > def.home) { def.home = s[1] - s[0]; worst.home = [...s]; wi.home = seq.length - 1; }
+    if (s[0] - s[1] > def.away) { def.away = s[0] - s[1]; worst.away = [...s]; wi.away = seq.length - 1; }
   }
-  return { seq, def, worst, first: seq.length ? (seq[0].home ? "home" : "away") : null, final: [...s] };
+  return { seq, def, worst, wi, first: seq.length ? (seq[0].home ? "home" : "away") : null, final: [...s] };
 }
 // Preokret: ekipa koja je gubila pa pobijedila ili izjednačila (kod neriješenog: veći zaostatak, barem 2 gola)
 export function comeback(m) {
@@ -118,7 +118,10 @@ export function comeback(m) {
   else if (a > h && f.def.away > 0) side = "away";
   else if (h === a && Math.max(f.def.home, f.def.away) >= 2) side = f.def.home >= f.def.away ? "home" : "away";
   if (!side) return null;
-  return { side, deficit: f.def[side], from: f.worst[side], win: h !== a };
+  // gol koji je dovršio preokret: prvi nakon najvećeg zaostatka koji je izjednačio (neriješeno) ili donio vodstvo (pobjeda)
+  const need = h !== a ? 1 : 0, sign = side === "home" ? 1 : -1;
+  const key = f.seq.slice(f.wi[side] + 1).find((g) => sign * (g.s[0] - g.s[1]) >= need);
+  return { side, deficit: f.def[side], from: f.worst[side], win: h !== a, goal: key?.e.id };
 }
 // Po klubu: rezultati kad zabije/primi prvi, bodovi iz zaostatka, izgubljeni bodovi iz vodstva, golovi u zadnjih 5 minuta
 export function formStats(db, compId) {

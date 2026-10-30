@@ -575,7 +575,8 @@ table.st { font-size: 13px; }
 :root[data-theme="dark"] { --zone-a2: #3f6fe0; --zone-q: #f0a040; }
 
 /* preokreti i tijek rezultata */
-.bcb { display: inline-block; margin: 6px 0 4px; font: 700 11.5px/1 var(--body); text-transform: uppercase; letter-spacing: .04em; color: var(--fg); background: color-mix(in srgb, var(--signal) 30%, transparent); padding: 4px 7px; border-radius: 2px; }
+.cbnote { margin-left: 10px; color: var(--fg); font-weight: 700; text-transform: none; letter-spacing: 0; font-size: 12.5px; }
+.cbtag { display: inline-block; margin-left: 8px; vertical-align: 1px; font: 700 10.5px/1 var(--body); text-transform: uppercase; letter-spacing: .04em; color: var(--fg); background: color-mix(in srgb, var(--signal) 30%, transparent); padding: 3px 5px; border-radius: 2px; }
 .flow { padding: 10px 16px 6px; border-bottom: 1px solid var(--line); }
 .flow-h { display: flex; justify-content: space-between; align-items: baseline; font: 700 11.5px/1 var(--body); text-transform: uppercase; letter-spacing: .03em; color: var(--muted); margin-bottom: 6px; }
 .flow-h .small { text-transform: none; letter-spacing: 0; font-weight: 400; }

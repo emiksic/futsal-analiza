@@ -45,7 +45,6 @@ function Board({ m, ix }) {
     .sort((a, b) => absSec(a) - absSec(b));
   const lostH = s && m.status === "finished" && s[0] < s[1], lostA = s && m.status === "finished" && s[1] < s[0];
   const fin = m.status === "finished";
-  const cb = comeback(m);
   const f2 = [fouls(m, "home", 2), fouls(m, "away", 2)];
   return (
     <section className="board" aria-label="Rezultat">
@@ -62,7 +61,6 @@ function Board({ m, ix }) {
         <div className="bscore">
           {s ? <div className="digits"><span className={lostH ? "lost" : ""}>{s[0]}</span><span className="sep">:</span><span className={lostA ? "lost" : ""}>{s[1]}</span></div>
             : <div className="bkick">{m.timeTbd ? "–:–" : fmtTime(m.date)}</div>}
-          {cb && <div className="bcb">Preokret: {ix.club[m[cb.side]].name} s {cb.side === "home" ? `${cb.from[0]}:${cb.from[1]}` : `${cb.from[1]}:${cb.from[0]}`}</div>}
           <div className="bstate">{fin ? `Kraj${ht ? `, poluvrijeme ${ht[0]}:${ht[1]}` : ""}` : m.timeTbd ? "Satnica još nije objavljena" : "Zakazano"}</div>
         </div>
         <a className="bteam" href={href("klub", A.id)}><Jersey kit={A.kit} size={58} /><b>{A.name}</b></a>
@@ -126,6 +124,7 @@ function AnalysisTab({ m, ix, A }) {
 }
 
 function Incidents({ m, ix }) {
+  const cbGoal = comeback(m)?.goal;
   if (m.status !== "finished" && !m.events.length) return <div className="empty">Utakmica još nije odigrana.</div>;
   const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(a) - absSec(b));
   const cnt = { home: {}, away: {} }, sc = [0, 0], rows = [];
@@ -153,7 +152,7 @@ function Incidents({ m, ix }) {
         if (r.head) return <div key={r.k} className="per">{r.head}{r.sc && <b>{r.sc[0]}:{r.sc[1]}</b>}</div>;
         const e = r.e, p = ix.player[e.player], as = ix.player[e.assist];
         let icon, main, sub;
-        if (e.type === "goal" || e.type === "owngoal") { icon = Icon.ball(20); main = playerName(p); sub = e.type === "owngoal" ? "autogol" : e.pen ? "kazneni udarac" : as ? `asistencija: ${playerName(as)}` : ""; }
+        if (e.type === "goal" || e.type === "owngoal") { icon = Icon.ball(20); main = <>{playerName(p)}{e.id === cbGoal && <span className="cbtag">preokret</span>}</>; sub = e.type === "owngoal" ? "autogol" : e.pen ? "kazneni udarac" : as ? `asistencija: ${playerName(as)}` : ""; }
         else if (e.type === "yellow") { icon = <span className="card-y" />; main = playerName(p); sub = "žuti karton"; }
         else if (e.type === "red") { icon = <span className="card-r" />; main = playerName(p); sub = e.secondYellow ? "drugi žuti karton" : "crveni karton"; }
         else if (e.type === "timeout") { icon = Icon.timeout(); main = "Time-out"; sub = ix.club[m[e.side]].name; }
@@ -186,10 +185,10 @@ function ScoreFlow({ m, ix }) {
   let path = `M${X(0)},${Y(0)}`;
   for (const g of f.seq) path += ` H${X(g.t)} V${Y(g.s[0] - g.s[1])}`;
   path += ` H${X(2400)}`;
-  const hk = ix.club[m.home].kit.shirt, ak = ix.club[m.away].kit.shirt;
+  const hk = ix.club[m.home].kit.shirt, ak = ix.club[m.away].kit.shirt, cb = comeback(m);
   return (
     <div className="flow">
-      <div className="flow-h"><span>Tijek rezultata</span><span className="muted small">{ix.club[m.home].short || ix.club[m.home].name} gore, {ix.club[m.away].short || ix.club[m.away].name} dolje</span></div>
+      <div className="flow-h"><span>Tijek rezultata{cb && <b className="cbnote">{ix.club[m[cb.side]].name} se vratio s {cb.side === "home" ? `${cb.from[0]}:${cb.from[1]}` : `${cb.from[1]}:${cb.from[0]}`}</b>}</span><span className="muted small">{ix.club[m.home].short || ix.club[m.home].name} gore, {ix.club[m.away].short || ix.club[m.away].name} dolje</span></div>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Tijek rezultata">
         <line x1={X(0)} x2={X(2400)} y1={Y(0)} y2={Y(0)} className="flow-0" />
         <line x1={X(1200)} x2={X(1200)} y1={6} y2={H - 6} className="flow-ht" />
