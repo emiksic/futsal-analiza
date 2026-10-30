@@ -76,4 +76,6 @@ Traka s rezultatom na SHMNL YouTube prijenosima (vjerojatno ista na svim utakmic
 - rezultat: promjena = gol → događaj `goal` s točnom minutom i vremenom u videu (seek sa stranice)
 - akumulirani prekršaji: kvadratići se pojavljuju jedan po jedan (0 prekršaja = nema kvadratića);
   broji se po svjetlini na fiksnim mjestima iznad kratice → svaki novi kvadratić = događaj `foul`
-- grafika se podesi jednom (položaj trake) i vrijedi za sve prijenose iste produkcije
+- grafika NIJE ista svugdje: domaćin radi svoj prijenos (npr. Hajduk doma: bijelo/crveni stil, sat desno u crvenom,
+  bez oznake poluvremena, prekršaji vjerojatno kao crtice ispod kratica) → po jedan profil grafike po produkciji
+  (položaji kratica, rezultata, sata, prekršaja), a profil se bira automatski usporedbom s predlošcima na prvim slikama
