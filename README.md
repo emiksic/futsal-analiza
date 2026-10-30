@@ -79,3 +79,5 @@ Traka s rezultatom na SHMNL YouTube prijenosima (vjerojatno ista na svim utakmic
 - grafika NIJE ista svugdje: domaćin radi svoj prijenos (npr. Hajduk doma: bijelo/crveni stil, sat desno u crvenom,
   bez oznake poluvremena, prekršaji vjerojatno kao crtice ispod kratica) → po jedan profil grafike po produkciji
   (položaji kratica, rezultata, sata, prekršaja), a profil se bira automatski usporedbom s predlošcima na prvim slikama
+- viđeno: Pula doma (tamnoplava traka, prekršaji kao kvadratići iznad kratica), Novo vrijeme doma (isti raspored,
+  svjetloplava prozirna traka) → vjerojatno isti predložak; Hajduk doma: drugi stil

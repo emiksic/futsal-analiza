@@ -354,7 +354,8 @@
 "side": "away",
 "player": "square-2026-27-U-19-p2700b515",
 "period": 1,
-"sec": 449
+"sec": 449,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k1-pula-square-c0",
@@ -362,7 +363,8 @@
 "side": "home",
 "player": "pula-2026-27-U-19-pd140e7a9",
 "period": 1,
-"sec": 785
+"sec": 785,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k1-pula-square-g4",
@@ -370,7 +372,8 @@
 "side": "away",
 "player": "square-2026-27-U-19-pbe3c53e7",
 "period": 1,
-"sec": 798
+"sec": 798,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k1-pula-square-g5",
@@ -379,6 +382,7 @@
 "player": "square-2026-27-U-19-pbe3c53e7",
 "period": 1,
 "sec": 836,
+"exact": true,
 "pen": true
 },
 {
@@ -387,7 +391,8 @@
 "side": "away",
 "player": "square-2026-27-U-19-p89b8f5a5",
 "period": 1,
-"sec": 997
+"sec": 997,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k1-pula-square-g6",
@@ -395,7 +400,8 @@
 "side": "away",
 "player": "square-2026-27-U-19-p72234204",
 "period": 2,
-"sec": 172
+"sec": 172,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k1-pula-square-g7",
@@ -403,7 +409,8 @@
 "side": "away",
 "player": "square-2026-27-U-19-p2700b515",
 "period": 2,
-"sec": 305
+"sec": 305,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k1-pula-square-g8",
@@ -411,7 +418,8 @@
 "side": "away",
 "player": "square-2026-27-U-19-pa510ce41",
 "period": 2,
-"sec": 688
+"sec": 688,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k1-pula-square-g9",
@@ -419,7 +427,8 @@
 "side": "away",
 "player": "square-2026-27-U-19-p72234204",
 "period": 2,
-"sec": 756
+"sec": 756,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k1-pula-square-g0",
@@ -2034,7 +2043,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-p366b731f",
 "period": 1,
-"sec": 522
+"sec": 522,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-c0",
@@ -2042,7 +2052,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-19-p133ff4d6",
 "period": 1,
-"sec": 614
+"sec": 614,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g1",
@@ -2050,7 +2061,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-19-p8d7cb94d",
 "period": 1,
-"sec": 1057
+"sec": 1057,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g2",
@@ -2058,7 +2070,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-pfdb50166",
 "period": 1,
-"sec": 1151
+"sec": 1151,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-c3",
@@ -2066,7 +2079,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-p7b3ff626",
 "period": 1,
-"sec": 1156
+"sec": 1156,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g3",
@@ -2074,7 +2088,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-p7b3ff626",
 "period": 2,
-"sec": 121
+"sec": 121,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g4",
@@ -2082,7 +2097,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-p2d9b1037",
 "period": 2,
-"sec": 243
+"sec": 243,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-c1",
@@ -2090,7 +2106,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-19-p37ce6c9a",
 "period": 2,
-"sec": 422
+"sec": 422,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-c2",
@@ -2098,7 +2115,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-pfdb50166",
 "period": 2,
-"sec": 536
+"sec": 536,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g5",
@@ -2106,7 +2124,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-p2d9b1037",
 "period": 2,
-"sec": 683
+"sec": 683,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g6",
@@ -2114,7 +2133,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-p0dad8b9c",
 "period": 2,
-"sec": 784
+"sec": 784,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g7",
@@ -2122,7 +2142,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-p2d9b1037",
 "period": 2,
-"sec": 1099
+"sec": 1099,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g8",
@@ -2130,7 +2151,8 @@
 "side": "away",
 "player": "pula-2026-27-U-19-pd140e7a9",
 "period": 2,
-"sec": 1137
+"sec": 1137,
+"exact": true
 }
 ],
 "analysis": null,
@@ -2237,7 +2259,8 @@
 "side": "away",
 "player": "hajduk-2026-27-U-19-pc30a1a47",
 "period": 1,
-"sec": 143
+"sec": 143,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-g0",
@@ -2285,7 +2308,8 @@
 "side": "away",
 "player": "hajduk-2026-27-U-19-pacda3c78",
 "period": 1,
-"sec": 669
+"sec": 669,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-g3",
@@ -2317,7 +2341,8 @@
 "side": "home",
 "player": "futsal-dinamo-2026-27-U-19-pa8026f67",
 "period": 2,
-"sec": 197
+"sec": 197,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-g10",
@@ -2325,7 +2350,8 @@
 "side": "away",
 "player": "hajduk-2026-27-U-19-p3c5ab5af",
 "period": 2,
-"sec": 227
+"sec": 227,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-g11",
@@ -2823,7 +2849,8 @@
 "side": "home",
 "player": "gimka-2026-27-U-19-pe002ce66",
 "period": 1,
-"sec": 268
+"sec": 268,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-g3",
@@ -2831,7 +2858,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-19-p4b9e7c12",
 "period": 1,
-"sec": 390
+"sec": 390,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-g1",
@@ -2839,7 +2867,8 @@
 "side": "home",
 "player": "gimka-2026-27-U-19-p5bdb8a66",
 "period": 1,
-"sec": 435
+"sec": 435,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-g4",
@@ -2847,7 +2876,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-19-p4b9e7c12",
 "period": 1,
-"sec": 576
+"sec": 576,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-g5",
@@ -2855,7 +2885,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-19-pa135650c",
 "period": 1,
-"sec": 1050
+"sec": 1050,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-g2",
@@ -2863,7 +2894,8 @@
 "side": "home",
 "player": "gimka-2026-27-U-19-p82d21738",
 "period": 2,
-"sec": 26
+"sec": 26,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-c0",
@@ -2871,7 +2903,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-19-p4b9e7c12",
 "period": 2,
-"sec": 381
+"sec": 381,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-g6",
@@ -2879,7 +2912,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-19-p355f1398",
 "period": 2,
-"sec": 615
+"sec": 615,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-g7",
@@ -2887,7 +2921,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-19-p4b9e7c12",
 "period": 2,
-"sec": 863
+"sec": 863,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-g8",
@@ -2895,7 +2930,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-19-p88cb7828",
 "period": 2,
-"sec": 1170
+"sec": 1170,
+"exact": true
 }
 ],
 "analysis": null,
@@ -3001,7 +3037,8 @@
 "side": "home",
 "player": "pula-2026-27-U-19-p0dad8b9c",
 "period": 1,
-"sec": 631
+"sec": 631,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-g1",
@@ -3009,7 +3046,8 @@
 "side": "away",
 "player": "futsal-dinamo-2026-27-U-19-p64fdb374",
 "period": 1,
-"sec": 766
+"sec": 766,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-g2",
@@ -3017,7 +3055,8 @@
 "side": "away",
 "player": "futsal-dinamo-2026-27-U-19-pa8026f67",
 "period": 1,
-"sec": 870
+"sec": 870,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-g3",
@@ -3025,7 +3064,8 @@
 "side": "away",
 "player": "futsal-dinamo-2026-27-U-19-p64fdb374",
 "period": 1,
-"sec": 921
+"sec": 921,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-g4",
@@ -3033,7 +3073,8 @@
 "side": "away",
 "player": "futsal-dinamo-2026-27-U-19-p480c70b4",
 "period": 1,
-"sec": 1028
+"sec": 1028,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-c2",
@@ -3041,7 +3082,8 @@
 "side": "away",
 "player": "futsal-dinamo-2026-27-U-19-p57e5b943",
 "period": 2,
-"sec": 672
+"sec": 672,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-g5",
@@ -3049,7 +3091,8 @@
 "side": "away",
 "player": "futsal-dinamo-2026-27-U-19-pfd937cff",
 "period": 2,
-"sec": 729
+"sec": 729,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-c1",
@@ -3057,7 +3100,8 @@
 "side": "away",
 "player": "futsal-dinamo-2026-27-U-19-pa8026f67",
 "period": 2,
-"sec": 1109
+"sec": 1109,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-c0",
@@ -3065,7 +3109,8 @@
 "side": "home",
 "player": "pula-2026-27-U-19-p1a91e0ff",
 "period": 2,
-"sec": 1123
+"sec": 1123,
+"exact": true
 }
 ],
 "analysis": null,
@@ -3382,7 +3427,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-19-p0abe3d1c",
 "period": 1,
-"sec": 440
+"sec": 440,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-c2",
@@ -3390,7 +3436,8 @@
 "side": "away",
 "player": "novo-vrijeme-2026-27-U-19-p51219606",
 "period": 1,
-"sec": 506
+"sec": 506,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-c0",
@@ -3398,7 +3445,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-19-pc8c6105f",
 "period": 1,
-"sec": 587
+"sec": 587,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-g5",
@@ -3406,7 +3454,8 @@
 "side": "away",
 "player": "novo-vrijeme-2026-27-U-19-p63f2e607",
 "period": 1,
-"sec": 595
+"sec": 595,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-g1",
@@ -3414,7 +3463,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-19-p060a4978",
 "period": 1,
-"sec": 649
+"sec": 649,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-g2",
@@ -3422,7 +3472,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-19-p9b3a82ef",
 "period": 1,
-"sec": 850
+"sec": 850,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-c1",
@@ -3430,7 +3481,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-19-p5d055bab",
 "period": 1,
-"sec": 1034
+"sec": 1034,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-g3",
@@ -3438,7 +3490,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-19-p9b3a82ef",
 "period": 2,
-"sec": 455
+"sec": 455,
+"exact": true
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-g4",
@@ -3446,7 +3499,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-19-p54f0fc30",
 "period": 2,
-"sec": 1150
+"sec": 1150,
+"exact": true
 }
 ],
 "analysis": null,

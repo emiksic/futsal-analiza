@@ -33,6 +33,8 @@ export function score(m, upto = Infinity) {
 }
 export const absSec = (e) => (e.period - 1) * 1200 + e.sec;
 export const minute = (e) => e.period > 2 ? `${40 + Math.floor(e.sec / 60) + 1}'` : `${(e.period - 1) * 20 + Math.floor(e.sec / 60) + 1}'`;
+// vrijeme gola: s točnom sekundom kad je poznata (e.exact: Semafor sa sekundama ili očitano sa snimke), inače minuta
+export const goalTime = (e) => e.exact && e.period <= 2 ? `${(e.period - 1) * 20 + Math.floor(e.sec / 60)}:${String(e.sec % 60).padStart(2, "0")}` : minute(e);
 export const clock = (sec) => `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
 
 export function result(m, side) {
@@ -87,6 +89,60 @@ export function standings(db, compId) {
   return rows.map((r) => ({ ...r, fp: fp[r.club] || 0 })).sort((a, b) => b.pts - a.pts || kr(a.club) - kr(b.club) || b.gd - a.gd || b.gf - a.gf
     || (H[b.club] || z).pts - (H[a.club] || z).pts || (H[b.club] || z).gd - (H[a.club] || z).gd
     || a.fp - b.fp || a.club.localeCompare(b.club));
+}
+
+// ---------- tijek rezultata i preokreti ----------
+// Golovi redom s rezultatom nakon svakog. null ako golovi ne odgovaraju konačnom rezultatu.
+export function flow(m) {
+  if (m.status !== "finished") return null;
+  const fin = score(m); if (!fin) return null;
+  const goals = m.events.map((e, i) => [e, i]).filter(([e]) => e.type === "goal" || e.type === "owngoal")
+    .sort((a, b) => absSec(a[0]) - absSec(b[0]) || a[1] - b[1]).map(([e]) => e);
+  if (goals.length !== fin[0] + fin[1]) return null;
+  const s = [0, 0], seq = [], worst = { home: [0, 0], away: [0, 0] }, def = { home: 0, away: 0 };
+  for (const e of goals) {
+    const h = (e.side === "home") !== (e.type === "owngoal");
+    s[h ? 0 : 1]++;
+    seq.push({ e, t: absSec(e), s: [...s], home: h });
+    if (s[1] - s[0] > def.home) { def.home = s[1] - s[0]; worst.home = [...s]; }
+    if (s[0] - s[1] > def.away) { def.away = s[0] - s[1]; worst.away = [...s]; }
+  }
+  return { seq, def, worst, first: seq.length ? (seq[0].home ? "home" : "away") : null, final: [...s] };
+}
+// Preokret: ekipa koja je gubila pa pobijedila ili izjednačila (kod neriješenog: veći zaostatak, barem 2 gola)
+export function comeback(m) {
+  const f = flow(m); if (!f) return null;
+  const [h, a] = f.final;
+  let side = null;
+  if (h > a && f.def.home > 0) side = "home";
+  else if (a > h && f.def.away > 0) side = "away";
+  else if (h === a && Math.max(f.def.home, f.def.away) >= 2) side = f.def.home >= f.def.away ? "home" : "away";
+  if (!side) return null;
+  return { side, deficit: f.def[side], from: f.worst[side], win: h !== a };
+}
+// Po klubu: rezultati kad zabije/primi prvi, bodovi iz zaostatka, izgubljeni bodovi iz vodstva, golovi u zadnjih 5 minuta
+export function formStats(db, compId) {
+  const comp = db.comps.find((c) => c.id === compId); if (!comp) return [];
+  const T = Object.fromEntries(comp.teams.map((t) => [t, { club: t, n: 0, fs: [0, 0, 0], cf: [0, 0, 0], ptsBehind: 0, ptsLost: 0, lateFor: 0, lateAg: 0 }]));
+  for (const m of db.matches) {
+    if (m.comp !== compId) continue;
+    const f = flow(m); if (!f) continue;
+    for (const side of ["home", "away"]) {
+      const r = T[m[side]]; if (!r) continue;
+      const [me, op] = side === "home" ? f.final : [f.final[1], f.final[0]];
+      const res = me > op ? 0 : me === op ? 1 : 2, pts = [3, 1, 0][res];
+      r.n++;
+      if (f.first === side) r.fs[res]++; else if (f.first) r.cf[res]++;
+      if (f.def[side] > 0) r.ptsBehind += pts;
+      if (f.def[side === "home" ? "away" : "home"] > 0) r.ptsLost += 3 - pts;
+      for (const g of f.seq) if (g.t >= 2100 && g.e.period === 2) { if (g.home === (side === "home")) r.lateFor++; else r.lateAg++; }
+    }
+  }
+  return Object.values(T);
+}
+export function comebacks(db, compId) {
+  return db.matches.filter((m) => m.comp === compId).map((m) => ({ m, c: comeback(m) })).filter((x) => x.c)
+    .sort((a, b) => b.c.deficit - a.c.deficit || b.c.win - a.c.win || b.m.date.localeCompare(a.m.date));
 }
 
 export function scorers(db, compId) {

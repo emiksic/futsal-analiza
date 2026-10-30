@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { href } from "../lib/router.js";
-import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers } from "../lib/derive.js";
+import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, goalTime, flow, comeback } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
@@ -45,6 +45,7 @@ function Board({ m, ix }) {
     .sort((a, b) => absSec(a) - absSec(b));
   const lostH = s && m.status === "finished" && s[0] < s[1], lostA = s && m.status === "finished" && s[1] < s[0];
   const fin = m.status === "finished";
+  const cb = comeback(m);
   const f2 = [fouls(m, "home", 2), fouls(m, "away", 2)];
   return (
     <section className="board" aria-label="Rezultat">
@@ -61,6 +62,7 @@ function Board({ m, ix }) {
         <div className="bscore">
           {s ? <div className="digits"><span className={lostH ? "lost" : ""}>{s[0]}</span><span className="sep">:</span><span className={lostA ? "lost" : ""}>{s[1]}</span></div>
             : <div className="bkick">{m.timeTbd ? "–:–" : fmtTime(m.date)}</div>}
+          {cb && <div className="bcb">Preokret: {ix.club[m[cb.side]].name} s {cb.side === "home" ? `${cb.from[0]}:${cb.from[1]}` : `${cb.from[1]}:${cb.from[0]}`}</div>}
           <div className="bstate">{fin ? `Kraj${ht ? `, poluvrijeme ${ht[0]}:${ht[1]}` : ""}` : m.timeTbd ? "Satnica još nije objavljena" : "Zakazano"}</div>
         </div>
         <a className="bteam" href={href("klub", A.id)}><Jersey kit={A.kit} size={58} /><b>{A.name}</b></a>
@@ -68,7 +70,7 @@ function Board({ m, ix }) {
       {fin && (goals("home").length || goals("away").length) ? (
         <div className="board-goals">
           {["home", "away"].map((side) => (
-            <div key={side}>{goals(side).map((e) => <span key={e.id}>{playerName(ix.player[e.player])}{e.type === "owngoal" ? " (ag)" : ""} {minute(e)}</span>)}</div>
+            <div key={side}>{goals(side).map((e) => <span key={e.id}>{playerName(ix.player[e.player])}{e.type === "owngoal" ? " (ag)" : ""} {goalTime(e)}</span>)}</div>
           ))}
         </div>) : null}
       {fin && m.events.some((e) => e.type === "foul") && (
@@ -144,6 +146,8 @@ function Incidents({ m, ix }) {
   }
   if (per) rows.push({ k: "end", head: "Kraj", sc: [...sc] });
   return (
+    <>
+    <ScoreFlow m={m} ix={ix} />
     <div className="inc">
       {rows.map((r) => {
         if (r.head) return <div key={r.k} className="per">{r.head}{r.sc && <b>{r.sc[0]}:{r.sc[1]}</b>}</div>;
@@ -163,11 +167,37 @@ function Incidents({ m, ix }) {
         return (
           <div key={r.k} className="irow">
             {e.side === "home" ? body : <span />}
-            <span className="min">{minute(e)}</span>
+            <span className="min">{goalTime(e)}</span>
             {e.side === "away" ? body : <span />}
           </div>
         );
       })}
+    </div>
+    </>
+  );
+}
+
+// Tijek rezultata: razlika u golovima kroz 40 minuta (gore domaćin vodi, dolje gost)
+function ScoreFlow({ m, ix }) {
+  const f = flow(m);
+  if (!f || f.seq.length < 2) return null;
+  const W = 600, H = 120, X = (t) => 28 + (Math.min(t, 2400) / 2400) * (W - 40), max = Math.max(2, ...f.seq.map((g) => Math.abs(g.s[0] - g.s[1])));
+  const Y = (d) => H / 2 - (d / max) * (H / 2 - 14);
+  let path = `M${X(0)},${Y(0)}`;
+  for (const g of f.seq) path += ` H${X(g.t)} V${Y(g.s[0] - g.s[1])}`;
+  path += ` H${X(2400)}`;
+  const hk = ix.club[m.home].kit.shirt, ak = ix.club[m.away].kit.shirt;
+  return (
+    <div className="flow">
+      <div className="flow-h"><span>Tijek rezultata</span><span className="muted small">{ix.club[m.home].short || ix.club[m.home].name} gore, {ix.club[m.away].short || ix.club[m.away].name} dolje</span></div>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Tijek rezultata">
+        <line x1={X(0)} x2={X(2400)} y1={Y(0)} y2={Y(0)} className="flow-0" />
+        <line x1={X(1200)} x2={X(1200)} y1={6} y2={H - 6} className="flow-ht" />
+        {[0, 10, 20, 30, 40].map((t) => <text key={t} x={X(t * 60)} y={H - 1} className="flow-t">{t}'</text>)}
+        <path d={path} className="flow-line" />
+        {f.seq.map((g, i) => <circle key={i} cx={X(g.t)} cy={Y(g.s[0] - g.s[1])} r={4.5} fill={g.home ? hk : ak} className="flow-dot">
+          <title>{goalTime(g.e)} {g.s[0]}:{g.s[1]}</title></circle>)}
+      </svg>
     </div>
   );
 }

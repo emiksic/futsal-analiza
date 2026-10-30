@@ -211,7 +211,8 @@
 "side": "home",
 "player": "crnica-2026-27-U-17-pa1f60ba6",
 "period": 2,
-"sec": 967
+"sec": 967,
+"exact": true
 }
 ],
 "analysis": null,
@@ -336,7 +337,8 @@
 "side": "away",
 "player": "square-2026-27-U-17-pc2b72eee",
 "period": 1,
-"sec": 212
+"sec": 212,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k1-pula-square-c1",
@@ -344,7 +346,8 @@
 "side": "home",
 "player": "pula-2026-27-U-17-pa4a5a602",
 "period": 1,
-"sec": 380
+"sec": 380,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k1-pula-square-g1",
@@ -352,7 +355,8 @@
 "side": "home",
 "player": "pula-2026-27-U-17-pf6735c91",
 "period": 1,
-"sec": 418
+"sec": 418,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k1-pula-square-c0",
@@ -360,7 +364,8 @@
 "side": "home",
 "player": "pula-2026-27-U-17-pef912000",
 "period": 2,
-"sec": 121
+"sec": 121,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k1-pula-square-g4",
@@ -368,7 +373,8 @@
 "side": "away",
 "player": "square-2026-27-U-17-pc2b72eee",
 "period": 2,
-"sec": 519
+"sec": 519,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k1-pula-square-c2",
@@ -376,7 +382,8 @@
 "side": "away",
 "player": "square-2026-27-U-17-pc2b72eee",
 "period": 2,
-"sec": 569
+"sec": 569,
+"exact": true
 }
 ],
 "analysis": null,
@@ -2233,7 +2240,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-17-p7e1fb509",
 "period": 1,
-"sec": 9
+"sec": 9,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k2-universitas-pula-g1",
@@ -2241,7 +2249,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-17-pa384dacc",
 "period": 1,
-"sec": 253
+"sec": 253,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k2-universitas-pula-g6",
@@ -2249,7 +2258,8 @@
 "side": "away",
 "player": "pula-2026-27-U-17-pf6735c91",
 "period": 1,
-"sec": 601
+"sec": 601,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k2-universitas-pula-g2",
@@ -2257,7 +2267,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-17-p129d74ec",
 "period": 1,
-"sec": 783
+"sec": 783,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k2-universitas-pula-g3",
@@ -2265,7 +2276,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-17-p43a19ec4",
 "period": 1,
-"sec": 946
+"sec": 946,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k2-universitas-pula-c0",
@@ -2273,7 +2285,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-17-p43a19ec4",
 "period": 2,
-"sec": 281
+"sec": 281,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k2-universitas-pula-g7",
@@ -2281,7 +2294,8 @@
 "side": "away",
 "player": "pula-2026-27-U-17-p48f8a8b2",
 "period": 2,
-"sec": 635
+"sec": 635,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k2-universitas-pula-g4",
@@ -2289,7 +2303,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-17-pbfe6d7a8",
 "period": 2,
-"sec": 1046
+"sec": 1046,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k2-universitas-pula-g5",
@@ -2297,7 +2312,8 @@
 "side": "home",
 "player": "universitas-2026-27-U-17-p129d74ec",
 "period": 2,
-"sec": 1107
+"sec": 1107,
+"exact": true
 }
 ],
 "analysis": null,
@@ -2975,7 +2991,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-17-pc2ffd1b8",
 "period": 1,
-"sec": 234
+"sec": 234,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-c0",
@@ -2983,7 +3000,8 @@
 "side": "home",
 "player": "gimka-2026-27-U-17-p7172b534",
 "period": 1,
-"sec": 421
+"sec": 421,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-g4",
@@ -2991,7 +3009,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-17-p13e99256",
 "period": 1,
-"sec": 424
+"sec": 424,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-g0",
@@ -2999,7 +3018,8 @@
 "side": "home",
 "player": "gimka-2026-27-U-17-p004ec76a",
 "period": 1,
-"sec": 479
+"sec": 479,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-g1",
@@ -3007,7 +3027,8 @@
 "side": "home",
 "player": "gimka-2026-27-U-17-p7172b534",
 "period": 1,
-"sec": 919
+"sec": 919,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-c2",
@@ -3015,7 +3036,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-17-p13e99256",
 "period": 1,
-"sec": 1004
+"sec": 1004,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-g2",
@@ -3023,7 +3045,8 @@
 "side": "home",
 "player": "gimka-2026-27-U-17-p26bde06b",
 "period": 1,
-"sec": 1141
+"sec": 1141,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-g5",
@@ -3031,7 +3054,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-17-p23da66b7",
 "period": 2,
-"sec": 148
+"sec": 148,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-c1",
@@ -3039,7 +3063,8 @@
 "side": "home",
 "player": "gimka-2026-27-U-17-p4fa3cc47",
 "period": 2,
-"sec": 182
+"sec": 182,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-c3",
@@ -3047,7 +3072,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-17-pbc43262a",
 "period": 2,
-"sec": 254
+"sec": 254,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-g6",
@@ -3055,7 +3081,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-17-p13e99256",
 "period": 2,
-"sec": 765
+"sec": 765,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-gimka-olmissum-g3",
@@ -3064,6 +3091,7 @@
 "player": "gimka-2026-27-U-17-p26bde06b",
 "period": 2,
 "sec": 930,
+"exact": true,
 "pen": true
 },
 {
@@ -3072,7 +3100,8 @@
 "side": "away",
 "player": "olmissum-2026-27-U-17-p13e99256",
 "period": 2,
-"sec": 1180
+"sec": 1180,
+"exact": true
 }
 ],
 "analysis": null,
@@ -3183,7 +3212,8 @@
 "side": "home",
 "player": "pula-2026-27-U-17-p6b5041df",
 "period": 1,
-"sec": 1144
+"sec": 1144,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-pula-futsal-dinamo-g0",
@@ -3191,7 +3221,8 @@
 "side": "home",
 "player": "pula-2026-27-U-17-p6b5041df",
 "period": 2,
-"sec": 775
+"sec": 775,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-pula-futsal-dinamo-g1",
@@ -3199,7 +3230,8 @@
 "side": "away",
 "player": "futsal-dinamo-2026-27-U-17-p798fe5f0",
 "period": 2,
-"sec": 899
+"sec": 899,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-pula-futsal-dinamo-c1",
@@ -3207,7 +3239,8 @@
 "side": "home",
 "player": "pula-2026-27-U-17-pef912000",
 "period": 2,
-"sec": 915
+"sec": 915,
+"exact": true
 }
 ],
 "analysis": null,
@@ -3513,7 +3546,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p4f53603d",
 "period": 1,
-"sec": 547
+"sec": 547,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g1",
@@ -3521,7 +3555,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p34de0f76",
 "period": 1,
-"sec": 662
+"sec": 662,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g2",
@@ -3529,7 +3564,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p365c6f08",
 "period": 1,
-"sec": 860
+"sec": 860,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g3",
@@ -3537,7 +3573,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-pdf9d7dcc",
 "period": 1,
-"sec": 875
+"sec": 875,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g4",
@@ -3545,7 +3582,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p9f5644a0",
 "period": 1,
-"sec": 883
+"sec": 883,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g5",
@@ -3553,7 +3591,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p970a0af5",
 "period": 1,
-"sec": 932
+"sec": 932,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g6",
@@ -3561,7 +3600,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-pc55309a6",
 "period": 1,
-"sec": 1092
+"sec": 1092,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g7",
@@ -3569,7 +3609,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p34de0f76",
 "period": 1,
-"sec": 1104
+"sec": 1104,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-c0",
@@ -3577,7 +3618,8 @@
 "side": "away",
 "player": "novo-vrijeme-2026-27-U-17-pa03aa8bd",
 "period": 1,
-"sec": 1164
+"sec": 1164,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-c1",
@@ -3585,7 +3627,8 @@
 "side": "away",
 "player": "novo-vrijeme-2026-27-U-17-p1d47bc72",
 "period": 1,
-"sec": 1193
+"sec": 1193,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g8",
@@ -3593,7 +3636,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p970a0af5",
 "period": 2,
-"sec": 264
+"sec": 264,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g9",
@@ -3601,7 +3645,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-pc55309a6",
 "period": 2,
-"sec": 323
+"sec": 323,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g10",
@@ -3609,7 +3654,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-pc55309a6",
 "period": 2,
-"sec": 335
+"sec": 335,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g11",
@@ -3617,7 +3663,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p34de0f76",
 "period": 2,
-"sec": 557
+"sec": 557,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g12",
@@ -3625,7 +3672,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p34de0f76",
 "period": 2,
-"sec": 810
+"sec": 810,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g13",
@@ -3633,7 +3681,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-pdf9d7dcc",
 "period": 2,
-"sec": 964
+"sec": 964,
+"exact": true
 },
 {
 "id": "kadeti-2026-27-k3-rijeka-novo-vrijeme-g14",
@@ -3641,7 +3690,8 @@
 "side": "home",
 "player": "rijeka-2026-27-U-17-p365c6f08",
 "period": 2,
-"sec": 1165
+"sec": 1165,
+"exact": true
 }
 ],
 "analysis": null,

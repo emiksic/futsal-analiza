@@ -30,7 +30,9 @@ def to_ev(t):
     tot = mins * 60 + int(s) if s is not None else (mins - 1) * 60 + 30
     per = min(tot // 1200 + 1, 3) if tot < 2400 else 3
     if tot >= 2400 and mins <= 40: per, tot = 2, 2399
-    return {"period": per, "sec": tot - (per - 1) * 1200}
+    ev = {"period": per, "sec": tot - (per - 1) * 1200}
+    if s is not None: ev["exact"] = True      # sekunda poznata (inače je minuta, sredina minute)
+    return ev
 
 YOUTH = CAT in ("U-19", "U-17")
 CLUB = {"Crnica": "crnica", "Olmissum": "olmissum", "Futsal Istra Pula": "pula", "Square": "square", "Uspinjača Gimka": "gimka",

@@ -584,7 +584,8 @@
 "side": "home",
 "player": "rijeka-2026-27-Seniori-rafael-ferreira-lima",
 "period": 1,
-"sec": 395
+"sec": 395,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k1-rijeka-hajduk-g1",
@@ -600,7 +601,8 @@
 "side": "away",
 "player": "hajduk-2026-27-Seniori-josip-cikojevic",
 "period": 1,
-"sec": 1168
+"sec": 1168,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k1-rijeka-hajduk-g3",
@@ -608,7 +610,8 @@
 "side": "home",
 "player": "rijeka-2026-27-Seniori-manolo-bilic",
 "period": 2,
-"sec": 799
+"sec": 799,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k1-rijeka-hajduk-g4",
@@ -616,7 +619,8 @@
 "side": "home",
 "player": "rijeka-2026-27-Seniori-manolo-bilic",
 "period": 2,
-"sec": 1075
+"sec": 1075,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k1-rijeka-hajduk-g5",
@@ -624,7 +628,8 @@
 "side": "home",
 "player": "rijeka-2026-27-Seniori-rafael-ferreira-lima",
 "period": 2,
-"sec": 1127
+"sec": 1127,
+"exact": true
 }
 ],
 "analysis": null,
@@ -1120,7 +1125,8 @@
 "side": "home",
 "player": "pula-2026-27-Seniori-david-pernic",
 "period": 1,
-"sec": 1131
+"sec": 1131,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k2-pula-crnica-g1",
@@ -1136,7 +1142,8 @@
 "side": "home",
 "player": "pula-2026-27-Seniori-daniel-moravac",
 "period": 2,
-"sec": 96
+"sec": 96,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k2-pula-crnica-g3",
@@ -1144,7 +1151,8 @@
 "side": "away",
 "player": "crnica-2026-27-Seniori-nairton-severiano-da-silva",
 "period": 2,
-"sec": 698
+"sec": 698,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k2-pula-crnica-g4",
@@ -1152,7 +1160,8 @@
 "side": "away",
 "player": "crnica-2026-27-Seniori-toni-legcevic",
 "period": 2,
-"sec": 987
+"sec": 987,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k2-pula-crnica-g5",
@@ -1160,7 +1169,8 @@
 "side": "home",
 "player": "pula-2026-27-Seniori-daniel-moravac",
 "period": 2,
-"sec": 1177
+"sec": 1177,
+"exact": true
 }
 ],
 "analysis": null,
@@ -1936,7 +1946,8 @@
 "side": "home",
 "player": "hajduk-2026-27-Seniori-josip-cikojevic",
 "period": 2,
-"sec": 65
+"sec": 65,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k3-hajduk-square-g2",
@@ -1944,7 +1955,8 @@
 "side": "home",
 "player": "hajduk-2026-27-Seniori-filipe-da-silva-santana",
 "period": 2,
-"sec": 447
+"sec": 447,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k3-hajduk-square-g3",
@@ -1960,7 +1972,8 @@
 "side": "away",
 "player": "square-2026-27-Seniori-maro-duras",
 "period": 2,
-"sec": 648
+"sec": 648,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k3-hajduk-square-g5",
@@ -2055,7 +2068,8 @@
 "side": "home",
 "player": "futsal-dinamo-2026-27-Seniori-kristian-cekol",
 "period": 2,
-"sec": 423
+"sec": 423,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k4-futsal-dinamo-crnica-g2",
@@ -2063,7 +2077,8 @@
 "side": "home",
 "player": "futsal-dinamo-2026-27-Seniori-kristian-cekol",
 "period": 2,
-"sec": 744
+"sec": 744,
+"exact": true
 },
 {
 "id": "1-hmnl-2026-27-k4-futsal-dinamo-crnica-g3",

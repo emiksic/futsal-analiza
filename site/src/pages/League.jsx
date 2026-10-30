@@ -1,12 +1,12 @@
 import { href, go } from "../lib/router.js";
-import { standings, scorers, currentRound, fmtDay, playerName, zoneOf } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, score } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
 import { AnalysedCard, ScorersCard, MiniTable } from "../components/Side.jsx";
 import { Jersey, LeagueBadge, Form, Icon } from "../components/ui.jsx";
 
-const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["analize", "Video analize"], ["pravila", "Pravila"]];
+const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["preokreti", "Preokreti"], ["analize", "Video analize"], ["pravila", "Pravila"]];
 
 export function League({ db, ix, leagueId, seasonId, tab = "tablica", roundArg }) {
   const L = ix.league[leagueId];
@@ -39,6 +39,7 @@ export function League({ db, ix, leagueId, seasonId, tab = "tablica", roundArg }
           {tab === "tablica" && <Standings db={db} ix={ix} comp={comp} league={L} />}
           {tab === "rezultati" && <Rounds db={db} ix={ix} comp={comp} round={roundArg ? +roundArg : null} />}
           {tab === "strijelci" && <Scorers db={db} ix={ix} comp={comp} />}
+          {tab === "preokreti" && <Comebacks db={db} ix={ix} comp={comp} />}
           {tab === "analize" && <Analysed db={db} ix={ix} comp={comp} />}
           {tab === "pravila" && <Rules league={L} season={comp.season} />}
         </section>
@@ -144,6 +145,55 @@ function Scorers({ db, ix, comp }) {
         })}</tbody>
       </table>
     </div>
+  );
+}
+
+function Comebacks({ db, ix, comp }) {
+  const rows = formStats(db, comp.id).filter((r) => r.n), list = comebacks(db, comp.id);
+  if (!rows.length) return <div className="empty">Još nema utakmica s unesenim golovima.</div>;
+  const order = Object.fromEntries(standings(db, comp.id).map((r, i) => [r.club, i]));
+  rows.sort((a, b) => order[a.club] - order[b.club]);
+  const wdl = (x) => <span className="wdl"><b>{x[0]}</b>-{x[1]}-{x[2]}</span>;
+  return (
+    <>
+      <div className="tbl-wrap">
+        <table className="st">
+          <thead><tr>
+            <th className="l">Klub</th>
+            <th title="Pobjede-neriješeno-porazi kad je klub zabio prvi gol">Zabili prvi</th>
+            <th title="Pobjede-neriješeno-porazi kad je klub primio prvi gol">Primili prvi</th>
+            <th title="Bodovi osvojeni u utakmicama u kojima je klub gubio">Iz zaostatka</th>
+            <th title="Bodovi ispušteni u utakmicama u kojima je klub vodio">Ispušteno</th>
+            <th title="Golovi zabijeni i primljeni od 36. minute">36.–40.</th>
+          </tr></thead>
+          <tbody>{rows.map((r) => {
+            const c = ix.club[r.club];
+            return (
+              <tr key={r.club}>
+                <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={22} />{c.name}</a></td>
+                <td>{wdl(r.fs)}</td><td>{wdl(r.cf)}</td>
+                <td className={r.ptsBehind ? "pts" : "muted"}>{r.ptsBehind}</td>
+                <td className={r.ptsLost ? "pts" : "muted"}>{r.ptsLost}</td>
+                <td>{r.lateFor}:{r.lateAg}</td>
+              </tr>);
+          })}</tbody>
+        </table>
+      </div>
+      <div className="zones"><span>Zabili prvi / primili prvi: pobjede-neriješeno-porazi. Iz zaostatka: bodovi osvojeni u utakmicama u kojima je klub gubio. Ispušteno: bodovi izgubljeni u utakmicama u kojima je vodio. 36.–40.: golovi zabijeni i primljeni u zadnjih 5 minuta. Računaju se samo utakmice za koje su uneseni svi golovi.</span></div>
+      <div className="mgroup"><b>Preokreti</b></div>
+      {!list.length ? <div className="empty">Još nije bilo preokreta.</div> : (
+        <div className="cb-list">{list.map(({ m, c }) => {
+          const W = ix.club[m[c.side]], O = ix.club[m[c.side === "home" ? "away" : "home"]];
+          const f = (s) => c.side === "home" ? `${s[0]}:${s[1]}` : `${s[1]}:${s[0]}`;   // iz perspektive ekipe koja se vratila
+          return (
+            <a key={m.id} className="cb-row" href={href("utakmica", m.id, "detalji")}>
+              <span className="cb-def">−{c.deficit}</span>
+              <span className="cb-txt"><Jersey kit={W.kit} size={20} /><b>{W.name}</b>&nbsp;{c.win ? "pobijedio" : "izjednačio"} protiv {O.name}
+                <span className="muted small">&nbsp;· gubio {f(c.from)}, kraj {f(score(m))}</span></span>
+              <span className="muted small cb-when">{m.round}. kolo, {fmtDate(m.date)}</span>
+            </a>);
+        })}</div>)}
+    </>
   );
 }
 
