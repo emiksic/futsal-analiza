@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { href } from "../lib/router.js";
-import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, goalTime, flow, comeback } from "../lib/derive.js";
+import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, goalTime, flow, comeback, sideScore } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
@@ -188,7 +188,7 @@ function ScoreFlow({ m, ix }) {
   const hk = ix.club[m.home].kit.shirt, ak = ix.club[m.away].kit.shirt, cb = comeback(m);
   return (
     <div className="flow">
-      <div className="flow-h"><span>Tijek rezultata{cb && <b className="cbnote">{ix.club[m[cb.side]].name} se vratio s {cb.side === "home" ? `${cb.from[0]}:${cb.from[1]}` : `${cb.from[1]}:${cb.from[0]}`}</b>}</span><span className="muted small">{ix.club[m.home].short || ix.club[m.home].name} gore, {ix.club[m.away].short || ix.club[m.away].name} dolje</span></div>
+      <div className="flow-h"><span>Tijek rezultata{cb && <b className="cbnote">Preokret: {ix.club[m[cb.side]].name} s {sideScore(cb.from, cb.side)} na {sideScore(cb.lead, cb.side)}</b>}</span><span className="muted small">{ix.club[m.home].short || ix.club[m.home].name} gore, {ix.club[m.away].short || ix.club[m.away].name} dolje</span></div>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Tijek rezultata">
         <line x1={X(0)} x2={X(2400)} y1={Y(0)} y2={Y(0)} className="flow-0" />
         <line x1={X(1200)} x2={X(1200)} y1={6} y2={H - 6} className="flow-ht" />

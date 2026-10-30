@@ -1,5 +1,5 @@
 import { href, go } from "../lib/router.js";
-import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, score } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
@@ -183,13 +183,13 @@ function Comebacks({ db, ix, comp }) {
       <div className="mgroup"><b>Preokreti</b></div>
       {!list.length ? <div className="empty">Još nije bilo preokreta.</div> : (
         <div className="cb-list">{list.map(({ m, c }) => {
-          const W = ix.club[m[c.side]], O = ix.club[m[c.side === "home" ? "away" : "home"]];
-          const f = (s) => c.side === "home" ? `${s[0]}:${s[1]}` : `${s[1]}:${s[0]}`;   // iz perspektive ekipe koja se vratila
+          const W = ix.club[m[c.side]], O = ix.club[m[c.side === "home" ? "away" : "home"]], f = (x) => sideScore(x, c.side);
+          const end = { W: "pobjeda", D: "neriješeno", L: "ipak poraz" }[c.res];
           return (
             <a key={m.id} className="cb-row" href={href("utakmica", m.id, "detalji")}>
               <span className="cb-def">−{c.deficit}</span>
-              <span className="cb-txt"><Jersey kit={W.kit} size={20} /><b>{W.name}</b>&nbsp;{c.win ? "pobijedio" : "izjednačio"} protiv {O.name}
-                <span className="muted small">&nbsp;· gubio {f(c.from)}, kraj {f(score(m))}</span></span>
+              <span className="cb-txt"><Jersey kit={W.kit} size={20} /><b>{W.name}</b>&nbsp;protiv {O.name}
+                <span className="muted small">&nbsp;· s {f(c.from)} na {f(c.lead)}, kraj {f(c.final)} ({end})</span></span>
               <span className="muted small cb-when">{m.round}. kolo, {fmtDate(m.date)}</span>
             </a>);
         })}</div>)}

@@ -109,20 +109,29 @@ export function flow(m) {
   }
   return { seq, def, worst, wi, first: seq.length ? (seq[0].home ? "home" : "away") : null, final: [...s] };
 }
-// Preokret: ekipa koja je gubila pa pobijedila ili izjednačila (kod neriješenog: veći zaostatak, barem 2 gola)
+// Preokret: ekipa koja je gubila pa prešla u vodstvo (bez obzira na konačni rezultat).
+// Ako se dogodilo više puta, vrijedi onaj s najvećim zaostatkom (pa kasniji).
 export function comeback(m) {
   const f = flow(m); if (!f) return null;
-  const [h, a] = f.final;
-  let side = null;
-  if (h > a && f.def.home > 0) side = "home";
-  else if (a > h && f.def.away > 0) side = "away";
-  else if (h === a && Math.max(f.def.home, f.def.away) >= 2) side = f.def.home >= f.def.away ? "home" : "away";
-  if (!side) return null;
-  // gol koji je dovršio preokret: prvi nakon najvećeg zaostatka koji je izjednačio (neriješeno) ili donio vodstvo (pobjeda)
-  const need = h !== a ? 1 : 0, sign = side === "home" ? 1 : -1;
-  const key = f.seq.slice(f.wi[side] + 1).find((g) => sign * (g.s[0] - g.s[1]) >= need);
-  return { side, deficit: f.def[side], from: f.worst[side], win: h !== a, goal: key?.e.id };
+  let best = null;
+  for (const side of ["home", "away"]) {
+    const sign = side === "home" ? 1 : -1;
+    let def = 0, from = null;
+    for (const g of f.seq) {
+      const d = sign * (g.s[0] - g.s[1]);
+      if (-d > 0 && -d >= def) { def = -d; from = g.s; }   // zadnji trenutak najvećeg zaostatka
+      if (d >= 1 && def > 0) {
+        if (!best || def >= best.deficit) best = { side, deficit: def, from, lead: g.s, goal: g.e.id, t: g.t };
+        def = 0; from = null;
+      }
+    }
+  }
+  if (!best) return null;
+  const [h, a] = f.final, me = best.side === "home" ? h - a : a - h;
+  return { ...best, final: f.final, res: me > 0 ? "W" : me === 0 ? "D" : "L" };
 }
+// rezultat iz perspektive ekipe
+export const sideScore = (s, side) => side === "home" ? `${s[0]}:${s[1]}` : `${s[1]}:${s[0]}`;
 // Po klubu: rezultati kad zabije/primi prvi, bodovi iz zaostatka, izgubljeni bodovi iz vodstva, golovi u zadnjih 5 minuta
 export function formStats(db, compId) {
   const comp = db.comps.find((c) => c.id === compId); if (!comp) return [];
@@ -144,8 +153,9 @@ export function formStats(db, compId) {
   return Object.values(T);
 }
 export function comebacks(db, compId) {
+  const rank = { W: 0, D: 1, L: 2 };
   return db.matches.filter((m) => m.comp === compId).map((m) => ({ m, c: comeback(m) })).filter((x) => x.c)
-    .sort((a, b) => b.c.deficit - a.c.deficit || b.c.win - a.c.win || b.m.date.localeCompare(a.m.date));
+    .sort((a, b) => b.c.deficit - a.c.deficit || rank[a.c.res] - rank[b.c.res] || b.m.date.localeCompare(a.m.date));
 }
 
 export function scorers(db, compId) {
