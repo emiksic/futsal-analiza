@@ -51,7 +51,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .brand { display: flex; align-items: center; gap: 9px; font: 700 23px/1 var(--display); letter-spacing: .01em; white-space: nowrap; }
 .brand svg { flex: none; }
-.lnav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1; }
+.lnav { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; min-width: 0; flex: 1; }
 .lnav::-webkit-scrollbar { display: none; }
 .lnav a { font: 600 16px/1 var(--display); letter-spacing: .02em; padding: 9px 12px; border-radius: 2px; color: var(--band-muted); white-space: nowrap; }
 .lnav a:hover { color: var(--band-fg); background: var(--band-2); }
@@ -140,10 +140,11 @@ h1 { font: 700 34px/1.02 var(--display); margin: 0; letter-spacing: .005em; text
 .pill i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 
 /* ---------- tabs ---------- */
-.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--line); padding: 0 8px; }
+/* overflow-x: auto bez overflow-y: hidden = i okomiti scroll; na iOS-u se traka dala povlačiti gore-dolje */
+.tabs { display: flex; gap: 2px; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; box-shadow: inset 0 -1px 0 var(--line); padding: 0 8px; }
 .tabs::-webkit-scrollbar { display: none; }
 .tabs a, .tabs button { font: 600 16px/1 var(--display); letter-spacing: .02em; padding: 14px 12px 12px; color: var(--muted); white-space: nowrap;
-  border: 0; background: none; border-bottom: 3px solid transparent; margin-bottom: -1px; cursor: pointer; }
+  border: 0; background: none; border-bottom: 3px solid transparent; cursor: pointer; }
 .tabs a:hover, .tabs button:hover { color: var(--fg); }
 .tabs [aria-current="page"], .tabs [aria-selected="true"] { color: var(--fg); border-bottom-color: var(--primary); }
 
@@ -379,7 +380,7 @@ dl.keys dd { margin: 0; color: var(--muted); }
   display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); align-items: start; }
 @media (min-width: 900px) { .admin { grid-template-columns: 210px minmax(0, 1fr); } }
 .anav { display: grid; gap: 2px; padding: 6px; }
-@media (max-width: 899px) { .anav { display: flex; overflow-x: auto; } }
+@media (max-width: 899px) { .anav { display: flex; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; } }
 .anav a { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border-radius: var(--r-ctl); font-weight: 600; white-space: nowrap; }
 .anav a:hover { background: var(--surface-2); }
 .anav a[aria-current="page"] { background: var(--fg); color: var(--bg); }
