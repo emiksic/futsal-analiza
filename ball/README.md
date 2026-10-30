@@ -29,7 +29,6 @@ Otvori `ball/label.html` u Chromeu ili Edgeu, klikni **Otvori mapu** i odaberi `
 | Enter | žuti prijedlog je dobar |
 | N | lopta se ne vidi (skrivena, izvan kadra) |
 | S | nije igra: repriza, reklama, poluvrijeme |
-| K | druga kamera (krupni plan, drugi kut), nije glavna kamera |
 | Z ili ← | natrag |
 | [ ] | manji / veći okvir (promjer lopte) |
 
