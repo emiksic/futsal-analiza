@@ -6,6 +6,7 @@ import argparse, json, cv2, numpy as np
 ap = argparse.ArgumentParser()
 ap.add_argument("video"); ap.add_argument("camera"); ap.add_argument("tracks"); ap.add_argument("out")
 ap.add_argument("--every", type=float, default=0.5); ap.add_argument("--scale", type=float, default=0.5)
+ap.add_argument("--max-gb", type=float, default=3.0, help="najviše RAM-a za slaganje (smanji mjerilo ako treba)")
 a = ap.parse_args()
 
 tl = json.load(open(a.tracks))["timeline"]; cam = json.load(open(a.camera))
@@ -22,6 +23,10 @@ for t, Hm in zip(times, Hs):
 corners = np.float32([[0, 100], [W, 100], [W, H], [0, H]]).reshape(-1, 1, 2)   # bez tribina gore
 allc = np.concatenate([cv2.perspectiveTransform(corners, Hi) for _, Hi in sel]).reshape(-1, 2)
 x0, y0 = allc.min(0) - 20; x1, y1 = allc.max(0) + 20
+need = len(sel) * (x1 - x0) * (y1 - y0) * a.scale ** 2 * 4 / 1e9      # slike (3 B) + maska (1 B) po pikselu
+if need > a.max_gb:                                                   # npr. kamera koja zumira/okreće puno: platno ogromno
+    a.scale *= (a.max_gb / need) ** 0.5
+    print(f"platno bi trebalo {need:.1f} GB RAM-a -> mjerilo smanjeno na {a.scale:.3f}")
 S = np.array([[a.scale, 0, -x0 * a.scale], [0, a.scale, -y0 * a.scale], [0, 0, 1]])
 CW, CH = int((x1 - x0) * a.scale), int((y1 - y0) * a.scale)
 print("platno", CW, "x", CH, " frameova", len(sel))
