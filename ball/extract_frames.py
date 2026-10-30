@@ -104,6 +104,7 @@ def main():
     if a.hard and not a.model: sys.exit("--hard ima smisla samo s vlastitim modelom (--model …/best.pt)")
     sug_path = out / "suggestions.json"
     sug = json.load(open(sug_path)) if sug_path.exists() else {}
+    failed = []
     for url in urls:
         vid = yt_id(url)
         if not vid: print("  preskačem (nije YouTube link):", url); continue
@@ -114,9 +115,15 @@ def main():
         if not path.exists():
             print(f"preuzimam {vid} …")
             # H.264 (avc1) prvo: OpenCV često ne zna dekodirati AV1/VP9 pa ne bi izvukao nijedan okvir
-            subprocess.run([sys.executable, "-m", "yt_dlp", "-f",
-                            f"bv*[height<={a.height}][vcodec^=avc1]/bv*[height<={a.height}][ext=mp4]/bv*[height<={a.height}]",
-                            "--no-audio", "-N", "6", "--retries", "30", "--fragment-retries", "30", "-o", str(path), url], check=True)
+            ok = False
+            for attempt in range(3):                 # 403 usred skidanja: ponovni pokušaj nastavlja .part datoteku
+                r = subprocess.run([sys.executable, "-m", "yt_dlp", "-f",
+                                    f"bv*[height<={a.height}][vcodec^=avc1]/bv*[height<={a.height}][ext=mp4]/bv*[height<={a.height}]",
+                                    "--no-audio", "-N", "4", "--retries", "30", "--fragment-retries", "30", "-o", str(path), url])
+                if r.returncode == 0 and path.exists(): ok = True; break
+                print(f"  skidanje {vid} nije uspjelo (pokušaj {attempt + 1}/3)")
+            if not ok:
+                failed.append(vid); print(f"  ! preskačem {vid}; ponovno pokretanje nastavlja gdje je stalo"); continue
         cap = cv2.VideoCapture(str(path)); fps = cap.get(cv2.CAP_PROP_FPS) or 25; n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         dur = n / fps
         rnd = random.Random(vid)
@@ -151,6 +158,7 @@ def main():
         json.dump(sug, open(sug_path, "w"))
         print(f"  {vid}: {done} novih okvira ({dur/60:.0f} min snimke)")
     print(f"gotovo: {len(list((out / 'frames').glob('*.jpg')))} okvira u {out / 'frames'}")
+    if failed: print(f"nisu skinute ({len(failed)}): {' '.join(failed)}  -> pip install -U yt-dlp pa pokreni istu naredbu ponovno")
     print("sljedeće: otvori ball/label.html u pregledniku i odaberi mapu", out)
 
 if __name__ == "__main__":
