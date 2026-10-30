@@ -203,7 +203,8 @@ view.addEventListener("click", (e) => { const p = pos(e); set([Math.round(p.x * 
 mag.addEventListener("wheel", (e) => { e.preventDefault(); zoom = Math.max(2, Math.min(16, zoom + (e.deltaY < 0 ? 1 : -1))); drawMag(); }, { passive: false });
 view.addEventListener("wheel", (e) => { e.preventDefault(); zoom = Math.max(2, Math.min(16, zoom + (e.deltaY < 0 ? 1 : -1))); drawMag(); }, { passive: false });
 function set(v) { labels[names[i]] = v; dirty = true; queueSave(); }
-function next() { if (i < names.length - 1) i++; show(); }
+// naprijed: preskoči već označene (stari i novi okviri su pomiješani po imenu); ako ih više nema, ide redom
+function next() { const k = names.findIndex((n, j) => j > i && !(n in labels)); if (k >= 0) i = k; else if (i < names.length - 1) i++; show(); }
 function prev() { if (i > 0) i--; show(); }
 document.addEventListener("keydown", (e) => {
   if (!names.length || e.ctrlKey || e.metaKey || e.altKey) return;
