@@ -1,5 +1,6 @@
 import { update, uid } from "../lib/store.js";
 import { Icon } from "../components/ui.jsx";
+import { href } from "../lib/router.js";
 
 export function Halls({ db }) {
   const uh = (id, fn) => update((d) => fn(d.halls.find((h) => h.id === id)));
@@ -20,7 +21,7 @@ export function Halls({ db }) {
                 <td><input className="input sm" value={h.city} onChange={(e) => uh(h.id, (x) => { x.city = e.target.value; })} aria-label="Grad" /></td>
                 <td className="small">{db.clubs.filter((c) => c.hall === h.id).map((c) => c.name).join(", ") || "—"}</td>
                 <td>{h.calibrated ? <span className="pill done">kalibrirana</span> : <span className="pill queued">nije</span>}</td>
-                <td><button className="btn sm" disabled title="Alat za kalibraciju dolazi uskoro">Kalibriraj</button></td>
+                <td><a className="btn sm" href={href("admin", "dvorana", h.id)}>Kalibriraj</a></td>
               </tr>))}</tbody>
           </table>
         </div>

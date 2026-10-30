@@ -1,6 +1,8 @@
 """Kalibracija terena: točke + središnja linija + automatski pronađeni bijeli lukovi 6 m (ICP).
 Teren se pretpostavlja L x W (default 40 x 20); dužina/širina se mogu i fitati (--fit-lw).
 python3 calib2.py clip.mp4 points.json camera.json tracks.json S.npy out_profile.json --arcs 110.0 55.0 [--fit-lw]
+python3 calib2.py clip.mp4 points.json camera.json tracks.json mosaic_S.npy court.json --arcs-mosaic
+    (točke iz admina, Dvorane -> Kalibriraj: kliknute na panorami, "canvas": true; lukovi se traže na panorami)
 """
 import argparse, json, cv2, numpy as np
 from scipy.optimize import least_squares
@@ -10,6 +12,7 @@ ap.add_argument("--arcs", type=float, nargs="*", default=[], help="vremena frame
 ap.add_argument("--L", type=float, default=40.0); ap.add_argument("--W", type=float, default=20.0)
 ap.add_argument("--D", type=float, default=6.0, help="radijus luka peterca")
 ap.add_argument("--fit-lw", action="store_true")
+ap.add_argument("--arcs-mosaic", action="store_true", help="bijele piksele lukova traži na panorami (<S bez _S.npy>.png)")
 ap.add_argument("--render", type=float, nargs="*", default=[], help="vremena frameova za provjeru")
 a = ap.parse_args()
 
@@ -26,9 +29,12 @@ def frame(t): cap.set(1, round(t * fps)); return cap.read()[1]
 def model_xy(lbl, hl, hw):
     return {"GL_N": (-hl, 1.5), "GL_F": (-hl, -1.5), "GR_N": (hl, 1.5), "GR_F": (hl, -1.5), "MF": (0, -hw),
             "MN": (0, hw), "FL": (-hl, -hw), "FR": (hl, -hw), "NL": (-hl, hw), "NR": (hl, hw), "C": (0, 0)}[lbl]
+if isinstance(pts, dict):                                     # format iz admina: {"L", "W", "points": [...]}
+    a.L, a.W = float(pts.get("L", a.L)), float(pts.get("W", a.W)); pts = pts["points"]
+def to_canvas(p): return [p["x"], p["y"]] if p.get("canvas") else tf(F2C(p["t"]), [[p["x"], p["y"]]])[0]
 lab = [p for p in pts if p["label"] not in ("CIRC", "MID")]
-P_lab = np.float32([tf(F2C(p["t"]), [[p["x"], p["y"]]])[0] for p in lab])
-P_mid = np.float32([tf(F2C(p["t"]), [[p["x"], p["y"]]])[0] for p in pts if p["label"] == "MID"])
+P_lab = np.float32([to_canvas(p) for p in lab])
+P_mid = np.float32([to_canvas(p) for p in pts if p["label"] == "MID"]).reshape(-1, 2)
 
 def arc_dist(xy, hl):
     """udaljenost od najbližeg luka 6 m (lijevi ili desni gol)"""
@@ -67,6 +73,12 @@ for t in a.arcs:
     m[:150, :330] = False                                              # scoreboard
     ys, xs = np.nonzero(m); sel = np.random.default_rng(0).choice(len(xs), min(4000, len(xs)), replace=False)
     white_px.append(tf(F2C(t), np.c_[xs[sel], ys[sel]].astype(np.float32)))
+if a.arcs_mosaic:                                                    # panorama: igrača i grafike već nema
+    f = cv2.imread(a.S.rsplit("_S.npy", 1)[0] + ".png"); g = cv2.cvtColor(f, cv2.COLOR_BGR2GRAY); hsv = cv2.cvtColor(f, cv2.COLOR_BGR2HSV)
+    th = cv2.morphologyEx(g, cv2.MORPH_TOPHAT, cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7)))
+    ys, xs = np.nonzero((th > 25) & (hsv[..., 1] < 70) & (g > 140))
+    sel = np.random.default_rng(0).choice(len(xs), min(8000, len(xs)), replace=False)
+    white_px.append(np.c_[xs[sel], ys[sel]].astype(np.float32))
 white_px = np.concatenate(white_px) if white_px else np.zeros((0, 2), np.float32)
 
 for gate in (1.5, 1.0, 0.6, 0.4, 0.3):

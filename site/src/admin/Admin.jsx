@@ -6,6 +6,7 @@ import { MatchEdit } from "./MatchEdit.jsx";
 import { Clubs, ClubEdit } from "./Clubs.jsx";
 import { Leagues } from "./Leagues.jsx";
 import { Halls } from "./Halls.jsx";
+import { HallCalib } from "./HallCalib.jsx";
 import { update } from "../lib/store.js";
 
 export function Admin({ db, ix, route }) {
@@ -64,7 +65,7 @@ function AdminInner({ db, ix, route }) {
   const s = sec || "utakmice";
   const queue = db.matches.filter((m) => ["queued", "processing"].includes(m.analysis?.status)).length;
   const NAV = [["utakmice", "Utakmice", queue ? `${queue} u redu` : ""], ["klubovi", "Klubovi i igrači"], ["lige", "Lige i sezone"], ["dvorane", "Dvorane"], ["postavke", "Postavke stranice"]];
-  const cur = s === "utakmica" ? "utakmice" : s === "klub" ? "klubovi" : s;
+  const cur = s === "utakmica" ? "utakmice" : s === "klub" ? "klubovi" : s === "dvorana" ? "dvorane" : s;
   return (
     <div className="admin">
       <aside className="col">
@@ -80,6 +81,7 @@ function AdminInner({ db, ix, route }) {
         {s === "klub" && <ClubEdit db={db} ix={ix} id={a} />}
         {s === "lige" && <Leagues db={db} ix={ix} />}
         {s === "dvorane" && <Halls db={db} ix={ix} />}
+        {s === "dvorana" && <HallCalib db={db} id={a} />}
         {s === "postavke" && <Settings db={db} />}
       </main>
     </div>
