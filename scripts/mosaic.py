@@ -15,9 +15,14 @@ for e in cam: times.append(e["t"]); Hs.append(np.array(e["H"]) @ Hs[-1])
 times = np.array(times)
 W, H = 1280, 720
 
+# referentni pogled = frame čije je središte u sredini svih pogleda (inače se kod velikog okretanja kamere
+# jedna strana panorame silno razvuče); spremljeni S i dalje preslikava izvorni ref (prvi frame) -> platno
+cx = [cv2.perspectiveTransform(np.float32([[[W / 2, H / 2]]]), np.linalg.inv(Hm))[0, 0, 0] for Hm in Hs]
+m = int(np.argsort(cx)[len(cx) // 2]); R = Hs[m]                     # izvorni ref -> novi ref
+print(f"referentni pogled: t={times[m]:.1f} s")
 sel = []; last = -9
 for t, Hm in zip(times, Hs):
-    if t - last >= a.every: sel.append((t, np.linalg.inv(Hm))); last = t   # frame t -> ref
+    if t - last >= a.every: sel.append((t, R @ np.linalg.inv(Hm))); last = t   # frame t -> novi ref
 
 # granice platna
 corners = np.float32([[0, 100], [W, 100], [W, H], [0, H]]).reshape(-1, 1, 2)   # bez tribina gore
@@ -60,5 +65,5 @@ for r0 in range(0, CH, 48):                                 # medijan po trakama
         mos[r0:r0 + 48] = np.nan_to_num(np.nanmedian(blk, axis=0)).astype(np.uint8)
 cover = valid.sum(0)
 cv2.imwrite(a.out, mos)
-np.save(a.out.rsplit(".", 1)[0] + "_S.npy", S)          # ref -> platno
+np.save(a.out.rsplit(".", 1)[0] + "_S.npy", S @ R)      # izvorni ref -> platno
 print("pokriveno piksela:", round((cover > 0).mean() * 100), "%")
