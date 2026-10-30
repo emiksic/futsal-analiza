@@ -60,6 +60,9 @@ def main():
         vid = yt_id(url)
         if not vid: print("  preskačem (nije YouTube link):", url); continue
         path = out / "videos" / f"{vid}.mp4"
+        have = len(list((out / "frames").glob(f"{vid}_*.jpg")))
+        if have >= a.per_match * 0.9 and not path.exists():
+            print(f"  {vid}: već ima {have} okvira, preskačem"); continue
         if not path.exists():
             print(f"preuzimam {vid} …")
             # H.264 (avc1) prvo: OpenCV često ne zna dekodirati AV1/VP9 pa ne bi izvukao nijedan okvir
