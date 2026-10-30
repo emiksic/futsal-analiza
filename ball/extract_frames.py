@@ -62,21 +62,32 @@ def main():
         path = out / "videos" / f"{vid}.mp4"
         if not path.exists():
             print(f"preuzimam {vid} …")
-            subprocess.run([sys.executable, "-m", "yt_dlp", "-f", f"bv*[height<={a.height}][ext=mp4]/bv*[height<={a.height}]",
+            # H.264 (avc1) prvo: OpenCV često ne zna dekodirati AV1/VP9 pa ne bi izvukao nijedan okvir
+            subprocess.run([sys.executable, "-m", "yt_dlp", "-f",
+                            f"bv*[height<={a.height}][vcodec^=avc1]/bv*[height<={a.height}][ext=mp4]/bv*[height<={a.height}]",
                             "--no-audio", "-N", "6", "--retries", "30", "--fragment-retries", "30", "-o", str(path), url], check=True)
         cap = cv2.VideoCapture(str(path)); fps = cap.get(cv2.CAP_PROP_FPS) or 25; n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         dur = n / fps
         rnd = random.Random(vid)
         t0, t1 = dur * a.skip_start, dur * (1 - a.skip_end)
         times = sorted(rnd.uniform(t0, t1) for _ in range(a.per_match))
-        done = 0
+        done = fail = 0; use_ffmpeg = False
         for t in times:
             name = f"{vid}_{t:07.1f}.jpg"
             fp = out / "frames" / name
             if fp.exists(): continue
-            cap.set(cv2.CAP_PROP_POS_MSEC, t * 1000); ok, fr = cap.read()
-            if not ok: continue
-            cv2.imwrite(str(fp), fr, [cv2.IMWRITE_JPEG_QUALITY, 92]); done += 1
+            fr = None
+            if not use_ffmpeg:
+                cap.set(cv2.CAP_PROP_POS_MSEC, t * 1000); ok, fr = cap.read()
+                if not ok:
+                    fr = None
+                    if done == 0: use_ffmpeg = True; print("  OpenCV ne čita ovaj video, prebacujem na ffmpeg")
+            if use_ffmpeg:
+                subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{t:.2f}", "-i", str(path), "-frames:v", "1", "-q:v", "2", str(fp)])
+                fr = cv2.imread(str(fp)) if fp.exists() else None
+            if fr is None: fail += 1; continue
+            if not fp.exists(): cv2.imwrite(str(fp), fr, [cv2.IMWRITE_JPEG_QUALITY, 92])
+            done += 1
             if model is not None:
                 r = model.predict(fr, imgsz=1280, classes=cls, conf=0.05, verbose=False)[0]
                 if len(r.boxes):
@@ -84,7 +95,9 @@ def main():
                     sug[name] = [round((x1 + x2) / 2, 1), round((y1 + y2) / 2, 1), round(float(r.boxes.conf[i]), 3)]
                 else: sug[name] = None
         cap.release()
-        if a.delete_video: path.unlink()
+        if done == 0 and fail:
+            print(f"  ! {vid}: nijedan okvir nije izvučen, video ostaje u {path} za provjeru")
+        elif a.delete_video: path.unlink()
         json.dump(sug, open(sug_path, "w"))
         print(f"  {vid}: {done} novih okvira ({dur/60:.0f} min snimke)")
     print(f"gotovo: {len(list((out / 'frames').glob('*.jpg')))} okvira u {out / 'frames'}")
