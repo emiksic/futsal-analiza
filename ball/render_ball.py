@@ -26,6 +26,7 @@ def main():
     ap.add_argument("--start-conf", type=float, default=0.4, help="koliko sigurna mora biti prva detekcija")
     ap.add_argument("--max-miss", type=int, default=8, help="koraka bez detekcije prije nego se lopta izgubi")
     ap.add_argument("--raw", action="store_true", help="nacrtaj i sve sirove detekcije")
+    ap.add_argument("--cut", type=float, default=0.7, help="prag sličnosti boja između frameova za promjenu kadra")
     a = ap.parse_args()
     if not (a.model or a.dets): sys.exit("Treba --model ili --dets")
 
@@ -50,7 +51,7 @@ def main():
     else:
         vw = cv2.VideoWriter(a.out, cv2.VideoWriter_fourcc(*"mp4v"), out_fps, (W, H)); write = vw.write
 
-    pos = vel = None; miss = 0; trail = []; n = seen = pred_n = 0
+    pos = vel = None; miss = 0; trail = []; n = seen = pred_n = cuts = 0; prev_h = None
     fi = f0
     while fi < f1:
         ok, img = cap.read()
@@ -64,6 +65,13 @@ def main():
             r = model.predict(img, imgsz=a.imgsz, conf=0.05, verbose=False)[0]
             dets = [[*b.xywh[0].tolist(), float(b.conf)] for b in r.boxes]
         dets = [d for d in dets if d[4] >= a.min_conf]
+
+        # promjena kadra (druga kamera, repriza, nagli pomak): praćenje kreće ispočetka
+        hsv = cv2.cvtColor(cv2.resize(img, (160, 90)), cv2.COLOR_BGR2HSV)
+        hh = cv2.normalize(cv2.calcHist([hsv], [0, 1], None, [30, 16], [0, 180, 0, 256]), None).flatten()
+        if prev_h is not None and cv2.compareHist(prev_h, hh, cv2.HISTCMP_CORREL) < a.cut:
+            pos = vel = None; miss = 0; trail = []; cuts += 1
+        prev_h = hh
 
         # --- praćenje ---
         pick = None
@@ -80,6 +88,7 @@ def main():
             strong = [d for d in dets if d[4] >= a.start_conf]
             if strong and (pos is None or miss >= 3):          # novo hvatanje
                 pick = max(strong, key=lambda d: d[4]); vel = (0.0, 0.0); pos = None
+                trail.append(None)                             # trag se ne spaja sa starom pozicijom
         if pick is not None:
             if pos is not None:
                 k = miss + 1
@@ -112,7 +121,7 @@ def main():
     if shutil.which("ffmpeg"): enc.stdin.close(); enc.wait()
     else: vw.release()
     print(f"{n} frameova: lopta viđena {seen / max(n, 1):.0%}, predviđena {pred_n / max(n, 1):.0%}, "
-          f"ukupno prikazana {(seen + pred_n) / max(n, 1):.0%}  -> {a.out}")
+          f"ukupno prikazana {(seen + pred_n) / max(n, 1):.0%}, promjena kadra: {cuts}  -> {a.out}")
 
 
 if __name__ == "__main__":
