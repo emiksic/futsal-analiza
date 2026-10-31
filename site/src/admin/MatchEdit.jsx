@@ -3,7 +3,7 @@ import { href, go, replaceClick } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
 import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
-import { Jersey, Icon, Toast } from "../components/ui.jsx";
+import { Jersey, Icon, Toast, NumInput } from "../components/ui.jsx";
 import { ShotTagger } from "./ShotTagger.jsx";
 
 const toLocal = (iso) => { const d = new Date(iso), p = (n) => String(n).padStart(2, "0");
@@ -94,7 +94,7 @@ function Basic({ db, ix, m, upd }) {
           {db.comps.map((c) => <option key={c.id} value={c.id}>{compName(ix, c.id)}</option>)}
         </select></label>
       <label className="field"><span>Kolo</span>
-        <input className="input" type="number" min="1" max={C.rounds} value={m.round} onChange={(e) => upd((x) => { x.round = +e.target.value || 1; })} /></label>
+        <NumInput className="input" value={m.round} empty={m.round || 1} onChange={(v) => upd((x) => { x.round = Math.max(1, v); })} /></label>
       <label className="field"><span>Datum i vrijeme</span>
         <input className="input" type="datetime-local" value={toLocal(m.date)} onChange={(e) => e.target.value && upd((x) => { x.date = new Date(e.target.value).toISOString(); })} /></label>
       <label className="field"><span>Status</span>

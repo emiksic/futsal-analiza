@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { href } from "../lib/router.js";
 
 // Dres u bojama kluba — zamjena za grb (grbove ne prenosimo).
@@ -87,4 +88,16 @@ export function analysisPill(a) {
   const s = a?.status || "none"; if (s === "none") return null;
   const L = { queued: "Čeka obradu", processing: "U obradi", done: "Analiza", failed: "Greška" };
   return <span className={`pill ${s}`}>{s === "processing" && <i />}{L[s]}</span>;
+}
+
+// Brojčano polje koje se smije isprazniti dok se tipka (prazno se ne pretvara odmah u 0).
+// Sprema se kad je upisan broj; prazno polje na izlasku (blur) postaje `empty` (zadano 0).
+export function NumInput({ value, onChange, empty = 0, ...rest }) {
+  const [t, setT] = useState(value == null ? "" : String(value));
+  const [focus, setFocus] = useState(false);
+  useEffect(() => { if (!focus) setT(value == null ? "" : String(value)); }, [value, focus]);
+  return <input {...rest} inputMode="numeric" value={t}
+    onFocus={() => setFocus(true)}
+    onBlur={() => { setFocus(false); if (t === "") onChange(empty); }}
+    onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, "").slice(0, 3); setT(v); if (v !== "") onChange(+v); }} />;
 }

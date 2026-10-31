@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { update } from "../lib/store.js";
 import { compName, NAME_FORMATS } from "../lib/derive.js";
-import { Jersey, Icon, LeagueBadge } from "../components/ui.jsx";
+import { Jersey, Icon, LeagueBadge, NumInput } from "../components/ui.jsx";
 
 function roundRobin(ids) {
   const t = [...ids]; if (t.length % 2) t.push(null);
@@ -34,13 +34,13 @@ export function Leagues({ db, ix }) {
             <tbody>{db.leagues.map((l) => (
               <tr key={l.id}>
                 <td><LeagueBadge league={l} /></td>
-                <td><input className="input sm" value={l.name} onChange={(e) => ul(l.id, (x) => { x.name = e.target.value; })} aria-label="Naziv lige" /></td>
+                <td><input className="input sm" style={{ minWidth: 170 }} value={l.name} onChange={(e) => ul(l.id, (x) => { x.name = e.target.value; })} aria-label="Naziv lige" /></td>
                 <td><select className="input sm" value={l.category} onChange={(e) => ul(l.id, (x) => { x.category = e.target.value; })} aria-label="Kategorija">
                   {["Seniori", "U-19", "U-17", "U-15", "Seniorke"].map((c) => <option key={c}>{c}</option>)}</select></td>
-                <td><input className="input sm num" type="number" min="0" value={l.zones?.direct || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, direct: +e.target.value }; })} aria-label="Izravno u polufinale" /></td>
-                <td><input className="input sm num" type="number" min="0" value={l.zones?.playoff || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, playoff: +e.target.value }; })} aria-label="Doigravanje" /></td>
-                <td><input className="input sm num" type="number" min="0" value={l.zones?.qual || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, qual: +e.target.value }; })} aria-label="Kvalifikacije" /></td>
-                <td><input className="input sm num" type="number" min="0" value={l.zones?.relegation || 0} onChange={(e) => ul(l.id, (x) => { x.zones = { ...x.zones, relegation: +e.target.value }; })} aria-label="Ispadanje" /></td>
+                <td><NumInput className="input sm num" value={l.zones?.direct || 0} onChange={(v) => ul(l.id, (x) => { x.zones = { ...x.zones, direct: v }; })} aria-label="Izravno u polufinale" /></td>
+                <td><NumInput className="input sm num" value={l.zones?.playoff || 0} onChange={(v) => ul(l.id, (x) => { x.zones = { ...x.zones, playoff: v }; })} aria-label="Doigravanje" /></td>
+                <td><NumInput className="input sm num" value={l.zones?.qual || 0} onChange={(v) => ul(l.id, (x) => { x.zones = { ...x.zones, qual: v }; })} aria-label="Kvalifikacije" /></td>
+                <td><NumInput className="input sm num" value={l.zones?.relegation || 0} onChange={(v) => ul(l.id, (x) => { x.zones = { ...x.zones, relegation: v }; })} aria-label="Ispadanje" /></td>
                 <td><select className="input sm" value={l.privacy?.names || "full"} onChange={(e) => ul(l.id, (x) => { x.privacy = { ...x.privacy, names: e.target.value }; })} aria-label="Prikaz imena">
                   {Object.entries(NAME_FORMATS).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></td>
                 <td><label className="small" style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>
@@ -91,7 +91,7 @@ function CompEditor({ db, ix, comp }) {
   };
   return (
     <div style={{ borderTop: "1px solid var(--line)" }}>
-      <button className="btn ghost" style={{ width: "100%", justifyContent: "space-between", padding: "12px 16px", borderRadius: 0 }} onClick={() => setOpen(!open)} aria-expanded={open}>
+      <button className="btn ghost" style={{ width: "100%", justifyContent: "space-between", padding: "12px 16px", borderRadius: 0, flexWrap: "wrap", whiteSpace: "normal", textAlign: "left", gap: 4 }} onClick={() => setOpen(!open)} aria-expanded={open}>
         <span>{compName(ix, comp.id)}</span>
         <span className="small muted" style={{ fontFamily: "var(--body)", fontWeight: 400 }}>{comp.teams.length} klubova, {comp.rounds} kola, {n} utakmica {open ? "▴" : "▾"}</span>
       </button>
