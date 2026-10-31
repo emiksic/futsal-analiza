@@ -24,6 +24,7 @@ def main():
     ap.add_argument("--gap", type=float, default=1 / 30, help="razmak do susjednog framea (s)")
     ap.add_argument("--height", type=int, default=1080)
     ap.add_argument("--delete-video", action="store_true")
+    ap.add_argument("--videos", help="mapa sa snimkama (zadano <data>/videos), npr. na disku s više mjesta")
     ap.add_argument("--max-mae", type=float, default=6.0, help="koliko smije odstupati pronađeni srednji frame od spremljenog jpg-a")
     a = ap.parse_args()
     data = Path(os.path.expanduser(a.data)); out = data / "frames3"; out.mkdir(exist_ok=True)
@@ -36,7 +37,8 @@ def main():
         by_vid[n.rsplit("_", 1)[0]].append(n)
     print(f"{sum(map(len, by_vid.values()))} okvira u {len(by_vid)} snimki za obradu")
     for vid, names in sorted(by_vid.items()):
-        path = data / "videos" / f"{vid}.mp4"
+        vdir = Path(os.path.expanduser(a.videos)) if a.videos else data / "videos"; vdir.mkdir(parents=True, exist_ok=True)
+        path = vdir / f"{vid}.mp4"
         if not path.exists():
             print(f"preuzimam {vid} …")
             fmt = f"bv*[height<={a.height}][vcodec^=avc1]/bv*[height<={a.height}][ext=mp4]/bv*[height<={a.height}]"
