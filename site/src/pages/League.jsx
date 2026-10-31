@@ -1,4 +1,4 @@
-import { href, go } from "../lib/router.js";
+import { href, go, replaceClick, replaceGo } from "../lib/router.js";
 import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
@@ -28,13 +28,13 @@ export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roun
             </div>
             <div className="sel">
               <label className="small muted" htmlFor="season-sel" style={{ marginRight: 8 }}>Sezona</label>
-              <select id="season-sel" className="select" value={comp.season} onChange={(e) => go("liga", leagueId, e.target.value, tab)}>
+              <select id="season-sel" className="select" value={comp.season} onChange={(e) => replaceGo("liga", leagueId, e.target.value, tab)}>
                 {seasonsOf.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
           </div>
           <nav className="tabs" aria-label="Liga">
-            {TABS.filter(([k]) => !(cup && k === "tablica")).map(([k, t]) => <a key={k} href={href("liga", leagueId, comp.season, k)} aria-current={tab === k ? "page" : undefined}>
+            {TABS.filter(([k]) => !(cup && k === "tablica")).map(([k, t]) => <a key={k} href={href("liga", leagueId, comp.season, k)} onClick={replaceClick} aria-current={tab === k ? "page" : undefined}>
               {t}{k === "analize" && analysed ? ` (${analysed})` : ""}</a>)}
           </nav>
           {tab === "tablica" && <Standings db={db} ix={ix} comp={comp} league={L} />}
@@ -98,7 +98,7 @@ function Rounds({ db, ix, comp, league, round }) {
   const r = round || currentRound(db, comp.id);
   const ms = db.matches.filter((m) => m.comp === comp.id && m.round === r).sort((a, b) => a.date.localeCompare(b.date));
   const days = [...new Set(ms.map((m) => fmtDay(m.date)))];
-  const nav = (k) => go("liga", comp.league, comp.season, "rezultati", k);
+  const nav = (k) => replaceGo("liga", comp.league, comp.season, "rezultati", k);
   return (
     <>
       <div className="toolbar" style={{ paddingTop: 12 }}>

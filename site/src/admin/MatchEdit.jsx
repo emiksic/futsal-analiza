@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { href, go } from "../lib/router.js";
+import { href, go, replaceClick } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
 import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
@@ -41,7 +41,7 @@ export function MatchEdit({ db, ix, id, tab = "osnovno" }) {
       </div>
       <section className="panel">
         <nav className="tabs" aria-label="Uređivanje">
-          {TABS.map(([k, n]) => <a key={k} href={href("admin", "utakmica", id, k)} aria-current={tab === k ? "page" : undefined}>{n}</a>)}
+          {TABS.map(([k, n]) => <a key={k} href={href("admin", "utakmica", id, k)} onClick={replaceClick} aria-current={tab === k ? "page" : undefined}>{n}</a>)}
         </nav>
         <div style={{ height: 14 }} />
         {tab === "osnovno" && <Basic db={db} ix={ix} m={m} upd={upd} />}

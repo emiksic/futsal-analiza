@@ -8,7 +8,11 @@ export function Club({ db, ix, id }) {
   const c = ix.club[id];
   const cur = db.seasons[0].id;
   const comps = db.comps.filter((x) => x.teams.includes(id) && x.season === cur);
-  const [compSel, setComp] = useState(comps[0]?.id);
+  // odabrano natjecanje se pamti dok je kartica otvorena (povratak s utakmice ga ne poništi)
+  const sk = "club-comp-" + id;
+  const [compSel0, setComp0] = useState(() => { try { return sessionStorage.getItem(sk); } catch { return null; } });
+  const compSel = comps.some((c) => c.id === compSel0) ? compSel0 : comps[0]?.id;
+  const setComp = (v) => { setComp0(v); try { sessionStorage.setItem(sk, v); } catch { /* */ } };
   if (!c) return <div className="page"><div className="panel empty">Klub ne postoji.</div></div>;
   const comp = ix.comp[compSel];
   const ms = db.matches.filter((m) => m.comp === compSel && (m.home === id || m.away === id)).sort((a, b) => a.date.localeCompare(b.date));

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { href } from "../lib/router.js";
+import { href, replaceClick } from "../lib/router.js";
 import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, goalTime, flow, comeback, sideScore, roundName, winner, shootout } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
@@ -23,7 +23,7 @@ export function Match({ db, ix: ix0, id, tab }) {
       <div className={t === "analiza" || t === "udarci" ? "" : "split"}>
       <section className="panel">
         <nav className="tabs" aria-label="Utakmica">
-          {TABS.map(([k, n]) => <a key={k} href={href("utakmica", m.id, k)} aria-current={t === k ? "page" : undefined}>{n}</a>)}
+          {TABS.map(([k, n]) => <a key={k} href={href("utakmica", m.id, k)} onClick={replaceClick} aria-current={t === k ? "page" : undefined}>{n}</a>)}
         </nav>
         {t !== "analiza" && <div style={{ height: 6 }} />}
         {t === "analiza" && <AnalysisTab m={m} ix={ix} A={A} />}

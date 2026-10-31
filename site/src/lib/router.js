@@ -34,3 +34,14 @@ export function useRoute() {
 }
 export const href = (...seg) => "#/" + seg.filter((x) => x != null && x !== "").map(encodeURIComponent).join("/");
 export const go = (...seg) => { location.hash = href(...seg).slice(1); };
+// Promjena bez novog unosa u povijesti (kartice, kola): "natrag" vodi na stranicu prije, ne na prethodnu karticu
+export function replace(h) {
+  if (h === location.hash) return;
+  history.replaceState(history.state, "", h);
+  dispatchEvent(new HashChangeEvent("hashchange"));
+}
+export const replaceGo = (...seg) => replace(href(...seg));
+export function replaceClick(e) {
+  if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // nova kartica preglednika i sl.
+  e.preventDefault(); replace(e.currentTarget.getAttribute("href"));
+}
