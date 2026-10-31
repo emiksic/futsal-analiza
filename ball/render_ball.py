@@ -28,7 +28,7 @@ def detect_pass(a, cap, f0, f1, fps):
         from ultralytics import YOLO
         model = YOLO(os.path.expanduser(a.model))
     cap.set(cv2.CAP_PROP_POS_FRAMES, f0)
-    steps, prev_h, fi = [], None, f0
+    steps, prev_h, prev_g, cam, fi = [], None, None, np.zeros(2), f0
     while fi < f1:
         ok, img = cap.read()
         if not ok: break
@@ -43,10 +43,33 @@ def detect_pass(a, cap, f0, f1, fps):
         hh = cv2.normalize(cv2.calcHist([hsv], [0, 1], None, [30, 16], [0, 180, 0, 256]), None).flatten()
         cut = prev_h is not None and cv2.compareHist(prev_h, hh, cv2.HISTCMP_CORREL) < a.cut
         prev_h = hh
-        steps.append({"t": round(t, 3), "dets": dets, "cut": cut})
+        # pomak kamere (fazna korelacija na smanjenoj slici): da se razlikuje mirna stvar na zidu od lopte
+        g = cv2.cvtColor(cv2.resize(img, (320, 180)), cv2.COLOR_BGR2GRAY).astype(np.float32)
+        if prev_g is not None and not cut:
+            (dx, dy), _ = cv2.phaseCorrelate(prev_g, g); cam = cam + np.array([dx, dy]) * img.shape[1] / 320
+        prev_g = g
+        steps.append({"t": round(t, 3), "dets": dets, "cut": cut, "cam": cam.tolist()})
         if len(steps) % 300 == 0: print(f"  detekcija {t:6.1f} s")
         fi += 1
     return steps
+
+
+def drop_static(steps, a, s):
+    """Detekcija koja je u ±5 s većinu vremena na istom mjestu u sceni (pomak kamere poništen) je znak, lampa,
+    rezervna lopta... a ne lopta u igri. Takve se izbace prije praćenja."""
+    W = round(5 * a.fps_step); n = len(steps); R = 10 * s
+    rel = [np.array([[d[0] - st["cam"][0], d[1] - st["cam"][1]] for d in st["dets"] if d[4] >= a.min_conf]).reshape(-1, 2) for st in steps]
+    dropped = 0
+    for k in range(n):
+        if not len(rel[k]): continue
+        lo, hi = max(0, k - W), min(n, k + W + 1)
+        keep = []
+        for d, r in zip([d for d in steps[k]["dets"] if d[4] >= a.min_conf], rel[k]):
+            hits = sum(1 for j in range(lo, hi) if len(rel[j]) and np.min(np.linalg.norm(rel[j] - r, axis=1)) < R)
+            if hits > a.static_share * (hi - lo): dropped += 1
+            else: keep.append(d)
+        steps[k]["dets"] = keep
+    if dropped: print(f"  izbačeno {dropped} detekcija nepomičnih stvari (znak, lampa, rezervna lopta...)")
 
 
 def build_tracklets(steps, a, s):
@@ -74,11 +97,16 @@ def build_tracklets(steps, a, s):
                 best["v"] = nv if len(best["pts"]) == 1 else (0.6 * nv[0] + 0.4 * best["v"][0], 0.6 * nv[1] + 0.4 * best["v"][1])
                 best["pts"][k] = (d[0], d[1], d[4]); best["k1"] = k; used.add(id(best))
     done += active
-    out = []
+    out = []; static = 0
+    long_k = round(a.static_s * a.fps_step)
     for tr in done:
         c = [p[2] for p in tr["pts"].values()]
-        if len(c) < 3 and max(c) < 0.6: continue          # kratki i nesigurni = šum
+        if len(c) < 3 and max(c) < a.short_conf: continue    # kratki i nesigurni = šum
+        if tr["k1"] - tr["k0"] >= long_k:                     # dugo "zalijepljen" za pozadinu = znak, lampa, rezervna lopta
+            rel = np.array([[x - steps[k]["cam"][0], y - steps[k]["cam"][1]] for k, (x, y, _) in tr["pts"].items()])
+            if np.max(np.linalg.norm(rel - np.median(rel, 0), axis=1)) < 8 * s: static += 1; continue
         tr["score"] = sum(c); out.append(tr)
+    if static: print(f"  odbačeno {static} nepomičnih trackleta (stvar na zidu/podu, ne lopta u igri)")
     return out
 
 
@@ -137,6 +165,9 @@ def main():
     ap.add_argument("--vmax", type=float, default=60, help="najveći pomak lopte po koraku (px na 1280 širine)")
     ap.add_argument("--jump", type=float, default=2.0, help="kazna za nemoguć skok (u jedinicama pouzdanosti)")
     ap.add_argument("--max-gap", type=float, default=0.7, help="najdulja rupa (s) koja se popunjava")
+    ap.add_argument("--short-conf", type=float, default=0.45, help="kratki tracklet (<3) se zadrži samo ako ima detekciju >= ovoga")
+    ap.add_argument("--static-share", type=float, default=0.35, help="detekcija na istom mjestu u sceni u ovolikom udjelu frameova (±5 s) = nepomična stvar")
+    ap.add_argument("--static-s", type=float, default=2.0, help="tracklet koji ovoliko sekundi stoji na istom mjestu u sceni se odbaci")
     ap.add_argument("--raw", action="store_true", help="nacrtaj i sve sirove detekcije")
     ap.add_argument("--cut", type=float, default=0.7, help="prag sličnosti boja između frameova za promjenu kadra")
     a = ap.parse_args()
@@ -147,11 +178,10 @@ def main():
     f0 = round(a.start * fps); f1 = min(nfr, round(min(a.end, nfr / fps) * fps))
     s = W / 1280                                             # pragovi su zadani za 1280 px širine
 
-    steps = detect_pass(a, cap, f0, f1, fps)
+    steps = detect_pass(a, cap, f0, f1, fps); a.fps_step = fps / a.step
     if not a.dets:
-        dp_path = os.path.splitext(a.out)[0] + "_dets.json"
-        json.dump([{"t": st["t"], "dets": st["dets"]} for st in steps], open(dp_path, "w"))
-        print("detekcije spremljene:", dp_path)
+        json.dump([{"t": st["t"], "dets": st["dets"]} for st in steps], open(os.path.splitext(a.out)[0] + "_dets.json", "w"))
+    drop_static(steps, a, s)
     trs = build_tracklets(steps, a, s)
     chain = best_path(trs, steps, a, s)
     pos = path_positions(chain, steps, a, fps / a.step, s)
