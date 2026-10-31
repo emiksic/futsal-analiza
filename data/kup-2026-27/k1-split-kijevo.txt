@@ -1,0 +1,39 @@
+# HNS Semafor 120367196
+HOME_PLAYERS
+13|Frane Dadić|GK|S
+4|Mateo Veić|-|S
+5|Toni Borčić|-|S
+6|Luka Tešija|-|S
+8|Benjamin Marasović|-|S
+77|Marin Nikolić|GK|B
+7|Roko Elezović|-|B
+11|Tonino Zorotović|-|B
+15|Domagoj Čule|-|B
+18|Milan Walter Simpson|-|B
+AWAY_PLAYERS
+1|Robert Mišković|GK|S
+2|Ivan Matić|-|S
+8|Marko Marković|-|S
+16|Nikola Matić|-|S
+17|Ivan Marković|-|S
+25|Mario Milić|GK|B
+6|Dino Bradarić|-|B
+10|Ante Milas|-|B
+14|Leon Ercegovac|-|B
+GOALS
+5'18"|Nikola Matić|-
+8'37"|Domagoj Čule|-
+8'53"|Tonino Zorotović|-
+13'|Ivan Matić|-
+21'38"|Luka Tešija|-
+37'58"|Nikola Matić|-
+SHOOTOUT
+home|Luka Tešija|G
+home|Tonino Zorotović|G
+home|Toni Borčić|X
+home|Mateo Veić|G
+home|Milan Walter Simpson|X
+away|Ivan Matić|G
+away|Nikola Matić|G
+away|Dino Bradarić|G
+away|Ante Milas|G

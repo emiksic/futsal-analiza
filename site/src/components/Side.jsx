@@ -1,6 +1,6 @@
 // Kartice za desni stupac: video analize, strijelci, mini tablica.
 import { href } from "../lib/router.js";
-import { score, scorers, standings, playerName, fmtDay } from "../lib/derive.js";
+import { score, scorers, standings, playerName, fmtDay, isCup, roundName } from "../lib/derive.js";
 import { Jersey, CourtLines } from "./ui.jsx";
 
 export function AnalysedCard({ db, ix, comp, limit = 3 }) {
@@ -25,7 +25,7 @@ export function AnalysedCard({ db, ix, comp, limit = 3 }) {
                 </div>
                 <div className="feat-teams"><Jersey kit={H.kit} size={18} />{H.short}<span className="muted">–</span><Jersey kit={A.kit} size={18} />{A.short}
                   <span className="sc">{s ? `${s[0]}:${s[1]}` : ""}</span></div>
-                <div className="small muted">{ix.league[ix.comp[m.comp].league].name}, {m.round ? `${m.round}. kolo, ${fmtDay(m.date)}` : "isječak"}</div>
+                <div className="small muted">{ix.league[ix.comp[m.comp].league].name}, {m.round ? `${roundName(ix.league[ix.comp[m.comp].league], m.round)}, ${fmtDay(m.date)}` : "isječak"}</div>
               </a>
             );
           })}
@@ -57,7 +57,9 @@ export function ScorersCard({ db, ix, comp, limit = 6, title = "Strijelci" }) {
 }
 
 export function MiniTable({ db, ix, comp, mark = [] }) {
-  const rows = standings(db, comp), C = ix.comp[comp];
+  const C = ix.comp[comp];
+  if (!C || isCup(ix.league[C.league])) return null;   // kup nema tablicu
+  const rows = standings(db, comp);
   return (
     <section className="panel">
       <div className="ph"><h2>Tablica</h2><a className="more" href={href("liga", C.league, C.season, "tablica")}>Cijela</a></div>

@@ -1,0 +1,37 @@
+# HNS Semafor 120367197
+HOME_PLAYERS
+33|Victor Lopez Gonzalez|GK|S
+10|Vitor Hugo de Lima da Silva|-|S
+20|Yuri Madruga|-|S
+23|Antonio Sekulić|-|S
+77|Nejc Hozjan|-|S
+1|Franko Jamičić|GK|B
+4|Matias Mijić|-|B
+7|Josip Šalaj|-|B
+11|Lovro Trdin|-|B
+17|Ronaldo Aparecido Prado De Oliveira Junior|-|B
+18|Jakov Jurišić|-|B
+27|Marko Jakopec|-|B
+88|Josip Suton|-|B
+AWAY_PLAYERS
+20|Mijo Brzica|GK|S
+7|Gabrijel Lasić|-|S
+9|Jonhn Lennon Felinto Silva|-|S
+27|Loren Radić|-|S
+33|Ante Silić|-|S
+17|Antonio Džaja|GK|B
+5|Niko Radić|-|B
+8|Kristijan Jurilj|-|B
+11|Muanis Duvnjak|-|B
+14|Marin Musinov|-|B
+15|Klemen Duščak|-|B
+80|Adrijan Trstenjak|-|B
+GOALS
+7'|Vitor Hugo de Lima da Silva|-
+14'|Nejc Hozjan|-
+22'|Jonhn Lennon Felinto Silva|-
+23'|Jonhn Lennon Felinto Silva|-
+26'|Antonio Sekulić|-
+31'|Josip Suton|-
+35'|Josip Suton|-
+37'|Yuri Madruga|-

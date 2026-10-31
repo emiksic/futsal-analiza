@@ -1,5 +1,5 @@
 import { href, go } from "../lib/router.js";
-import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
@@ -8,8 +8,9 @@ import { Jersey, LeagueBadge, Form, Icon } from "../components/ui.jsx";
 
 const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["preokreti", "Preokreti"], ["analize", "Video analize"], ["pravila", "Pravila"]];
 
-export function League({ db, ix, leagueId, seasonId, tab = "tablica", roundArg }) {
-  const L = ix.league[leagueId];
+export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roundArg }) {
+  const L = ix.league[leagueId], cup = isCup(L);
+  const tab = cup && tab0 === "tablica" ? "rezultati" : tab0;   // kup nema tablicu
   const comp = db.comps.find((c) => c.league === leagueId && c.season === seasonId) || db.comps.find((c) => c.league === leagueId);
   if (!L || !comp) return <div className="page"><div className="panel empty">Liga ne postoji.</div></div>;
   const seasonsOf = db.comps.filter((c) => c.league === leagueId).map((c) => ix.season[c.season]);
@@ -23,7 +24,7 @@ export function League({ db, ix, leagueId, seasonId, tab = "tablica", roundArg }
             <LeagueBadge league={L} big />
             <div>
               <h1>{L.name}</h1>
-              <div className="meta">{L.category}, {comp.teams.length} klubova, {comp.rounds} kola</div>
+              <div className="meta">{cup ? `${L.category}, kup, ${comp.teams.length} klubova` : `${L.category}, ${comp.teams.length} klubova, ${comp.rounds} kola`}</div>
             </div>
             <div className="sel">
               <label className="small muted" htmlFor="season-sel" style={{ marginRight: 8 }}>Sezona</label>
@@ -33,11 +34,11 @@ export function League({ db, ix, leagueId, seasonId, tab = "tablica", roundArg }
             </div>
           </div>
           <nav className="tabs" aria-label="Liga">
-            {TABS.map(([k, t]) => <a key={k} href={href("liga", leagueId, comp.season, k)} aria-current={tab === k ? "page" : undefined}>
+            {TABS.filter(([k]) => !(cup && k === "tablica")).map(([k, t]) => <a key={k} href={href("liga", leagueId, comp.season, k)} aria-current={tab === k ? "page" : undefined}>
               {t}{k === "analize" && analysed ? ` (${analysed})` : ""}</a>)}
           </nav>
           {tab === "tablica" && <Standings db={db} ix={ix} comp={comp} league={L} />}
-          {tab === "rezultati" && <Rounds db={db} ix={ix} comp={comp} round={roundArg ? +roundArg : null} />}
+          {tab === "rezultati" && <Rounds db={db} ix={ix} comp={comp} league={L} round={roundArg ? +roundArg : null} />}
           {tab === "strijelci" && <Scorers db={db} ix={ix} comp={comp} />}
           {tab === "preokreti" && <Comebacks db={db} ix={ix} comp={comp} />}
           {tab === "analize" && <Analysed db={db} ix={ix} comp={comp} />}
@@ -45,7 +46,7 @@ export function League({ db, ix, leagueId, seasonId, tab = "tablica", roundArg }
         </section>
       </main>
       <aside className="ctx col">
-        {tab === "tablica" ? <RoundCard db={db} ix={ix} comp={comp} /> : <MiniTable db={db} ix={ix} comp={comp.id} />}
+        {tab === "tablica" ? <RoundCard db={db} ix={ix} comp={comp} league={L} /> : <MiniTable db={db} ix={ix} comp={comp.id} />}
         {tab !== "strijelci" && <ScorersCard db={db} ix={ix} comp={comp.id} limit={5} />}
         {tab !== "analize" && <AnalysedCard db={db} ix={ix} comp={comp.id} limit={2} />}
       </aside>
@@ -93,7 +94,7 @@ function Standings({ db, ix, comp, league }) {
   );
 }
 
-function Rounds({ db, ix, comp, round }) {
+function Rounds({ db, ix, comp, league, round }) {
   const r = round || currentRound(db, comp.id);
   const ms = db.matches.filter((m) => m.comp === comp.id && m.round === r).sort((a, b) => a.date.localeCompare(b.date));
   const days = [...new Set(ms.map((m) => fmtDay(m.date)))];
@@ -103,16 +104,16 @@ function Rounds({ db, ix, comp, round }) {
       <div className="toolbar" style={{ paddingTop: 12 }}>
         <div className="stepper">
           <button onClick={() => nav(r - 1)} disabled={r <= 1} aria-label="Prethodno kolo">{Icon.chevL()}</button>
-          <b>{r}. kolo</b>
+          <b>{roundName(league, r)}</b>
           <button onClick={() => nav(r + 1)} disabled={r >= comp.rounds} aria-label="Sljedeće kolo">{Icon.chevR()}</button>
         </div>
         <span className="grow" />
         <select className="select" aria-label="Odaberi kolo" value={r} onChange={(e) => nav(e.target.value)}>
-          {Array.from({ length: comp.rounds }, (_, i) => <option key={i} value={i + 1}>{i + 1}. kolo</option>)}
+          {Array.from({ length: comp.rounds }, (_, i) => <option key={i} value={i + 1}>{roundName(league, i + 1)}</option>)}
         </select>
       </div>
       <div className="mlist">
-        {!ms.length && <div className="empty">Raspored za {r}. kolo još nije unesen.</div>}
+        {!ms.length && <div className="empty">Raspored za {roundName(league, r)} još nije unesen.</div>}
         {days.map((d) => (
           <div key={d}>
             <div className="mgroup"><b>{d}</b></div>
@@ -203,12 +204,12 @@ function Analysed({ db, ix, comp }) {
   return <div className="mlist">{ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} showDay />)}</div>;
 }
 
-function RoundCard({ db, ix, comp }) {
+function RoundCard({ db, ix, comp, league }) {
   const r = currentRound(db, comp.id), next = Math.min(comp.rounds, r + 1);
   const ms = db.matches.filter((m) => m.comp === comp.id && m.round === next).sort((a, b) => a.date.localeCompare(b.date));
   return (
     <section className="panel">
-      <div className="ph"><h2>{next}. kolo</h2><a className="more" href={href("liga", comp.league, comp.season, "rezultati", next)}>Sva kola</a></div>
+      <div className="ph"><h2>{roundName(league, next)}</h2><a className="more" href={href("liga", comp.league, comp.season, "rezultati", next)}>Sva kola</a></div>
       <div className="mlist">{ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} showDay />)}
         {!ms.length && <div className="empty">Raspored još nije unesen.</div>}</div>
     </section>

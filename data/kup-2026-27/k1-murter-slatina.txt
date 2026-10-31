@@ -1,0 +1,41 @@
+# HNS Semafor 120367195
+HOME_PLAYERS
+1|Josip Kardum|GK|S
+8|Luka Grubišić|-|S
+9|Ivan Bradarić|-|S
+12|Roko Nakić|-|S
+20|Nino Jurjević Adžić|-|S
+2|Mihovil Turčinov|GK|B
+4|Leonardo Lučić|-|B
+5|Josip Stojčević|-|B
+6|Ante Dragošević|-|B
+7|Roko Šikić|-|B
+10|Dominik Nadoveza|-|B
+11|Josip Ćoran|-|B
+14|Roko Burčul|-|B
+24|Marko Marčić|-|B
+AWAY_PLAYERS
+1|Dominik Nikšić|GK|S
+6|Dominik Bogati|-|S
+7|Dorian Bogati|-|S
+9|Nikola Tomić|-|S
+11|Stipe Ćavić|-|S
+2|Franjo Tunić|-|B
+3|Franjo Đorđević|-|B
+4|Mateo Novaković|-|B
+10|Matheus Felipe De Jesus Silva|-|B
+13|Vedran Salaj Obrovac|-|B
+GOALS
+3'|Ivan Bradarić|-
+7'|Dominik Nadoveza|-
+8'|Ivan Bradarić|-
+9'|Roko Nakić|-
+11'|Roko Burčul|-
+17'|Matheus Felipe De Jesus Silva|-
+31'|Stipe Ćavić|-
+33'|Matheus Felipe De Jesus Silva|-
+35'|Luka Grubišić|-
+35'|Franjo Tunić|-
+37'|Dominik Nadoveza|-
+37'|Matheus Felipe De Jesus Silva|-
+40'|Dominik Nadoveza|-

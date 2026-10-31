@@ -37,6 +37,23 @@ export const minute = (e) => e.period > 2 ? `${40 + Math.floor(e.sec / 60) + 1}'
 export const goalTime = (e) => e.exact && e.period <= 2 ? `${(e.period - 1) * 20 + Math.floor(e.sec / 60)}:${String(e.sec % 60).padStart(2, "0")}` : minute(e);
 export const clock = (sec) => `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
 
+// Kup: liga s zones.cup; kola su faze natjecanja
+export const isCup = (L) => !!L?.zones?.cup;
+export const CUP_STAGES = ["1/16 finala", "1/8 finala", "Četvrtfinale", "Polufinale", "Finale"];
+export const roundName = (L, r) => isCup(L) ? (CUP_STAGES[r - 1] || `${r}. krug`) : `${r}. kolo`;
+// kazneni udarci nakon utakmice (događaji "so"), [domaćin, gost] ili null
+export function shootout(m) {
+  const so = m.events.filter((e) => e.type === "so"); if (!so.length) return null;
+  const s = [0, 0]; for (const e of so) if (e.scored) s[e.side === "home" ? 0 : 1]++;
+  return s;
+}
+// 1 = domaćin, -1 = gost, 0 = neriješeno, null = nije odigrano (kod kupa odlučuju i kazneni udarci)
+export function winner(m) {
+  const s = score(m); if (!s || m.status !== "finished") return null;
+  if (s[0] !== s[1]) return s[0] > s[1] ? 1 : -1;
+  const p = shootout(m); return p && p[0] !== p[1] ? (p[0] > p[1] ? 1 : -1) : 0;
+}
+
 export function result(m, side) {
   const s = score(m); if (!s || m.status !== "finished") return null;
   const [a, b] = side === "home" ? s : [s[1], s[0]];

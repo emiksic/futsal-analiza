@@ -1,0 +1,31 @@
+# HNS Semafor 120367185
+HOME_PLAYERS
+12|Alen Đurman|GK|S
+3|Leo Vrbanić|-|S
+10|Patrik Mraz|-|S
+18|Silvestar Žganec|-|S
+19|Tomica Fijačko|-|S
+5|David Plasajec|-|B
+11|Slavko Stolnik|-|B
+14|David Čretni|-|B
+20|Siniša Hrgar|-|B
+22|Sven Hrgar|-|B
+24|Slaven Hlišć|-|B
+AWAY_PLAYERS
+18|Antonio Jurišić|GK|S
+5|Željko Tomić|-|S
+6|Milan Kralj|-|S
+10|Danijel Marić|-|S
+11|Roberto Juko|-|S
+15|Domagoj Pigac|GK|B
+4|Matej Vidović|-|B
+8|Marin Smolčić|-|B
+GOALS
+6'|Slavko Stolnik|P
+9'|Leo Vrbanić|-
+19'|Milan Kralj|-
+20'|Patrik Mraz|-
+21'|Siniša Hrgar|-
+23'|Milan Kralj|-
+35'|Slaven Hlišć|-
+40'|Milan Kralj|-

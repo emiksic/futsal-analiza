@@ -2,7 +2,7 @@ import { href } from "../lib/router.js";
 
 // Dres u bojama kluba — zamjena za grb (grbove ne prenosimo).
 export function Jersey({ kit, size = 28, num, title }) {
-  const k = kit || { shirt: "#cfd6de", trim: "#8995a3", num: "#111" };
+  const k = kit?.shirt ? kit : { shirt: "#cfd6de", trim: "#8995a3", num: "#111" };   // klub bez upisanih boja: sivi dres
   return (
     <svg width={size} height={size} viewBox="0 0 40 40" role={title ? "img" : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
       <path d="M13 4.5 7.5 6.6 1.8 12.6l4.6 6.6 3.8-2.7V36.5h19.6V16.5l3.8 2.7 4.6-6.6-5.7-6-5.5-2.1Q20 9.5 13 4.5Z"
@@ -16,8 +16,9 @@ export function Jersey({ kit, size = 28, num, title }) {
 }
 
 export function LeagueBadge({ league, big }) {
-  const cls = league.category === "U-19" ? "u19" : league.category === "U-17" ? "u17" : "";
-  const txt = league.category === "Seniori" ? "1." : league.category.replace("U-", "U");
+  const cup = !!league.zones?.cup;
+  const cls = cup ? "cup" : league.category === "U-19" ? "u19" : league.category === "U-17" ? "u17" : "";
+  const txt = cup ? "K" : league.category === "Seniori" ? "1." : league.category.replace("U-", "U");
   return <span className={`lg-badge ${cls}`} style={big ? { width: 52, height: 52, fontSize: 20, borderRadius: 12 } : undefined} aria-hidden="true">{txt}</span>;
 }
 

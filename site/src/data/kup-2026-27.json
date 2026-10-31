@@ -1,0 +1,3435 @@
+{
+"matches": [
+{
+"id": "kup-2026-27-k1-split-kijevo",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-30T17:30:00+01:00",
+"home": "split",
+"away": "kijevo",
+"hall": "gripe",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": {
+"players": [
+"split-2026-27-Seniori-frane-dadic",
+"split-2026-27-Seniori-mateo-veic",
+"split-2026-27-Seniori-toni-borcic",
+"split-2026-27-Seniori-luka-tesija",
+"split-2026-27-Seniori-benjamin-marasovic",
+"split-2026-27-Seniori-marin-nikolic",
+"split-2026-27-Seniori-roko-elezovic",
+"split-2026-27-Seniori-tonino-zorotovic",
+"split-2026-27-Seniori-domagoj-cule",
+"split-2026-27-Seniori-milan-walter-simpson"
+],
+"start": [
+"split-2026-27-Seniori-frane-dadic",
+"split-2026-27-Seniori-mateo-veic",
+"split-2026-27-Seniori-toni-borcic",
+"split-2026-27-Seniori-luka-tesija",
+"split-2026-27-Seniori-benjamin-marasovic"
+],
+"gk": [
+"split-2026-27-Seniori-frane-dadic",
+"split-2026-27-Seniori-marin-nikolic"
+]
+},
+"away": {
+"players": [
+"kijevo-2026-27-Seniori-robert-miskovic",
+"kijevo-2026-27-Seniori-ivan-matic",
+"kijevo-2026-27-Seniori-marko-markovic",
+"kijevo-2026-27-Seniori-nikola-matic",
+"kijevo-2026-27-Seniori-ivan-markovic",
+"kijevo-2026-27-Seniori-mario-milic",
+"kijevo-2026-27-Seniori-dino-bradaric",
+"kijevo-2026-27-Seniori-ante-milas",
+"kijevo-2026-27-Seniori-leon-ercegovac"
+],
+"start": [
+"kijevo-2026-27-Seniori-robert-miskovic",
+"kijevo-2026-27-Seniori-ivan-matic",
+"kijevo-2026-27-Seniori-marko-markovic",
+"kijevo-2026-27-Seniori-nikola-matic",
+"kijevo-2026-27-Seniori-ivan-markovic"
+],
+"gk": [
+"kijevo-2026-27-Seniori-robert-miskovic",
+"kijevo-2026-27-Seniori-mario-milic"
+]
+}
+},
+"events": [
+{
+"id": "kup-2026-27-k1-split-kijevo-g0",
+"type": "goal",
+"side": "away",
+"player": "kijevo-2026-27-Seniori-nikola-matic",
+"period": 1,
+"sec": 318,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-g1",
+"type": "goal",
+"side": "home",
+"player": "split-2026-27-Seniori-domagoj-cule",
+"period": 1,
+"sec": 517,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-g2",
+"type": "goal",
+"side": "home",
+"player": "split-2026-27-Seniori-tonino-zorotovic",
+"period": 1,
+"sec": 533,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-g3",
+"type": "goal",
+"side": "away",
+"player": "kijevo-2026-27-Seniori-ivan-matic",
+"period": 1,
+"sec": 750
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-g4",
+"type": "goal",
+"side": "home",
+"player": "split-2026-27-Seniori-luka-tesija",
+"period": 2,
+"sec": 98,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-g5",
+"type": "goal",
+"side": "away",
+"player": "kijevo-2026-27-Seniori-nikola-matic",
+"period": 2,
+"sec": 1078,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-so0",
+"type": "so",
+"side": "home",
+"player": "split-2026-27-Seniori-luka-tesija",
+"scored": true,
+"period": 4,
+"sec": 0
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-so5",
+"type": "so",
+"side": "away",
+"player": "kijevo-2026-27-Seniori-ivan-matic",
+"scored": true,
+"period": 4,
+"sec": 1
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-so1",
+"type": "so",
+"side": "home",
+"player": "split-2026-27-Seniori-tonino-zorotovic",
+"scored": true,
+"period": 4,
+"sec": 2
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-so6",
+"type": "so",
+"side": "away",
+"player": "kijevo-2026-27-Seniori-nikola-matic",
+"scored": true,
+"period": 4,
+"sec": 3
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-so2",
+"type": "so",
+"side": "home",
+"player": "split-2026-27-Seniori-toni-borcic",
+"scored": false,
+"period": 4,
+"sec": 4
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-so7",
+"type": "so",
+"side": "away",
+"player": "kijevo-2026-27-Seniori-dino-bradaric",
+"scored": true,
+"period": 4,
+"sec": 5
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-so3",
+"type": "so",
+"side": "home",
+"player": "split-2026-27-Seniori-mateo-veic",
+"scored": true,
+"period": 4,
+"sec": 6
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-so8",
+"type": "so",
+"side": "away",
+"player": "kijevo-2026-27-Seniori-ante-milas",
+"scored": true,
+"period": 4,
+"sec": 7
+},
+{
+"id": "kup-2026-27-k1-split-kijevo-so4",
+"type": "so",
+"side": "home",
+"player": "split-2026-27-Seniori-milan-walter-simpson",
+"scored": false,
+"period": 4,
+"sec": 8
+}
+],
+"analysis": null,
+"source": "HNS Semafor"
+},
+{
+"id": "kup-2026-27-k1-bjelovar-trilj",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-30T18:00:00+01:00",
+"home": "bjelovar",
+"away": "trilj",
+"hall": "bjelovar",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": {
+"players": [
+"bjelovar-2026-27-Seniori-nikola-beljan",
+"bjelovar-2026-27-Seniori-teo-besic",
+"bjelovar-2026-27-Seniori-matija-tolic",
+"bjelovar-2026-27-Seniori-ivan-matan",
+"bjelovar-2026-27-Seniori-ante-matan",
+"bjelovar-2026-27-Seniori-lovro-crnkovic",
+"bjelovar-2026-27-Seniori-marko-beljan",
+"bjelovar-2026-27-Seniori-luka-barisic",
+"bjelovar-2026-27-Seniori-nikola-matic",
+"bjelovar-2026-27-Seniori-dino-packo",
+"bjelovar-2026-27-Seniori-branko-artic",
+"bjelovar-2026-27-Seniori-matko-marusic",
+"bjelovar-2026-27-Seniori-kristijan-mizan",
+"bjelovar-2026-27-Seniori-ivan-durak"
+],
+"start": [
+"bjelovar-2026-27-Seniori-nikola-beljan",
+"bjelovar-2026-27-Seniori-teo-besic",
+"bjelovar-2026-27-Seniori-matija-tolic",
+"bjelovar-2026-27-Seniori-ivan-matan",
+"bjelovar-2026-27-Seniori-ante-matan"
+],
+"gk": [
+"bjelovar-2026-27-Seniori-nikola-beljan",
+"bjelovar-2026-27-Seniori-lovro-crnkovic"
+]
+},
+"away": {
+"players": [
+"trilj-2026-27-Seniori-dario-runje",
+"trilj-2026-27-Seniori-filip-koprcina",
+"trilj-2026-27-Seniori-mise-tokic",
+"trilj-2026-27-Seniori-luka-zivaljic",
+"trilj-2026-27-Seniori-ivano-vukas",
+"trilj-2026-27-Seniori-tino-covic",
+"trilj-2026-27-Seniori-zdenko-bugarin",
+"trilj-2026-27-Seniori-lovre-jukic",
+"trilj-2026-27-Seniori-blaz-zupa",
+"trilj-2026-27-Seniori-tomislav-tokic",
+"trilj-2026-27-Seniori-ivan-barac",
+"trilj-2026-27-Seniori-mario-tokic"
+],
+"start": [
+"trilj-2026-27-Seniori-dario-runje",
+"trilj-2026-27-Seniori-filip-koprcina",
+"trilj-2026-27-Seniori-mise-tokic",
+"trilj-2026-27-Seniori-luka-zivaljic",
+"trilj-2026-27-Seniori-ivano-vukas"
+],
+"gk": [
+"trilj-2026-27-Seniori-dario-runje",
+"trilj-2026-27-Seniori-tino-covic"
+]
+}
+},
+"events": [
+{
+"id": "kup-2026-27-k1-bjelovar-trilj-g0",
+"type": "goal",
+"side": "away",
+"player": "trilj-2026-27-Seniori-ivano-vukas",
+"period": 1,
+"sec": 441,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-bjelovar-trilj-g1",
+"type": "goal",
+"side": "home",
+"player": "bjelovar-2026-27-Seniori-dino-packo",
+"period": 1,
+"sec": 1109,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-bjelovar-trilj-g2",
+"type": "goal",
+"side": "home",
+"player": "bjelovar-2026-27-Seniori-dino-packo",
+"period": 1,
+"sec": 1198,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-bjelovar-trilj-g3",
+"type": "goal",
+"side": "home",
+"player": "bjelovar-2026-27-Seniori-ivan-matan",
+"period": 2,
+"sec": 40,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-bjelovar-trilj-g4",
+"type": "owngoal",
+"side": "home",
+"player": "bjelovar-2026-27-Seniori-nikola-beljan",
+"period": 2,
+"sec": 84,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-bjelovar-trilj-g5",
+"type": "goal",
+"side": "home",
+"player": "bjelovar-2026-27-Seniori-matija-tolic",
+"period": 2,
+"sec": 323,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-bjelovar-trilj-g6",
+"type": "goal",
+"side": "home",
+"player": "bjelovar-2026-27-Seniori-ivan-durak",
+"period": 2,
+"sec": 571,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-bjelovar-trilj-g7",
+"type": "goal",
+"side": "home",
+"player": "bjelovar-2026-27-Seniori-dino-packo",
+"period": 2,
+"sec": 860,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-bjelovar-trilj-g8",
+"type": "goal",
+"side": "home",
+"player": "bjelovar-2026-27-Seniori-nikola-matic",
+"period": 2,
+"sec": 1031,
+"exact": true
+}
+],
+"analysis": null,
+"source": "HNS Semafor"
+},
+{
+"id": "kup-2026-27-k1-pula-torcida",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-30T20:00:00+01:00",
+"home": "pula",
+"away": "torcida",
+"hall": "mate-parlov",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": {
+"players": [
+"pula-2026-27-Seniori-domagoj-steko",
+"pula-2026-27-Seniori-radenko-markovic",
+"pula-2026-27-Seniori-zan-janez",
+"pula-2026-27-Seniori-david-pernic",
+"pula-2026-27-Seniori-bepo-paus",
+"pula-2026-27-Seniori-edvin-lorber",
+"pula-2026-27-Seniori-daniel-moravac",
+"pula-2026-27-Seniori-teo-hajdaraj",
+"pula-2026-27-Seniori-kristijan-vasic",
+"pula-2026-27-Seniori-igor-duric",
+"pula-2026-27-Seniori-niko-vukmir",
+"pula-2026-27-Seniori-frane-paus",
+"pula-2026-27-Seniori-stefano-galesic"
+],
+"start": [
+"pula-2026-27-Seniori-domagoj-steko",
+"pula-2026-27-Seniori-radenko-markovic",
+"pula-2026-27-Seniori-zan-janez",
+"pula-2026-27-Seniori-david-pernic",
+"pula-2026-27-Seniori-bepo-paus"
+],
+"gk": [
+"pula-2026-27-Seniori-domagoj-steko",
+"pula-2026-27-Seniori-edvin-lorber"
+]
+},
+"away": {
+"players": [
+"torcida-2026-27-Seniori-marin-juric",
+"torcida-2026-27-Seniori-julian-esteban-clavijo-urquijo",
+"torcida-2026-27-Seniori-bartul-ora",
+"torcida-2026-27-Seniori-petar-pedic",
+"torcida-2026-27-Seniori-karlo-vukovic",
+"torcida-2026-27-Seniori-duje-krivosija",
+"torcida-2026-27-Seniori-duje-vladovic",
+"torcida-2026-27-Seniori-mijo-miserda",
+"torcida-2026-27-Seniori-caio-alves-roque",
+"torcida-2026-27-Seniori-marko-zuljevic",
+"torcida-2026-27-Seniori-dino-palada",
+"torcida-2026-27-Seniori-dario-vukasovic",
+"torcida-2026-27-Seniori-ante-perkusic",
+"torcida-2026-27-Seniori-nandi-eterovic"
+],
+"start": [
+"torcida-2026-27-Seniori-marin-juric",
+"torcida-2026-27-Seniori-julian-esteban-clavijo-urquijo",
+"torcida-2026-27-Seniori-bartul-ora",
+"torcida-2026-27-Seniori-petar-pedic",
+"torcida-2026-27-Seniori-karlo-vukovic"
+],
+"gk": [
+"torcida-2026-27-Seniori-marin-juric",
+"torcida-2026-27-Seniori-duje-krivosija"
+]
+}
+},
+"events": [
+{
+"id": "kup-2026-27-k1-pula-torcida-g0",
+"type": "goal",
+"side": "away",
+"player": "torcida-2026-27-Seniori-julian-esteban-clavijo-urquijo",
+"period": 1,
+"sec": 653,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-pula-torcida-g1",
+"type": "goal",
+"side": "home",
+"player": "pula-2026-27-Seniori-frane-paus",
+"period": 1,
+"sec": 1026,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-pula-torcida-g2",
+"type": "goal",
+"side": "away",
+"player": "torcida-2026-27-Seniori-nandi-eterovic",
+"period": 2,
+"sec": 393,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-pula-torcida-g3",
+"type": "goal",
+"side": "away",
+"player": "torcida-2026-27-Seniori-julian-esteban-clavijo-urquijo",
+"period": 2,
+"sec": 738,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-pula-torcida-g4",
+"type": "goal",
+"side": "home",
+"player": "pula-2026-27-Seniori-frane-paus",
+"period": 2,
+"sec": 865,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-pula-torcida-g5",
+"type": "goal",
+"side": "home",
+"player": "pula-2026-27-Seniori-zan-janez",
+"period": 2,
+"sec": 1077,
+"exact": true
+},
+{
+"id": "kup-2026-27-k1-pula-torcida-g6",
+"type": "goal",
+"side": "away",
+"player": "torcida-2026-27-Seniori-marko-zuljevic",
+"period": 2,
+"sec": 1174,
+"exact": true
+}
+],
+"analysis": null,
+"source": "HNS Semafor"
+},
+{
+"id": "kup-2026-27-k1-podstrana-square",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-30T20:00:00+01:00",
+"home": "podstrana",
+"away": "square",
+"hall": "primorski-dolac",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": {
+"players": [
+"podstrana-2026-27-Seniori-zarko-luketin",
+"podstrana-2026-27-Seniori-nikola-radan",
+"podstrana-2026-27-Seniori-stjepan-perisic",
+"podstrana-2026-27-Seniori-valerije-juric",
+"podstrana-2026-27-Seniori-nikola-pavic",
+"podstrana-2026-27-Seniori-duje-kolovrat",
+"podstrana-2026-27-Seniori-robert-vinko-pavicic",
+"podstrana-2026-27-Seniori-adrijan-micevski",
+"podstrana-2026-27-Seniori-ante-matas",
+"podstrana-2026-27-Seniori-antonio-kolovrat",
+"podstrana-2026-27-Seniori-josip-kolobaric",
+"podstrana-2026-27-Seniori-dujo-maric",
+"podstrana-2026-27-Seniori-dominik-vuko"
+],
+"start": [
+"podstrana-2026-27-Seniori-zarko-luketin",
+"podstrana-2026-27-Seniori-nikola-radan",
+"podstrana-2026-27-Seniori-stjepan-perisic",
+"podstrana-2026-27-Seniori-valerije-juric",
+"podstrana-2026-27-Seniori-nikola-pavic"
+],
+"gk": [
+"podstrana-2026-27-Seniori-zarko-luketin",
+"podstrana-2026-27-Seniori-duje-kolovrat"
+]
+},
+"away": {
+"players": [
+"square-2026-27-Seniori-zoran-primic",
+"square-2026-27-Seniori-matej-perovic",
+"square-2026-27-Seniori-marko-kuraja",
+"square-2026-27-Seniori-anderson-de-souza-santos",
+"square-2026-27-Seniori-matus-sevcik",
+"square-2026-27-Seniori-lujo-jurisic",
+"square-2026-27-Seniori-hrvoje-sijakovic",
+"square-2026-27-Seniori-ivo-cengic",
+"square-2026-27-Seniori-haron-dzankovic",
+"square-2026-27-Seniori-andre-luis-sasse",
+"square-2026-27-Seniori-antonio-konsuo",
+"square-2026-27-Seniori-antonio-lang",
+"square-2026-27-Seniori-divo-lobas",
+"square-2026-27-Seniori-maro-duras"
+],
+"start": [
+"square-2026-27-Seniori-zoran-primic",
+"square-2026-27-Seniori-matej-perovic",
+"square-2026-27-Seniori-marko-kuraja",
+"square-2026-27-Seniori-anderson-de-souza-santos",
+"square-2026-27-Seniori-matus-sevcik"
+],
+"gk": [
+"square-2026-27-Seniori-zoran-primic",
+"square-2026-27-Seniori-lujo-jurisic"
+]
+}
+},
+"events": [
+{
+"id": "kup-2026-27-k1-podstrana-square-g0",
+"type": "goal",
+"side": "home",
+"player": "podstrana-2026-27-Seniori-valerije-juric",
+"period": 1,
+"sec": 510
+},
+{
+"id": "kup-2026-27-k1-podstrana-square-g1",
+"type": "goal",
+"side": "away",
+"player": "square-2026-27-Seniori-marko-kuraja",
+"period": 1,
+"sec": 570
+},
+{
+"id": "kup-2026-27-k1-podstrana-square-g2",
+"type": "goal",
+"side": "away",
+"player": "square-2026-27-Seniori-matus-sevcik",
+"period": 2,
+"sec": 150
+},
+{
+"id": "kup-2026-27-k1-podstrana-square-g3",
+"type": "goal",
+"side": "home",
+"player": "podstrana-2026-27-Seniori-valerije-juric",
+"period": 2,
+"sec": 270
+},
+{
+"id": "kup-2026-27-k1-podstrana-square-g4",
+"type": "goal",
+"side": "away",
+"player": "square-2026-27-Seniori-andre-luis-sasse",
+"period": 2,
+"sec": 690
+}
+],
+"analysis": null,
+"source": "HNS Semafor"
+},
+{
+"id": "kup-2026-27-k1-osijek-novo-vrijeme",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-30T20:00:00+01:00",
+"home": "osijek",
+"away": "novo-vrijeme",
+"hall": "zrinjevac",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": {
+"players": [
+"osijek-2026-27-Seniori-victor-lopez-gonzalez",
+"osijek-2026-27-Seniori-vitor-hugo-de-lima-da-silva",
+"osijek-2026-27-Seniori-yuri-madruga",
+"osijek-2026-27-Seniori-antonio-sekulic",
+"osijek-2026-27-Seniori-nejc-hozjan",
+"osijek-2026-27-Seniori-franko-jamicic",
+"osijek-2026-27-Seniori-matias-mijic",
+"osijek-2026-27-Seniori-josip-salaj",
+"osijek-2026-27-Seniori-lovro-trdin",
+"osijek-2026-27-Seniori-ronaldo-aparecido-prado-de-oliveira-junior",
+"osijek-2026-27-Seniori-jakov-jurisic",
+"osijek-2026-27-Seniori-marko-jakopec",
+"osijek-2026-27-Seniori-josip-suton"
+],
+"start": [
+"osijek-2026-27-Seniori-victor-lopez-gonzalez",
+"osijek-2026-27-Seniori-vitor-hugo-de-lima-da-silva",
+"osijek-2026-27-Seniori-yuri-madruga",
+"osijek-2026-27-Seniori-antonio-sekulic",
+"osijek-2026-27-Seniori-nejc-hozjan"
+],
+"gk": [
+"osijek-2026-27-Seniori-victor-lopez-gonzalez",
+"osijek-2026-27-Seniori-franko-jamicic"
+]
+},
+"away": {
+"players": [
+"novo-vrijeme-2026-27-Seniori-mijo-brzica",
+"novo-vrijeme-2026-27-Seniori-gabrijel-lasic",
+"novo-vrijeme-2026-27-Seniori-jonhn-lennon-felinto-silva",
+"novo-vrijeme-2026-27-Seniori-loren-radic",
+"novo-vrijeme-2026-27-Seniori-ante-silic",
+"novo-vrijeme-2026-27-Seniori-antonio-dzaja",
+"novo-vrijeme-2026-27-Seniori-niko-radic",
+"novo-vrijeme-2026-27-Seniori-kristijan-jurilj",
+"novo-vrijeme-2026-27-Seniori-muanis-duvnjak",
+"novo-vrijeme-2026-27-Seniori-marin-musinov",
+"novo-vrijeme-2026-27-Seniori-klemen-duscak",
+"novo-vrijeme-2026-27-Seniori-adrijan-trstenjak"
+],
+"start": [
+"novo-vrijeme-2026-27-Seniori-mijo-brzica",
+"novo-vrijeme-2026-27-Seniori-gabrijel-lasic",
+"novo-vrijeme-2026-27-Seniori-jonhn-lennon-felinto-silva",
+"novo-vrijeme-2026-27-Seniori-loren-radic",
+"novo-vrijeme-2026-27-Seniori-ante-silic"
+],
+"gk": [
+"novo-vrijeme-2026-27-Seniori-mijo-brzica",
+"novo-vrijeme-2026-27-Seniori-antonio-dzaja"
+]
+}
+},
+"events": [
+{
+"id": "kup-2026-27-k1-osijek-novo-vrijeme-g0",
+"type": "goal",
+"side": "home",
+"player": "osijek-2026-27-Seniori-vitor-hugo-de-lima-da-silva",
+"period": 1,
+"sec": 390
+},
+{
+"id": "kup-2026-27-k1-osijek-novo-vrijeme-g1",
+"type": "goal",
+"side": "home",
+"player": "osijek-2026-27-Seniori-nejc-hozjan",
+"period": 1,
+"sec": 810
+},
+{
+"id": "kup-2026-27-k1-osijek-novo-vrijeme-g2",
+"type": "goal",
+"side": "away",
+"player": "novo-vrijeme-2026-27-Seniori-jonhn-lennon-felinto-silva",
+"period": 2,
+"sec": 90
+},
+{
+"id": "kup-2026-27-k1-osijek-novo-vrijeme-g3",
+"type": "goal",
+"side": "away",
+"player": "novo-vrijeme-2026-27-Seniori-jonhn-lennon-felinto-silva",
+"period": 2,
+"sec": 150
+},
+{
+"id": "kup-2026-27-k1-osijek-novo-vrijeme-g4",
+"type": "goal",
+"side": "home",
+"player": "osijek-2026-27-Seniori-antonio-sekulic",
+"period": 2,
+"sec": 330
+},
+{
+"id": "kup-2026-27-k1-osijek-novo-vrijeme-g5",
+"type": "goal",
+"side": "home",
+"player": "osijek-2026-27-Seniori-josip-suton",
+"period": 2,
+"sec": 630
+},
+{
+"id": "kup-2026-27-k1-osijek-novo-vrijeme-g6",
+"type": "goal",
+"side": "home",
+"player": "osijek-2026-27-Seniori-josip-suton",
+"period": 2,
+"sec": 870
+},
+{
+"id": "kup-2026-27-k1-osijek-novo-vrijeme-g7",
+"type": "goal",
+"side": "home",
+"player": "osijek-2026-27-Seniori-yuri-madruga",
+"period": 2,
+"sec": 990
+}
+],
+"analysis": null,
+"source": "HNS Semafor"
+},
+{
+"id": "kup-2026-27-k1-fotex-lika-sport",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-30T20:15:00+01:00",
+"home": "fotex",
+"away": "lika-sport",
+"hall": "vidovec",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": {
+"players": [
+"fotex-2026-27-Seniori-alen-durman",
+"fotex-2026-27-Seniori-leo-vrbanic",
+"fotex-2026-27-Seniori-patrik-mraz",
+"fotex-2026-27-Seniori-silvestar-zganec",
+"fotex-2026-27-Seniori-tomica-fijacko",
+"fotex-2026-27-Seniori-david-plasajec",
+"fotex-2026-27-Seniori-slavko-stolnik",
+"fotex-2026-27-Seniori-david-cretni",
+"fotex-2026-27-Seniori-sinisa-hrgar",
+"fotex-2026-27-Seniori-sven-hrgar",
+"fotex-2026-27-Seniori-slaven-hlisc"
+],
+"start": [
+"fotex-2026-27-Seniori-alen-durman",
+"fotex-2026-27-Seniori-leo-vrbanic",
+"fotex-2026-27-Seniori-patrik-mraz",
+"fotex-2026-27-Seniori-silvestar-zganec",
+"fotex-2026-27-Seniori-tomica-fijacko"
+],
+"gk": [
+"fotex-2026-27-Seniori-alen-durman"
+]
+},
+"away": {
+"players": [
+"lika-sport-2026-27-Seniori-antonio-jurisic",
+"lika-sport-2026-27-Seniori-zeljko-tomic",
+"lika-sport-2026-27-Seniori-milan-kralj",
+"lika-sport-2026-27-Seniori-danijel-maric",
+"lika-sport-2026-27-Seniori-roberto-juko",
+"lika-sport-2026-27-Seniori-domagoj-pigac",
+"lika-sport-2026-27-Seniori-matej-vidovic",
+"lika-sport-2026-27-Seniori-marin-smolcic"
+],
+"start": [
+"lika-sport-2026-27-Seniori-antonio-jurisic",
+"lika-sport-2026-27-Seniori-zeljko-tomic",
+"lika-sport-2026-27-Seniori-milan-kralj",
+"lika-sport-2026-27-Seniori-danijel-maric",
+"lika-sport-2026-27-Seniori-roberto-juko"
+],
+"gk": [
+"lika-sport-2026-27-Seniori-antonio-jurisic",
+"lika-sport-2026-27-Seniori-domagoj-pigac"
+]
+}
+},
+"events": [
+{
+"id": "kup-2026-27-k1-fotex-lika-sport-g0",
+"type": "goal",
+"side": "home",
+"player": "fotex-2026-27-Seniori-slavko-stolnik",
+"period": 1,
+"sec": 330,
+"pen": true
+},
+{
+"id": "kup-2026-27-k1-fotex-lika-sport-g1",
+"type": "goal",
+"side": "home",
+"player": "fotex-2026-27-Seniori-leo-vrbanic",
+"period": 1,
+"sec": 510
+},
+{
+"id": "kup-2026-27-k1-fotex-lika-sport-g2",
+"type": "goal",
+"side": "away",
+"player": "lika-sport-2026-27-Seniori-milan-kralj",
+"period": 1,
+"sec": 1110
+},
+{
+"id": "kup-2026-27-k1-fotex-lika-sport-g3",
+"type": "goal",
+"side": "home",
+"player": "fotex-2026-27-Seniori-patrik-mraz",
+"period": 1,
+"sec": 1170
+},
+{
+"id": "kup-2026-27-k1-fotex-lika-sport-g4",
+"type": "goal",
+"side": "home",
+"player": "fotex-2026-27-Seniori-sinisa-hrgar",
+"period": 2,
+"sec": 30
+},
+{
+"id": "kup-2026-27-k1-fotex-lika-sport-g5",
+"type": "goal",
+"side": "away",
+"player": "lika-sport-2026-27-Seniori-milan-kralj",
+"period": 2,
+"sec": 150
+},
+{
+"id": "kup-2026-27-k1-fotex-lika-sport-g6",
+"type": "goal",
+"side": "home",
+"player": "fotex-2026-27-Seniori-slaven-hlisc",
+"period": 2,
+"sec": 870
+},
+{
+"id": "kup-2026-27-k1-fotex-lika-sport-g7",
+"type": "goal",
+"side": "away",
+"player": "lika-sport-2026-27-Seniori-milan-kralj",
+"period": 2,
+"sec": 1170
+}
+],
+"analysis": null,
+"source": "HNS Semafor"
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-30T20:30:00+01:00",
+"home": "gauni",
+"away": "dubravice",
+"hall": "biograd",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": {
+"players": [
+"gauni-2026-27-Seniori-rafael-baricic",
+"gauni-2026-27-Seniori-dino-kulas",
+"gauni-2026-27-Seniori-jakov-josip-karic",
+"gauni-2026-27-Seniori-mateo-erlic",
+"gauni-2026-27-Seniori-luka-vodopija",
+"gauni-2026-27-Seniori-sime-markic",
+"gauni-2026-27-Seniori-frane-ljumezi",
+"gauni-2026-27-Seniori-sandro-tolic",
+"gauni-2026-27-Seniori-ante-jukic",
+"gauni-2026-27-Seniori-luka-petrovic",
+"gauni-2026-27-Seniori-joso-kalac",
+"gauni-2026-27-Seniori-vice-birkic",
+"gauni-2026-27-Seniori-martin-cirjak"
+],
+"start": [
+"gauni-2026-27-Seniori-rafael-baricic",
+"gauni-2026-27-Seniori-dino-kulas",
+"gauni-2026-27-Seniori-jakov-josip-karic",
+"gauni-2026-27-Seniori-mateo-erlic",
+"gauni-2026-27-Seniori-luka-vodopija"
+],
+"gk": [
+"gauni-2026-27-Seniori-rafael-baricic",
+"gauni-2026-27-Seniori-sime-markic"
+]
+},
+"away": {
+"players": [
+"dubravice-2026-27-Seniori-ivan-klaric",
+"dubravice-2026-27-Seniori-ante-mijic",
+"dubravice-2026-27-Seniori-sime-grozdanic",
+"dubravice-2026-27-Seniori-ante-brajkovic",
+"dubravice-2026-27-Seniori-antonio-vlaic",
+"dubravice-2026-27-Seniori-karlo-skoric",
+"dubravice-2026-27-Seniori-josip-brajkovic",
+"dubravice-2026-27-Seniori-ante-males",
+"dubravice-2026-27-Seniori-ante-bacic",
+"dubravice-2026-27-Seniori-niko-rudan",
+"dubravice-2026-27-Seniori-luka-brajkovic"
+],
+"start": [
+"dubravice-2026-27-Seniori-ivan-klaric",
+"dubravice-2026-27-Seniori-ante-mijic",
+"dubravice-2026-27-Seniori-sime-grozdanic",
+"dubravice-2026-27-Seniori-ante-brajkovic",
+"dubravice-2026-27-Seniori-antonio-vlaic"
+],
+"gk": [
+"dubravice-2026-27-Seniori-ivan-klaric"
+]
+}
+},
+"events": [
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g0",
+"type": "goal",
+"side": "home",
+"player": "gauni-2026-27-Seniori-luka-petrovic",
+"period": 1,
+"sec": 270
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g1",
+"type": "goal",
+"side": "home",
+"player": "gauni-2026-27-Seniori-vice-birkic",
+"period": 1,
+"sec": 270
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g2",
+"type": "goal",
+"side": "away",
+"player": "dubravice-2026-27-Seniori-ante-males",
+"period": 1,
+"sec": 570
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g3",
+"type": "goal",
+"side": "away",
+"player": "dubravice-2026-27-Seniori-sime-grozdanic",
+"period": 1,
+"sec": 690
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g4",
+"type": "goal",
+"side": "home",
+"player": "gauni-2026-27-Seniori-luka-petrovic",
+"period": 1,
+"sec": 810
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g5",
+"type": "goal",
+"side": "away",
+"player": "dubravice-2026-27-Seniori-ante-mijic",
+"period": 1,
+"sec": 930
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g6",
+"type": "goal",
+"side": "home",
+"player": "gauni-2026-27-Seniori-luka-vodopija",
+"period": 2,
+"sec": 150
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g7",
+"type": "goal",
+"side": "home",
+"player": "gauni-2026-27-Seniori-luka-vodopija",
+"period": 2,
+"sec": 630
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g8",
+"type": "goal",
+"side": "home",
+"player": "gauni-2026-27-Seniori-joso-kalac",
+"period": 2,
+"sec": 870
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g9",
+"type": "goal",
+"side": "home",
+"player": "gauni-2026-27-Seniori-vice-birkic",
+"period": 2,
+"sec": 990
+},
+{
+"id": "kup-2026-27-k1-gauni-dubravice-g10",
+"type": "goal",
+"side": "home",
+"player": "gauni-2026-27-Seniori-sandro-tolic",
+"period": 2,
+"sec": 1170
+}
+],
+"analysis": null,
+"source": "HNS Semafor"
+},
+{
+"id": "kup-2026-27-k1-murter-slatina",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-30T20:45:00+01:00",
+"home": "murter",
+"away": "slatina",
+"hall": "murter",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": {
+"players": [
+"murter-2026-27-Seniori-josip-kardum",
+"murter-2026-27-Seniori-luka-grubisic",
+"murter-2026-27-Seniori-ivan-bradaric",
+"murter-2026-27-Seniori-roko-nakic",
+"murter-2026-27-Seniori-nino-jurjevic-adzic",
+"murter-2026-27-Seniori-mihovil-turcinov",
+"murter-2026-27-Seniori-leonardo-lucic",
+"murter-2026-27-Seniori-josip-stojcevic",
+"murter-2026-27-Seniori-ante-dragosevic",
+"murter-2026-27-Seniori-roko-sikic",
+"murter-2026-27-Seniori-dominik-nadoveza",
+"murter-2026-27-Seniori-josip-coran",
+"murter-2026-27-Seniori-roko-burcul",
+"murter-2026-27-Seniori-marko-marcic"
+],
+"start": [
+"murter-2026-27-Seniori-josip-kardum",
+"murter-2026-27-Seniori-luka-grubisic",
+"murter-2026-27-Seniori-ivan-bradaric",
+"murter-2026-27-Seniori-roko-nakic",
+"murter-2026-27-Seniori-nino-jurjevic-adzic"
+],
+"gk": [
+"murter-2026-27-Seniori-josip-kardum",
+"murter-2026-27-Seniori-mihovil-turcinov"
+]
+},
+"away": {
+"players": [
+"slatina-2026-27-Seniori-dominik-niksic",
+"slatina-2026-27-Seniori-dominik-bogati",
+"slatina-2026-27-Seniori-dorian-bogati",
+"slatina-2026-27-Seniori-nikola-tomic",
+"slatina-2026-27-Seniori-stipe-cavic",
+"slatina-2026-27-Seniori-franjo-tunic",
+"slatina-2026-27-Seniori-franjo-dordevic",
+"slatina-2026-27-Seniori-mateo-novakovic",
+"slatina-2026-27-Seniori-matheus-felipe-de-jesus-silva",
+"slatina-2026-27-Seniori-vedran-salaj-obrovac"
+],
+"start": [
+"slatina-2026-27-Seniori-dominik-niksic",
+"slatina-2026-27-Seniori-dominik-bogati",
+"slatina-2026-27-Seniori-dorian-bogati",
+"slatina-2026-27-Seniori-nikola-tomic",
+"slatina-2026-27-Seniori-stipe-cavic"
+],
+"gk": [
+"slatina-2026-27-Seniori-dominik-niksic"
+]
+}
+},
+"events": [
+{
+"id": "kup-2026-27-k1-murter-slatina-g0",
+"type": "goal",
+"side": "home",
+"player": "murter-2026-27-Seniori-ivan-bradaric",
+"period": 1,
+"sec": 150
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g1",
+"type": "goal",
+"side": "home",
+"player": "murter-2026-27-Seniori-dominik-nadoveza",
+"period": 1,
+"sec": 390
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g2",
+"type": "goal",
+"side": "home",
+"player": "murter-2026-27-Seniori-ivan-bradaric",
+"period": 1,
+"sec": 450
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g3",
+"type": "goal",
+"side": "home",
+"player": "murter-2026-27-Seniori-roko-nakic",
+"period": 1,
+"sec": 510
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g4",
+"type": "goal",
+"side": "home",
+"player": "murter-2026-27-Seniori-roko-burcul",
+"period": 1,
+"sec": 630
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g5",
+"type": "goal",
+"side": "away",
+"player": "slatina-2026-27-Seniori-matheus-felipe-de-jesus-silva",
+"period": 1,
+"sec": 990
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g6",
+"type": "goal",
+"side": "away",
+"player": "slatina-2026-27-Seniori-stipe-cavic",
+"period": 2,
+"sec": 630
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g7",
+"type": "goal",
+"side": "away",
+"player": "slatina-2026-27-Seniori-matheus-felipe-de-jesus-silva",
+"period": 2,
+"sec": 750
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g8",
+"type": "goal",
+"side": "home",
+"player": "murter-2026-27-Seniori-luka-grubisic",
+"period": 2,
+"sec": 870
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g9",
+"type": "goal",
+"side": "away",
+"player": "slatina-2026-27-Seniori-franjo-tunic",
+"period": 2,
+"sec": 870
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g10",
+"type": "goal",
+"side": "home",
+"player": "murter-2026-27-Seniori-dominik-nadoveza",
+"period": 2,
+"sec": 990
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g11",
+"type": "goal",
+"side": "away",
+"player": "slatina-2026-27-Seniori-matheus-felipe-de-jesus-silva",
+"period": 2,
+"sec": 990
+},
+{
+"id": "kup-2026-27-k1-murter-slatina-g12",
+"type": "goal",
+"side": "home",
+"player": "murter-2026-27-Seniori-dominik-nadoveza",
+"period": 2,
+"sec": 1170
+}
+],
+"analysis": null,
+"source": "HNS Semafor"
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-30T21:00:00+01:00",
+"home": "mala-mljekara",
+"away": "petrinjcica",
+"hall": "valpovo",
+"status": "finished",
+"youtube": "",
+"roster": {
+"home": {
+"players": [
+"mala-mljekara-2026-27-Seniori-dominik-mateo-roncevic",
+"mala-mljekara-2026-27-Seniori-borna-amidzic",
+"mala-mljekara-2026-27-Seniori-matej-hanzek",
+"mala-mljekara-2026-27-Seniori-robert-nospak",
+"mala-mljekara-2026-27-Seniori-domagoj-damjanovic",
+"mala-mljekara-2026-27-Seniori-niko-tomic",
+"mala-mljekara-2026-27-Seniori-filip-baraci",
+"mala-mljekara-2026-27-Seniori-marin-stupar",
+"mala-mljekara-2026-27-Seniori-zvonimir-horvat",
+"mala-mljekara-2026-27-Seniori-luka-ralic",
+"mala-mljekara-2026-27-Seniori-nebojsa-popovic",
+"mala-mljekara-2026-27-Seniori-anton-seric",
+"mala-mljekara-2026-27-Seniori-mislav-sosic",
+"mala-mljekara-2026-27-Seniori-zvonimir-filipovic"
+],
+"start": [
+"mala-mljekara-2026-27-Seniori-dominik-mateo-roncevic",
+"mala-mljekara-2026-27-Seniori-borna-amidzic",
+"mala-mljekara-2026-27-Seniori-matej-hanzek",
+"mala-mljekara-2026-27-Seniori-robert-nospak",
+"mala-mljekara-2026-27-Seniori-domagoj-damjanovic"
+],
+"gk": [
+"mala-mljekara-2026-27-Seniori-dominik-mateo-roncevic",
+"mala-mljekara-2026-27-Seniori-niko-tomic"
+]
+},
+"away": {
+"players": [
+"petrinjcica-2026-27-Seniori-vladimir-pezic",
+"petrinjcica-2026-27-Seniori-josip-jandric",
+"petrinjcica-2026-27-Seniori-daniel-matkovic",
+"petrinjcica-2026-27-Seniori-tin-grsic",
+"petrinjcica-2026-27-Seniori-leonardo-papic",
+"petrinjcica-2026-27-Seniori-lovro-juric",
+"petrinjcica-2026-27-Seniori-luka-milicevic",
+"petrinjcica-2026-27-Seniori-franko-vujnovic",
+"petrinjcica-2026-27-Seniori-antonio-knezevic"
+],
+"start": [
+"petrinjcica-2026-27-Seniori-vladimir-pezic",
+"petrinjcica-2026-27-Seniori-josip-jandric",
+"petrinjcica-2026-27-Seniori-daniel-matkovic",
+"petrinjcica-2026-27-Seniori-tin-grsic",
+"petrinjcica-2026-27-Seniori-leonardo-papic"
+],
+"gk": [
+"petrinjcica-2026-27-Seniori-vladimir-pezic"
+]
+}
+},
+"events": [
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-g0",
+"type": "goal",
+"side": "away",
+"player": "petrinjcica-2026-27-Seniori-daniel-matkovic",
+"period": 1,
+"sec": 30
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-g1",
+"type": "goal",
+"side": "away",
+"player": "petrinjcica-2026-27-Seniori-antonio-knezevic",
+"period": 1,
+"sec": 150
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-g2",
+"type": "goal",
+"side": "home",
+"player": "mala-mljekara-2026-27-Seniori-anton-seric",
+"period": 1,
+"sec": 270
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-g3",
+"type": "goal",
+"side": "home",
+"player": "mala-mljekara-2026-27-Seniori-borna-amidzic",
+"period": 1,
+"sec": 330
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-g4",
+"type": "goal",
+"side": "home",
+"player": "mala-mljekara-2026-27-Seniori-nebojsa-popovic",
+"period": 1,
+"sec": 630
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-g5",
+"type": "goal",
+"side": "away",
+"player": "petrinjcica-2026-27-Seniori-tin-grsic",
+"period": 2,
+"sec": 630
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-so0",
+"type": "so",
+"side": "home",
+"player": "mala-mljekara-2026-27-Seniori-domagoj-damjanovic",
+"scored": true,
+"period": 4,
+"sec": 0
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-so4",
+"type": "so",
+"side": "away",
+"player": "petrinjcica-2026-27-Seniori-tin-grsic",
+"scored": false,
+"period": 4,
+"sec": 1
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-so1",
+"type": "so",
+"side": "home",
+"player": "mala-mljekara-2026-27-Seniori-zvonimir-filipovic",
+"scored": true,
+"period": 4,
+"sec": 2
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-so5",
+"type": "so",
+"side": "away",
+"player": "petrinjcica-2026-27-Seniori-daniel-matkovic",
+"scored": true,
+"period": 4,
+"sec": 3
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-so2",
+"type": "so",
+"side": "home",
+"player": "mala-mljekara-2026-27-Seniori-zvonimir-horvat",
+"scored": true,
+"period": 4,
+"sec": 4
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-so6",
+"type": "so",
+"side": "away",
+"player": "petrinjcica-2026-27-Seniori-franko-vujnovic",
+"scored": false,
+"period": 4,
+"sec": 5
+},
+{
+"id": "kup-2026-27-k1-mala-mljekara-petrinjcica-so3",
+"type": "so",
+"side": "home",
+"player": "mala-mljekara-2026-27-Seniori-nebojsa-popovic",
+"scored": true,
+"period": 4,
+"sec": 6
+}
+],
+"analysis": null,
+"source": "HNS Semafor"
+},
+{
+"id": "kup-2026-27-k1-dominik-savio-novi-marof",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-31T17:45:00+01:00",
+"home": "dominik-savio",
+"away": "novi-marof",
+"hall": "sutinska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null
+},
+{
+"id": "kup-2026-27-k1-vinkovci-gimka",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-31T18:00:00+01:00",
+"home": "vinkovci",
+"away": "gimka",
+"hall": "vinkovci",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null
+},
+{
+"id": "kup-2026-27-k1-jezera-futsal-dinamo",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-31T18:30:00+01:00",
+"home": "jezera",
+"away": "futsal-dinamo",
+"hall": "tisno",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null
+},
+{
+"id": "kup-2026-27-k1-rijeka-universitas",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-31T18:30:00+01:00",
+"home": "rijeka",
+"away": "universitas",
+"hall": "zamet",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null
+},
+{
+"id": "kup-2026-27-k1-vrgorac-aurelia-boso",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-31T19:30:00+01:00",
+"home": "vrgorac",
+"away": "aurelia-boso",
+"hall": "makarska",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null
+},
+{
+"id": "kup-2026-27-k1-heroji-2007-hajduk",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-10-31T20:00:00+01:00",
+"home": "heroji-2007",
+"away": "hajduk",
+"hall": "racice",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null
+},
+{
+"id": "kup-2026-27-k1-olmissum-crnica",
+"comp": "kup-2026-27",
+"round": 1,
+"date": "2026-11-17T20:00:00+01:00",
+"home": "olmissum",
+"away": "crnica",
+"hall": "omis",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true
+}
+],
+"players": [
+{
+"id": "split-2026-27-Seniori-frane-dadic",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "13",
+"name": "Frane Dadić",
+"gk": true
+},
+{
+"id": "split-2026-27-Seniori-mateo-veic",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Mateo Veić",
+"gk": false
+},
+{
+"id": "split-2026-27-Seniori-toni-borcic",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "Toni Borčić",
+"gk": false
+},
+{
+"id": "split-2026-27-Seniori-luka-tesija",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Luka Tešija",
+"gk": false
+},
+{
+"id": "split-2026-27-Seniori-benjamin-marasovic",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Benjamin Marasović",
+"gk": false
+},
+{
+"id": "split-2026-27-Seniori-marin-nikolic",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "77",
+"name": "Marin Nikolić",
+"gk": true
+},
+{
+"id": "split-2026-27-Seniori-roko-elezovic",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Roko Elezović",
+"gk": false
+},
+{
+"id": "split-2026-27-Seniori-tonino-zorotovic",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Tonino Zorotović",
+"gk": false
+},
+{
+"id": "split-2026-27-Seniori-domagoj-cule",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "15",
+"name": "Domagoj Čule",
+"gk": false
+},
+{
+"id": "split-2026-27-Seniori-milan-walter-simpson",
+"club": "split",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "18",
+"name": "Milan Walter Simpson",
+"gk": false
+},
+{
+"id": "kijevo-2026-27-Seniori-robert-miskovic",
+"club": "kijevo",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Robert Mišković",
+"gk": true
+},
+{
+"id": "kijevo-2026-27-Seniori-ivan-matic",
+"club": "kijevo",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "2",
+"name": "Ivan Matić",
+"gk": false
+},
+{
+"id": "kijevo-2026-27-Seniori-marko-markovic",
+"club": "kijevo",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Marko Marković",
+"gk": false
+},
+{
+"id": "kijevo-2026-27-Seniori-nikola-matic",
+"club": "kijevo",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "16",
+"name": "Nikola Matić",
+"gk": false
+},
+{
+"id": "kijevo-2026-27-Seniori-ivan-markovic",
+"club": "kijevo",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "17",
+"name": "Ivan Marković",
+"gk": false
+},
+{
+"id": "kijevo-2026-27-Seniori-mario-milic",
+"club": "kijevo",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "25",
+"name": "Mario Milić",
+"gk": true
+},
+{
+"id": "kijevo-2026-27-Seniori-dino-bradaric",
+"club": "kijevo",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Dino Bradarić",
+"gk": false
+},
+{
+"id": "kijevo-2026-27-Seniori-ante-milas",
+"club": "kijevo",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Ante Milas",
+"gk": false
+},
+{
+"id": "kijevo-2026-27-Seniori-leon-ercegovac",
+"club": "kijevo",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "14",
+"name": "Leon Ercegovac",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-nikola-beljan",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Nikola Beljan",
+"gk": true
+},
+{
+"id": "bjelovar-2026-27-Seniori-teo-besic",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Teo Bešić",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-matija-tolic",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Matija Tolić",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-ivan-matan",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "23",
+"name": "Ivan Matan",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-ante-matan",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "32",
+"name": "Ante Matan",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-lovro-crnkovic",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "12",
+"name": "Lovro Crnković",
+"gk": true
+},
+{
+"id": "bjelovar-2026-27-Seniori-marko-beljan",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Marko Beljan",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-luka-barisic",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "Luka Barišić",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-nikola-matic",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Nikola Matić",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-dino-packo",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Dino Pačko",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-branko-artic",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "16",
+"name": "Branko Artić",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-matko-marusic",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "17",
+"name": "Matko Marušić",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-kristijan-mizan",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "19",
+"name": "Kristijan Mizan",
+"gk": false
+},
+{
+"id": "bjelovar-2026-27-Seniori-ivan-durak",
+"club": "bjelovar",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "44",
+"name": "Ivan Đurak",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-dario-runje",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "99",
+"name": "Dario Runje",
+"gk": true
+},
+{
+"id": "trilj-2026-27-Seniori-filip-koprcina",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "Filip Koprčina",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-mise-tokic",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Miše Tokić",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-luka-zivaljic",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Luka Živaljić",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-ivano-vukas",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Ivano Vukas",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-tino-covic",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "12",
+"name": "Tino Čović",
+"gk": true
+},
+{
+"id": "trilj-2026-27-Seniori-zdenko-bugarin",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "3",
+"name": "Zdenko Bugarin",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-lovre-jukic",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Lovre Jukić",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-blaz-zupa",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Blaž Župa",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-tomislav-tokic",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Tomislav Tokić",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-ivan-barac",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Ivan Barać",
+"gk": false
+},
+{
+"id": "trilj-2026-27-Seniori-mario-tokic",
+"club": "trilj",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "23",
+"name": "Mario Tokić",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-domagoj-steko",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "77",
+"name": "Domagoj Šteko",
+"gk": true
+},
+{
+"id": "pula-2026-27-Seniori-radenko-markovic",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Radenko Marković",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-zan-janez",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Žan Janež",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-david-pernic",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "David Pernić",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-bepo-paus",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Bepo Paus",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-edvin-lorber",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "29",
+"name": "Edvin Lorber",
+"gk": true
+},
+{
+"id": "pula-2026-27-Seniori-daniel-moravac",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Daniel Moravac",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-teo-hajdaraj",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Teo Hajdaraj",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-kristijan-vasic",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Kristijan Vasić",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-igor-duric",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "16",
+"name": "Igor Đurić",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-niko-vukmir",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "21",
+"name": "Niko Vukmir",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-frane-paus",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "80",
+"name": "Frane Paus",
+"gk": false
+},
+{
+"id": "pula-2026-27-Seniori-stefano-galesic",
+"club": "pula",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "89",
+"name": "Stefano Galešić",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-marin-juric",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Marin Jurić",
+"gk": true
+},
+{
+"id": "torcida-2026-27-Seniori-julian-esteban-clavijo-urquijo",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Julian Esteban Clavijo Urquijo",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-bartul-ora",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "18",
+"name": "Bartul Ora",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-petar-pedic",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "21",
+"name": "Petar Pedić",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-karlo-vukovic",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "37",
+"name": "Karlo Vuković",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-duje-krivosija",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "25",
+"name": "Duje Krivošija",
+"gk": true
+},
+{
+"id": "torcida-2026-27-Seniori-duje-vladovic",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "3",
+"name": "Duje Vladović",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-mijo-miserda",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Mijo Mišerda",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-caio-alves-roque",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Caio Alves Roque",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-marko-zuljevic",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Marko Žuljević",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-dino-palada",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "22",
+"name": "Dino Palada",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-dario-vukasovic",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "23",
+"name": "Dario Vukasović",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-ante-perkusic",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "49",
+"name": "Ante Perkušić",
+"gk": false
+},
+{
+"id": "torcida-2026-27-Seniori-nandi-eterovic",
+"club": "torcida",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "99",
+"name": "Nandi Eterović",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-zarko-luketin",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Žarko Luketin",
+"gk": true
+},
+{
+"id": "podstrana-2026-27-Seniori-nikola-radan",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Nikola Radan",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-stjepan-perisic",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "15",
+"name": "Stjepan Perišić",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-valerije-juric",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "19",
+"name": "Valerije Jurić",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-nikola-pavic",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "42",
+"name": "Nikola Pavić",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-duje-kolovrat",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "77",
+"name": "Duje Kolovrat",
+"gk": true
+},
+{
+"id": "podstrana-2026-27-Seniori-robert-vinko-pavicic",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Robert-Vinko Pavičić",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-adrijan-micevski",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Adrijan Micevski",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-ante-matas",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Ante Matas",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-antonio-kolovrat",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Antonio Kolovrat",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-josip-kolobaric",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "17",
+"name": "Josip Kolobarić",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-dujo-maric",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "18",
+"name": "Dujo Marić",
+"gk": false
+},
+{
+"id": "podstrana-2026-27-Seniori-dominik-vuko",
+"club": "podstrana",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "22",
+"name": "Dominik Vuko",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-zoran-primic",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Zoran Primić",
+"gk": true
+},
+{
+"id": "square-2026-27-Seniori-matej-perovic",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Matej Perović",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-marko-kuraja",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Marko Kuraja",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-anderson-de-souza-santos",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Anderson de Souza Santos",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-matus-sevcik",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "23",
+"name": "Matuš Ševčik",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-lujo-jurisic",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "91",
+"name": "Lujo Jurišić",
+"gk": true
+},
+{
+"id": "square-2026-27-Seniori-hrvoje-sijakovic",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "Hrvoje Šijaković",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-ivo-cengic",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Ivo Čengić",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-haron-dzankovic",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Haron Džanković",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-andre-luis-sasse",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Andre-Luis Sasse",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-antonio-konsuo",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "13",
+"name": "Antonio Konsuo",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-antonio-lang",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "17",
+"name": "Antonio Lang",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-divo-lobas",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "18",
+"name": "Đivo Lobaš",
+"gk": false
+},
+{
+"id": "square-2026-27-Seniori-maro-duras",
+"club": "square",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "19",
+"name": "Maro Đuraš",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-victor-lopez-gonzalez",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "33",
+"name": "Victor Lopez Gonzalez",
+"gk": true
+},
+{
+"id": "osijek-2026-27-Seniori-vitor-hugo-de-lima-da-silva",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Vitor Hugo de Lima da Silva",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-yuri-madruga",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "20",
+"name": "Yuri Madruga",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-antonio-sekulic",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "23",
+"name": "Antonio Sekulić",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-nejc-hozjan",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "77",
+"name": "Nejc Hozjan",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-franko-jamicic",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Franko Jamičić",
+"gk": true
+},
+{
+"id": "osijek-2026-27-Seniori-matias-mijic",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Matias Mijić",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-josip-salaj",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Josip Šalaj",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-lovro-trdin",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Lovro Trdin",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-ronaldo-aparecido-prado-de-oliveira-junior",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "17",
+"name": "Ronaldo Aparecido Prado De Oliveira Junior",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-jakov-jurisic",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "18",
+"name": "Jakov Jurišić",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-marko-jakopec",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "27",
+"name": "Marko Jakopec",
+"gk": false
+},
+{
+"id": "osijek-2026-27-Seniori-josip-suton",
+"club": "osijek",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "88",
+"name": "Josip Suton",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-mijo-brzica",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "20",
+"name": "Mijo Brzica",
+"gk": true
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-gabrijel-lasic",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Gabrijel Lasić",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-jonhn-lennon-felinto-silva",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Jonhn Lennon Felinto Silva",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-loren-radic",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "27",
+"name": "Loren Radić",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-ante-silic",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "33",
+"name": "Ante Silić",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-antonio-dzaja",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "17",
+"name": "Antonio Džaja",
+"gk": true
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-niko-radic",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "Niko Radić",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-kristijan-jurilj",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Kristijan Jurilj",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-muanis-duvnjak",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Muanis Duvnjak",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-marin-musinov",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "14",
+"name": "Marin Musinov",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-klemen-duscak",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "15",
+"name": "Klemen Duščak",
+"gk": false
+},
+{
+"id": "novo-vrijeme-2026-27-Seniori-adrijan-trstenjak",
+"club": "novo-vrijeme",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "80",
+"name": "Adrijan Trstenjak",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-alen-durman",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "12",
+"name": "Alen Đurman",
+"gk": true
+},
+{
+"id": "fotex-2026-27-Seniori-leo-vrbanic",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "3",
+"name": "Leo Vrbanić",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-patrik-mraz",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Patrik Mraz",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-silvestar-zganec",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "18",
+"name": "Silvestar Žganec",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-tomica-fijacko",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "19",
+"name": "Tomica Fijačko",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-david-plasajec",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "David Plasajec",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-slavko-stolnik",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Slavko Stolnik",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-david-cretni",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "14",
+"name": "David Čretni",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-sinisa-hrgar",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "20",
+"name": "Siniša Hrgar",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-sven-hrgar",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "22",
+"name": "Sven Hrgar",
+"gk": false
+},
+{
+"id": "fotex-2026-27-Seniori-slaven-hlisc",
+"club": "fotex",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "24",
+"name": "Slaven Hlišć",
+"gk": false
+},
+{
+"id": "lika-sport-2026-27-Seniori-antonio-jurisic",
+"club": "lika-sport",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "18",
+"name": "Antonio Jurišić",
+"gk": true
+},
+{
+"id": "lika-sport-2026-27-Seniori-zeljko-tomic",
+"club": "lika-sport",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "Željko Tomić",
+"gk": false
+},
+{
+"id": "lika-sport-2026-27-Seniori-milan-kralj",
+"club": "lika-sport",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Milan Kralj",
+"gk": false
+},
+{
+"id": "lika-sport-2026-27-Seniori-danijel-maric",
+"club": "lika-sport",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Danijel Marić",
+"gk": false
+},
+{
+"id": "lika-sport-2026-27-Seniori-roberto-juko",
+"club": "lika-sport",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Roberto Juko",
+"gk": false
+},
+{
+"id": "lika-sport-2026-27-Seniori-domagoj-pigac",
+"club": "lika-sport",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "15",
+"name": "Domagoj Pigac",
+"gk": true
+},
+{
+"id": "lika-sport-2026-27-Seniori-matej-vidovic",
+"club": "lika-sport",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Matej Vidović",
+"gk": false
+},
+{
+"id": "lika-sport-2026-27-Seniori-marin-smolcic",
+"club": "lika-sport",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Marin Smolčić",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-rafael-baricic",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Rafael Baričić",
+"gk": true
+},
+{
+"id": "gauni-2026-27-Seniori-dino-kulas",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Dino Kulaš",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-jakov-josip-karic",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "12",
+"name": "Jakov Josip Karić",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-mateo-erlic",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "20",
+"name": "Mateo Erlić",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-luka-vodopija",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "99",
+"name": "Luka Vodopija",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-sime-markic",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "21",
+"name": "Šime Markić",
+"gk": true
+},
+{
+"id": "gauni-2026-27-Seniori-frane-ljumezi",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "3",
+"name": "Frane Ljumeži",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-sandro-tolic",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "Sandro Tolić",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-ante-jukic",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Ante Jukić",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-luka-petrovic",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Luka Petrović",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-joso-kalac",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Joso Kalac",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-vice-birkic",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Vice Birkić",
+"gk": false
+},
+{
+"id": "gauni-2026-27-Seniori-martin-cirjak",
+"club": "gauni",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "33",
+"name": "Martin Čirjak",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-ivan-klaric",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Ivan Klarić",
+"gk": true
+},
+{
+"id": "dubravice-2026-27-Seniori-ante-mijic",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "3",
+"name": "Ante Mijić",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-sime-grozdanic",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Šime Grozdanić",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-ante-brajkovic",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Ante Brajković",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-antonio-vlaic",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "22",
+"name": "Antonio Vlaić",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-karlo-skoric",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Karlo Skorić",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-josip-brajkovic",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "Josip Brajković",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-ante-males",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Ante Maleš",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-ante-bacic",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "18",
+"name": "Ante Bačić",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-niko-rudan",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "20",
+"name": "Niko Rudan",
+"gk": false
+},
+{
+"id": "dubravice-2026-27-Seniori-luka-brajkovic",
+"club": "dubravice",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "49",
+"name": "Luka Brajković",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-josip-kardum",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Josip Kardum",
+"gk": true
+},
+{
+"id": "murter-2026-27-Seniori-luka-grubisic",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Luka Grubišić",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-ivan-bradaric",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Ivan Bradarić",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-roko-nakic",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "12",
+"name": "Roko Nakić",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-nino-jurjevic-adzic",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "20",
+"name": "Nino Jurjević Adžić",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-mihovil-turcinov",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "2",
+"name": "Mihovil Turčinov",
+"gk": true
+},
+{
+"id": "murter-2026-27-Seniori-leonardo-lucic",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Leonardo Lučić",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-josip-stojcevic",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "5",
+"name": "Josip Stojčević",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-ante-dragosevic",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Ante Dragošević",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-roko-sikic",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Roko Šikić",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-dominik-nadoveza",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Dominik Nadoveza",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-josip-coran",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Josip Ćoran",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-roko-burcul",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "14",
+"name": "Roko Burčul",
+"gk": false
+},
+{
+"id": "murter-2026-27-Seniori-marko-marcic",
+"club": "murter",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "24",
+"name": "Marko Marčić",
+"gk": false
+},
+{
+"id": "slatina-2026-27-Seniori-dominik-niksic",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Dominik Nikšić",
+"gk": true
+},
+{
+"id": "slatina-2026-27-Seniori-dominik-bogati",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Dominik Bogati",
+"gk": false
+},
+{
+"id": "slatina-2026-27-Seniori-dorian-bogati",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Dorian Bogati",
+"gk": false
+},
+{
+"id": "slatina-2026-27-Seniori-nikola-tomic",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Nikola Tomić",
+"gk": false
+},
+{
+"id": "slatina-2026-27-Seniori-stipe-cavic",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Stipe Ćavić",
+"gk": false
+},
+{
+"id": "slatina-2026-27-Seniori-franjo-tunic",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "2",
+"name": "Franjo Tunić",
+"gk": false
+},
+{
+"id": "slatina-2026-27-Seniori-franjo-dordevic",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "3",
+"name": "Franjo Đorđević",
+"gk": false
+},
+{
+"id": "slatina-2026-27-Seniori-mateo-novakovic",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Mateo Novaković",
+"gk": false
+},
+{
+"id": "slatina-2026-27-Seniori-matheus-felipe-de-jesus-silva",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Matheus Felipe De Jesus Silva",
+"gk": false
+},
+{
+"id": "slatina-2026-27-Seniori-vedran-salaj-obrovac",
+"club": "slatina",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "13",
+"name": "Vedran Salaj Obrovac",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-dominik-mateo-roncevic",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "33",
+"name": "Dominik Mateo Rončević",
+"gk": true
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-borna-amidzic",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "6",
+"name": "Borna Amidžić",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-matej-hanzek",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Matej Hanžek",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-robert-nospak",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Robert Nospak",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-domagoj-damjanovic",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "12",
+"name": "Domagoj Damjanović",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-niko-tomic",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Niko Tomić",
+"gk": true
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-filip-baraci",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Filip Barači",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-marin-stupar",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Marin Stupar",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-zvonimir-horvat",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "11",
+"name": "Zvonimir Horvat",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-luka-ralic",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "13",
+"name": "Luka Ralić",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-nebojsa-popovic",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "16",
+"name": "Nebojša Popović",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-anton-seric",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "21",
+"name": "Anton Šerić",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-mislav-sosic",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "24",
+"name": "Mislav Šošić",
+"gk": false
+},
+{
+"id": "mala-mljekara-2026-27-Seniori-zvonimir-filipovic",
+"club": "mala-mljekara",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "97",
+"name": "Zvonimir Filipović",
+"gk": false
+},
+{
+"id": "petrinjcica-2026-27-Seniori-vladimir-pezic",
+"club": "petrinjcica",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "1",
+"name": "Vladimir Pezić",
+"gk": true
+},
+{
+"id": "petrinjcica-2026-27-Seniori-josip-jandric",
+"club": "petrinjcica",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "9",
+"name": "Josip Jandrić",
+"gk": false
+},
+{
+"id": "petrinjcica-2026-27-Seniori-daniel-matkovic",
+"club": "petrinjcica",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "10",
+"name": "Daniel Matković",
+"gk": false
+},
+{
+"id": "petrinjcica-2026-27-Seniori-tin-grsic",
+"club": "petrinjcica",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "12",
+"name": "Tin Gršić",
+"gk": false
+},
+{
+"id": "petrinjcica-2026-27-Seniori-leonardo-papic",
+"club": "petrinjcica",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "53",
+"name": "Leonardo Papić",
+"gk": false
+},
+{
+"id": "petrinjcica-2026-27-Seniori-lovro-juric",
+"club": "petrinjcica",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "4",
+"name": "Lovro Jurić",
+"gk": false
+},
+{
+"id": "petrinjcica-2026-27-Seniori-luka-milicevic",
+"club": "petrinjcica",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "7",
+"name": "Luka Miličević",
+"gk": false
+},
+{
+"id": "petrinjcica-2026-27-Seniori-franko-vujnovic",
+"club": "petrinjcica",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "8",
+"name": "Franko Vujnović",
+"gk": false
+},
+{
+"id": "petrinjcica-2026-27-Seniori-antonio-knezevic",
+"club": "petrinjcica",
+"season": "2026-27",
+"cat": "Seniori",
+"num": "19",
+"name": "Antonio Knežević",
+"gk": false
+}
+]
+}

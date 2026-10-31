@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { href } from "../lib/router.js";
-import { standings, scorers, compName, playerName } from "../lib/derive.js";
+import { standings, scorers, compName, playerName, isCup } from "../lib/derive.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Jersey } from "../components/ui.jsx";
 
@@ -56,6 +56,7 @@ export function Club({ db, ix, id }) {
 }
 
 function Position({ db, ix, comp, id }) {
+  if (isCup(ix.league[comp.league])) return null;
   const rows = standings(db, comp.id), i = rows.findIndex((r) => r.club === id), r = rows[i];
   if (!r) return null;
   return (

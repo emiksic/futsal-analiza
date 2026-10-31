@@ -1,0 +1,19 @@
+# kolo|datum vrijeme|domaćin|gost|rezultat|dvorana|prijenos
+# Hrvatski malonogometni kup 2026./27. (HNS Semafor, natjecanje 120095680). Kolo: 1 = 1/16 finala, 2 = 1/8, 3 = četvrtfinale, 4 = polufinale, 5 = finale.
+# Rezultat nakon produžetaka; kazneni udarci u zagradi, npr. 3:3 (3:4).
+1|30.10.2026 17:30|split|kijevo|3:3 (3:4)|gripe|
+1|30.10.2026 18:00|bjelovar|trilj|7:2|bjelovar|
+1|30.10.2026 20:00|pula|torcida|3:4|mate-parlov|
+1|30.10.2026 20:00|podstrana|square|2:3|primorski-dolac|
+1|30.10.2026 20:00|osijek|novo-vrijeme|6:2|zrinjevac|
+1|30.10.2026 20:15|fotex|lika-sport|5:3|vidovec|
+1|30.10.2026 20:30|gauni|dubravice|8:3|biograd|
+1|30.10.2026 20:45|murter|slatina|8:5|murter|
+1|30.10.2026 21:00|mala-mljekara|petrinjcica|3:3 (4:1)|valpovo|
+1|31.10.2026 17:45|dominik-savio|novi-marof||sutinska|
+1|31.10.2026 18:00|vinkovci|gimka||vinkovci|
+1|31.10.2026 18:30|jezera|futsal-dinamo||tisno|
+1|31.10.2026 18:30|rijeka|universitas||zamet|
+1|31.10.2026 19:30|vrgorac|aurelia-boso||makarska|
+1|31.10.2026 20:00|heroji-2007|hajduk||racice|
+1|17.11.2026|olmissum|crnica||omis|

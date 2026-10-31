@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { href, go } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
-import { score, fmtDay, fmtTime, currentRound, compName } from "../lib/derive.js";
+import { score, fmtDay, fmtTime, currentRound, compName, roundName } from "../lib/derive.js";
 import { Jersey, Icon, analysisPill } from "../components/ui.jsx";
 
 export function Matches({ db, ix }) {
@@ -28,7 +28,7 @@ export function Matches({ db, ix }) {
               <div className="qrow" key={m.id}>
                 <div>
                   <a href={href("admin", "utakmica", m.id, "analiza")} style={{ fontWeight: 600 }}>{ix.club[m.home].name} – {ix.club[m.away].name}</a>
-                  <div className="small muted">{compName(ix, m.comp)}, {m.round}. kolo, {fmtDay(m.date)}</div>
+                  <div className="small muted">{compName(ix, m.comp)}, {roundName(ix.league[ix.comp[m.comp].league], m.round)}, {fmtDay(m.date)}</div>
                   {m.analysis.status === "processing" && <div className="prog-bar" style={{ maxWidth: 240 }}><i style={{ width: `${Math.round((m.analysis.progress || 0) * 100)}%` }} /></div>}
                 </div>
                 {analysisPill(m.analysis)}
@@ -43,7 +43,7 @@ export function Matches({ db, ix }) {
           </select>
           <select className="select" aria-label="Kolo" value={round} onChange={(e) => setRound(e.target.value)}>
             <option value="all">Sva kola</option>
-            {Array.from({ length: C.rounds }, (_, i) => <option key={i} value={i + 1}>{i + 1}. kolo</option>)}
+            {Array.from({ length: C.rounds }, (_, i) => <option key={i} value={i + 1}>{roundName(ix.league[C.league], i + 1)}</option>)}
           </select>
           <span className="grow" />
           <span className="small muted">{ms.length} utakmica</span>

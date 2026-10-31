@@ -1,0 +1,39 @@
+# HNS Semafor 120367194
+HOME_PLAYERS
+1|Nikola Beljan|GK|S
+9|Teo Bešić|-|S
+10|Matija Tolić|-|S
+23|Ivan Matan|-|S
+32|Ante Matan|-|S
+12|Lovro Crnković|GK|B
+4|Marko Beljan|-|B
+5|Luka Barišić|-|B
+7|Nikola Matić|-|B
+11|Dino Pačko|-|B
+16|Branko Artić|-|B
+17|Matko Marušić|-|B
+19|Kristijan Mizan|-|B
+44|Ivan Đurak|-|B
+AWAY_PLAYERS
+99|Dario Runje|GK|S
+5|Filip Koprčina|-|S
+6|Miše Tokić|-|S
+9|Luka Živaljić|-|S
+10|Ivano Vukas|-|S
+12|Tino Čović|GK|B
+3|Zdenko Bugarin|-|B
+4|Lovre Jukić|-|B
+7|Blaž Župa|-|B
+8|Tomislav Tokić|-|B
+11|Ivan Barać|-|B
+23|Mario Tokić|-|B
+GOALS
+7'21"|Ivano Vukas|-
+18'29"|Dino Pačko|-
+19'58"|Dino Pačko|-
+20'40"|Ivan Matan|-
+21'24"|Nikola Beljan|AG
+25'23"|Matija Tolić|-
+29'31"|Ivan Đurak|-
+34'20"|Dino Pačko|-
+37'11"|Nikola Matić|-

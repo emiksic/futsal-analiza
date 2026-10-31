@@ -1,0 +1,38 @@
+# HNS Semafor 120367184
+HOME_PLAYERS
+77|Domagoj Šteko|GK|S
+6|Radenko Marković|-|S
+9|Žan Janež|-|S
+10|David Pernić|-|S
+11|Bepo Paus|-|S
+29|Edvin Lorber|GK|B
+4|Daniel Moravac|-|B
+7|Teo Hajdaraj|-|B
+8|Kristijan Vasić|-|B
+16|Igor Đurić|-|B
+21|Niko Vukmir|-|B
+80|Frane Paus|-|B
+89|Stefano Galešić|-|B
+AWAY_PLAYERS
+1|Marin Jurić|GK|S
+7|Julian Esteban Clavijo Urquijo|-|S
+18|Bartul Ora|-|S
+21|Petar Pedić|-|S
+37|Karlo Vuković|-|S
+25|Duje Krivošija|GK|B
+3|Duje Vladović|-|B
+8|Mijo Mišerda|-|B
+9|Caio Alves Roque|-|B
+10|Marko Žuljević|-|B
+22|Dino Palada|-|B
+23|Dario Vukasović|-|B
+49|Ante Perkušić|-|B
+99|Nandi Eterović|-|B
+GOALS
+10'53"|Julian Esteban Clavijo Urquijo|-
+17'6"|Frane Paus|-
+26'33"|Nandi Eterović|-
+32'18"|Julian Esteban Clavijo Urquijo|-
+34'25"|Frane Paus|-
+37'57"|Žan Janež|-
+39'34"|Marko Žuljević|-

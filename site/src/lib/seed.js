@@ -1,18 +1,21 @@
 // Početni podaci (bez izmišljenih rezultata).
 // - 1. HMNL 2026./27.: raspored, rezultati, postave i strijelci (HNS Semafor), prijenosi (YouTube / MAXsport)
+// - Hrvatski malonogometni kup 2026./27.: raspored 1/16 finala, rezultati, postave, strijelci i kazneni udarci (HNS Semafor)
 // - 1. HMNL juniori 2026./27.: raspored i rezultati (HNS Semafor) + analiza isječka RIJ–NVR (3. kolo)
 // Boje dresova su procjena iz grbova i treba ih potvrditi u adminu.
 
 import HMNL from "../data/hmnl-2026-27.json";       // gradi: python3 data/build.py hmnl-2026-27 1-hmnl-2026-27 Seniori
 import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build.py juniori-2026-27 juniori-2026-27 U-19
 import KADETI from "../data/kadeti-2026-27.json";   // gradi: python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
+import KUP from "../data/kup-2026-27.json";         // gradi: python3 data/build.py kup-2026-27 kup-2026-27 Seniori
 
-export const SEED_VERSION = 17;
+export const SEED_VERSION = 18;
 
 const leagues = [
   { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
   { id: "juniori", name: "1. HMNL juniori", category: "U-19", zones: { direct: 2, playoff: 6, note: "Ispadanje se određuje zbirnom tablicom kadeta i juniora." }, privacy: { names: "initial", perPlayer: true } },
   { id: "kadeti", name: "1. HMNL kadeti", category: "U-17", zones: { direct: 2, playoff: 6, note: "Ispadanje se određuje zbirnom tablicom kadeta i juniora." }, privacy: { names: "initials", perPlayer: false } },
+  { id: "kup", name: "Hrvatski kup", category: "Seniori", zones: { cup: true }, privacy: { names: "full", perPlayer: true } },
 ];
 const seasons = [{ id: "2026-27", name: "2026./27." }];
 
@@ -34,6 +37,16 @@ const halls = [
   { id: "zagreb", name: "Zagreb", city: "Zagreb", calibrated: false },
   { id: "pescenica", name: "Peščenica", city: "Zagreb", calibrated: false },
   { id: "domjanic", name: "SD OŠ Dragutin Domjanić", city: "Zagreb", calibrated: false },
+  // kup 2026./27.
+  { id: "bjelovar", name: "Gradski stadion Bjelovar", city: "Bjelovar", calibrated: false },
+  { id: "primorski-dolac", name: "ŠD Primorski Dolac", city: "Primorski Dolac", calibrated: false },
+  { id: "vidovec", name: "Park", city: "Vidovec", calibrated: false },
+  { id: "biograd", name: "Dvorana Biograd N/m", city: "Biograd na Moru", calibrated: false },
+  { id: "murter", name: "Murterski škoj", city: "Murter", calibrated: false },
+  { id: "valpovo", name: "GD Valpovo", city: "Valpovo", calibrated: false },
+  { id: "vinkovci", name: "Vinkovci", city: "Vinkovci", calibrated: false },
+  { id: "tisno", name: "Sportska dvorana Tisno", city: "Tisno", calibrated: false },
+  { id: "racice", name: "S.C Račice", city: "Vodice", calibrated: false },
 ];
 
 // kit: shirt = dres, trim = rukavi/ovratnik, num = broj (procjena)
@@ -50,6 +63,29 @@ const clubs = [
   { id: "universitas", name: "Universitas Split", full: "AMNK Universitas Split", short: "UNI", city: "Split", hall: "gripe", kit: { shirt: "#8fd3ee", trim: "#0e2f66", num: "#0e2f66" } },
   { id: "gimka", name: "Uspinjača Gimka", full: "MNK Uspinjača Gimka", short: "GIM", city: "Zagreb", hall: "zagreb", kit: { shirt: "#1f3a6b", trim: "#ffffff", num: "#ffffff" } },
   { id: "hajduk", name: "Hajduk", full: "MNK Hajduk", short: "HAJ", city: "Split", hall: "gripe", kit: { shirt: "#ffffff", trim: "#c8102e", num: "#1d3c8f" } },
+  // ostali klubovi iz kupa 2026./27. (boje dresova još nisu poznate: sivi dres, mijenja se u adminu)
+  ...[
+    ["split", "Split", "MNK Split", "SPL", "Split", "gripe"],
+    ["kijevo", "Kijevo", "MNK Kijevo", "KIJ", "", null],
+    ["bjelovar", "Bjelovar", "MNK Bjelovar", "BJE", "Bjelovar", "bjelovar"],
+    ["trilj", "Trilj", "MNK Trilj", "TRI", "Trilj", null],
+    ["podstrana", "Podstrana", "MNK Podstrana", "POD", "Podstrana", "primorski-dolac"],
+    ["fotex", "Fotex", "MNK Fotex", "FOT", "Vidovec", "vidovec"],
+    ["lika-sport", "Lika šport", "MNK Lika šport", "LIK", "", null],
+    ["gauni", "Gauni", "MNK Gauni", "GAU", "Biograd na Moru", "biograd"],
+    ["dubravice", "Dubravice", "MNK Dubravice", "DUB", "", null],
+    ["murter", "Murter", "MNK Murter", "MUR", "Murter", "murter"],
+    ["slatina", "Slatina", "MNK Slatina", "SLA", "Slatina", null],
+    ["mala-mljekara", "Mala Mljekara", "MNK Mala Mljekara", "MML", "Valpovo", "valpovo"],
+    ["petrinjcica", "Petrinjčica", "MNK Petrinjčica", "PET", "", null],
+    ["dominik-savio", "Dominik Savio", "MNK Dominik Savio", "DSA", "Zagreb", "sutinska"],
+    ["novi-marof", "Novi Marof", "MNK Novi Marof", "NMA", "Novi Marof", null],
+    ["vinkovci", "Vinkovci", "MNK Vinkovci", "VIN", "Vinkovci", "vinkovci"],
+    ["jezera", "Jezera", "MNK Jezera", "JEZ", "", "tisno"],
+    ["vrgorac", "Vrgorac", "HMNK Vrgorac", "VRG", "Vrgorac", null],
+    ["aurelia-boso", "Aurelia Boso", "MNK Aurelia Boso", "AUR", "", null],
+    ["heroji-2007", "Heroji 2007", "MNK Heroji 2007", "HER", "Vodice", "racice"],
+  ].map(([id, name, full, short, city, hall]) => ({ id, name, full, short, city, hall, kit: { shirt: "#cfd6de", trim: "#8995a3", num: "#111111" } })),
 ];
 
 function build() {
@@ -82,6 +118,12 @@ function build() {
   comps.push({ id: "kadeti-2026-27", league: "kadeti", season: "2026-27", teams: [...new Set(KADETI.matches.flatMap((m) => [m.home, m.away]))], rounds: 22 });
   players.push(...KADETI.players);
   matches.push(...KADETI.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
+
+  // --- Hrvatski kup (seniori): igrači iz 1. HMNL već postoje, dodaju se samo novi
+  comps.push({ id: "kup-2026-27", league: "kup", season: "2026-27", teams: [...new Set(KUP.matches.flatMap((m) => [m.home, m.away]))], rounds: 5 });
+  const have = new Set(players.map((p) => p.id));
+  players.push(...KUP.players.filter((p) => !have.has(p.id)));
+  matches.push(...KUP.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
 
   const site = { name: "", contact: "" };   // naziv još nije odabran
   return { version: SEED_VERSION, site, leagues, seasons, halls, clubs, players, comps, matches };

@@ -1,17 +1,18 @@
 import { href } from "../lib/router.js";
-import { score, fmtTime, fmtDay } from "../lib/derive.js";
+import { score, fmtTime, fmtDay, winner, shootout } from "../lib/derive.js";
 import { Jersey, Icon } from "./ui.jsx";
 
 export function MatchRow({ m, ix, showDay }) {
   const s = score(m), H = ix.club[m.home], A = ix.club[m.away];
   const fin = m.status === "finished" && s;
-  const lostH = fin && s[0] < s[1], lostA = fin && s[1] < s[0];
+  const w = winner(m), lostH = fin && w === -1, lostA = fin && w === 1, so = fin && shootout(m);
   const an = m.analysis?.status;
   return (
     <a className="mrow" href={href("utakmica", m.id)}>
       <div className={"when" + (fin ? " fin" : "")}>
         {showDay && <div>{fmtDay(m.date)}</div>}
         <div>{fin ? "Kraj" : m.timeTbd ? "—" : fmtTime(m.date)}</div>
+        {so && <div className="sotag" title={`Kazneni udarci ${so[0]}:${so[1]}`}>11m {so[0]}:{so[1]}</div>}
         {(m.youtube || m.tv) && <div className="tvtag" title={m.youtube || m.tv === "YouTube" ? "Prijenos na YouTubeu" : `Prijenos: ${m.tv}`}>{m.youtube ? "YouTube" : m.tv}</div>}
       </div>
       <div className="teams">

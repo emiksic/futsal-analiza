@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { href } from "../lib/router.js";
-import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, goalTime, flow, comeback, sideScore } from "../lib/derive.js";
+import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, goalTime, flow, comeback, sideScore, roundName, winner, shootout } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
@@ -43,13 +43,13 @@ function Board({ m, ix }) {
   const ht = m.status === "finished" ? score(m, 1199) : null;
   const goals = (side) => m.events.filter((e) => (e.type === "goal" && e.side === side) || (e.type === "owngoal" && e.side !== side))
     .sort((a, b) => absSec(a) - absSec(b));
-  const lostH = s && m.status === "finished" && s[0] < s[1], lostA = s && m.status === "finished" && s[1] < s[0];
-  const fin = m.status === "finished";
+  const w = winner(m), lostH = w === -1, lostA = w === 1;
+  const fin = m.status === "finished", so = fin && shootout(m);
   const f2 = [fouls(m, "home", 2), fouls(m, "away", 2)];
   return (
     <section className="board" aria-label="Rezultat">
       <div className="board-top">
-        <a href={href("liga", comp.league, comp.season, "rezultati", m.round)}>{L.name}{m.round ? `, ${m.round}. kolo` : ", isječak"}</a>
+        <a href={href("liga", comp.league, comp.season, "rezultati", m.round)}>{L.name}{m.round ? `, ${roundName(L, m.round)}` : ", isječak"}</a>
         {!m.extra && <span>{fmtDay(m.date)}{m.timeTbd ? "" : ` u ${fmtTime(m.date)}`}</span>}
         <span>{ix.hall[m.hall]?.name}, {ix.hall[m.hall]?.city}</span>
         {m.youtube ? <a className="r" href={m.youtube} target="_blank" rel="noreferrer" style={{ display: "inline-flex", gap: 6, alignItems: "center", color: "var(--band-fg)" }}>
@@ -62,6 +62,7 @@ function Board({ m, ix }) {
           {s ? <div className="digits"><span className={lostH ? "lost" : ""}>{s[0]}</span><span className="sep">:</span><span className={lostA ? "lost" : ""}>{s[1]}</span></div>
             : <div className="bkick">{m.timeTbd ? "–:–" : fmtTime(m.date)}</div>}
           <div className="bstate">{fin ? `Kraj${ht ? `, poluvrijeme ${ht[0]}:${ht[1]}` : ""}` : m.timeTbd ? "Satnica još nije objavljena" : "Zakazano"}</div>
+          {so && <div className="bstate" style={{ marginTop: 6 }}>Kazneni udarci {so[0]}:{so[1]}</div>}
         </div>
         <a className="bteam" href={href("klub", A.id)}><Jersey kit={A.kit} size={58} /><b>{A.name}</b></a>
       </div>
@@ -127,23 +128,29 @@ function Incidents({ m, ix }) {
   const cbGoal = comeback(m)?.goal;
   if (m.status !== "finished" && !m.events.length) return <div className="empty">Utakmica još nije odigrana.</div>;
   const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(a) - absSec(b));
-  const cnt = { home: {}, away: {} }, sc = [0, 0], rows = [];
+  const cnt = { home: {}, away: {} }, sc = [0, 0], so = [0, 0], kick = { home: 0, away: 0 }, rows = [];
+  const PER = { 3: "Produžeci", 4: "Kazneni udarci" };
   let per = 0;
   for (const e of evs) {
     if (e.period !== per) {
       if (per) rows.push({ k: "p" + per + "end", head: per === 1 ? "Poluvrijeme" : "Kraj regularnog dijela", sc: [...sc] });
-      per = e.period; rows.push({ k: "p" + per, head: `${per}. poluvrijeme` });
+      per = e.period; rows.push({ k: "p" + per, head: PER[per] || `${per}. poluvrijeme` });
     }
     if (e.type === "foul") {
       const c = cnt[e.side][e.period] = (cnt[e.side][e.period] || 0) + 1;
       if (c >= 5) rows.push({ k: e.id, e, foulN: c });
       continue;
     }
+    if (e.type === "so") {   // kazneni udarci nakon utakmice
+      if (e.scored) so[e.side === "home" ? 0 : 1]++;
+      rows.push({ k: e.id, e, sc: [...so], kick: ++kick[e.side] });
+      continue;
+    }
     if (e.type === "goal") sc[e.side === "home" ? 0 : 1]++;
     if (e.type === "owngoal") sc[e.side === "home" ? 1 : 0]++;
     rows.push({ k: e.id, e, sc: [...sc] });
   }
-  if (per) rows.push({ k: "end", head: "Kraj", sc: [...sc] });
+  if (per) rows.push({ k: "end", head: per === 4 ? "Kraj, kazneni udarci" : "Kraj", sc: per === 4 ? [...so] : [...sc] });
   return (
     <>
     <ScoreFlow m={m} ix={ix} />
@@ -156,17 +163,18 @@ function Incidents({ m, ix }) {
         else if (e.type === "yellow") { icon = <span className="card-y" />; main = playerName(p); sub = "žuti karton"; }
         else if (e.type === "red") { icon = <span className="card-r" />; main = playerName(p); sub = e.secondYellow ? "drugi žuti karton" : "crveni karton"; }
         else if (e.type === "timeout") { icon = Icon.timeout(); main = "Time-out"; sub = ix.club[m[e.side]].name; }
+        else if (e.type === "so") { icon = e.scored ? Icon.ball(20) : <span className="so-miss" aria-hidden="true">✕</span>; main = playerName(p); sub = e.scored ? "pogođen kazneni udarac" : "promašen kazneni udarac"; }
         else if (e.type === "foul") { icon = Icon.whistle(); main = `${r.foulN}. akumulirani prekršaj`; sub = r.foulN >= 6 ? "kazneni udarac s 10 m" : "sljedeći prekršaj donosi udarac s 10 m"; }
         const body = (
           <div className={"ev " + e.side}>
             <span className="ico">{icon}</span>
             <span className="txt">{main}{sub && <small>{sub}</small>}</span>
-            {(e.type === "goal" || e.type === "owngoal") && <span className="sc">{r.sc[0]}:{r.sc[1]}</span>}
+            {(e.type === "goal" || e.type === "owngoal" || e.type === "so") && <span className="sc">{r.sc[0]}:{r.sc[1]}</span>}
           </div>);
         return (
           <div key={r.k} className="irow">
             {e.side === "home" ? body : <span />}
-            <span className="min">{goalTime(e)}</span>
+            <span className="min">{e.type === "so" ? `${r.kick}.` : goalTime(e)}</span>
             {e.side === "away" ? body : <span />}
           </div>
         );

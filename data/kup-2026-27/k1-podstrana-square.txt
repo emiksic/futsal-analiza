@@ -1,0 +1,36 @@
+# HNS Semafor 120367188
+HOME_PLAYERS
+1|Žarko Luketin|GK|S
+4|Nikola Radan|-|S
+15|Stjepan Perišić|-|S
+19|Valerije Jurić|-|S
+42|Nikola Pavić|-|S
+77|Duje Kolovrat|GK|B
+7|Robert-Vinko Pavičić|-|B
+8|Adrijan Micevski|-|B
+10|Ante Matas|-|B
+11|Antonio Kolovrat|-|B
+17|Josip Kolobarić|-|B
+18|Dujo Marić|-|B
+22|Dominik Vuko|-|B
+AWAY_PLAYERS
+1|Zoran Primić|GK|S
+8|Matej Perović|-|S
+10|Marko Kuraja|-|S
+11|Anderson de Souza Santos|-|S
+23|Matuš Ševčik|-|S
+91|Lujo Jurišić|GK|B
+5|Hrvoje Šijaković|-|B
+6|Ivo Čengić|-|B
+7|Haron Džanković|-|B
+9|Andre-Luis Sasse|-|B
+13|Antonio Konsuo|-|B
+17|Antonio Lang|-|B
+18|Đivo Lobaš|-|B
+19|Maro Đuraš|-|B
+GOALS
+9'|Valerije Jurić|-
+10'|Marko Kuraja|-
+23'|Matuš Ševčik|-
+25'|Valerije Jurić|-
+32'|Andre-Luis Sasse|-

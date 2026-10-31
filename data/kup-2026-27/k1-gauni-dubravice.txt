@@ -1,0 +1,39 @@
+# HNS Semafor 120367187
+HOME_PLAYERS
+1|Rafael Baričić|GK|S
+6|Dino Kulaš|-|S
+12|Jakov Josip Karić|-|S
+20|Mateo Erlić|-|S
+99|Luka Vodopija|-|S
+21|Šime Markić|GK|B
+3|Frane Ljumeži|-|B
+5|Sandro Tolić|-|B
+7|Ante Jukić|-|B
+8|Luka Petrović|-|B
+9|Joso Kalac|-|B
+10|Vice Birkić|-|B
+33|Martin Čirjak|-|B
+AWAY_PLAYERS
+1|Ivan Klarić|GK|S
+3|Ante Mijić|-|S
+7|Šime Grozdanić|-|S
+8|Ante Brajković|-|S
+22|Antonio Vlaić|-|S
+4|Karlo Skorić|-|B
+5|Josip Brajković|-|B
+9|Ante Maleš|-|B
+18|Ante Bačić|-|B
+20|Niko Rudan|-|B
+49|Luka Brajković|-|B
+GOALS
+5'|Luka Petrović|-
+5'|Vice Birkić|-
+10'|Ante Maleš|-
+12'|Šime Grozdanić|-
+14'|Luka Petrović|-
+16'|Ante Mijić|-
+23'|Luka Vodopija|-
+31'|Luka Vodopija|-
+35'|Joso Kalac|-
+37'|Vice Birkić|-
+40'|Sandro Tolić|-

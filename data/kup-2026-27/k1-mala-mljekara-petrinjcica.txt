@@ -1,0 +1,41 @@
+# HNS Semafor 120367190
+HOME_PLAYERS
+33|Dominik Mateo Rončević|GK|S
+6|Borna Amidžić|-|S
+9|Matej Hanžek|-|S
+10|Robert Nospak|-|S
+12|Domagoj Damjanović|-|S
+1|Niko Tomić|GK|B
+7|Filip Barači|-|B
+8|Marin Stupar|-|B
+11|Zvonimir Horvat|-|B
+13|Luka Ralić|-|B
+16|Nebojša Popović|-|B
+21|Anton Šerić|-|B
+24|Mislav Šošić|-|B
+97|Zvonimir Filipović|-|B
+AWAY_PLAYERS
+1|Vladimir Pezić|GK|S
+9|Josip Jandrić|-|S
+10|Daniel Matković|-|S
+12|Tin Gršić|-|S
+53|Leonardo Papić|-|S
+4|Lovro Jurić|-|B
+7|Luka Miličević|-|B
+8|Franko Vujnović|-|B
+19|Antonio Knežević|-|B
+GOALS
+1'|Daniel Matković|-
+3'|Antonio Knežević|-
+5'|Anton Šerić|-
+6'|Borna Amidžić|-
+11'|Nebojša Popović|-
+31'|Tin Gršić|-
+SHOOTOUT
+home|Domagoj Damjanović|G
+home|Zvonimir Filipović|G
+home|Zvonimir Horvat|G
+home|Nebojša Popović|G
+away|Tin Gršić|X
+away|Daniel Matković|G
+away|Franko Vujnović|X

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { href } from "../lib/router.js";
-import { currentRound, fmtDay } from "../lib/derive.js";
+import { currentRound, fmtDay, roundName } from "../lib/derive.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
 import { AnalysedCard, ScorersCard } from "../components/Side.jsx";
@@ -32,11 +32,11 @@ export function Home({ db, ix }) {
               return (
                 <div key={c.id}>
                   <a className="mgroup" href={href("liga", c.league, c.season, "rezultati", round)}>
-                    <LeagueBadge league={L} /><b>{L.name}</b><span className="muted">{round}. kolo</span>
+                    <LeagueBadge league={L} /><b>{L.name}</b><span className="muted">{roundName(L, round)}</span>
                     <span className="r">{days.join(", ")}</span>
                   </a>
                   {ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} />)}
-                  {!ms.length && <div className="empty">Raspored za {round}. kolo još nije unesen.</div>}
+                  {!ms.length && <div className="empty">Raspored za {roundName(L, round)} još nije unesen.</div>}
                 </div>
               );
             })}

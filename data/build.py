@@ -2,6 +2,9 @@
 python3 data/build.py hmnl-2026-27 1-hmnl-2026-27 Seniori
 python3 data/build.py juniori-2026-27 juniori-2026-27 U-19
 python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
+python3 data/build.py kup-2026-27 kup-2026-27 Seniori
+
+Kup: rezultat u rasporedu može imati kaznene udarce u zagradi ("3:3 (3:4)"); u zapisniku sekcija SHOOTOUT (strana|ime|G ili X).
 
 Mlađe kategorije (U-19, U-17): postave i događaji dolaze iz data/private/semafor-2026-27.txt (puna imena, nije u repou).
 U javni JSON idu samo brojevi i neprozirni ID-jevi igrača; imena idu u data/private/<mapa>.sql koji se pokrene u Supabaseu.
@@ -14,13 +17,14 @@ D = os.path.join(os.path.dirname(os.path.abspath(__file__)), NAME)
 OUT = os.path.join(D, "..", "..", "site", "src", "data", NAME + ".json")
 
 def parse_detail(path):
-    sec, out = None, {"home": [], "away": [], "goals": []}
+    sec, out = None, {"home": [], "away": [], "goals": [], "shootout": []}
     for ln in open(path, encoding="utf-8"):
         ln = ln.strip()
-        if not ln: continue
-        if ln in ("HOME_PLAYERS", "AWAY_PLAYERS", "GOALS"): sec = ln; continue
+        if not ln or ln.startswith("#"): continue
+        if ln in ("HOME_PLAYERS", "AWAY_PLAYERS", "GOALS", "SHOOTOUT"): sec = ln; continue
         f = ln.split("|")
-        if sec == "GOALS": out["goals"].append((f[0], f[1], f[2] == "AG"))
+        if sec == "SHOOTOUT": out["shootout"].append((f[0], f[1], f[2] == "G")); continue
+        if sec == "GOALS": out["goals"].append((f[0], f[1], f[2] == "AG", None, f[2] == "P"))
         else: out["home" if sec == "HOME_PLAYERS" else "away"].append((f[0], f[1], f[2] == "GK", f[3] == "S"))
     return out
 
@@ -91,6 +95,7 @@ for ln in open(os.path.join(D, "schedule.txt"), encoding="utf-8"):
     if bc.startswith("yt:"): m["youtube"] = "https://www.youtube.com/watch?v=" + bc[3:]
     elif bc.startswith("tv:"): m["tv"] = bc[3:]
     if res:
+        so = re.search(r"\((\d+):(\d+)\)", res); res = res.split(" ")[0]
         gh, ga = map(int, res.split(":")); m["result"] = [gh, ga]
         p = os.path.join(D, f"k{rnd}-{home}-{away}.txt")
         det = PRIV.pop((home, away), None) if YOUTH else (parse_detail(p) if os.path.exists(p) else None)
@@ -117,9 +122,18 @@ for ln in open(os.path.join(D, "schedule.txt"), encoding="utf-8"):
                 pid = name_side.get((side, name))
                 if not pid: problems.append(f"{mid}: strijelac '{name}' nije u postavi"); continue
                 ev = {"id": f"{mid}-g{i}", "type": "owngoal" if og else "goal", "side": side, "player": pid, **to_ev(t)}
-                if YOUTH and g[4]: ev["pen"] = True
+                if g[4]: ev["pen"] = True
                 m["events"].append(ev)
                 sc[(0 if side == "home" else 1) ^ (1 if og else 0)] += 1
+            kick = {"home": 0, "away": 0}
+            for i, (side, name, ok) in enumerate(det.get("shootout", [])):   # kazneni udarci nakon utakmice (kup)
+                pid = name_side.get((side, name))
+                if not pid: problems.append(f"{mid}: izvođač '{name}' nije u postavi"); continue
+                m["events"].append({"id": f"{mid}-so{i}", "type": "so", "side": side, "player": pid, "scored": ok, "period": 4, "sec": kick[side] * 2 + (side == "away")})
+                kick[side] += 1
+            if so:
+                got = [sum(1 for e in m["events"] if e["type"] == "so" and e["side"] == s_ and e["scored"]) for s_ in ("home", "away")]
+                if got != [int(so.group(1)), int(so.group(2))]: problems.append(f"{mid}: kazneni {got} ne odgovaraju {so.group(0)}")
             for i, (t, name, side, k) in enumerate(det.get("cards", [])):
                 ev = {"id": f"{mid}-c{i}", "type": "yellow" if k == "y" else "red", "side": side, "player": name_side[(side, name)], **to_ev(t)}
                 if k == "yy": ev["secondYellow"] = True
