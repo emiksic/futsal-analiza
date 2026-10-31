@@ -55,6 +55,7 @@ def detect_pass(a, cap, f0, f1, fps):
 
 
 def drop_static(steps, a, s):
+    if not a.static_share: return
     """Detekcija koja je u ±5 s većinu vremena na istom mjestu u sceni (pomak kamere poništen) je znak, lampa,
     rezervna lopta... a ne lopta u igri. Takve se izbace prije praćenja."""
     W = round(5 * a.fps_step); n = len(steps); R = 10 * s
@@ -166,7 +167,7 @@ def main():
     ap.add_argument("--jump", type=float, default=2.0, help="kazna za nemoguć skok (u jedinicama pouzdanosti)")
     ap.add_argument("--max-gap", type=float, default=0.7, help="najdulja rupa (s) koja se popunjava")
     ap.add_argument("--short-conf", type=float, default=0.45, help="kratki tracklet (<3) se zadrži samo ako ima detekciju >= ovoga")
-    ap.add_argument("--static-share", type=float, default=0.35, help="detekcija na istom mjestu u sceni u ovolikom udjelu frameova (±5 s) = nepomična stvar")
+    ap.add_argument("--static-share", type=float, default=0, help="npr. 0.35: detekcija na istom mjestu u sceni u tolikom udjelu frameova (±5 s) = nepomična stvar (zadano isključeno: zna maknuti i pravu loptu)")
     ap.add_argument("--static-s", type=float, default=2.0, help="tracklet koji ovoliko sekundi stoji na istom mjestu u sceni se odbaci")
     ap.add_argument("--raw", action="store_true", help="nacrtaj i sve sirove detekcije")
     ap.add_argument("--cut", type=float, default=0.7, help="prag sličnosti boja između frameova za promjenu kadra")
