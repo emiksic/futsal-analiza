@@ -222,7 +222,7 @@ function Rules({ league, season }) {
   return (
     <div className="prose rules">
       <p className="muted small">Sažetak službenih propozicija HNS-a. Mjerodavan je izvorni dokument:{" "}
-        <a href={R.url} target="_blank" rel="noreferrer" style={{ color: "var(--primary)", fontWeight: 500 }}>{R.title}</a>.</p>
+        <a href={R.url} target="_blank" rel="noreferrer" style={{ color: "var(--primary)", fontWeight: 500 }}>{R.title}</a>{R.title.endsWith(".") ? "" : "."}</p>
       {R.sections.map(([h, items]) => (
         <section key={h}>
           <h2>{h}</h2>

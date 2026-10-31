@@ -72,4 +72,35 @@ export const RULES = {
       ]],
     ],
   },
+  "kup-2026-27": {
+    title: "Propozicije natjecanja HMNK (Hrvatski malonogometni kup) 2026./27.",
+    url: "https://hns.family/files/documents/33427/Propozicije%20natjecanja%20HMNK%202026-27.pdf",
+    sections: [
+      ["Sustav natjecanja", [
+        "Tri razine: županijski kupovi, kup središta (Zagreb, Rijeka, Split, Varaždin, Osijek) i završni dio (čl. 1).",
+        "U završnom dijelu igra 32 momčadi: 27 klubova s najboljim koeficijentom uspješnosti u zadnjih pet godina i 5 pobjednika središta (čl. 1).",
+        "Završnica počinje 1/16 finala. Do finala se igra jedna utakmica, a parove i domaćine određuje ždrijeb (čl. 1, 2 i 12).",
+        "Finale se igra na dvije utakmice. Domaćina prve utakmice određuje ždrijeb (čl. 2).",
+      ]],
+      ["Neriješeno", [
+        "Od 1/16 do polufinala: nema produžetaka, kod neriješenog rezultata odmah se izvode kazneni udarci (čl. 12).",
+        "Finale: ako je ukupni rezultat obje utakmice izjednačen, nakon druge utakmice igraju se produžeci, a zatim kazneni udarci (čl. 12).",
+        "Na županijskoj razini i razini središta također se odmah izvode kazneni udarci (čl. 12).",
+      ]],
+      ["Igrači", [
+        "Na utakmici najviše 9 zamjenskih igrača (čl. 11).",
+        "Najviše dva strana igrača; igrači s hrvatskim državljanstvom (i dvojnim) te državljani EU/EGP ne ubrajaju se u kvotu (čl. 10).",
+        "Nastup od 17. godine; s 16 godina uz pisanu suglasnost roditelja upisanu u Comet (čl. 8).",
+        "Kazne za kartone određuje Disciplinski pravilnik HNS-a; disciplinski sudac vodi evidenciju opomena (čl. 17 i 33).",
+      ]],
+      ["Nagrade", [
+        "Pobjednik: prijelazni pehar, pehar u trajno vlasništvo i 30 zlatnih medalja; finalist 30 srebrnih medalja (čl. 13).",
+        "Novčano (TV i medijska prava): polufinalist 4.000 €, finalist dodatnih 5.000 €, pobjednik dodatnih 7.000 € (čl. 13).",
+      ]],
+      ["Organizacija", [
+        "U završnici sude četiri suca, po potrebi i peti (čl. 21 i 23).",
+        "Utakmice završnice mogu se prenositi na TV-u, prema ugovoru HNS-a i odluci Povjerenika (čl. 36).",
+      ]],
+    ],
+  },
 };
