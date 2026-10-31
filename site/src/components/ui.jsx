@@ -18,7 +18,7 @@ export function Jersey({ kit, size = 28, num, title }) {
 export function LeagueBadge({ league, big }) {
   const cup = !!league.zones?.cup;
   const cls = cup ? "cup" : league.category === "U-19" ? "u19" : league.category === "U-17" ? "u17" : "";
-  const txt = cup ? "K" : league.category === "Seniori" ? "1." : league.category.replace("U-", "U");
+  const txt = cup ? "K" : league.category === "Seniori" ? "SS" : league.category.replace("U-", "U");
   return <span className={`lg-badge ${cls}`} style={big ? { width: 52, height: 52, fontSize: 20, borderRadius: 12 } : undefined} aria-hidden="true">{txt}</span>;
 }
 

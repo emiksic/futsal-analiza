@@ -132,3 +132,6 @@ create policy "analysis: admin piše" on storage.objects for all to authenticate
 grant usage on schema public to service_role;
 grant select, insert, update, delete on all tables in schema public to service_role;
 alter default privileges in schema public grant select, insert, update, delete on tables to service_role;
+
+-- ---------- ažuriranje 2026-10-31: službeni naziv lige ----------
+-- update public.leagues set name = 'SuperSport HMNL' where id = '1-hmnl';

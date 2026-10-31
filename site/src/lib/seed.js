@@ -9,10 +9,10 @@ import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build
 import KADETI from "../data/kadeti-2026-27.json";   // gradi: python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
 import KUP from "../data/kup-2026-27.json";         // gradi: python3 data/build.py kup-2026-27 kup-2026-27 Seniori
 
-export const SEED_VERSION = 18;
+export const SEED_VERSION = 19;
 
 const leagues = [
-  { id: "1-hmnl", name: "1. HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
+  { id: "1-hmnl", name: "SuperSport HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
   { id: "juniori", name: "1. HMNL juniori", category: "U-19", zones: { direct: 2, playoff: 6, note: "Ispadanje se određuje zbirnom tablicom kadeta i juniora." }, privacy: { names: "initial", perPlayer: true } },
   { id: "kadeti", name: "1. HMNL kadeti", category: "U-17", zones: { direct: 2, playoff: 6, note: "Ispadanje se određuje zbirnom tablicom kadeta i juniora." }, privacy: { names: "initials", perPlayer: false } },
   { id: "kup", name: "Hrvatski kup", category: "Seniori", zones: { cup: true }, privacy: { names: "full", perPlayer: true } },
