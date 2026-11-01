@@ -68,6 +68,16 @@ def detect_pass(a, cap, f0, f1, fps):
     return steps
 
 
+def dedupe(steps, s, r=10):
+    """Model zna dati dva gotovo ista vrha za istu loptu; to bi napravilo dva paralelna trackleta koji se poslije
+    'sudaraju' u vremenu, pa praćenje baci jedan od njih (često baš pravu loptu). Zadrži jači unutar r px."""
+    for st in steps:
+        keep = []
+        for d in sorted(st["dets"], key=lambda d: -d[4]):
+            if all(math.hypot(d[0] - k[0], d[1] - k[1]) > r * s for k in keep): keep.append(d)
+        st["dets"] = keep
+
+
 def people_prior(steps, a):
     """Lopta rijetko leti na glavi igrača ili iznad svih igrača (zid, mreža iza gola, publika).
     Takvim detekcijama se smanji pouzdanost (ne brišu se: kod skoka glavom praćenje ih i dalje može uzeti)."""
@@ -156,7 +166,15 @@ def best_path(trs, steps, a, s):
         xb, yb, _ = b["pts"][b["k0"]]
         for j in range(i):
             p = trs[j]
-            if p["k1"] >= b["k0"]: continue                   # preklapanje u vremenu
+            ov = p["k1"] - b["k0"] + 1                      # preklapanje u vremenu (u koracima)
+            if ov > 0:
+                # kratko preklapanje na istom mjestu = isti objekt (tracklet se samo razdvojio): dopusti
+                if ov > 3 or b["k0"] not in p["pts"]: continue
+                xq, yq, _ = p["pts"][b["k0"]]
+                if math.hypot(xb - xq, yb - yq) > 20 * s: continue
+                val = dp[j] + b["score"] - sum(c for k, (_, _, c) in b["pts"].items() if k <= p["k1"])
+                if val > dp[i]: dp[i], prev[i] = val, j
+                continue
             gap = b["k0"] - p["k1"]; xp, yp, _ = p["pts"][p["k1"]]
             dist = math.hypot(xb - xp, yb - yp)
             ok = dist <= (40 + a.vmax * gap) * s and not crosses_cut(p["k1"], b["k0"])
@@ -202,7 +220,7 @@ def main():
     ap.add_argument("--max-gap", type=float, default=0.7, help="najdulja rupa (s) koja se popunjava")
     ap.add_argument("--short-conf", type=float, default=0.45, help="kratki tracklet (<3) se zadrži samo ako ima detekciju >= ovoga")
     ap.add_argument("--static-share", type=float, default=0, help="npr. 0.35: detekcija na istom mjestu u sceni u tolikom udjelu frameova (±5 s) = nepomična stvar (zadano isključeno: zna maknuti i pravu loptu)")
-    ap.add_argument("--static-s", type=float, default=2.0, help="tracklet koji ovoliko sekundi stoji na istom mjestu u sceni se odbaci")
+    ap.add_argument("--static-s", type=float, default=6.0, help="tracklet koji ovoliko sekundi stoji na istom mjestu u sceni se odbaci")
     ap.add_argument("--people", help="YOLO model za igrače (npr. yolo11s.pt): kazna za detekcije na glavi i iznad svih igrača")
     ap.add_argument("--head-mult", type=float, default=0.35, help="množitelj pouzdanosti za detekciju na glavi igrača")
     ap.add_argument("--above-mult", type=float, default=0.4, help="množitelj pouzdanosti za detekciju iznad svih igrača")
@@ -223,6 +241,7 @@ def main():
         pc = os.path.splitext(a.out)[0] + "_people.json"
         if not os.path.exists(pc): json.dump([{"t": st["t"], "p": st.get("people", [])} for st in steps], open(pc, "w"))
         people_prior(steps, a)
+    dedupe(steps, s)
     drop_static(steps, a, s)
     trs = build_tracklets(steps, a, s)
     chain = best_path(trs, steps, a, s)
