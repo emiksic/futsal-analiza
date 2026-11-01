@@ -145,7 +145,8 @@ def evaluate(model, items, dev, quiet=False):
         ims, sx, sy = read3(it["paths"])
         pk = peaks(predict(model, ims, dev), k=1, thr=0.0)
         res.append((it["ball"], (pk[0][0] / sx, pk[0][1] / sy, pk[0][2]) if pk else None))
-    thr = [0.1, 0.25, 0.4, 0.55, 0.7]; table = []
+    # gusta mreža pragova: grubih 5 pragova promaši najbolju točku čim se pouzdanosti modela malo pomaknu
+    thr = [round(0.05 * k, 2) for k in range(1, 20)]; table = []
     for t in thr:
         hit = tot = fa = neg = 0
         for b, d in res:
@@ -156,7 +157,16 @@ def evaluate(model, items, dev, quiet=False):
     if not quiet:
         print(f"{len(items)} okvira ({sum(1 for b, _ in res if b)} s loptom)\n  prag  odaziv  lažni alarm")
         for t, r, f in table: print(f"  {t:.2f}  {r:6.0%}  {f:10.0%}")
+        for lim in (0.15, 0.05):
+            ok = [(r, t) for t, r, f in table if f <= lim]
+            if ok: r, t = max(ok); print(f"najbolje uz lažni alarm <= {lim:.0%}: odaziv {r:.0%} na pragu {t:.2f}")
     return table
+
+
+SHOW = (0.1, 0.25, 0.4, 0.55, 0.7)
+def short(table): return [x for x in table if x[0] in SHOW]
+def best_thr(table, lim=0.15):
+    ok = [(r, t) for t, r, f in table if f <= lim]; return max(ok)[1] if ok else None
 
 
 def score(table):            # za odabir najbolje epohe: najveći odaziv uz lažni alarm <= 15 %
@@ -180,7 +190,7 @@ def cmd_train(a):
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=a.lr, total_steps=a.epochs * len(dl), pct_start=0.1)
     scaler = torch.amp.GradScaler(enabled=dev.type == "cuda")
     out = data / "runs" / "tracknet"; out.mkdir(parents=True, exist_ok=True)
-    log = open(out / "results.csv", "a"); log.write("epoha,vrijeme_min,loss,score," + ",".join(f"odaziv@{t},alarm@{t}" for t in (0.1, 0.25, 0.4, 0.55, 0.7)) + "\n")
+    log = open(out / "results.csv", "a"); log.write("epoha,vrijeme_min,loss,score,prag," + ",".join(f"odaziv@{t},alarm@{t}" for t in SHOW) + "\n")
     best, bad, t0 = -1, 0, time.time()
     for ep in range(1, a.epochs + 1):
         model.train(); tot = 0.0
@@ -194,9 +204,10 @@ def cmd_train(a):
             if k % 50 == 0: print(f"\r  epoha {ep}/{a.epochs}  {k}/{len(dl)}  loss {tot / (k + 1):.4f}", end="", flush=True)
         table = evaluate(model, va, dev, quiet=True); s = score(table)
         mins = (time.time() - t0) / 60
-        print(f"\repoha {ep}/{a.epochs}  loss {tot / len(dl):.4f}  odaziv uz alarm<=15%: {s:.0%}  "
-              + "  ".join(f"[{t}: {r:.0%}/{f:.0%}]" for t, r, f in table) + f"  ({mins:.0f} min)", flush=True)
-        log.write(f"{ep},{mins:.1f},{tot / len(dl):.5f},{s:.4f}," + ",".join(f"{r:.4f},{f:.4f}" for _, r, f in table) + "\n"); log.flush()
+        bt = best_thr(table)
+        print(f"\repoha {ep}/{a.epochs}  loss {tot / len(dl):.4f}  odaziv uz alarm<=15%: {s:.0%} (prag {bt})  "
+              + "  ".join(f"[{t}: {r:.0%}/{f:.0%}]" for t, r, f in short(table)) + f"  ({mins:.0f} min)", flush=True)
+        log.write(f"{ep},{mins:.1f},{tot / len(dl):.5f},{s:.4f},{bt}," + ",".join(f"{r:.4f},{f:.4f}" for _, r, f in short(table)) + "\n"); log.flush()
         torch.save(model.state_dict(), out / "last.pt")
         if s > best: best, bad = s, 0; torch.save(model.state_dict(), out / "best.pt"); print(f"  -> najbolji do sad, spremljen best.pt")
         else:
@@ -251,7 +262,7 @@ def main():
         if c == "train":
             p.add_argument("--epochs", type=int, default=40); p.add_argument("--batch", type=int, default=6)
             p.add_argument("--lr", type=float, default=2e-3); p.add_argument("--workers", type=int, default=4)
-            p.add_argument("--patience", type=int, default=10)
+            p.add_argument("--patience", type=int, default=15)
         if c == "detect":
             p.add_argument("video"); p.add_argument("out")
             p.add_argument("--start", type=float, default=0); p.add_argument("--end", type=float, default=1e9); p.add_argument("--step", type=int, default=1)
