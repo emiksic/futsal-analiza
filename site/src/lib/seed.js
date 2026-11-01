@@ -9,7 +9,7 @@ import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build
 import KADETI from "../data/kadeti-2026-27.json";   // gradi: python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
 import KUP from "../data/kup-2026-27.json";         // gradi: python3 data/build.py kup-2026-27 kup-2026-27 Seniori
 
-export const SEED_VERSION = 20;
+export const SEED_VERSION = 21;
 
 const leagues = [
   { id: "1-hmnl", name: "SuperSport HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
@@ -107,12 +107,6 @@ function build() {
   Object.assign(u1, {
     analysis: { status: "done", clip: "u1", video: "media/u1.mp4", data: "media/u1.json", from: 128, to: 148, rights: "embed", ytOffset: null,
       note: "Isječak od 20 s (07:49–08:09 na satu, 1:0 za Rijeku). Brojevi su ograničeni na zapisnik.", teamMap: { RIJ: "home", NVR: "away" } } });
-  // drugi isječak (DIN–OLM): još nije utvrđeno s koje je utakmice, pa nije u rasporedu
-  matches.push({ id: "isjecak-futsal-dinamo-olmissum", comp: jid, round: null, extra: true, date: "2026-09-27T10:00:00.000Z", home: "futsal-dinamo", away: "olmissum", hall: "dom-sportova",
-    status: "finished", noScore: true, youtube: "", roster: { home: null, away: null }, events: [],
-    analysis: { status: "done", clip: "u2", video: "media/u2.mp4", data: "media/u2.json", from: 0, to: 150, rights: "embed", ytOffset: null,
-      note: "Isječak od 2:30. Utakmica i zapisnik još nisu utvrđeni, a boje ekipa su pretpostavka (plavi = Futsal Dinamo, zeleni = Olmissum).",
-      teamMap: { DIN: "home", OLM: "away" }, kitUnconfirmed: true } });
 
   // --- kadeti: isti raspored kao juniori, rezultati 1.–3. kola
   comps.push({ id: "kadeti-2026-27", league: "kadeti", season: "2026-27", teams: [...new Set(KADETI.matches.flatMap((m) => [m.home, m.away]))], rounds: 22 });
