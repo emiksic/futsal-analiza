@@ -126,6 +126,10 @@ function Basic({ db, ix, m, upd }) {
         {(m.youtube || m.tv === "YouTube") && <input className="input" type="url" placeholder="https://www.youtube.com/watch?v=…" value={m.youtube || ""} onChange={(e) => upd((x) => { x.youtube = e.target.value.trim(); })} />}
         {m.tv === "YouTube" && !m.youtube && <div className="callout warn">Nema linka. Dodaj link prijenosa, ili prebaci na MAXsport ako se utakmica ne prenosi na YouTubeu.</div>}
         <small>{m.tv === "MAXsport" ? "TV prijenos: na stranici piše gdje se gleda, bez videa i analize." : "Iz YouTube linka se prikazuje snimka i preuzima video za analizu."}</small></div>
+      <label className="field wide"><span>Službeni sažetak (YouTube link)</span>
+        <input className="input" type="url" placeholder="https://www.youtube.com/watch?v=…" value={m.highlights || ""} onChange={(e) => upd((x) => { const v = e.target.value.trim(); if (v) x.highlights = v; else delete x.highlights; })} />
+        {m.highlights && !/^https:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//.test(m.highlights) && <small style={{ color: "var(--live)" }}>To nije YouTube link, na stranici se neće prikazati.</small>}
+        <small>Ako postoji, na utakmici se pojavi kartica „Sažetak”. Korisno i za utakmice s TV prijenosom.</small></label>
       <div className="wide small muted">Promjene se spremaju odmah.</div>
     </div>
   );

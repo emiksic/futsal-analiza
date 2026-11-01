@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { href, go, replaceClick, replaceGo } from "../lib/router.js";
-import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
@@ -54,11 +55,19 @@ export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roun
   );
 }
 
+const VIEWS = [["all", "Ukupno"], ["home", "Doma"], ["away", "U gostima"], ["h1", "1. poluvrijeme"], ["h2", "2. poluvrijeme"]];
 function Standings({ db, ix, comp, league }) {
-  const rows = standings(db, comp.id), z = league.zones || {};
-  if (!rows.some((r) => r.p)) return <div className="empty">Rezultati za ovu ligu još nisu uneseni.</div>;
+  const [view, setView0] = useState(() => { try { return sessionStorage.getItem("tbl-view") || "all"; } catch { return "all"; } });
+  const setView = (v) => { setView0(v); try { sessionStorage.setItem("tbl-view", v); } catch { /* */ } };
+  const all = view === "all";
+  const V = all ? { rows: standings(db, comp.id), skipped: 0 } : standingsView(db, comp.id, view);
+  const rows = V.rows, z = all ? league.zones || {} : {};
+  if (!standings(db, comp.id).some((r) => r.p)) return <div className="empty">Rezultati za ovu ligu još nisu uneseni.</div>;
   return (
     <>
+      <div className="seg tbl-views" role="tablist" aria-label="Vrsta tablice">
+        {VIEWS.map(([k, n]) => <button key={k} type="button" role="tab" aria-selected={view === k} onClick={() => setView(k)}>{n}</button>)}
+      </div>
       <div className="tbl-wrap">
         <table className="st">
           <thead><tr>
@@ -88,7 +97,9 @@ function Standings({ db, ix, comp, league }) {
         {z.qual ? <span><i style={{ background: "var(--zone-q)" }} />Kvalifikacije</span> : null}
         {z.relegation ? <span><i style={{ background: "var(--zone-b)" }} />Ispadanje</span> : null}
         {z.note ? <span>{z.note}</span> : null}
-        <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova: {league.id === "juniori" ? "plasman kadetske momčadi, " : ""}gol-razlika, više golova, međusobne utakmice, fair-play.</span>
+        {!all && <span>{view === "home" ? "Samo utakmice kod kuće." : view === "away" ? "Samo utakmice u gostima." : `Bodovi kao da je utakmica trajala samo ${view === "h1" ? "prvo" : "drugo"} poluvrijeme.`}
+          {V.skipped ? ` Nije uračunato ${V.skipped} utakmica bez minuta svih golova.` : ""} Poredak po bodovima, gol-razlici i golovima.</span>}
+        {all && <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova: {league.id === "juniori" ? "plasman kadetske momčadi, " : ""}gol-razlika, više golova, međusobne utakmice, fair-play.</span>}
       </div>
     </>
   );
@@ -191,7 +202,7 @@ function Comebacks({ db, ix, comp }) {
               <span className="cb-def">−{c.deficit}</span>
               <span className="cb-txt"><Jersey kit={W.kit} size={20} /><b>{W.name}</b>&nbsp;protiv {O.name}
                 <span className="muted small">&nbsp;· s {f(c.from)} na {f(c.lead)}, kraj {f(c.final)} ({end})</span></span>
-              <span className="muted small cb-when">{m.round}. kolo, {fmtDate(m.date)}</span>
+              <span className="muted small cb-when">{roundName(ix.league[comp.league], m.round)}, {fmtDate(m.date)}</span>
             </a>);
         })}</div>)}
     </>

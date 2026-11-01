@@ -26,7 +26,7 @@ create table if not exists public.matches (
   id text primary key, comp text not null references public.comps(id), round int, date timestamptz not null,
   home text not null references public.clubs(id), away text not null references public.clubs(id), hall text references public.halls(id),
   status text not null default 'scheduled', result int[], no_score boolean not null default false, time_tbd boolean not null default false,
-  extra boolean not null default false, youtube text, tv text, source text,
+  extra boolean not null default false, youtube text, tv text, source text, highlights text,
   roster jsonb not null default '{"home":null,"away":null}', events jsonb not null default '[]', analysis jsonb,
   updated_at timestamptz not null default now());
 create table if not exists public.site (id int primary key default 1 check (id = 1), name text, contact text);
@@ -142,3 +142,6 @@ alter default privileges in schema public grant select, insert, update, delete o
 
 -- ---------- ažuriranje 2026-11-01: sigurnost ----------
 -- Pokreni ponovno blokove "tko je admin" i "prezime i javno ime" iznad (create or replace), ili datoteku sigurnost-2026-11-01.sql.
+
+-- ---------- ažuriranje 2026-11-01: službeni sažetak utakmice ----------
+alter table public.matches add column if not exists highlights text;

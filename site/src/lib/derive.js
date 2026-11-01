@@ -145,7 +145,8 @@ export function comeback(m) {
   }
   if (!best) return null;
   const [h, a] = f.final, me = best.side === "home" ? h - a : a - h;
-  return { ...best, final: f.final, res: me > 0 ? "W" : me === 0 ? "D" : "L" };
+  if (me <= 0) return null;     // preokret se broji samo kad ekipa koja je gubila i pobijedi (u regularnom dijelu)
+  return { ...best, final: f.final, res: "W" };
 }
 // rezultat iz perspektive ekipe
 export const sideScore = (s, side) => side === "home" ? `${s[0]}:${s[1]}` : `${s[1]}:${s[0]}`;
@@ -169,6 +170,37 @@ export function formStats(db, compId) {
   }
   return Object.values(T);
 }
+// Tablica za dio sezone: doma, u gostima, 1. ili 2. poluvrijeme (rezultat samo tog poluvremena).
+// Poluvremena se računaju samo iz utakmica u kojima su uneseni svi golovi s minutama.
+export function standingsView(db, compId, view) {
+  const comp = db.comps.find((c) => c.id === compId); if (!comp) return { rows: [], skipped: 0 };
+  const row = Object.fromEntries(comp.teams.map((t) => [t, { club: t, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0, form: [] }]));
+  let skipped = 0;
+  const ms = db.matches.filter((m) => m.comp === compId && m.status === "finished").sort((a, b) => a.date.localeCompare(b.date));
+  for (const m of ms) {
+    let s = score(m); if (!s) continue;
+    if (view === "h1" || view === "h2") {
+      const ht = score(m, 1199); if (!ht) { skipped++; continue; }
+      const f = flow(m); if (!f) { skipped++; continue; }
+      const reg = f.final;                                 // regularni dio (bez kaznenih udaraca)
+      s = view === "h1" ? ht : [reg[0] - ht[0], reg[1] - ht[1]];
+    }
+    for (const side of ["home", "away"]) {
+      if (view === "home" && side !== "home") continue;
+      if (view === "away" && side !== "away") continue;
+      const r = row[m[side]]; if (!r) continue;
+      const [me, op] = side === "home" ? s : [s[1], s[0]];
+      r.p++; r.gf += me; r.ga += op;
+      const res = me > op ? "W" : me === op ? "D" : "L";
+      r[{ W: "w", D: "d", L: "l" }[res]]++; r.pts += { W: 3, D: 1, L: 0 }[res];
+      r.form.push({ r: res, m: m.id });
+    }
+  }
+  const rows = Object.values(row).map((r) => ({ ...r, gd: r.gf - r.ga, form: r.form.slice(-5).reverse() }))
+    .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.club.localeCompare(b.club));
+  return { rows, skipped };
+}
+
 export function comebacks(db, compId) {
   const rank = { W: 0, D: 1, L: 2 };
   return db.matches.filter((m) => m.comp === compId).map((m) => ({ m, c: comeback(m) })).filter((x) => x.c)
