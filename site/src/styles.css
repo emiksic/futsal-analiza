@@ -667,3 +667,13 @@ table.st { font-size: 13px; }
 @media (max-width: 560px) { .show-s { display: inline; } }
 .pill.failed, .pill.warn { white-space: nowrap; }
 .st th .card-y, .st th .card-r { display: inline-block; vertical-align: middle; }
+
+/* početna: skupljanje natjecanja */
+.mgroup-t > a { display: inline-flex; align-items: center; gap: 10px; min-width: 0; color: inherit; }
+.mgroup-t > a:hover b { text-decoration: underline; }
+.mg-tog { display: inline-grid; place-items: center; width: 28px; height: 26px; margin-right: -6px; padding: 0; border: 0; background: transparent; color: var(--muted); cursor: pointer; border-radius: 2px; }
+.mg-tog:hover { background: var(--line); color: var(--fg); }
+.mg-tog svg { transition: transform .15s; }
+.mg-tog[aria-expanded="true"] svg { transform: rotate(90deg); }
+.tabs .tabs-r { margin-left: auto; font-size: 12px; text-transform: none; letter-spacing: 0; color: var(--muted); }
+.tabs .tabs-r:hover { color: var(--fg); }
