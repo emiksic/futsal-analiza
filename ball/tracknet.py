@@ -240,6 +240,9 @@ def cmd_detect(a):
 
 
 def main():
+    for st in (sys.stdout, sys.stderr):                  # Windows + preusmjeren izlaz (Tee-Object) = cp1252, ruši se na č/ć/đ
+        try: st.reconfigure(encoding="utf-8", errors="replace")
+        except Exception: pass
     ap = argparse.ArgumentParser(); sub = ap.add_subparsers(dest="cmd", required=True)
     for c in ("train", "eval", "detect"):
         p = sub.add_parser(c)
