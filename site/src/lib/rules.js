@@ -104,3 +104,6 @@ export const RULES = {
     ],
   },
 };
+
+// kadeti i juniori imaju iste propozicije (jedan dokument, zbirno natjecanje)
+RULES["kadeti-2026-27"] = RULES["juniori-2026-27"];
