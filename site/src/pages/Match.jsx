@@ -9,6 +9,8 @@ import { MiniTable } from "../components/Side.jsx";
 import { Shots } from "./Shots.jsx";
 import { Player } from "../components/Player.jsx";
 import { shotStats } from "../components/ShotMap.jsx";
+import { AttackReplay } from "../components/AttackReplay.jsx";
+import { useStore } from "../lib/store.js";
 
 export function Match({ db, ix: ix0, id, tab }) {
   const m = ix0.match[id];
@@ -28,6 +30,7 @@ export function Match({ db, ix: ix0, id, tab }) {
         </nav>
         {t !== "analiza" && <div style={{ height: 6 }} />}
         {t === "analiza" && <AnalysisTab m={m} ix={ix} A={A} />}
+        {t === "detalji" && <TestReplay m={m} ix={ix} A={A} />}
         {t === "detalji" && <Incidents m={m} ix={ix} />}
         {t === "statistika" && <Stats m={m} ix={ix} A={A} />}
         {t === "udarci" && <Shots m={m} ix={ix} />}
@@ -121,6 +124,30 @@ function AnalysisTab({ m, ix, A }) {
       {mode === "overlay" && a.rightsNote && <div className="callout warn">{a.rightsNote}</div>}
       <AnalysisViewer D={A.D} video={a.video} order={order} names={[ix.club[m.home].short, ix.club[m.away].short]} note={a.note} youtube={m.youtube}
         mode={mode} ytOffset={a.ytOffset || 0} />
+    </div>
+  );
+}
+
+// TEST (vidi samo admin i privatni pregled): animacija napada iz podataka video analize
+function TestReplay({ m, ix, A }) {
+  const st = useStore();
+  const test = import.meta.env.MODE === "single" || st.isAdmin;
+  const D = A?.D;
+  if (!test || !D || !m.analysis?.teamMap) return null;
+  const map = m.analysis.teamMap, order = teamOrder(D, m);
+  const sideOf = (ti) => map[D.teams[ti]?.name];
+  const teamKit = (ti) => { const s = sideOf(ti); return s ? ix.club[m[s]].kit : null; };
+  const nameOf = (key) => {
+    const [code, num] = key.split(" "), side = map[code]; if (!side) return key;
+    const r = m.roster[side]; const pid = (r?.players || []).find((p) => (r.num?.[p] ?? ix.player[p]?.num) === num);
+    const nm = pid ? playerName(ix.player[pid]).replace(/ #\d+$/, "") : "";
+    return !nm || nm.startsWith("Igrač") ? `${ix.club[m[side]].short} #${num}` : nm;
+  };
+  const t1 = D.frames[D.frames.length - 1].t, t0 = Math.max(0, t1 - 14);
+  return (
+    <div style={{ padding: "4px 16px 12px" }}>
+      <div className="callout warn small" style={{ marginBottom: 8 }}>Test, vidiš samo ti: animacija zadnjih 14 s isječka analize (ovdje nema gola). Kod pravih utakmica otvara se klikom na gol.</div>
+      <AttackReplay D={D} t0={t0} t1={t1} order={order} teamKit={teamKit} nameOf={nameOf} label={`${ix.club[m.home].short} – ${ix.club[m.away].short}, isječak`} />
     </div>
   );
 }
