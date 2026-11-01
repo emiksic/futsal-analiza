@@ -129,6 +129,7 @@ function AnalysisTab({ m, ix, A }) {
 }
 
 // TEST (vidi samo admin i privatni pregled): animacija napada iz podataka video analize
+const REPLAY_S = 6;   // koliko sekundi prije gola prikazati
 function TestReplay({ m, ix, A }) {
   const st = useStore();
   const test = import.meta.env.MODE === "single" || st.isAdmin;
@@ -143,10 +144,10 @@ function TestReplay({ m, ix, A }) {
     const nm = pid ? playerName(ix.player[pid]).replace(/ #\d+$/, "") : "";
     return !nm || nm.startsWith("Igrač") ? `${ix.club[m[side]].short} #${num}` : nm;
   };
-  const t1 = D.frames[D.frames.length - 1].t, t0 = Math.max(0, t1 - 14);
+  const t1 = D.frames[D.frames.length - 1].t, t0 = Math.max(0, t1 - REPLAY_S);
   return (
     <div style={{ padding: "4px 16px 12px" }}>
-      <div className="callout warn small" style={{ marginBottom: 8 }}>Test, vidiš samo ti: animacija zadnjih 14 s isječka analize (ovdje nema gola). Kod pravih utakmica otvara se klikom na gol.</div>
+      <div className="callout warn small" style={{ marginBottom: 8 }}>Test, vidiš samo ti: animacija zadnjih 6 s isječka analize (ovdje nema gola). Kod pravih utakmica otvara se klikom na gol.</div>
       <AttackReplay D={D} t0={t0} t1={t1} order={order} teamKit={teamKit} nameOf={nameOf} label={`${ix.club[m.home].short} – ${ix.club[m.away].short}, isječak`} />
     </div>
   );
