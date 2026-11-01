@@ -1,0 +1,45 @@
+# HNS Semafor 120367199
+HOME_PLAYERS
+1|Gabrijel Vukančić|GK|S
+8|Tony Rubelj|-|S
+9|Danjel Knežević|-|S
+10|Antonio Perić|-|S
+22|Karlo Olivani|-|S
+92|Filip Radaj|GK|B
+3|Tomislav Rakić|-|B
+13|Tino Junaković|-|B
+14|Duje Zubčić|-|B
+17|Robert Franjkić|-|B
+99|Mihael Vulić|-|B
+AWAY_PLAYERS
+77|Nikola Čizmić|GK|S
+5|Jakov Hrstić|-|S
+7|Antonio Kulić|-|S
+10|Josip Jurlina|-|S
+18|Josip Cikojević|-|S
+36|Mate Vrdoljak|GK|B
+3|Roko Jurić|-|B
+4|Mladen Burilović|-|B
+8|Filipe Da Silva Santana|-|B
+9|Stipe Dolić|-|B
+11|Eric Fode Sylla|-|B
+17|Vinko Vardić|-|B
+22|Ivor Šuljić|-|B
+80|Antonio Blažević|-|B
+GOALS
+2'39"|Josip Cikojević|-
+11'47"|Josip Cikojević|-
+18'23"|Eric Fode Sylla|-
+19'41"|Karlo Olivani|-
+20'17"|Jakov Hrstić|-
+21'4"|Josip Jurlina|-
+25'2"|Antonio Blažević|-
+29'57"|Josip Jurlina|-
+30'33"|Eric Fode Sylla|-
+32'15"|Mladen Burilović|-
+32'40"|Josip Cikojević|P
+36'58"|Ivor Šuljić|-
+CARDS
+18'23"|Antonio Blažević|away|y
+19'12"|Danjel Knežević|home|y
+24'6"|Duje Zubčić|home|y

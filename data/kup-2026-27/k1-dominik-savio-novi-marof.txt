@@ -1,0 +1,52 @@
+# HNS Semafor 120367191
+HOME_PLAYERS
+15|Filip Brdar|GK|S
+3|Petar Šimić|-|S
+6|Roko Rečić|-|S
+8|Anteo Roko Lukić|-|S
+9|Matej Ćosić|-|S
+24|Vito Horvatin|GK|B
+30|Rafael Križančić|GK|B
+2|Ivan Mikulić|-|B
+10|Karlo Kekelj|-|B
+11|Petar Matić|-|B
+12|Andrija Antolović|-|B
+16|Nikola Mihanović|-|B
+17|Marko Kadić|-|B
+18|Josip Galić|-|B
+AWAY_PLAYERS
+12|Luka Baturina|GK|S
+9|Pino Rečić|-|S
+11|Kristijan Mešnjak|-|S
+13|Frano Brzović|-|S
+16|Stipe Došen|-|S
+1|Matija Markoč|GK|B
+2|Juraj Lovrić|-|B
+4|Dino Musulin|-|B
+7|Marko Červenka|-|B
+15|Martin Šundov|-|B
+22|Josip Petrović|-|B
+GOALS
+5'43"|Martin Šundov|-
+17'|Petar Šimić|-
+35'|Roko Rečić|-
+36'|Kristijan Mešnjak|-
+CARDS
+17'|Frano Brzović|away|y
+19'|Matej Ćosić|home|y
+33'|Frano Brzović|away|yy
+SHOOTOUT
+home|Roko Rečić|G
+home|Anteo Roko Lukić|G
+home|Matej Ćosić|G
+home|Josip Galić|G
+home|Petar Šimić|G
+home|Marko Kadić|G
+home|Petar Matić|X
+away|Martin Šundov|G
+away|Pino Rečić|G
+away|Stipe Došen|G
+away|Marko Červenka|G
+away|Kristijan Mešnjak|G
+away|Dino Musulin|G
+away|Josip Petrović|G

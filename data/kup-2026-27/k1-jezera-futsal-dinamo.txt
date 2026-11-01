@@ -1,0 +1,46 @@
+# HNS Semafor 120367193
+HOME_PLAYERS
+1|Toni Petrisor Tonita|GK|S
+5|Renato Nović|-|S
+6|Josip Perković|-|S
+8|Martin Gudelj|-|S
+10|Ivan Škugor|-|S
+12|Roberto Fantov|GK|B
+4|Šime Brajković|-|B
+7|Toni Bugarija|-|B
+9|Paulo Katuša|-|B
+11|Vedran Klarić|-|B
+14|Jakov Pirija|-|B
+16|Nino Gulam|-|B
+17|Danijel Risonjić|-|B
+AWAY_PLAYERS
+1|Filip Ivan Pranjić|GK|S
+5|Luka Čop|-|S
+14|Mateo Mužar|-|S
+17|Kristian Čekol|-|S
+99|Filip Novak|-|S
+30|Ante Piplica|GK|B
+3|Nikola Gudasić|-|B
+4|Josip Purgar|-|B
+7|Ivano Peruško|-|B
+8|Vid Fabijanić|-|B
+11|Lovro Cigler|-|B
+19|Vito Horvat|-|B
+23|Mihael Čop|-|B
+27|Dominik Drmić|-|B
+GOALS
+1'|Josip Perković|-
+2'|Luka Čop|-
+11'|Kristian Čekol|-
+20'|Josip Perković|-
+21'|Filip Novak|-
+22'|Kristian Čekol|-
+24'|Luka Čop|-
+30'|Luka Čop|-
+35'|Mateo Mužar|-
+CARDS
+6'|Vedran Klarić|home|y
+10'|Toni Petrisor Tonita|home|r
+25'|Lovro Cigler|away|y
+28'|Renato Nović|home|y
+40'|Nino Gulam|home|y

@@ -10,10 +10,10 @@
 1|30.10.2026 20:30|gauni|dubravice|8:3|biograd|
 1|30.10.2026 20:45|murter|slatina|8:5|murter|
 1|30.10.2026 21:00|mala-mljekara|petrinjcica|3:3 (4:1)|valpovo|
-1|31.10.2026 17:45|dominik-savio|novi-marof||sutinska|
-1|31.10.2026 18:00|vinkovci|gimka||vinkovci|
-1|31.10.2026 18:30|jezera|futsal-dinamo||tisno|
-1|31.10.2026 18:30|rijeka|universitas||zamet|
-1|31.10.2026 19:30|vrgorac|aurelia-boso||makarska|
-1|31.10.2026 20:00|heroji-2007|hajduk||racice|
+1|31.10.2026 17:45|dominik-savio|novi-marof|2:2 (6:7)|sutinska|
+1|31.10.2026 18:00|vinkovci|gimka|2:8|vinkovci|
+1|31.10.2026 18:30|jezera|futsal-dinamo|2:7|tisno|
+1|31.10.2026 18:30|rijeka|universitas|10:4|zamet|
+1|31.10.2026 19:30|vrgorac|aurelia-boso|7:0|makarska|
+1|31.10.2026 20:00|heroji-2007|hajduk|1:11|racice|
 1|17.11.2026|olmissum|crnica||omis|

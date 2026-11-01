@@ -1,0 +1,37 @@
+# HNS Semafor 120367186
+HOME_PLAYERS
+55|Senad Poračanin|GK|S
+5|Mateo Kozarić|-|S
+6|Toni Jelavić|-|S
+11|Josip Bošković|-|S
+99|Ivan Grbavac|-|S
+22|Dejan Rašić|GK|B
+3|Mateo Stanković|-|B
+8|Duje Dragičević|-|B
+10|Marko Gašpar|-|B
+17|Mihovil Šutalo|-|B
+18|Dane Raos|-|B
+20|Jan Tolj|-|B
+61|Nathan Medeiros De Almeida|-|B
+AWAY_PLAYERS
+12|Fran Pedić|GK|S
+2|Ivan Ferbežar|-|S
+11|Filip Josipović|-|S
+19|Josip Horvat|-|S
+23|Adrian Mičić|-|S
+1|Jakov Crnaić|GK|B
+9|Ivano Božić|-|B
+10|Marko Pest-Mundvajl|-|B
+14|Mario Božić|-|B
+20|Bruno Lončar|-|B
+24|Mihael Luketina Milunović|-|B
+GOALS
+4'|Nathan Medeiros De Almeida|-
+6'|Josip Bošković|-
+15'|Josip Bošković|-
+20'|Josip Bošković|-
+38'|Toni Jelavić|-
+39'|Duje Dragičević|-
+39'|Mihovil Šutalo|-
+CARDS
+26'|Mario Božić|away|y

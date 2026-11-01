@@ -39,8 +39,8 @@ Svi zadaci rade na Erikovom serveru (Windows 10) preko alata `device_bash` (Git 
 |---|---|---|---|---|---|
 | 1. HMNL (SuperSport HMNL) | `1-hmnl-2026-27` | `hmnl-2026-27` | `Seniori` | `115835988` | kola 1–18 |
 | Hrvatski kup | `kup-2026-27` | `kup-2026-27` | `Seniori` | `120095680` | 1 = 1/16, 2 = 1/8, 3 = ČF, 4 = PF, 5 = finale |
-| 1. HMNL juniori | `juniori-2026-27` | `juniori-2026-27` | `U-19` | *(pronađi, vidi 2.1)* | kola 1–22 |
-| 1. HMNL kadeti | `kadeti-2026-27` | `kadeti-2026-27` | `U-17` | *(pronađi, vidi 2.1)* | kola 1–22 |
+| 1. HMNL juniori | `juniori-2026-27` | `juniori-2026-27` | `U-19` | `116548239` | kola 1–22 |
+| 1. HMNL kadeti | `kadeti-2026-27` | `kadeti-2026-27` | `U-17` | `116558032` | kola 1–22 |
 
 Raspored natjecanja: `https://semafor.hns.family/natjecanja/<Semafor ID>/x/detaljno/`.
 
@@ -183,3 +183,6 @@ GOALS
 ## Zapisano tijekom rada
 
 <!-- Semafor ID-jevi, YouTube kanali klubova koji prenose mlade, posebnosti dvorana i klubova -->
+- 2026-11-01: ID-jevi juniora (`116548239`, „FUTSAL PRVA HMNL juniori 26/27”) i kadeta (`116558032`, „FUTSAL PRVA HMNL KADETI 26/27”) pronađeni preko stranice kluba. Filtar uzrasta tamo radi samo JavaScriptom (padajući `#acat`), pa `curl` s `?acat=Juniors` vraća samo seniorska natjecanja.
+- Privatna datoteka (4.3): golovi idu redom stupaca sa Semafora (svi `col0`, pa svi `col1`), ne kronološki. ID-jevi golova (`-g<i>`) ovise o tom redu, a javni JSON i baza su tako složeni.
+- `.events_penalties` (naslov „Jedanaesterci”) sadrži i promašene kaznene udarce tijekom utakmice (`penalty_failed`), ne samo raspucavanje. Kao `SHOOTOUT` ih piši samo kad postoji `.additional_status.pen`.

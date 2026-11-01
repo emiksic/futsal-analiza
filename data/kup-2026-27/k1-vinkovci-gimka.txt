@@ -1,0 +1,37 @@
+# HNS Semafor 120367189
+HOME_PLAYERS
+4|Dominik Jelinić|GK|S
+5|Josip Antunović|-|S
+7|Matija Jurić|-|S
+17|Josip Haluška|-|S
+18|Fran Japundžić|-|S
+3|Karlo Radonić|GK|B
+22|Stjepan Đordić|-|B
+23|Davor Barišić|-|B
+44|Robert Rumenović|-|B
+99|Marko Ljaljić|-|B
+AWAY_PLAYERS
+1|Hrvoje Sekulić|GK|S
+3|Bruno Jakovljević|-|S
+6|Danijel Dekanić|-|S
+21|Toni Vučković|-|S
+24|Josip Brkić|-|S
+12|Ivano Jukić|GK|B
+2|Gabriel Pavlović|-|B
+5|Tvrtko Ivan Pajalić|-|B
+9|Denis Kneževič|-|B
+10|Matej Horvat|-|B
+11|Luka Perić|-|B
+15|Rodrigo Jose Da Silva Rodrigues|-|B
+17|Neven Zonjić|-|B
+GOALS
+2'|Josip Antunović|-
+5'|Matej Horvat|-
+9'|Neven Zonjić|-
+16'|Denis Kneževič|-
+16'|Denis Kneževič|-
+21'|Marko Ljaljić|-
+25'|Josip Brkić|-
+28'|Denis Kneževič|-
+30'|Luka Perić|-
+36'|Josip Brkić|-

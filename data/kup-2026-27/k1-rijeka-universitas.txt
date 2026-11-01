@@ -1,0 +1,49 @@
+# HNS Semafor 120367198
+HOME_PLAYERS
+31|Leon Tomić|GK|S
+5|Manolo Bilić|-|S
+9|Luka Suton|-|S
+11|Savio Valadares-Pereira De Mendonca|-|S
+12|Đorđe Rosić|-|S
+21|Victor Karl Roberth Sääf|GK|B
+55|Thomas Milić|GK|B
+4|Mihael Matijević|-|B
+10|Rafael Ferreira Lima|-|B
+19|Elvir Husarić|-|B
+24|David Lučić|-|B
+77|Filip Kamauli|-|B
+87|Frane Beno|-|B
+AWAY_PLAYERS
+24|Roko Marin Stojkić|GK|S
+4|Mateo Poljarić|-|S
+5|Ante Crnjac|-|S
+13|Ivan Gotovac|-|S
+98|Šimun Ivo Barišić|-|S
+21|Vinko Krželj|GK|B
+3|Ante Mijić|-|B
+7|Benjamin Ademi|-|B
+10|Leon Jedvaj|-|B
+12|Luka Pažanin|-|B
+14|Nikola Anić|-|B
+15|Luka Skoko|-|B
+19|Josip Govorko|-|B
+22|Ivan Tustonjić|-|B
+GOALS
+6'|Rafael Ferreira Lima|-
+12'|Luka Skoko|-
+18'|Josip Govorko|-
+19'|Luka Suton|-
+20'|Rafael Ferreira Lima|-
+22'|Leon Tomić|-
+22'|Mateo Poljarić|-
+24'|Ivan Tustonjić|-
+26'|Filip Kamauli|-
+29'|Luka Suton|-
+30'|Luka Suton|-
+33'|Filip Kamauli|-
+35'|Savio Valadares-Pereira De Mendonca|-
+40'|Mihael Matijević|-
+CARDS
+17'|Mateo Poljarić|away|y
+20'|Ante Crnjac|away|y
+34'|Filip Kamauli|home|y
