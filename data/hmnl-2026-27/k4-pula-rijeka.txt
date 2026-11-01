@@ -35,3 +35,9 @@ GOALS
 30|Luka Suton|-
 37|Elvir Husarić|-
 39|Luka Suton|-
+CARDS
+36'|Danijel Starčić|home|r
+26'|Bepo Paus|home|y
+33'|Stefano Galešić|home|y
+33'|Elvir Husarić|away|y
+10'|Alen Jukić|away|y

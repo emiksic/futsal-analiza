@@ -34,3 +34,5 @@ GOALS
 24|Muanis Duvnjak|-
 31|Mijo Mišerda|-
 40|Filip Bašković|-
+CARDS
+27'|Jonhn Lennon Felinto Silva|away|y

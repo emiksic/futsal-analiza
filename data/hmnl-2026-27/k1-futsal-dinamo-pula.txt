@@ -31,3 +31,9 @@ GOALS
 18|Luka Čop|-
 22|Žan Janež|-
 28|Kristijan Vasić|-
+CARDS
+32'|Kristian Čekol|home|y
+35'|Niko Vukmir|away|y
+32'|Stefano Galešić|away|y
+32'|Teo Hajdaraj|away|y
+17'|Kristijan Vasić|away|y

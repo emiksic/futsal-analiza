@@ -37,3 +37,8 @@ GOALS
 34|Uroš Đurić|-
 36|David Barbarić|-
 38|Ante Kovačević|-
+CARDS
+32'|Julian Esteban Clavijo Urquijo|home|y
+9'|Marko Žuljević|home|y
+28'|Iiro Olavi Vanha|away|y
+12'|Josip Juretić|away|y

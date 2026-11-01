@@ -34,3 +34,11 @@ GOALS
 35|Jure Suban|-
 37|Jonhn Lennon Felinto Silva|-
 39|Ante Silić|-
+CARDS
+3'|Gabrijel Lasić|home|y
+34'|Loren Radić|home|y
+19'|Danijel Starčić|away|y
+36'|Daniel Moravac|away|y
+36'|Domagoj Šteko|away|y
+9'|Žan Janež|away|y
+16'|Stefano Galešić|away|y

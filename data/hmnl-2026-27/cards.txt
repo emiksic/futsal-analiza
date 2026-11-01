@@ -1,0 +1,116 @@
+# Kartoni sa HNS Semafora (zapisnici utakmica). Blok po utakmici: kolo Domaćin - Gost, zatim minuta|igrač|H/A|vrsta
+=== 1 MNK Torcida - MNK Olmissum
+32'|Julian Esteban Clavijo Urquijo|H|yellow
+9'|Marko Žuljević|H|yellow
+28'|Iiro Olavi Vanha|A|yellow
+12'|Josip Juretić|A|yellow
+=== 1 MNK Crnica - MNK Osijek
+17'|Arnon Santos Cassemiro|H|yellow
+19'|Saša Subotić|H|yellow
+10'|Yuri Madruga|A|yellow
+=== 1 MNK Futsal Dinamo - MNK Futsal Istra Pula
+32'|Kristian Čekol|H|yellow
+35'|Niko Vukmir|A|yellow
+32'|Stefano Galešić|A|yellow
+32'|Teo Hajdaraj|A|yellow
+17'|Kristijan Vasić|A|yellow
+=== 1 MNK Novo vrijeme - MNK Square
+40'|Gabrijel Lasić|H|yellow
+13'|Jonhn Lennon Felinto Silva|H|yellow
+32'|Muanis Duvnjak|H|yellow
+=== 1 HMNK Rijeka - MNK Hajduk
+17'42"|Luka Suton|H|yellow
+28'42"|Luka Suton|H|second_yellow
+39'|Elvir Husarić|H|yellow
+30'19"|Alen Jukić|H|yellow
+37'|Antonio Kulić|A|yellow
+8'19"|Josip Jurlina|A|yellow
+37'55"|Mladen Burilović|A|yellow
+24'52"|Vinko Vardić|A|yellow
+38'39"|Janio Robert Pereira De Almeida|A|yellow
+36'32"|Antonio Blažević|A|yellow
+=== 2 MNK Square - HMNK Rijeka
+19'|Matej Perović|H|yellow
+33'|Marko Kuraja|H|yellow
+12'|Anderson de Souza Santos|H|yellow
+20'|Victor Karl Roberth Sääf|A|yellow
+9'|Đorđe Rosić|A|yellow
+15'|Mihael Matijević|A|yellow
+12'|Alen Jukić|A|yellow
+=== 2 MNK Torcida - MNK Futsal Dinamo
+17'|Nandi Eterović|H|yellow
+24'|Dominik Drmić|A|yellow
+=== 2 MNK Olmissum - MNK Hajduk
+36'|Duje Kustura|H|yellow
+40'|Duje Kustura|H|second_yellow
+9'|Antonio Kulić|A|yellow
+36'|Josip Jurlina|A|yellow
+36'|Eric Fode Sylla|A|yellow
+33'|Mario Zrno|A|yellow
+13'|Mladen Burilović|A|yellow
+26'|Antonio Blažević|A|yellow
+=== 2 MNK Futsal Istra Pula - MNK Crnica
+10'39"|Frane Paus|H|yellow
+30'58"|Franco Jelovčić|A|yellow
+18'51"|Marko Odža|A|yellow
+10'46"|Josip Radić|A|yellow
+34'42"|Saša Subotić|A|yellow
+=== 2 MNK Osijek - MNK Novo vrijeme
+18'|Andrej Pandurević|H|yellow
+9'|Lovro Trdin|H|yellow
+26'|Ante Silić|A|yellow
+=== 3 MNK Futsal Dinamo - MNK Olmissum
+18'|Mateo Mužar|H|yellow
+27'|Kristian Čekol|H|yellow
+35'|Josip Purgar|H|yellow
+33'|Filip Novak|H|yellow
+12'|Matija Đulvat|H|yellow
+29'|Vinko Rozga|A|yellow
+18'|Uroš Đurić|A|yellow
+=== 3 HMNK Rijeka - MNK Osijek
+25'|Đorđe Rosić|H|yellow
+14'|Matias Mijić|A|yellow
+13'|Andrej Pandurević|A|yellow
+=== 3 MNK Crnica - MNK Torcida
+6'|Petar Pedić|A|yellow
+22'|Karlo Vuković|A|yellow
+14'|Julian Esteban Clavijo Urquijo|A|yellow
+=== 3 MNK Novo vrijeme - MNK Futsal Istra Pula
+3'|Gabrijel Lasić|H|yellow
+34'|Loren Radić|H|yellow
+19'|Danijel Starčić|A|yellow
+36'|Daniel Moravac|A|yellow
+36'|Domagoj Šteko|A|yellow
+9'|Žan Janež|A|yellow
+16'|Stefano Galešić|A|yellow
+=== 3 MNK Hajduk - MNK Square
+24'|Filipe Da Silva Santana|H|yellow
+15'|Stipe Dolić|H|yellow
+25'|Antonio Blažević|H|yellow
+24'|Antonio Lang|A|yellow
+=== 4 MNK Futsal Dinamo - MNK Crnica
+31'16"|Bruno Žilić|A|yellow
+20'|Arnon Santos Cassemiro|A|yellow
+26'24"|Arnon Santos Cassemiro|A|second_yellow
+=== 4 MNK Olmissum - MNK Square
+8'|Uroš Đurić|H|yellow
+31'|Ante Kovačević|H|yellow
+15'|David Barbarić|H|yellow
+10'|Jure Copić|H|yellow
+25'|Karlo Martinović|H|yellow
+22'|Frane Despotović|H|yellow
+14'|Zoran Primić|A|yellow
+1'|Matej Perović|A|yellow
+39'|Marko Kuraja|A|yellow
+26'|Haron Džanković|A|yellow
+36'|Andre-Luis Sasse|A|yellow
+=== 4 MNK Torcida - MNK Novo vrijeme
+27'|Jonhn Lennon Felinto Silva|A|yellow
+=== 4 MNK Futsal Istra Pula - HMNK Rijeka
+36'|Danijel Starčić|H|red
+26'|Bepo Paus|H|yellow
+33'|Stefano Galešić|H|yellow
+33'|Elvir Husarić|A|yellow
+10'|Alen Jukić|A|yellow
+=== 4 MNK Osijek - MNK Hajduk
+1'|Antonio Sekulić|H|yellow

@@ -38,3 +38,15 @@ GOALS
 22|Ante Kovačević|-
 35|David Barbarić|-
 39|Marko Kuraja|-
+CARDS
+8'|Uroš Đurić|home|y
+31'|Ante Kovačević|home|y
+15'|David Barbarić|home|y
+10'|Jure Copić|home|y
+25'|Karlo Martinović|home|y
+22'|Frane Despotović|home|y
+14'|Zoran Primić|away|y
+1'|Matej Perović|away|y
+39'|Marko Kuraja|away|y
+26'|Haron Džanković|away|y
+36'|Andre-Luis Sasse|away|y

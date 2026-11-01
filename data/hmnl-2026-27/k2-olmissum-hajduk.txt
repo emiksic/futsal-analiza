@@ -36,3 +36,12 @@ GOALS
 33|Antonio Kulić|-
 36|Josip Juretić|-
 40|Iiro Olavi Vanha|-
+CARDS
+36'|Duje Kustura|home|y
+40'|Duje Kustura|home|yy
+9'|Antonio Kulić|away|y
+36'|Josip Jurlina|away|y
+36'|Eric Fode Sylla|away|y
+33'|Mario Zrno|away|y
+13'|Mladen Burilović|away|y
+26'|Antonio Blažević|away|y

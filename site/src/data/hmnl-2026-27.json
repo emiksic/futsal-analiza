@@ -89,6 +89,22 @@
 "sec": 330
 },
 {
+"id": "1-hmnl-2026-27-k1-torcida-olmissum-c1",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 510,
+"player": "torcida-2026-27-Seniori-marko-zuljevic"
+},
+{
+"id": "1-hmnl-2026-27-k1-torcida-olmissum-c3",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 690,
+"player": "olmissum-2026-27-Seniori-josip-juretic"
+},
+{
 "id": "1-hmnl-2026-27-k1-torcida-olmissum-g2",
 "type": "goal",
 "side": "away",
@@ -111,6 +127,22 @@
 "player": "olmissum-2026-27-Seniori-ante-kovacevic",
 "period": 1,
 "sec": 1170
+},
+{
+"id": "1-hmnl-2026-27-k1-torcida-olmissum-c2",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 450,
+"player": "olmissum-2026-27-Seniori-iiro-olavi-vanha"
+},
+{
+"id": "1-hmnl-2026-27-k1-torcida-olmissum-c0",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 690,
+"player": "torcida-2026-27-Seniori-julian-esteban-clavijo-urquijo"
 },
 {
 "id": "1-hmnl-2026-27-k1-torcida-olmissum-g5",
@@ -220,12 +252,36 @@
 "sec": 450
 },
 {
+"id": "1-hmnl-2026-27-k1-crnica-osijek-c2",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 570,
+"player": "osijek-2026-27-Seniori-yuri-madruga"
+},
+{
+"id": "1-hmnl-2026-27-k1-crnica-osijek-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 990,
+"player": "crnica-2026-27-Seniori-arnon-santos-cassemiro"
+},
+{
 "id": "1-hmnl-2026-27-k1-crnica-osijek-g1",
 "type": "goal",
 "side": "away",
 "player": "osijek-2026-27-Seniori-yuri-madruga",
 "period": 1,
 "sec": 1110
+},
+{
+"id": "1-hmnl-2026-27-k1-crnica-osijek-c1",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 1110,
+"staff": true
 },
 {
 "id": "1-hmnl-2026-27-k1-crnica-osijek-g2",
@@ -326,6 +382,14 @@
 },
 "events": [
 {
+"id": "1-hmnl-2026-27-k1-futsal-dinamo-pula-c4",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 990,
+"player": "pula-2026-27-Seniori-kristijan-vasic"
+},
+{
 "id": "1-hmnl-2026-27-k1-futsal-dinamo-pula-g0",
 "type": "goal",
 "side": "home",
@@ -348,6 +412,38 @@
 "player": "pula-2026-27-Seniori-kristijan-vasic",
 "period": 2,
 "sec": 450
+},
+{
+"id": "1-hmnl-2026-27-k1-futsal-dinamo-pula-c0",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 690,
+"player": "futsal-dinamo-2026-27-Seniori-kristian-cekol"
+},
+{
+"id": "1-hmnl-2026-27-k1-futsal-dinamo-pula-c2",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 690,
+"player": "pula-2026-27-Seniori-stefano-galesic"
+},
+{
+"id": "1-hmnl-2026-27-k1-futsal-dinamo-pula-c3",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 690,
+"player": "pula-2026-27-Seniori-teo-hajdaraj"
+},
+{
+"id": "1-hmnl-2026-27-k1-futsal-dinamo-pula-c1",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 870,
+"player": "pula-2026-27-Seniori-niko-vukmir"
 }
 ],
 "analysis": null,
@@ -448,6 +544,14 @@
 "sec": 450
 },
 {
+"id": "1-hmnl-2026-27-k1-novo-vrijeme-square-c1",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 750,
+"player": "novo-vrijeme-2026-27-Seniori-jonhn-lennon-felinto-silva"
+},
+{
 "id": "1-hmnl-2026-27-k1-novo-vrijeme-square-g3",
 "type": "goal",
 "side": "away",
@@ -496,12 +600,28 @@
 "sec": 690
 },
 {
+"id": "1-hmnl-2026-27-k1-novo-vrijeme-square-c2",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 690,
+"player": "novo-vrijeme-2026-27-Seniori-muanis-duvnjak"
+},
+{
 "id": "1-hmnl-2026-27-k1-novo-vrijeme-square-g9",
 "type": "goal",
 "side": "away",
 "player": "square-2026-27-Seniori-andre-luis-sasse",
 "period": 2,
 "sec": 990
+},
+{
+"id": "1-hmnl-2026-27-k1-novo-vrijeme-square-c0",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 1170,
+"player": "novo-vrijeme-2026-27-Seniori-gabrijel-lasic"
 }
 ],
 "analysis": null,
@@ -596,6 +716,24 @@
 "sec": 450
 },
 {
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c5",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 499,
+"exact": true,
+"player": "hajduk-2026-27-Seniori-josip-jurlina"
+},
+{
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 1062,
+"exact": true,
+"player": "rijeka-2026-27-Seniori-luka-suton"
+},
+{
 "id": "1-hmnl-2026-27-k1-rijeka-hajduk-g2",
 "type": "goal",
 "side": "away",
@@ -603,6 +741,34 @@
 "period": 1,
 "sec": 1168,
 "exact": true
+},
+{
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c7",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 292,
+"exact": true,
+"player": "hajduk-2026-27-Seniori-vinko-vardic"
+},
+{
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c1",
+"type": "red",
+"side": "home",
+"period": 2,
+"sec": 522,
+"exact": true,
+"player": "rijeka-2026-27-Seniori-luka-suton",
+"secondYellow": true
+},
+{
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c3",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 619,
+"exact": true,
+"staff": true
 },
 {
 "id": "1-hmnl-2026-27-k1-rijeka-hajduk-g3",
@@ -614,6 +780,23 @@
 "exact": true
 },
 {
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c4",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 990,
+"player": "hajduk-2026-27-Seniori-antonio-kulic"
+},
+{
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c9",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 992,
+"exact": true,
+"player": "hajduk-2026-27-Seniori-antonio-blazevic"
+},
+{
 "id": "1-hmnl-2026-27-k1-rijeka-hajduk-g4",
 "type": "goal",
 "side": "home",
@@ -621,6 +804,32 @@
 "period": 2,
 "sec": 1075,
 "exact": true
+},
+{
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c6",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 1075,
+"exact": true,
+"player": "hajduk-2026-27-Seniori-mladen-burilovic"
+},
+{
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c2",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 1110,
+"player": "rijeka-2026-27-Seniori-elvir-husaric"
+},
+{
+"id": "1-hmnl-2026-27-k1-rijeka-hajduk-c8",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 1119,
+"exact": true,
+"player": "hajduk-2026-27-Seniori-janio-robert-pereira-de-almeida"
 },
 {
 "id": "1-hmnl-2026-27-k1-rijeka-hajduk-g5",
@@ -717,12 +926,44 @@
 "sec": 450
 },
 {
+"id": "1-hmnl-2026-27-k2-square-rijeka-c4",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 510,
+"player": "rijeka-2026-27-Seniori-dorde-rosic"
+},
+{
+"id": "1-hmnl-2026-27-k2-square-rijeka-c2",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 690,
+"player": "square-2026-27-Seniori-anderson-de-souza-santos"
+},
+{
+"id": "1-hmnl-2026-27-k2-square-rijeka-c6",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 690,
+"staff": true
+},
+{
 "id": "1-hmnl-2026-27-k2-square-rijeka-g1",
 "type": "goal",
 "side": "home",
 "player": "square-2026-27-Seniori-maro-duras",
 "period": 1,
 "sec": 870
+},
+{
+"id": "1-hmnl-2026-27-k2-square-rijeka-c5",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 870,
+"player": "rijeka-2026-27-Seniori-mihael-matijevic"
 },
 {
 "id": "1-hmnl-2026-27-k2-square-rijeka-g2",
@@ -749,12 +990,36 @@
 "sec": 1050
 },
 {
+"id": "1-hmnl-2026-27-k2-square-rijeka-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 1110,
+"player": "square-2026-27-Seniori-matej-perovic"
+},
+{
 "id": "1-hmnl-2026-27-k2-square-rijeka-g5",
 "type": "goal",
 "side": "home",
 "player": "square-2026-27-Seniori-marko-kuraja",
 "period": 1,
 "sec": 1170
+},
+{
+"id": "1-hmnl-2026-27-k2-square-rijeka-c3",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 1170,
+"player": "rijeka-2026-27-Seniori-victor-karl-roberth-saaf"
+},
+{
+"id": "1-hmnl-2026-27-k2-square-rijeka-c1",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 750,
+"player": "square-2026-27-Seniori-marko-kuraja"
 },
 {
 "id": "1-hmnl-2026-27-k2-square-rijeka-g6",
@@ -881,6 +1146,14 @@
 "sec": 870
 },
 {
+"id": "1-hmnl-2026-27-k2-torcida-futsal-dinamo-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 990,
+"player": "torcida-2026-27-Seniori-nandi-eterovic"
+},
+{
 "id": "1-hmnl-2026-27-k2-torcida-futsal-dinamo-g2",
 "type": "goal",
 "side": "away",
@@ -895,6 +1168,14 @@
 "player": "futsal-dinamo-2026-27-Seniori-kristian-cekol",
 "period": 2,
 "sec": 30
+},
+{
+"id": "1-hmnl-2026-27-k2-torcida-futsal-dinamo-c1",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 210,
+"player": "futsal-dinamo-2026-27-Seniori-dominik-drmic"
 },
 {
 "id": "1-hmnl-2026-27-k2-torcida-futsal-dinamo-g4",
@@ -989,6 +1270,22 @@
 "sec": 210
 },
 {
+"id": "1-hmnl-2026-27-k2-olmissum-hajduk-c2",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 510,
+"player": "hajduk-2026-27-Seniori-antonio-kulic"
+},
+{
+"id": "1-hmnl-2026-27-k2-olmissum-hajduk-c6",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 750,
+"player": "hajduk-2026-27-Seniori-mladen-burilovic"
+},
+{
 "id": "1-hmnl-2026-27-k2-olmissum-hajduk-g1",
 "type": "goal",
 "side": "home",
@@ -1013,6 +1310,14 @@
 "sec": 150
 },
 {
+"id": "1-hmnl-2026-27-k2-olmissum-hajduk-c7",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 330,
+"player": "hajduk-2026-27-Seniori-antonio-blazevic"
+},
+{
 "id": "1-hmnl-2026-27-k2-olmissum-hajduk-g4",
 "type": "goal",
 "side": "away",
@@ -1029,6 +1334,14 @@
 "sec": 750
 },
 {
+"id": "1-hmnl-2026-27-k2-olmissum-hajduk-c5",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 750,
+"player": "hajduk-2026-27-Seniori-mario-zrno"
+},
+{
 "id": "1-hmnl-2026-27-k2-olmissum-hajduk-g6",
 "type": "goal",
 "side": "home",
@@ -1037,12 +1350,45 @@
 "sec": 930
 },
 {
+"id": "1-hmnl-2026-27-k2-olmissum-hajduk-c0",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 930,
+"player": "olmissum-2026-27-Seniori-duje-kustura"
+},
+{
+"id": "1-hmnl-2026-27-k2-olmissum-hajduk-c3",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 930,
+"player": "hajduk-2026-27-Seniori-josip-jurlina"
+},
+{
+"id": "1-hmnl-2026-27-k2-olmissum-hajduk-c4",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 930,
+"player": "hajduk-2026-27-Seniori-eric-fode-sylla"
+},
+{
 "id": "1-hmnl-2026-27-k2-olmissum-hajduk-g7",
 "type": "goal",
 "side": "home",
 "player": "olmissum-2026-27-Seniori-iiro-olavi-vanha",
 "period": 2,
 "sec": 1170
+},
+{
+"id": "1-hmnl-2026-27-k2-olmissum-hajduk-c1",
+"type": "red",
+"side": "home",
+"period": 2,
+"sec": 1170,
+"player": "olmissum-2026-27-Seniori-duje-kustura",
+"secondYellow": true
 }
 ],
 "analysis": null,
@@ -1120,6 +1466,24 @@
 },
 "events": [
 {
+"id": "1-hmnl-2026-27-k2-pula-crnica-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 639,
+"exact": true,
+"player": "pula-2026-27-Seniori-frane-paus"
+},
+{
+"id": "1-hmnl-2026-27-k2-pula-crnica-c3",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 646,
+"exact": true,
+"player": "crnica-2026-27-Seniori-josip-radic"
+},
+{
 "id": "1-hmnl-2026-27-k2-pula-crnica-g0",
 "type": "goal",
 "side": "home",
@@ -1127,6 +1491,15 @@
 "period": 1,
 "sec": 1131,
 "exact": true
+},
+{
+"id": "1-hmnl-2026-27-k2-pula-crnica-c2",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 1131,
+"exact": true,
+"player": "crnica-2026-27-Seniori-marko-odza"
 },
 {
 "id": "1-hmnl-2026-27-k2-pula-crnica-g1",
@@ -1146,6 +1519,15 @@
 "exact": true
 },
 {
+"id": "1-hmnl-2026-27-k2-pula-crnica-c1",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 658,
+"exact": true,
+"player": "crnica-2026-27-Seniori-franco-jelovcic"
+},
+{
 "id": "1-hmnl-2026-27-k2-pula-crnica-g3",
 "type": "goal",
 "side": "away",
@@ -1153,6 +1535,15 @@
 "period": 2,
 "sec": 698,
 "exact": true
+},
+{
+"id": "1-hmnl-2026-27-k2-pula-crnica-c4",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 882,
+"exact": true,
+"staff": true
 },
 {
 "id": "1-hmnl-2026-27-k2-pula-crnica-g4",
@@ -1255,6 +1646,14 @@
 "sec": 330
 },
 {
+"id": "1-hmnl-2026-27-k2-osijek-novo-vrijeme-c1",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 510,
+"player": "osijek-2026-27-Seniori-lovro-trdin"
+},
+{
 "id": "1-hmnl-2026-27-k2-osijek-novo-vrijeme-g1",
 "type": "goal",
 "side": "home",
@@ -1287,6 +1686,14 @@
 "sec": 1050
 },
 {
+"id": "1-hmnl-2026-27-k2-osijek-novo-vrijeme-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 1050,
+"player": "osijek-2026-27-Seniori-andrej-pandurevic"
+},
+{
 "id": "1-hmnl-2026-27-k2-osijek-novo-vrijeme-g5",
 "type": "goal",
 "side": "home",
@@ -1301,6 +1708,14 @@
 "player": "osijek-2026-27-Seniori-yuri-madruga",
 "period": 2,
 "sec": 270
+},
+{
+"id": "1-hmnl-2026-27-k2-osijek-novo-vrijeme-c2",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 330,
+"player": "novo-vrijeme-2026-27-Seniori-ante-silic"
 },
 {
 "id": "1-hmnl-2026-27-k2-osijek-novo-vrijeme-g7",
@@ -1412,12 +1827,52 @@
 },
 "events": [
 {
+"id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-c4",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 690,
+"staff": true
+},
+{
+"id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 1050,
+"player": "futsal-dinamo-2026-27-Seniori-mateo-muzar"
+},
+{
+"id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-c6",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 1050,
+"player": "olmissum-2026-27-Seniori-uros-duric"
+},
+{
+"id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-c1",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 390,
+"player": "futsal-dinamo-2026-27-Seniori-kristian-cekol"
+},
+{
 "id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-g0",
 "type": "goal",
 "side": "home",
 "player": "futsal-dinamo-2026-27-Seniori-mihael-cop",
 "period": 2,
 "sec": 510
+},
+{
+"id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-c5",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 510,
+"player": "olmissum-2026-27-Seniori-vinko-rozga"
 },
 {
 "id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-g1",
@@ -1434,6 +1889,22 @@
 "player": "olmissum-2026-27-Seniori-ante-kovacevic",
 "period": 2,
 "sec": 750
+},
+{
+"id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-c3",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 750,
+"player": "futsal-dinamo-2026-27-Seniori-filip-novak"
+},
+{
+"id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-c2",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 870,
+"player": "futsal-dinamo-2026-27-Seniori-josip-purgar"
 },
 {
 "id": "1-hmnl-2026-27-k3-futsal-dinamo-olmissum-g3",
@@ -1561,12 +2032,28 @@
 "sec": 750
 },
 {
+"id": "1-hmnl-2026-27-k3-rijeka-osijek-c2",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 750,
+"player": "osijek-2026-27-Seniori-andrej-pandurevic"
+},
+{
 "id": "1-hmnl-2026-27-k3-rijeka-osijek-g5",
 "type": "goal",
 "side": "home",
 "player": "rijeka-2026-27-Seniori-mihael-matijevic",
 "period": 1,
 "sec": 810
+},
+{
+"id": "1-hmnl-2026-27-k3-rijeka-osijek-c1",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 810,
+"player": "osijek-2026-27-Seniori-matias-mijic"
 },
 {
 "id": "1-hmnl-2026-27-k3-rijeka-osijek-g6",
@@ -1583,6 +2070,14 @@
 "player": "osijek-2026-27-Seniori-antonio-sekulic",
 "period": 2,
 "sec": 270
+},
+{
+"id": "1-hmnl-2026-27-k3-rijeka-osijek-c0",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 270,
+"player": "rijeka-2026-27-Seniori-dorde-rosic"
 },
 {
 "id": "1-hmnl-2026-27-k3-rijeka-osijek-g8",
@@ -1690,12 +2185,36 @@
 "sec": 270
 },
 {
+"id": "1-hmnl-2026-27-k3-crnica-torcida-c0",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 330,
+"player": "torcida-2026-27-Seniori-petar-pedic"
+},
+{
 "id": "1-hmnl-2026-27-k3-crnica-torcida-g2",
 "type": "goal",
 "side": "home",
 "player": "crnica-2026-27-Seniori-arnon-santos-cassemiro",
 "period": 1,
 "sec": 750
+},
+{
+"id": "1-hmnl-2026-27-k3-crnica-torcida-c2",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 810,
+"player": "torcida-2026-27-Seniori-julian-esteban-clavijo-urquijo"
+},
+{
+"id": "1-hmnl-2026-27-k3-crnica-torcida-c1",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 90,
+"player": "torcida-2026-27-Seniori-karlo-vukovic"
 },
 {
 "id": "1-hmnl-2026-27-k3-crnica-torcida-g3",
@@ -1795,6 +2314,14 @@
 },
 "events": [
 {
+"id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 150,
+"player": "novo-vrijeme-2026-27-Seniori-gabrijel-lasic"
+},
+{
 "id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-g0",
 "type": "goal",
 "side": "home",
@@ -1819,6 +2346,14 @@
 "sec": 450
 },
 {
+"id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-c5",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 510,
+"player": "pula-2026-27-Seniori-zan-janez"
+},
+{
 "id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-g3",
 "type": "goal",
 "side": "away",
@@ -1835,12 +2370,52 @@
 "sec": 930
 },
 {
+"id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-c6",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 930,
+"player": "pula-2026-27-Seniori-stefano-galesic"
+},
+{
+"id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-c2",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 1110,
+"player": "pula-2026-27-Seniori-danijel-starcic"
+},
+{
+"id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-c1",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 810,
+"player": "novo-vrijeme-2026-27-Seniori-loren-radic"
+},
+{
 "id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-g5",
 "type": "goal",
 "side": "home",
 "player": "novo-vrijeme-2026-27-Seniori-jure-suban",
 "period": 2,
 "sec": 870
+},
+{
+"id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-c3",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 930,
+"player": "pula-2026-27-Seniori-daniel-moravac"
+},
+{
+"id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-c4",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 930,
+"player": "pula-2026-27-Seniori-domagoj-steko"
 },
 {
 "id": "1-hmnl-2026-27-k3-novo-vrijeme-pula-g6",
@@ -1941,6 +2516,14 @@
 "sec": 750
 },
 {
+"id": "1-hmnl-2026-27-k3-hajduk-square-c1",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 870,
+"player": "hajduk-2026-27-Seniori-stipe-dolic"
+},
+{
 "id": "1-hmnl-2026-27-k3-hajduk-square-g1",
 "type": "goal",
 "side": "home",
@@ -1948,6 +2531,30 @@
 "period": 2,
 "sec": 65,
 "exact": true
+},
+{
+"id": "1-hmnl-2026-27-k3-hajduk-square-c0",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 210,
+"player": "hajduk-2026-27-Seniori-filipe-da-silva-santana"
+},
+{
+"id": "1-hmnl-2026-27-k3-hajduk-square-c3",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 210,
+"player": "square-2026-27-Seniori-antonio-lang"
+},
+{
+"id": "1-hmnl-2026-27-k3-hajduk-square-c2",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 270,
+"player": "hajduk-2026-27-Seniori-antonio-blazevic"
 },
 {
 "id": "1-hmnl-2026-27-k3-hajduk-square-g2",
@@ -2063,6 +2670,24 @@
 "sec": 510
 },
 {
+"id": "1-hmnl-2026-27-k4-futsal-dinamo-crnica-c1",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 1170,
+"player": "crnica-2026-27-Seniori-arnon-santos-cassemiro"
+},
+{
+"id": "1-hmnl-2026-27-k4-futsal-dinamo-crnica-c2",
+"type": "red",
+"side": "away",
+"period": 2,
+"sec": 384,
+"exact": true,
+"player": "crnica-2026-27-Seniori-arnon-santos-cassemiro",
+"secondYellow": true
+},
+{
 "id": "1-hmnl-2026-27-k4-futsal-dinamo-crnica-g1",
 "type": "goal",
 "side": "home",
@@ -2070,6 +2695,15 @@
 "period": 2,
 "sec": 423,
 "exact": true
+},
+{
+"id": "1-hmnl-2026-27-k4-futsal-dinamo-crnica-c0",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 676,
+"exact": true,
+"player": "crnica-2026-27-Seniori-bruno-zilic"
 },
 {
 "id": "1-hmnl-2026-27-k4-futsal-dinamo-crnica-g2",
@@ -2162,6 +2796,14 @@
 },
 "events": [
 {
+"id": "1-hmnl-2026-27-k4-olmissum-square-c7",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 30,
+"player": "square-2026-27-Seniori-matej-perovic"
+},
+{
 "id": "1-hmnl-2026-27-k4-olmissum-square-g0",
 "type": "goal",
 "side": "home",
@@ -2186,12 +2828,28 @@
 "sec": 330
 },
 {
+"id": "1-hmnl-2026-27-k4-olmissum-square-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 450,
+"player": "olmissum-2026-27-Seniori-uros-duric"
+},
+{
 "id": "1-hmnl-2026-27-k4-olmissum-square-g3",
 "type": "goal",
 "side": "home",
 "player": "olmissum-2026-27-Seniori-karlo-martinovic",
 "period": 1,
 "sec": 570
+},
+{
+"id": "1-hmnl-2026-27-k4-olmissum-square-c3",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 570,
+"player": "olmissum-2026-27-Seniori-jure-copic"
 },
 {
 "id": "1-hmnl-2026-27-k4-olmissum-square-g4",
@@ -2202,12 +2860,28 @@
 "sec": 810
 },
 {
+"id": "1-hmnl-2026-27-k4-olmissum-square-c6",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 810,
+"player": "square-2026-27-Seniori-zoran-primic"
+},
+{
 "id": "1-hmnl-2026-27-k4-olmissum-square-g5",
 "type": "goal",
 "side": "away",
 "player": "square-2026-27-Seniori-marko-kuraja",
 "period": 1,
 "sec": 870
+},
+{
+"id": "1-hmnl-2026-27-k4-olmissum-square-c2",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 870,
+"player": "olmissum-2026-27-Seniori-david-barbaric"
 },
 {
 "id": "1-hmnl-2026-27-k4-olmissum-square-g6",
@@ -2234,6 +2908,38 @@
 "sec": 90
 },
 {
+"id": "1-hmnl-2026-27-k4-olmissum-square-c5",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 90,
+"staff": true
+},
+{
+"id": "1-hmnl-2026-27-k4-olmissum-square-c4",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 270,
+"player": "olmissum-2026-27-Seniori-karlo-martinovic"
+},
+{
+"id": "1-hmnl-2026-27-k4-olmissum-square-c9",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 330,
+"player": "square-2026-27-Seniori-haron-dzankovic"
+},
+{
+"id": "1-hmnl-2026-27-k4-olmissum-square-c1",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 630,
+"player": "olmissum-2026-27-Seniori-ante-kovacevic"
+},
+{
 "id": "1-hmnl-2026-27-k4-olmissum-square-g9",
 "type": "goal",
 "side": "home",
@@ -2242,12 +2948,28 @@
 "sec": 870
 },
 {
+"id": "1-hmnl-2026-27-k4-olmissum-square-c10",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 930,
+"player": "square-2026-27-Seniori-andre-luis-sasse"
+},
+{
 "id": "1-hmnl-2026-27-k4-olmissum-square-g10",
 "type": "goal",
 "side": "away",
 "player": "square-2026-27-Seniori-marko-kuraja",
 "period": 2,
 "sec": 1110
+},
+{
+"id": "1-hmnl-2026-27-k4-olmissum-square-c8",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 1110,
+"player": "square-2026-27-Seniori-marko-kuraja"
 }
 ],
 "analysis": null,
@@ -2358,6 +3080,14 @@
 "sec": 210
 },
 {
+"id": "1-hmnl-2026-27-k4-torcida-novo-vrijeme-c0",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 390,
+"player": "novo-vrijeme-2026-27-Seniori-jonhn-lennon-felinto-silva"
+},
+{
 "id": "1-hmnl-2026-27-k4-torcida-novo-vrijeme-g4",
 "type": "goal",
 "side": "home",
@@ -2466,6 +3196,14 @@
 "sec": 510
 },
 {
+"id": "1-hmnl-2026-27-k4-pula-rijeka-c4",
+"type": "yellow",
+"side": "away",
+"period": 1,
+"sec": 570,
+"staff": true
+},
+{
 "id": "1-hmnl-2026-27-k4-pula-rijeka-g2",
 "type": "goal",
 "side": "home",
@@ -2482,12 +3220,44 @@
 "sec": 90
 },
 {
+"id": "1-hmnl-2026-27-k4-pula-rijeka-c1",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 330,
+"player": "pula-2026-27-Seniori-bepo-paus"
+},
+{
 "id": "1-hmnl-2026-27-k4-pula-rijeka-g4",
 "type": "goal",
 "side": "away",
 "player": "rijeka-2026-27-Seniori-luka-suton",
 "period": 2,
 "sec": 570
+},
+{
+"id": "1-hmnl-2026-27-k4-pula-rijeka-c2",
+"type": "yellow",
+"side": "home",
+"period": 2,
+"sec": 750,
+"player": "pula-2026-27-Seniori-stefano-galesic"
+},
+{
+"id": "1-hmnl-2026-27-k4-pula-rijeka-c3",
+"type": "yellow",
+"side": "away",
+"period": 2,
+"sec": 750,
+"player": "rijeka-2026-27-Seniori-elvir-husaric"
+},
+{
+"id": "1-hmnl-2026-27-k4-pula-rijeka-c0",
+"type": "red",
+"side": "home",
+"period": 2,
+"sec": 930,
+"player": "pula-2026-27-Seniori-danijel-starcic"
 },
 {
 "id": "1-hmnl-2026-27-k4-pula-rijeka-g5",
@@ -2580,6 +3350,14 @@
 }
 },
 "events": [
+{
+"id": "1-hmnl-2026-27-k4-osijek-hajduk-c0",
+"type": "yellow",
+"side": "home",
+"period": 1,
+"sec": 30,
+"player": "osijek-2026-27-Seniori-antonio-sekulic"
+},
 {
 "id": "1-hmnl-2026-27-k4-osijek-hajduk-g0",
 "type": "goal",

@@ -38,3 +38,7 @@ GOALS
 25|Antonio Sekulić|-
 40|Rafael Ferreira Lima|-
 40|Teo Turk|-
+CARDS
+25'|Đorđe Rosić|home|y
+14'|Matias Mijić|away|y
+13'|Andrej Pandurević|away|y

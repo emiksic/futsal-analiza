@@ -137,7 +137,10 @@ for ln in open(os.path.join(D, "schedule.txt"), encoding="utf-8"):
                 got = [sum(1 for e in m["events"] if e["type"] == "so" and e["side"] == s_ and e["scored"]) for s_ in ("home", "away")]
                 if got != [int(so.group(1)), int(so.group(2))]: problems.append(f"{mid}: kazneni {got} ne odgovaraju {so.group(0)}")
             for i, (t, name, side, k) in enumerate(det.get("cards", [])):
-                ev = {"id": f"{mid}-c{i}", "type": "yellow" if k == "y" else "red", "side": side, "player": name_side[(side, name)], **to_ev(t)}
+                ev = {"id": f"{mid}-c{i}", "type": "yellow" if k == "y" else "red", "side": side, **to_ev(t)}
+                pid = name_side.get((side, name))
+                if pid: ev["player"] = pid
+                else: ev["staff"] = True        # karton treneru ili službenoj osobi (nije u popisu igrača)
                 if k == "yy": ev["secondYellow"] = True
                 m["events"].append(ev)
             m["events"].sort(key=lambda e: (e["period"], e["sec"]))

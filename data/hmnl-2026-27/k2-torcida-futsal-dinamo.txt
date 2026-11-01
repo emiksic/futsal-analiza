@@ -34,3 +34,6 @@ GOALS
 19|Filip Novak|-
 21|Kristian Čekol|-
 33|Nikola Gudasić|-
+CARDS
+17'|Nandi Eterović|home|y
+24'|Dominik Drmić|away|y

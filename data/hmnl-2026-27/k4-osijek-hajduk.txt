@@ -30,3 +30,5 @@ AWAY_PLAYERS
 GOALS
 19|Nejc Hozjan|-
 40|Nejc Hozjan|-
+CARDS
+1'|Antonio Sekulić|home|y

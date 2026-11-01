@@ -33,3 +33,11 @@ GOALS
 33|Romeo Sušac|-
 33|Ante Kovačević|-
 36|Kristian Čekol|-
+CARDS
+18'|Mateo Mužar|home|y
+27'|Kristian Čekol|home|y
+35'|Josip Purgar|home|y
+33'|Filip Novak|home|y
+12'|Matija Đulvat|home|y
+29'|Vinko Rozga|away|y
+18'|Uroš Đurić|away|y

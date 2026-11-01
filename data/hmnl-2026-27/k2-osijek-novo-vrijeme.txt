@@ -38,3 +38,7 @@ GOALS
 36|Vitor Hugo de Lima da Silva|-
 37|Ronaldo Aparecido Prado De Oliveira Junior|-
 37|Vitor Hugo de Lima da Silva|-
+CARDS
+18'|Andrej Pandurević|home|y
+9'|Lovro Trdin|home|y
+26'|Ante Silić|away|y
