@@ -15,7 +15,7 @@ export function Notice({ name }) {
     <div className="notice-bg">
       <div className="notice" role="dialog" aria-modal="true" aria-labelledby="notice-t">
         <h2 id="notice-t">Neslužbena stranica</h2>
-        <p><b>{name}</b> je neovisna stranica o hrvatskim futsal ligama. Nije povezana s Hrvatskim nogometnim savezom, ligom ni klubovima, i oni je nisu odobrili.</p>
+        <p><b>{name}</b> je neovisna stranica o hrvatskim futsal ligama. Nije povezana s Hrvatskim nogometnim savezom, ligom ni klubovima.</p>
         <ul>
           <li>Rezultati, rasporedi i postave preneseni su iz javnih izvora i mogu sadržavati greške. Službeni podaci objavljuju se na HNS Semaforu.</li>
           <li>Video prijenosi pripadaju klubovima i prijenosnicima i prikazuju se kroz originalni YouTube player. Nazivi i oznake klubova i lige vlasništvo su njihovih nositelja. Sva prava pridržana.</li>
