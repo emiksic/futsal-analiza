@@ -66,3 +66,15 @@ python ball/extract_frames.py --per-match 200 --model ~/futsal-ball/runs/ball/we
 Za svaku utakmicu pregleda 4x više kandidata (`--pool 4`) i uzme 70 % onih na kojima je model najslabiji: ne nađe loptu,
 nesiguran je (pouzdanost < 0.5) ili je lopta u gornjem dijelu slike (druga strana terena, mala lopta). Ostatak je nasumičan,
 da skup ne postane jednostran. Novi okviri su barem 2 s udaljeni od već izvučenih. Zatim označavanje i trening kao gore.
+
+## 8. TrackNet (3 uzastopne slike) i pregled na snimci — trenutno najbolje
+
+Model: `~/futsal-ball/runs/tracknet/last.pt` (1. 11. 2026.: 74 % lopti uz 16 % lažnih alarma, 58 % uz 3 %; gornja granica 86 %).
+
+```
+python ball/tracknet.py detect snimka.mp4 lopta.json --model ~/futsal-ball/runs/tracknet/last.pt [--start 600 --end 840]
+python ball/render_ball.py snimka.mp4 lopta.mp4 --dets lopta.json --min-conf 0.45 --short-conf 0.62 --people yolo11s.pt [--raw]
+```
+TrackNetove pouzdanosti su niže nego kod YOLO modela, zato `--min-conf 0.45 --short-conf 0.62`.
+`--people` smanji pouzdanost detekcija na glavama igrača i iznad svih igrača (zid, mreža, publika).
+Na 4 minute utakmice 7g1c (nije bila u treningu) lopta je točno praćena gotovo cijelo vrijeme.
