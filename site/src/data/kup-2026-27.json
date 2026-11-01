@@ -1212,7 +1212,7 @@
 "away": "petrinjcica",
 "hall": "valpovo",
 "status": "finished",
-"youtube": "",
+"youtube": "https://www.youtube.com/watch?v=Ng_um7Ac8lM",
 "roster": {
 "home": {
 "players": [
@@ -1473,25 +1473,25 @@
 "id": "kup-2026-27-k1-dominik-savio-novi-marof-c0",
 "type": "yellow",
 "side": "away",
-"player": "novi-marof-2026-27-Seniori-frano-brzovic",
 "period": 1,
-"sec": 990
+"sec": 990,
+"player": "novi-marof-2026-27-Seniori-frano-brzovic"
 },
 {
 "id": "kup-2026-27-k1-dominik-savio-novi-marof-c1",
 "type": "yellow",
 "side": "home",
-"player": "dominik-savio-2026-27-Seniori-matej-cosic",
 "period": 1,
-"sec": 1110
+"sec": 1110,
+"player": "dominik-savio-2026-27-Seniori-matej-cosic"
 },
 {
 "id": "kup-2026-27-k1-dominik-savio-novi-marof-c2",
 "type": "red",
 "side": "away",
-"player": "novi-marof-2026-27-Seniori-frano-brzovic",
 "period": 2,
 "sec": 750,
+"player": "novi-marof-2026-27-Seniori-frano-brzovic",
 "secondYellow": true
 },
 {
@@ -1880,17 +1880,17 @@
 "id": "kup-2026-27-k1-jezera-futsal-dinamo-c0",
 "type": "yellow",
 "side": "home",
-"player": "jezera-2026-27-Seniori-vedran-klaric",
 "period": 1,
-"sec": 330
+"sec": 330,
+"player": "jezera-2026-27-Seniori-vedran-klaric"
 },
 {
 "id": "kup-2026-27-k1-jezera-futsal-dinamo-c1",
 "type": "red",
 "side": "home",
-"player": "jezera-2026-27-Seniori-toni-petrisor-tonita",
 "period": 1,
-"sec": 570
+"sec": 570,
+"player": "jezera-2026-27-Seniori-toni-petrisor-tonita"
 },
 {
 "id": "kup-2026-27-k1-jezera-futsal-dinamo-g2",
@@ -1936,17 +1936,17 @@
 "id": "kup-2026-27-k1-jezera-futsal-dinamo-c2",
 "type": "yellow",
 "side": "away",
-"player": "futsal-dinamo-2026-27-Seniori-lovro-cigler",
 "period": 2,
-"sec": 270
+"sec": 270,
+"player": "futsal-dinamo-2026-27-Seniori-lovro-cigler"
 },
 {
 "id": "kup-2026-27-k1-jezera-futsal-dinamo-c3",
 "type": "yellow",
 "side": "home",
-"player": "jezera-2026-27-Seniori-renato-novic",
 "period": 2,
-"sec": 450
+"sec": 450,
+"player": "jezera-2026-27-Seniori-renato-novic"
 },
 {
 "id": "kup-2026-27-k1-jezera-futsal-dinamo-g7",
@@ -1968,9 +1968,9 @@
 "id": "kup-2026-27-k1-jezera-futsal-dinamo-c4",
 "type": "yellow",
 "side": "home",
-"player": "jezera-2026-27-Seniori-nino-gulam",
 "period": 2,
-"sec": 1170
+"sec": 1170,
+"player": "jezera-2026-27-Seniori-nino-gulam"
 }
 ],
 "analysis": null,
@@ -2067,9 +2067,9 @@
 "id": "kup-2026-27-k1-rijeka-universitas-c0",
 "type": "yellow",
 "side": "away",
-"player": "universitas-2026-27-Seniori-mateo-poljaric",
 "period": 1,
-"sec": 990
+"sec": 990,
+"player": "universitas-2026-27-Seniori-mateo-poljaric"
 },
 {
 "id": "kup-2026-27-k1-rijeka-universitas-g2",
@@ -2099,9 +2099,9 @@
 "id": "kup-2026-27-k1-rijeka-universitas-c1",
 "type": "yellow",
 "side": "away",
-"player": "universitas-2026-27-Seniori-ante-crnjac",
 "period": 1,
-"sec": 1170
+"sec": 1170,
+"player": "universitas-2026-27-Seniori-ante-crnjac"
 },
 {
 "id": "kup-2026-27-k1-rijeka-universitas-g5",
@@ -2163,9 +2163,9 @@
 "id": "kup-2026-27-k1-rijeka-universitas-c2",
 "type": "yellow",
 "side": "home",
-"player": "rijeka-2026-27-Seniori-filip-kamauli",
 "period": 2,
-"sec": 810
+"sec": 810,
+"player": "rijeka-2026-27-Seniori-filip-kamauli"
 },
 {
 "id": "kup-2026-27-k1-rijeka-universitas-g12",
@@ -2290,9 +2290,9 @@
 "id": "kup-2026-27-k1-vrgorac-aurelia-boso-c0",
 "type": "yellow",
 "side": "away",
-"player": "aurelia-boso-2026-27-Seniori-mario-bozic",
 "period": 2,
-"sec": 330
+"sec": 330,
+"player": "aurelia-boso-2026-27-Seniori-mario-bozic"
 },
 {
 "id": "kup-2026-27-k1-vrgorac-aurelia-boso-g4",
@@ -2421,19 +2421,19 @@
 "id": "kup-2026-27-k1-heroji-2007-hajduk-c0",
 "type": "yellow",
 "side": "away",
-"player": "hajduk-2026-27-Seniori-antonio-blazevic",
 "period": 1,
 "sec": 1103,
-"exact": true
+"exact": true,
+"player": "hajduk-2026-27-Seniori-antonio-blazevic"
 },
 {
 "id": "kup-2026-27-k1-heroji-2007-hajduk-c1",
 "type": "yellow",
 "side": "home",
-"player": "heroji-2007-2026-27-Seniori-danjel-knezevic",
 "period": 1,
 "sec": 1152,
-"exact": true
+"exact": true,
+"player": "heroji-2007-2026-27-Seniori-danjel-knezevic"
 },
 {
 "id": "kup-2026-27-k1-heroji-2007-hajduk-g3",
@@ -2466,10 +2466,10 @@
 "id": "kup-2026-27-k1-heroji-2007-hajduk-c2",
 "type": "yellow",
 "side": "home",
-"player": "heroji-2007-2026-27-Seniori-duje-zubcic",
 "period": 2,
 "sec": 246,
-"exact": true
+"exact": true,
+"player": "heroji-2007-2026-27-Seniori-duje-zubcic"
 },
 {
 "id": "kup-2026-27-k1-heroji-2007-hajduk-g6",

@@ -99,33 +99,33 @@
 "id": "juniori-2026-27-k1-crnica-olmissum-c4",
 "type": "yellow",
 "side": "away",
-"player": "olmissum-2026-27-U-19-p355f1398",
 "period": 1,
-"sec": 30
+"sec": 30,
+"player": "olmissum-2026-27-U-19-p355f1398"
 },
 {
 "id": "juniori-2026-27-k1-crnica-olmissum-c5",
 "type": "yellow",
 "side": "away",
-"player": "olmissum-2026-27-U-19-p6a2688b7",
 "period": 1,
-"sec": 90
+"sec": 90,
+"player": "olmissum-2026-27-U-19-p6a2688b7"
 },
 {
 "id": "juniori-2026-27-k1-crnica-olmissum-c6",
 "type": "yellow",
 "side": "away",
-"player": "olmissum-2026-27-U-19-pff024064",
 "period": 1,
-"sec": 690
+"sec": 690,
+"player": "olmissum-2026-27-U-19-pff024064"
 },
 {
 "id": "juniori-2026-27-k1-crnica-olmissum-c7",
 "type": "red",
 "side": "away",
-"player": "olmissum-2026-27-U-19-pff024064",
 "period": 1,
-"sec": 690
+"sec": 690,
+"player": "olmissum-2026-27-U-19-pff024064"
 },
 {
 "id": "juniori-2026-27-k1-crnica-olmissum-g0",
@@ -164,9 +164,9 @@
 "id": "juniori-2026-27-k1-crnica-olmissum-c1",
 "type": "yellow",
 "side": "home",
-"player": "crnica-2026-27-U-19-p96997cd2",
 "period": 1,
-"sec": 1170
+"sec": 1170,
+"player": "crnica-2026-27-U-19-p96997cd2"
 },
 {
 "id": "juniori-2026-27-k1-crnica-olmissum-g5",
@@ -180,9 +180,9 @@
 "id": "juniori-2026-27-k1-crnica-olmissum-c0",
 "type": "yellow",
 "side": "home",
-"player": "crnica-2026-27-U-19-p6c8b5065",
 "period": 2,
-"sec": 270
+"sec": 270,
+"player": "crnica-2026-27-U-19-p6c8b5065"
 },
 {
 "id": "juniori-2026-27-k1-crnica-olmissum-g6",
@@ -204,17 +204,17 @@
 "id": "juniori-2026-27-k1-crnica-olmissum-c3",
 "type": "yellow",
 "side": "away",
-"player": "olmissum-2026-27-U-19-p4dec9f8b",
 "period": 2,
-"sec": 570
+"sec": 570,
+"player": "olmissum-2026-27-U-19-p4dec9f8b"
 },
 {
 "id": "juniori-2026-27-k1-crnica-olmissum-c2",
 "type": "yellow",
 "side": "home",
-"player": "crnica-2026-27-U-19-p6a2efdd2",
 "period": 2,
-"sec": 810
+"sec": 810,
+"player": "crnica-2026-27-U-19-p6a2efdd2"
 },
 {
 "id": "juniori-2026-27-k1-crnica-olmissum-g8",
@@ -361,10 +361,10 @@
 "id": "juniori-2026-27-k1-pula-square-c0",
 "type": "yellow",
 "side": "home",
-"player": "pula-2026-27-U-19-pd140e7a9",
 "period": 1,
 "sec": 785,
-"exact": true
+"exact": true,
+"player": "pula-2026-27-U-19-pd140e7a9"
 },
 {
 "id": "juniori-2026-27-k1-pula-square-g4",
@@ -389,10 +389,10 @@
 "id": "juniori-2026-27-k1-pula-square-c1",
 "type": "yellow",
 "side": "away",
-"player": "square-2026-27-U-19-p89b8f5a5",
 "period": 1,
 "sec": 997,
-"exact": true
+"exact": true,
+"player": "square-2026-27-U-19-p89b8f5a5"
 },
 {
 "id": "juniori-2026-27-k1-pula-square-g6",
@@ -579,17 +579,17 @@
 "id": "juniori-2026-27-k1-universitas-futsal-dinamo-c0",
 "type": "yellow",
 "side": "home",
-"player": "universitas-2026-27-U-19-p133ff4d6",
 "period": 1,
-"sec": 450
+"sec": 450,
+"player": "universitas-2026-27-U-19-p133ff4d6"
 },
 {
 "id": "juniori-2026-27-k1-universitas-futsal-dinamo-c2",
 "type": "yellow",
 "side": "home",
-"player": "universitas-2026-27-U-19-p8d7cb94d",
 "period": 1,
-"sec": 750
+"sec": 750,
+"player": "universitas-2026-27-U-19-p8d7cb94d"
 },
 {
 "id": "juniori-2026-27-k1-universitas-futsal-dinamo-g3",
@@ -619,9 +619,9 @@
 "id": "juniori-2026-27-k1-universitas-futsal-dinamo-c3",
 "type": "yellow",
 "side": "away",
-"player": "futsal-dinamo-2026-27-U-19-pa8026f67",
 "period": 1,
-"sec": 990
+"sec": 990,
+"player": "futsal-dinamo-2026-27-U-19-pa8026f67"
 },
 {
 "id": "juniori-2026-27-k1-universitas-futsal-dinamo-g6",
@@ -635,9 +635,9 @@
 "id": "juniori-2026-27-k1-universitas-futsal-dinamo-c4",
 "type": "yellow",
 "side": "away",
-"player": "futsal-dinamo-2026-27-U-19-pe2148c25",
 "period": 2,
-"sec": 570
+"sec": 570,
+"player": "futsal-dinamo-2026-27-U-19-pe2148c25"
 },
 {
 "id": "juniori-2026-27-k1-universitas-futsal-dinamo-g7",
@@ -659,9 +659,9 @@
 "id": "juniori-2026-27-k1-universitas-futsal-dinamo-c1",
 "type": "yellow",
 "side": "home",
-"player": "universitas-2026-27-U-19-p547a9788",
 "period": 2,
-"sec": 1050
+"sec": 1050,
+"player": "universitas-2026-27-U-19-p547a9788"
 }
 ],
 "analysis": null,
@@ -784,9 +784,9 @@
 "id": "juniori-2026-27-k1-gimka-hajduk-c0",
 "type": "yellow",
 "side": "home",
-"player": "gimka-2026-27-U-19-p867a3150",
 "period": 1,
-"sec": 750
+"sec": 750,
+"player": "gimka-2026-27-U-19-p867a3150"
 },
 {
 "id": "juniori-2026-27-k1-gimka-hajduk-g3",
@@ -800,9 +800,9 @@
 "id": "juniori-2026-27-k1-gimka-hajduk-c2",
 "type": "yellow",
 "side": "away",
-"player": "hajduk-2026-27-U-19-p3c5ab5af",
 "period": 2,
-"sec": 570
+"sec": 570,
+"player": "hajduk-2026-27-U-19-p3c5ab5af"
 },
 {
 "id": "juniori-2026-27-k1-gimka-hajduk-g2",
@@ -825,9 +825,9 @@
 "id": "juniori-2026-27-k1-gimka-hajduk-c1",
 "type": "yellow",
 "side": "away",
-"player": "hajduk-2026-27-U-19-p8409256c",
 "period": 2,
-"sec": 810
+"sec": 810,
+"player": "hajduk-2026-27-U-19-p8409256c"
 }
 ],
 "analysis": null,
@@ -842,7 +842,7 @@
 "away": "torcida",
 "hall": "mladosti",
 "status": "finished",
-"youtube": "",
+"youtube": "https://www.youtube.com/watch?v=usnKqkWnH18",
 "roster": {
 "home": {
 "players": [
@@ -964,9 +964,9 @@
 "id": "juniori-2026-27-k1-rijeka-torcida-c1",
 "type": "yellow",
 "side": "home",
-"player": "rijeka-2026-27-U-19-p247f7434",
 "period": 2,
-"sec": 150
+"sec": 150,
+"player": "rijeka-2026-27-U-19-p247f7434"
 },
 {
 "id": "juniori-2026-27-k1-rijeka-torcida-g4",
@@ -988,25 +988,25 @@
 "id": "juniori-2026-27-k1-rijeka-torcida-c0",
 "type": "yellow",
 "side": "home",
-"player": "rijeka-2026-27-U-19-p57210243",
 "period": 2,
-"sec": 990
+"sec": 990,
+"player": "rijeka-2026-27-U-19-p57210243"
 },
 {
 "id": "juniori-2026-27-k1-rijeka-torcida-c2",
 "type": "yellow",
 "side": "away",
-"player": "torcida-2026-27-U-19-p681362d0",
 "period": 2,
-"sec": 1050
+"sec": 1050,
+"player": "torcida-2026-27-U-19-p681362d0"
 },
 {
 "id": "juniori-2026-27-k1-rijeka-torcida-c3",
 "type": "yellow",
 "side": "away",
-"player": "torcida-2026-27-U-19-paa94ced2",
 "period": 2,
-"sec": 1170
+"sec": 1170,
+"player": "torcida-2026-27-U-19-paa94ced2"
 }
 ],
 "analysis": null,
@@ -1021,7 +1021,7 @@
 "away": "novo-vrijeme",
 "hall": "zrinjevac",
 "status": "finished",
-"youtube": "",
+"youtube": "https://www.youtube.com/watch?v=1vpYPzH6O5c",
 "roster": {
 "home": {
 "players": [
@@ -1137,9 +1137,9 @@
 "id": "juniori-2026-27-k1-osijek-novo-vrijeme-c0",
 "type": "yellow",
 "side": "away",
-"player": "novo-vrijeme-2026-27-U-19-p4f7d55ef",
 "period": 1,
-"sec": 870
+"sec": 870,
+"player": "novo-vrijeme-2026-27-U-19-p4f7d55ef"
 },
 {
 "id": "juniori-2026-27-k1-osijek-novo-vrijeme-g8",
@@ -1193,9 +1193,9 @@
 "id": "juniori-2026-27-k1-osijek-novo-vrijeme-c1",
 "type": "yellow",
 "side": "away",
-"player": "novo-vrijeme-2026-27-U-19-p88e106bd",
 "period": 2,
-"sec": 1170
+"sec": 1170,
+"player": "novo-vrijeme-2026-27-U-19-p88e106bd"
 }
 ],
 "analysis": null,
@@ -1505,9 +1505,9 @@
 "id": "juniori-2026-27-k2-square-osijek-c0",
 "type": "yellow",
 "side": "home",
-"player": "square-2026-27-U-19-p7b09ee88",
 "period": 1,
-"sec": 1170
+"sec": 1170,
+"player": "square-2026-27-U-19-p7b09ee88"
 },
 {
 "id": "juniori-2026-27-k2-square-osijek-g2",
@@ -1641,17 +1641,17 @@
 "id": "juniori-2026-27-k2-novo-vrijeme-crnica-c1",
 "type": "yellow",
 "side": "home",
-"player": "novo-vrijeme-2026-27-U-19-p578830f9",
 "period": 1,
-"sec": 630
+"sec": 630,
+"player": "novo-vrijeme-2026-27-U-19-p578830f9"
 },
 {
 "id": "juniori-2026-27-k2-novo-vrijeme-crnica-c2",
 "type": "yellow",
 "side": "away",
-"player": "crnica-2026-27-U-19-p96997cd2",
 "period": 1,
-"sec": 810
+"sec": 810,
+"player": "crnica-2026-27-U-19-p96997cd2"
 },
 {
 "id": "juniori-2026-27-k2-novo-vrijeme-crnica-g1",
@@ -1681,9 +1681,9 @@
 "id": "juniori-2026-27-k2-novo-vrijeme-crnica-c3",
 "type": "yellow",
 "side": "away",
-"player": "crnica-2026-27-U-19-p9a2166fd",
 "period": 2,
-"sec": 870
+"sec": 870,
+"player": "crnica-2026-27-U-19-p9a2166fd"
 },
 {
 "id": "juniori-2026-27-k2-novo-vrijeme-crnica-g4",
@@ -1698,9 +1698,9 @@
 "id": "juniori-2026-27-k2-novo-vrijeme-crnica-c0",
 "type": "yellow",
 "side": "home",
-"player": "novo-vrijeme-2026-27-U-19-p4f7d55ef",
 "period": 2,
-"sec": 930
+"sec": 930,
+"player": "novo-vrijeme-2026-27-U-19-p4f7d55ef"
 },
 {
 "id": "juniori-2026-27-k2-novo-vrijeme-crnica-g0",
@@ -1829,9 +1829,9 @@
 "id": "juniori-2026-27-k2-olmissum-rijeka-c4",
 "type": "yellow",
 "side": "away",
-"player": "rijeka-2026-27-U-19-p502a8677",
 "period": 1,
-"sec": 390
+"sec": 390,
+"player": "rijeka-2026-27-U-19-p502a8677"
 },
 {
 "id": "juniori-2026-27-k2-olmissum-rijeka-g0",
@@ -1853,9 +1853,9 @@
 "id": "juniori-2026-27-k2-olmissum-rijeka-c3",
 "type": "yellow",
 "side": "away",
-"player": "rijeka-2026-27-U-19-p247f7434",
 "period": 1,
-"sec": 810
+"sec": 810,
+"player": "rijeka-2026-27-U-19-p247f7434"
 },
 {
 "id": "juniori-2026-27-k2-olmissum-rijeka-g2",
@@ -1869,9 +1869,9 @@
 "id": "juniori-2026-27-k2-olmissum-rijeka-c1",
 "type": "yellow",
 "side": "away",
-"player": "rijeka-2026-27-U-19-p060a4978",
 "period": 1,
-"sec": 1110
+"sec": 1110,
+"player": "rijeka-2026-27-U-19-p060a4978"
 },
 {
 "id": "juniori-2026-27-k2-olmissum-rijeka-g3",
@@ -1885,9 +1885,9 @@
 "id": "juniori-2026-27-k2-olmissum-rijeka-c0",
 "type": "yellow",
 "side": "home",
-"player": "olmissum-2026-27-U-19-p3a7679c1",
 "period": 2,
-"sec": 210
+"sec": 210,
+"player": "olmissum-2026-27-U-19-p3a7679c1"
 },
 {
 "id": "juniori-2026-27-k2-olmissum-rijeka-g4",
@@ -1933,9 +1933,9 @@
 "id": "juniori-2026-27-k2-olmissum-rijeka-c2",
 "type": "yellow",
 "side": "away",
-"player": "rijeka-2026-27-U-19-p54f0fc30",
 "period": 2,
-"sec": 1170
+"sec": 1170,
+"player": "rijeka-2026-27-U-19-p54f0fc30"
 }
 ],
 "analysis": null,
@@ -2050,10 +2050,10 @@
 "id": "juniori-2026-27-k2-universitas-pula-c0",
 "type": "yellow",
 "side": "home",
-"player": "universitas-2026-27-U-19-p133ff4d6",
 "period": 1,
 "sec": 614,
-"exact": true
+"exact": true,
+"player": "universitas-2026-27-U-19-p133ff4d6"
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g1",
@@ -2077,10 +2077,10 @@
 "id": "juniori-2026-27-k2-universitas-pula-c3",
 "type": "yellow",
 "side": "away",
-"player": "pula-2026-27-U-19-p7b3ff626",
 "period": 1,
 "sec": 1156,
-"exact": true
+"exact": true,
+"player": "pula-2026-27-U-19-p7b3ff626"
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g3",
@@ -2104,19 +2104,19 @@
 "id": "juniori-2026-27-k2-universitas-pula-c1",
 "type": "yellow",
 "side": "home",
-"player": "universitas-2026-27-U-19-p37ce6c9a",
 "period": 2,
 "sec": 422,
-"exact": true
+"exact": true,
+"player": "universitas-2026-27-U-19-p37ce6c9a"
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-c2",
 "type": "yellow",
 "side": "away",
-"player": "pula-2026-27-U-19-pfdb50166",
 "period": 2,
 "sec": 536,
-"exact": true
+"exact": true,
+"player": "pula-2026-27-U-19-pfdb50166"
 },
 {
 "id": "juniori-2026-27-k2-universitas-pula-g5",
@@ -2167,7 +2167,7 @@
 "away": "hajduk",
 "hall": "domjanic",
 "status": "finished",
-"youtube": "",
+"youtube": "https://www.youtube.com/watch?v=TX_c90oG5pI",
 "roster": {
 "home": {
 "players": [
@@ -2257,10 +2257,10 @@
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-c2",
 "type": "yellow",
 "side": "away",
-"player": "hajduk-2026-27-U-19-pc30a1a47",
 "period": 1,
 "sec": 143,
-"exact": true
+"exact": true,
+"player": "hajduk-2026-27-U-19-pc30a1a47"
 },
 {
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-g0",
@@ -2290,9 +2290,9 @@
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-c3",
 "type": "yellow",
 "side": "away",
-"player": "hajduk-2026-27-U-19-pd2ad3b7a",
 "period": 1,
-"sec": 510
+"sec": 510,
+"player": "hajduk-2026-27-U-19-pd2ad3b7a"
 },
 {
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-g8",
@@ -2306,10 +2306,10 @@
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-c1",
 "type": "yellow",
 "side": "away",
-"player": "hajduk-2026-27-U-19-pacda3c78",
 "period": 1,
 "sec": 669,
-"exact": true
+"exact": true,
+"player": "hajduk-2026-27-U-19-pacda3c78"
 },
 {
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-g3",
@@ -2331,9 +2331,9 @@
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-c0",
 "type": "yellow",
 "side": "home",
-"player": "futsal-dinamo-2026-27-U-19-p57e5b943",
 "period": 2,
-"sec": 150
+"sec": 150,
+"player": "futsal-dinamo-2026-27-U-19-p57e5b943"
 },
 {
 "id": "juniori-2026-27-k2-futsal-dinamo-hajduk-g4",
@@ -2488,9 +2488,9 @@
 "id": "juniori-2026-27-k3-hajduk-torcida-c0",
 "type": "yellow",
 "side": "away",
-"player": "torcida-2026-27-U-19-p3add2bd5",
 "period": 1,
-"sec": 750
+"sec": 750,
+"player": "torcida-2026-27-U-19-p3add2bd5"
 },
 {
 "id": "juniori-2026-27-k3-hajduk-torcida-g0",
@@ -2504,9 +2504,9 @@
 "id": "juniori-2026-27-k3-hajduk-torcida-c1",
 "type": "yellow",
 "side": "away",
-"player": "torcida-2026-27-U-19-pe27495d6",
 "period": 1,
-"sec": 1050
+"sec": 1050,
+"player": "torcida-2026-27-U-19-pe27495d6"
 },
 {
 "id": "juniori-2026-27-k3-hajduk-torcida-g1",
@@ -2654,17 +2654,17 @@
 "id": "juniori-2026-27-k3-crnica-square-c3",
 "type": "yellow",
 "side": "home",
-"player": "crnica-2026-27-U-19-p56a6875c",
 "period": 1,
-"sec": 690
+"sec": 690,
+"player": "crnica-2026-27-U-19-p56a6875c"
 },
 {
 "id": "juniori-2026-27-k3-crnica-square-c4",
 "type": "yellow",
 "side": "home",
-"player": "crnica-2026-27-U-19-p37a871df",
 "period": 1,
-"sec": 930
+"sec": 930,
+"player": "crnica-2026-27-U-19-p37a871df"
 },
 {
 "id": "juniori-2026-27-k3-crnica-square-g2",
@@ -2678,9 +2678,9 @@
 "id": "juniori-2026-27-k3-crnica-square-c6",
 "type": "yellow",
 "side": "away",
-"player": "square-2026-27-U-19-p72234204",
 "period": 2,
-"sec": 510
+"sec": 510,
+"player": "square-2026-27-U-19-p72234204"
 },
 {
 "id": "juniori-2026-27-k3-crnica-square-g0",
@@ -2694,41 +2694,41 @@
 "id": "juniori-2026-27-k3-crnica-square-c1",
 "type": "yellow",
 "side": "home",
-"player": "crnica-2026-27-U-19-p6900d302",
 "period": 2,
-"sec": 810
+"sec": 810,
+"player": "crnica-2026-27-U-19-p6900d302"
 },
 {
 "id": "juniori-2026-27-k3-crnica-square-c2",
 "type": "yellow",
 "side": "home",
-"player": "crnica-2026-27-U-19-pf3df3981",
 "period": 2,
-"sec": 810
+"sec": 810,
+"player": "crnica-2026-27-U-19-pf3df3981"
 },
 {
 "id": "juniori-2026-27-k3-crnica-square-c7",
 "type": "yellow",
 "side": "away",
-"player": "square-2026-27-U-19-p7b09ee88",
 "period": 2,
-"sec": 810
+"sec": 810,
+"player": "square-2026-27-U-19-p7b09ee88"
 },
 {
 "id": "juniori-2026-27-k3-crnica-square-c5",
 "type": "yellow",
 "side": "away",
-"player": "square-2026-27-U-19-pa510ce41",
 "period": 2,
-"sec": 990
+"sec": 990,
+"player": "square-2026-27-U-19-pa510ce41"
 },
 {
 "id": "juniori-2026-27-k3-crnica-square-c0",
 "type": "red",
 "side": "home",
-"player": "crnica-2026-27-U-19-p43707f94",
 "period": 2,
-"sec": 1110
+"sec": 1110,
+"player": "crnica-2026-27-U-19-p43707f94"
 },
 {
 "id": "juniori-2026-27-k3-crnica-square-g3",
@@ -2901,10 +2901,10 @@
 "id": "juniori-2026-27-k3-gimka-olmissum-c0",
 "type": "yellow",
 "side": "away",
-"player": "olmissum-2026-27-U-19-p4b9e7c12",
 "period": 2,
 "sec": 381,
-"exact": true
+"exact": true,
+"player": "olmissum-2026-27-U-19-p4b9e7c12"
 },
 {
 "id": "juniori-2026-27-k3-gimka-olmissum-g6",
@@ -3080,10 +3080,10 @@
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-c2",
 "type": "yellow",
 "side": "away",
-"player": "futsal-dinamo-2026-27-U-19-p57e5b943",
 "period": 2,
 "sec": 672,
-"exact": true
+"exact": true,
+"player": "futsal-dinamo-2026-27-U-19-p57e5b943"
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-g5",
@@ -3098,19 +3098,19 @@
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-c1",
 "type": "yellow",
 "side": "away",
-"player": "futsal-dinamo-2026-27-U-19-pa8026f67",
 "period": 2,
 "sec": 1109,
-"exact": true
+"exact": true,
+"player": "futsal-dinamo-2026-27-U-19-pa8026f67"
 },
 {
 "id": "juniori-2026-27-k3-pula-futsal-dinamo-c0",
 "type": "yellow",
 "side": "home",
-"player": "pula-2026-27-U-19-p1a91e0ff",
 "period": 2,
 "sec": 1123,
-"exact": true
+"exact": true,
+"player": "pula-2026-27-U-19-p1a91e0ff"
 }
 ],
 "analysis": null,
@@ -3125,7 +3125,7 @@
 "away": "universitas",
 "hall": "zrinjevac",
 "status": "finished",
-"youtube": "",
+"youtube": "https://www.youtube.com/watch?v=kEEpqPBs1KM",
 "roster": {
 "home": {
 "players": [
@@ -3223,17 +3223,17 @@
 "id": "juniori-2026-27-k3-osijek-universitas-c0",
 "type": "yellow",
 "side": "home",
-"player": "osijek-2026-27-U-19-p202e048a",
 "period": 1,
-"sec": 690
+"sec": 690,
+"player": "osijek-2026-27-U-19-p202e048a"
 },
 {
 "id": "juniori-2026-27-k3-osijek-universitas-c9",
 "type": "yellow",
 "side": "away",
-"player": "universitas-2026-27-U-19-p26737770",
 "period": 1,
-"sec": 690
+"sec": 690,
+"player": "universitas-2026-27-U-19-p26737770"
 },
 {
 "id": "juniori-2026-27-k3-osijek-universitas-g1",
@@ -3247,9 +3247,9 @@
 "id": "juniori-2026-27-k3-osijek-universitas-c6",
 "type": "yellow",
 "side": "away",
-"player": "universitas-2026-27-U-19-p1d5ff5d8",
 "period": 2,
-"sec": 90
+"sec": 90,
+"player": "universitas-2026-27-U-19-p1d5ff5d8"
 },
 {
 "id": "juniori-2026-27-k3-osijek-universitas-g2",
@@ -3263,9 +3263,9 @@
 "id": "juniori-2026-27-k3-osijek-universitas-c5",
 "type": "yellow",
 "side": "away",
-"player": "universitas-2026-27-U-19-pfb5c603f",
 "period": 2,
-"sec": 330
+"sec": 330,
+"player": "universitas-2026-27-U-19-pfb5c603f"
 },
 {
 "id": "juniori-2026-27-k3-osijek-universitas-g3",
@@ -3279,49 +3279,49 @@
 "id": "juniori-2026-27-k3-osijek-universitas-c4",
 "type": "yellow",
 "side": "home",
-"player": "osijek-2026-27-U-19-pac6c1606",
 "period": 2,
-"sec": 990
+"sec": 990,
+"player": "osijek-2026-27-U-19-pac6c1606"
 },
 {
 "id": "juniori-2026-27-k3-osijek-universitas-c1",
 "type": "yellow",
 "side": "home",
-"player": "osijek-2026-27-U-19-pb36da85e",
 "period": 2,
-"sec": 1110
+"sec": 1110,
+"player": "osijek-2026-27-U-19-pb36da85e"
 },
 {
 "id": "juniori-2026-27-k3-osijek-universitas-c7",
 "type": "yellow",
 "side": "away",
-"player": "universitas-2026-27-U-19-p133ff4d6",
 "period": 2,
-"sec": 1110
+"sec": 1110,
+"player": "universitas-2026-27-U-19-p133ff4d6"
 },
 {
 "id": "juniori-2026-27-k3-osijek-universitas-c8",
 "type": "yellow",
 "side": "away",
-"player": "universitas-2026-27-U-19-p976c28e9",
 "period": 2,
-"sec": 1110
+"sec": 1110,
+"player": "universitas-2026-27-U-19-p976c28e9"
 },
 {
 "id": "juniori-2026-27-k3-osijek-universitas-c2",
 "type": "yellow",
 "side": "home",
-"player": "osijek-2026-27-U-19-pf7f96015",
 "period": 2,
-"sec": 1170
+"sec": 1170,
+"player": "osijek-2026-27-U-19-pf7f96015"
 },
 {
 "id": "juniori-2026-27-k3-osijek-universitas-c3",
 "type": "yellow",
 "side": "home",
-"player": "osijek-2026-27-U-19-pfba8f136",
 "period": 2,
-"sec": 1170
+"sec": 1170,
+"player": "osijek-2026-27-U-19-pfba8f136"
 }
 ],
 "analysis": null,
@@ -3434,19 +3434,19 @@
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-c2",
 "type": "yellow",
 "side": "away",
-"player": "novo-vrijeme-2026-27-U-19-p51219606",
 "period": 1,
 "sec": 506,
-"exact": true
+"exact": true,
+"player": "novo-vrijeme-2026-27-U-19-p51219606"
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-c0",
 "type": "yellow",
 "side": "home",
-"player": "rijeka-2026-27-U-19-pc8c6105f",
 "period": 1,
 "sec": 587,
-"exact": true
+"exact": true,
+"player": "rijeka-2026-27-U-19-pc8c6105f"
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-g5",
@@ -3479,10 +3479,10 @@
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-c1",
 "type": "yellow",
 "side": "home",
-"player": "rijeka-2026-27-U-19-p5d055bab",
 "period": 1,
 "sec": 1034,
-"exact": true
+"exact": true,
+"player": "rijeka-2026-27-U-19-p5d055bab"
 },
 {
 "id": "juniori-2026-27-k3-rijeka-novo-vrijeme-g3",

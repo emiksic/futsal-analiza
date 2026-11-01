@@ -3,19 +3,19 @@
 1|04.10.2026 12:00|pula|square|3:7|mate-parlov|
 1|04.10.2026 12:30|universitas|futsal-dinamo|2:6|lora|
 1|04.10.2026 12:30|gimka|hajduk|3:2|zagreb|
-1|04.10.2026 13:00|rijeka|torcida|4:2|mladosti|
-1|04.10.2026 15:00|osijek|novo-vrijeme|6:4|zrinjevac|
+1|04.10.2026 13:00|rijeka|torcida|4:2|mladosti|yt:usnKqkWnH18
+1|04.10.2026 15:00|osijek|novo-vrijeme|6:4|zrinjevac|yt:1vpYPzH6O5c
 2|10.10.2026 20:00|torcida|gimka|1:8|gripe|
 2|11.10.2026 11:30|square|osijek|6:3|gospino|
 2|11.10.2026 12:00|novo-vrijeme|crnica|1:5|makarska|
 2|11.10.2026 12:15|olmissum|rijeka|6:3|omis|
 2|11.10.2026 12:30|universitas|pula|2:7|gripe|
-2|11.10.2026 17:15|futsal-dinamo|hajduk|8:4|domjanic|
+2|11.10.2026 17:15|futsal-dinamo|hajduk|8:4|domjanic|yt:TX_c90oG5pI
 3|17.10.2026 12:00|hajduk|torcida|4:1|gripe|
 3|17.10.2026 14:00|crnica|square|1:3|baldekin|
 3|17.10.2026 14:30|gimka|olmissum|3:6|pescenica|
 3|17.10.2026 15:00|pula|futsal-dinamo|1:5|mate-parlov|
-3|18.10.2026 12:00|osijek|universitas|3:1|zrinjevac|
+3|18.10.2026 12:00|osijek|universitas|3:1|zrinjevac|yt:kEEpqPBs1KM
 3|18.10.2026 12:00|rijeka|novo-vrijeme|5:1|zamet|yt:eCDieI6ctu0
 4|07.11.2026|futsal-dinamo|torcida||dom-sportova-2|
 4|07.11.2026|olmissum|hajduk||omis|
