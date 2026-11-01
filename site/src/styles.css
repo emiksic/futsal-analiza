@@ -657,3 +657,13 @@ table.st { font-size: 13px; }
 
 .tbl-views { margin: 12px 16px 4px; display: flex; flex-wrap: wrap; width: fit-content; max-width: calc(100% - 32px); }
 .tbl-views button { white-space: nowrap; }
+
+.st.bins td.bin { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.st.bins th, .st.bins td { padding-inline: 6px; }
+.bin-tot td { vertical-align: bottom; }
+.bin-bar { height: 34px; width: 18px; margin: 0 auto 2px; display: flex; align-items: flex-end; }
+.bin-bar i { display: block; width: 100%; background: var(--primary); border-radius: 1px 1px 0 0; min-height: 1px; }
+.show-s { display: none; }
+@media (max-width: 560px) { .show-s { display: inline; } }
+.pill.failed, .pill.warn { white-space: nowrap; }
+.st th .card-y, .st th .card-r { display: inline-block; vertical-align: middle; }
