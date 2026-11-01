@@ -4,6 +4,7 @@ python3 data/build.py juniori-2026-27 juniori-2026-27 U-19
 python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
 python3 data/build.py kup-2026-27 kup-2026-27 Seniori
 
+Seniori i kup: zapisnik može imati i sekciju CARDS (vrijeme|ime|home ili away|y, yy ili r).
 Kup: rezultat u rasporedu može imati kaznene udarce u zagradi ("3:3 (3:4)"); u zapisniku sekcija SHOOTOUT (strana|ime|G ili X).
 
 Mlađe kategorije (U-19, U-17): postave i događaji dolaze iz data/private/semafor-2026-27.txt (puna imena, nije u repou).
@@ -17,13 +18,14 @@ D = os.path.join(os.path.dirname(os.path.abspath(__file__)), NAME)
 OUT = os.path.join(D, "..", "..", "site", "src", "data", NAME + ".json")
 
 def parse_detail(path):
-    sec, out = None, {"home": [], "away": [], "goals": [], "shootout": []}
+    sec, out = None, {"home": [], "away": [], "goals": [], "shootout": [], "cards": []}
     for ln in open(path, encoding="utf-8"):
         ln = ln.strip()
         if not ln or ln.startswith("#"): continue
-        if ln in ("HOME_PLAYERS", "AWAY_PLAYERS", "GOALS", "SHOOTOUT"): sec = ln; continue
+        if ln in ("HOME_PLAYERS", "AWAY_PLAYERS", "GOALS", "SHOOTOUT", "CARDS"): sec = ln; continue
         f = ln.split("|")
         if sec == "SHOOTOUT": out["shootout"].append((f[0], f[1], f[2] == "G")); continue
+        if sec == "CARDS": out["cards"].append((f[0], f[1], f[2], f[3])); continue   # vrijeme|ime|home/away|y, yy ili r
         if sec == "GOALS": out["goals"].append((f[0], f[1], f[2] == "AG", None, f[2] == "P"))
         else: out["home" if sec == "HOME_PLAYERS" else "away"].append((f[0], f[1], f[2] == "GK", f[3] == "S"))
     return out
