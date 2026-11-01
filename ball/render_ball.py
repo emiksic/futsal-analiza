@@ -2,7 +2,7 @@
 
   python ball/render_ball.py run/klip.mp4 run/klip_lopta.mp4 --model ~/futsal-ball/runs/ball/weights/best.pt
   python ball/render_ball.py run/klip.mp4 run/klip_lopta.mp4 --dets run/klip_lopta_dets.json   (bez modela, brzo)
-       [--start 0 --end 240] [--step 2] [--raw]
+       [--start 0 --end 240] [--step 2] [--raw] [--people yolo11s.pt]
 
 Detekcije se uvijek spreme uz izlaz (<izlaz>_dets.json), pa se praćenje može mijenjati i ponovno renderirati bez modela.
 
@@ -27,6 +27,14 @@ def detect_pass(a, cap, f0, f1, fps):
     else:
         from ultralytics import YOLO
         model = YOLO(os.path.expanduser(a.model))
+    # igrači (za kaznu detekcija na glavama i iznad svih igrača); spremaju se uz izlaz da drugi put ne treba model
+    ppl_cache, ppl_model = {}, None
+    if a.people:
+        pc = os.path.splitext(a.out)[0] + "_people.json"
+        if os.path.exists(pc): ppl_cache = {round(d["t"], 2): d["p"] for d in json.load(open(pc))}
+        else:
+            from ultralytics import YOLO
+            ppl_model = YOLO(os.path.expanduser(a.people))
     cap.set(cv2.CAP_PROP_POS_FRAMES, f0)
     steps, prev_h, prev_g, cam, fi = [], None, None, np.zeros(2), f0
     while fi < f1:
@@ -48,10 +56,36 @@ def detect_pass(a, cap, f0, f1, fps):
         if prev_g is not None and not cut:
             (dx, dy), _ = cv2.phaseCorrelate(prev_g, g); cam = cam + np.array([dx, dy]) * img.shape[1] / 320
         prev_g = g
-        steps.append({"t": round(t, 3), "dets": dets, "cut": cut, "cam": cam.tolist()})
+        st = {"t": round(t, 3), "dets": dets, "cut": cut, "cam": cam.tolist()}
+        if ppl_model is not None:
+            r = ppl_model.predict(img, imgsz=a.imgsz, classes=[0], conf=0.35, verbose=False)[0]
+            st["people"] = [[round(v, 1) for v in b.xyxy[0].tolist()] for b in r.boxes]
+        elif a.people:
+            st["people"] = ppl_cache.get(round(t, 2), [])
+        steps.append(st)
         if len(steps) % 300 == 0: print(f"  detekcija {t:6.1f} s")
         fi += 1
     return steps
+
+
+def people_prior(steps, a):
+    """Lopta rijetko leti na glavi igrača ili iznad svih igrača (zid, mreža iza gola, publika).
+    Takvim detekcijama se smanji pouzdanost (ne brišu se: kod skoka glavom praćenje ih i dalje može uzeti)."""
+    head = above = 0
+    for st in steps:
+        P = st.get("people") or []
+        if not P: continue
+        top = min(p[1] for p in P); hgt = float(np.median([p[3] - p[1] for p in P]))
+        out = []
+        for d in st["dets"]:
+            x, y, c = d[0], d[1], d[4]
+            if any(p[0] <= x <= p[2] and p[1] - 0.05 * (p[3] - p[1]) <= y <= p[1] + 0.22 * (p[3] - p[1]) for p in P):
+                c *= a.head_mult; head += 1
+            elif len(P) >= 3 and y < top - 0.15 * hgt:
+                c *= a.above_mult; above += 1
+            out.append([d[0], d[1], d[2], d[3], round(c, 3)])
+        st["dets"] = out
+    if head or above: print(f"  smanjena pouzdanost: {head} detekcija na glavi igrača, {above} iznad svih igrača")
 
 
 def drop_static(steps, a, s):
@@ -169,6 +203,9 @@ def main():
     ap.add_argument("--short-conf", type=float, default=0.45, help="kratki tracklet (<3) se zadrži samo ako ima detekciju >= ovoga")
     ap.add_argument("--static-share", type=float, default=0, help="npr. 0.35: detekcija na istom mjestu u sceni u tolikom udjelu frameova (±5 s) = nepomična stvar (zadano isključeno: zna maknuti i pravu loptu)")
     ap.add_argument("--static-s", type=float, default=2.0, help="tracklet koji ovoliko sekundi stoji na istom mjestu u sceni se odbaci")
+    ap.add_argument("--people", help="YOLO model za igrače (npr. yolo11s.pt): kazna za detekcije na glavi i iznad svih igrača")
+    ap.add_argument("--head-mult", type=float, default=0.35, help="množitelj pouzdanosti za detekciju na glavi igrača")
+    ap.add_argument("--above-mult", type=float, default=0.4, help="množitelj pouzdanosti za detekciju iznad svih igrača")
     ap.add_argument("--raw", action="store_true", help="nacrtaj i sve sirove detekcije")
     ap.add_argument("--cut", type=float, default=0.7, help="prag sličnosti boja između frameova za promjenu kadra")
     a = ap.parse_args()
@@ -182,6 +219,10 @@ def main():
     steps = detect_pass(a, cap, f0, f1, fps); a.fps_step = fps / a.step
     if not a.dets:
         json.dump([{"t": st["t"], "dets": st["dets"]} for st in steps], open(os.path.splitext(a.out)[0] + "_dets.json", "w"))
+    if a.people:
+        pc = os.path.splitext(a.out)[0] + "_people.json"
+        if not os.path.exists(pc): json.dump([{"t": st["t"], "p": st.get("people", [])} for st in steps], open(pc, "w"))
+        people_prior(steps, a)
     drop_static(steps, a, s)
     trs = build_tracklets(steps, a, s)
     chain = best_path(trs, steps, a, s)
