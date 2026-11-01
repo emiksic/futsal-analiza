@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { safeYouTube } from "../lib/safe.js";
 import { href, replaceClick } from "../lib/router.js";
-import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, goalTime, flow, comeback, sideScore, roundName, winner, shootout } from "../lib/derive.js";
+import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, suspensions, goalTime, flow, comeback, sideScore, roundName, winner, shootout } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
@@ -33,6 +33,7 @@ export function Match({ db, ix: ix0, id, tab }) {
         {t === "detalji" && <Incidents m={m} ix={ix} />}
         {t === "statistika" && <Stats m={m} ix={ix} A={A} />}
         {t === "udarci" && <Shots m={m} ix={ix} />}
+        {t === "postave" && <Suspended db={db} m={m} ix={ix} />}
         {t === "postave" && <Lineups m={m} ix={ix} A={A} />}
       </section>
       {t !== "analiza" && t !== "udarci" && <aside className="col"><MiniTable db={db} ix={ix} comp={m.comp} mark={[m.home, m.away]} /></aside>}
@@ -305,6 +306,17 @@ function Stats({ m, ix, A }) {
 
 // formacija 1-2-1 (romb), domaćin brani lijevi gol
 const SLOTS = [[-18.2, 0], [-12, 0], [-8, -6], [-8, 6], [-3.6, 0]];
+function Suspended({ db, m, ix }) {
+  const S = suspensions(db, m);
+  if (!S.home.length && !S.away.length) return null;
+  return (
+    <div className="susp">
+      {["home", "away"].map((side) => S[side].length ? (
+        <div key={side}><b><Jersey kit={ix.club[m[side]].kit} size={18} />{ix.club[m[side]].name}: ne igra zbog kazne</b>
+          <ul>{S[side].map((s) => <li key={s.player}>{playerName(ix.player[s.player])} <span className="muted small">({s.reason})</span></li>)}</ul></div>) : null)}
+    </div>);
+}
+
 function Lineups({ m, ix, A }) {
   const [sel, setSel] = useState(null);
   const H = ix.club[m.home], Aw = ix.club[m.away];

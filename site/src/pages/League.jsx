@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { href, go, replaceClick, replaceGo } from "../lib/router.js";
-import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, goalBins, BINS, htft } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
@@ -165,7 +165,9 @@ function Scorers({ db, ix, comp }) {
 function Cards({ db, ix, comp, league }) {
   const rows = cardsTable(db, comp.id), cup = isCup(league);
   if (!rows.length) return <div className="empty">Još nema unesenih kartona.</div>;
-  const watch = cup ? [] : rows.filter((r) => r.redNow || r.toBan === 1);
+  const susp = cup ? [] : suspendedNext(db, comp.id), suspIds = new Set(susp.map((s) => s.player));
+  const watch = cup ? [] : [...susp.map((s) => ({ ...(rows.find((r) => r.player === s.player) || { player: s.player, club: s.club, y: 0 }), susp: s.reason })),
+    ...rows.filter((r) => r.toBan === 1 && !suspIds.has(r.player))];
   const team = {};
   for (const r of rows) { const t = (team[r.club] ||= { club: r.club, y: 0, r: 0 }); t.y += r.y; t.r += r.r; }
   const teams = Object.values(team).map((t) => ({ ...t, fp: t.y + 3 * t.r })).sort((a, b) => a.fp - b.fp);
@@ -175,13 +177,13 @@ function Cards({ db, ix, comp, league }) {
     <>
       {!cup && (
         <>
-          <div className="mgroup"><b>Pred kaznom</b><span className="muted">sljedeća utakmica</span></div>
-          {!watch.length ? <div className="empty">Nitko trenutno nije pred kaznom.</div> : (
+          <div className="mgroup"><b>Kazne i pred kaznom</b><span className="muted">sljedeća utakmica kluba</span></div>
+          {!watch.length ? <div className="empty">Nitko trenutno nije suspendiran ni pred kaznom.</div> : (
             <div className="tbl-wrap"><table className="st"><tbody>{watch.map((r) => (
               <tr key={r.player}>
                 <td className="l">{P(r)}</td>
                 <td className="l hide-s muted">{ix.club[r.club].name}</td>
-                <td className="l">{r.redNow ? <span className="pill failed">isključen na zadnjoj utakmici</span> : <span className="pill warn">{r.y} žuta, sljedeći = kazna</span>}</td>
+                <td className="l">{r.susp ? <span className="pill failed">ne igra sljedeću utakmicu ({r.susp})</span> : <span className="pill warn">{r.y} žuta, sljedeći = kazna</span>}</td>
               </tr>))}</tbody></table></div>)}
         </>)}
       <div className="mgroup"><b>Igrači</b></div>
@@ -205,7 +207,7 @@ function Cards({ db, ix, comp, league }) {
         </table>
       </div>
       <div className="zones">{cup ? <span>U kupu kazne za kartone određuje Disciplinski pravilnik HNS-a.</span>
-        : <span>{YELLOW_BAN} žuta kartona donose zabranu igranja jedne utakmice (propozicije). Drugi žuti na istoj utakmici računa se kao crveni.</span>}</div>
+        : <span>{YELLOW_BAN} žuta kartona donose zabranu igranja jedne utakmice (propozicije), nakon čega se brojanje nastavlja do sljedećih {YELLOW_BAN}. Drugi žuti na istoj utakmici računa se kao isključenje; trajanje kazne za crveni određuje disciplinski sudac, ovdje je prikazana samo prva sljedeća utakmica.</span>}</div>
     </>
   );
 }

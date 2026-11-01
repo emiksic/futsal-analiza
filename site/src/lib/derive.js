@@ -223,6 +223,41 @@ export function cardsTable(db, compId) {
   })).sort((a, b) => b.r - a.r || b.y - a.y);
 }
 
+// Tko ne smije igrati utakmicu m zbog kartona s prethodne utakmice svog kluba u istom natjecanju:
+// crveni karton (i drugi žuti) ili nakupljeni 4., 8., … žuti. Nakon odrađene kazne brojanje kreće ispočetka
+// (4 žuta = kazna, sljedeća kazna na 8. žutom). Žuti uz drugi žuti na istoj utakmici ne ulazi u nakupljanje.
+export function suspensions(db, m) {
+  const out = { home: [], away: [] };
+  const comp = db.comps.find((c) => c.id === m.comp), L = comp && db.leagues.find((l) => l.id === comp.league);
+  if (!comp || L?.zones?.cup) return out;
+  const ms = db.matches.filter((x) => x.comp === m.comp && x.status === "finished" && x.date < m.date && x.id !== m.id)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const yellowsIn = (x, club) => {
+    const sy = new Set(x.events.filter((e) => e.type === "red" && e.secondYellow && e.player).map((e) => e.player)), c = {};
+    for (const e of x.events) if (e.type === "yellow" && e.player && x[e.side] === club && !sy.has(e.player)) c[e.player] = (c[e.player] || 0) + 1;
+    return c;
+  };
+  for (const side of ["home", "away"]) {
+    const club = m[side]; if (!club) continue;
+    const prev = [...ms].reverse().find((x) => x.home === club || x.away === club); if (!prev) continue;
+    const before = {};
+    for (const x of ms) { if (x === prev) break; if (x.home !== club && x.away !== club) continue;
+      for (const [p, n] of Object.entries(yellowsIn(x, club))) before[p] = (before[p] || 0) + n; }
+    const red = new Set(prev.events.filter((e) => e.type === "red" && e.player && prev[e.side] === club).map((e) => e.player));
+    for (const p of red) out[side].push({ player: p, reason: "isključenje na prošloj utakmici" });
+    for (const [p, n] of Object.entries(yellowsIn(prev, club))) {
+      const b = before[p] || 0, a = b + n;
+      if (!red.has(p) && Math.floor(a / YELLOW_BAN) > Math.floor(b / YELLOW_BAN)) out[side].push({ player: p, reason: `${a}. žuti karton` });
+    }
+  }
+  return out;
+}
+// tko je suspendiran za sljedeću utakmicu svog kluba (za karticu Kartoni)
+export function suspendedNext(db, compId) {
+  const comp = db.comps.find((c) => c.id === compId); if (!comp) return [];
+  return comp.teams.flatMap((club) => suspensions(db, { id: "_", comp: compId, date: "9999", home: club, away: null }).home.map((s) => ({ ...s, club })));
+}
+
 // ---------- golovi po minutama i poluvrijeme/kraj ----------
 export const BINS = ["0–5", "5–10", "10–15", "15–20", "20–25", "25–30", "30–35", "35–40"];
 export function goalBins(db, compId) {
