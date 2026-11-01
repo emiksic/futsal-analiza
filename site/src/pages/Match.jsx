@@ -18,8 +18,9 @@ export function Match({ db, ix: ix0, id, tab }) {
   const A = useAnalysis(m);
   if (!m) return <div className="page"><div className="panel empty">Utakmica ne postoji.</div></div>;
   const has = m.analysis?.status === "done";
-  const t = tab || (has || m.youtube ? "analiza" : "detalji");
-  const TABS = [["analiza", "Video"], ["detalji", "Detalji"], ["udarci", "Udarci"], ["statistika", "Statistika"], ["postave", "Postave"]];
+  const hl = safeYouTube(m.highlights);
+  const t = tab || (has || m.youtube ? "analiza" : hl ? "sazetak" : "detalji");
+  const TABS = [["analiza", "Video"], ...(hl ? [["sazetak", "Sažetak"]] : []), ["detalji", "Detalji"], ["udarci", "Udarci"], ["statistika", "Statistika"], ["postave", "Postave"]];
   return (
     <div className="page">
       <Board m={m} ix={ix} />
@@ -30,6 +31,7 @@ export function Match({ db, ix: ix0, id, tab }) {
         </nav>
         {t !== "analiza" && <div style={{ height: 6 }} />}
         {t === "analiza" && <AnalysisTab m={m} ix={ix} A={A} />}
+        {t === "sazetak" && hl && <div className="pb" style={{ paddingTop: 16, display: "grid", gap: 10, maxWidth: 980 }}><Player youtube={hl} /><div className="note">Službeni sažetak utakmice.</div></div>}
         {t === "detalji" && <TestReplay m={m} ix={ix} A={A} />}
         {t === "detalji" && <Incidents m={m} ix={ix} />}
         {t === "statistika" && <Stats m={m} ix={ix} A={A} />}

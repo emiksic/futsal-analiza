@@ -37,15 +37,18 @@ const T = {
   comps: ["id", "league", "season", "teams", "rounds"],
   players: ["id", "club", "season", "cat", "num", "name", "last", "gk"],
   matches: ["id", "comp", "round", "date", "home", "away", "hall", "status", "result", "no_score", "time_tbd", "extra",
-    "youtube", "tv", "source", "roster", "events", "analysis"],
+    "youtube", "tv", "source", "roster", "events", "analysis", "highlights"],
 };
 const REN = { clubs: { full: "full_name" }, matches: { noScore: "no_score", timeTbd: "time_tbd" } };
 // zadane vrijednosti za stupce koji ne smiju biti prazni
 const DEF = { calibrated: false, gk: false, no_score: false, time_tbd: false, extra: false, zones: {}, privacy: { names: "full", perPlayer: true },
   kit: {}, teams: [], rounds: 0, status: "scheduled", roster: { home: null, away: null }, events: [] };
+// stupci koje baza (još) nema, npr. prije pokretanja nove SQL migracije: ne šalju se, da spremanje ne pukne
+const missing = new Set();
 function toRow(t, o, i) {
   const r = {}, ren = REN[t] || {}, back = Object.fromEntries(Object.entries(ren).map(([a, b]) => [b, a]));
-  for (const c of T[t]) { const v = o[back[c] || c]; r[c] = v === undefined || v === null ? (c in DEF ? DEF[c] : null) : v; }
+  for (const c of T[t]) {
+    if (missing.has(t + "." + c)) continue; const v = o[back[c] || c]; r[c] = v === undefined || v === null ? (c in DEF ? DEF[c] : null) : v; }
   if (t === "leagues") r.sort = i;
   return r;
 }
@@ -73,6 +76,8 @@ async function fetchAll() {
   const [seasons, halls, leagues, clubs, comps, matches, site] = await Promise.all(
     ["seasons", "halls", "leagues", "clubs", "comps", "matches", "site"].map((t) => get(t)));
   const players = await get("players", state.isAdmin ? "players" : "players_public");
+  // novi stupci koje baza možda još nema
+  for (const c of ["highlights"]) { if (matches.length && !(c in matches[0])) missing.add("matches." + c); else missing.delete("matches." + c); }
   leagues.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)); seasons.sort((a, b) => b.id.localeCompare(a.id));
   return {
     version: SEED_VERSION, site: site[0] ? { name: site[0].name || "", contact: site[0].contact || "" } : { name: "", contact: "" },
