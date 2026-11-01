@@ -1,3 +1,4 @@
+import { safeYouTube } from "../lib/safe.js";
 // YouTube se učitava tek na klik (bez bannera za kolačiće na cijeloj stranici).
 // Pristanak vrijedi do kraja posjete (sessionStorage); bez njega se ništa s YouTubea ne učitava.
 import { useSyncExternalStore } from "react";
@@ -14,7 +15,7 @@ export function YTGate({ youtube }) {
       <p>Snimka se prikazuje preko YouTubea. Kad je učitaš, YouTube može spremiti podatke na tvoj uređaj.</p>
       <div className="ytgate-act">
         <button className="btn primary" onClick={giveYTConsent}>Učitaj YouTube video</button>
-        {youtube && <a className="btn ghost" href={youtube} target="_blank" rel="noreferrer">Otvori na YouTubeu</a>}
+        {youtube && <a className="btn ghost" href={safeYouTube(youtube) || undefined} target="_blank" rel="noreferrer">Otvori na YouTubeu</a>}
       </div>
       <a className="ytgate-more" href="#/privatnost">Više o privatnosti</a>
     </div>

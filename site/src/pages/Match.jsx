@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { safeYouTube } from "../lib/safe.js";
 import { href, replaceClick } from "../lib/router.js";
 import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, goalTime, flow, comeback, sideScore, roundName, winner, shootout } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
@@ -52,7 +53,7 @@ function Board({ m, ix }) {
         <a href={href("liga", comp.league, comp.season, "rezultati", m.round)}>{L.name}{m.round ? `, ${roundName(L, m.round)}` : ", isječak"}</a>
         {!m.extra && <span>{fmtDay(m.date)}{m.timeTbd ? "" : ` u ${fmtTime(m.date)}`}</span>}
         <span>{ix.hall[m.hall]?.name}, {ix.hall[m.hall]?.city}</span>
-        {m.youtube ? <a className="r" href={m.youtube} target="_blank" rel="noreferrer" style={{ display: "inline-flex", gap: 6, alignItems: "center", color: "var(--band-fg)" }}>
+        {safeYouTube(m.youtube) ? <a className="r" href={safeYouTube(m.youtube)} target="_blank" rel="noreferrer" style={{ display: "inline-flex", gap: 6, alignItems: "center", color: "var(--band-fg)" }}>
           Prijenos na YouTubeu {Icon.ext()}</a>
           : m.tv ? <span className="r">Prijenos: {m.tv}</span> : null}
       </div>

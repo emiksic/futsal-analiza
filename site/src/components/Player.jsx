@@ -1,3 +1,4 @@
+import { safeYouTube } from "../lib/safe.js";
 // Video player s jednostavnim API-jem (time, seek, play, pause) — YouTube (zadano) ili vlastiti video.
 // YouTube se učitava preko youtube-nocookie.com, ništa se ne crta preko playera.
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
@@ -36,7 +37,7 @@ export const Player = forwardRef(function Player({ youtube, video, start = 0 }, 
           {(err || !id) && (
             <div className="yterr">
               <span>{id ? "YouTube player se ovdje ne može učitati." : "Za ovu utakmicu još nije povezana snimka."}</span>
-              {id && youtube && <a className="btn sm" href={youtube} target="_blank" rel="noreferrer">Otvori snimku na YouTubeu</a>}
+              {id && youtube && <a className="btn sm" href={safeYouTube(youtube) || undefined} target="_blank" rel="noreferrer">Otvori snimku na YouTubeu</a>}
             </div>)}
         </>)}
     </div>

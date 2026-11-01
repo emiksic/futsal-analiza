@@ -5,6 +5,7 @@
 import { useEffect, useRef } from "react";
 import { Icon } from "./ui.jsx";
 import { useYTConsent, YTGate } from "./consent.jsx";
+import { esc, safeColor, safeUrl, safeYouTube } from "../lib/safe.js";
 
 export function courtPolys(c) {
   const L = c.L / 2, W = c.W / 2, Dp = c.D, P = [];
@@ -41,7 +42,8 @@ export function ytIdOf(url) {
   const m = /(?:youtu\.be\/|v=|embed\/|live\/|shorts\/)([\w-]{11})/.exec(url || ""); return m ? m[1] : null;
 }
 
-export function AnalysisViewer({ D, video, order, names, note, youtube, mode = "embed", ytOffset = 0, perPlayer = true }) {
+export function AnalysisViewer({ D, video: video0, order, names, note, youtube: youtube0, mode = "embed", ytOffset = 0, perPlayer = true }) {
+  const video = safeUrl(video0, { relative: true }), youtube = safeYouTube(youtube0);
   const embed = mode === "embed";
   const ytId = ytIdOf(youtube);
   const consent = useYTConsent();
@@ -87,10 +89,11 @@ export function AnalysisViewer({ D, video, order, names, note, youtube, mode = "
       const st = f.L != null ? D.states[f.L] : [[[], []], [[], []]];
       $("lineup").innerHTML = order.map((ti, k) => {
         const t = T[ti], on = st[0][ti] || [], uns = new Set(st[1][ti] || []);
+        const tc = safeColor(t.color);
         const btns = on.map((n) => { const key = t.name + " " + n;
-          return `<button class="numb${uns.has(n) ? " unseen" : ""}" style="--tc:${t.color};--tb:${textOn(t.color) === "#111" ? "var(--muted)" : t.color}" data-p="${key}" aria-pressed="${highlight === key}"
-            title="${uns.has(n) ? "Na terenu, trenutno nije u kadru" : "Na terenu"}">${n}</button>`; }).join("");
-        return `<div class="lrow"><div class="lname">${names[k]}</div><div class="nums">${btns || '<span class="muted small">još nepoznato</span>'}</div></div>`;
+          return `<button class="numb${uns.has(n) ? " unseen" : ""}" style="--tc:${tc};--tb:${textOn(tc) === "#111" ? "var(--muted)" : tc}" data-p="${esc(key)}" aria-pressed="${highlight === key}"
+            title="${uns.has(n) ? "Na terenu, trenutno nije u kadru" : "Na terenu"}">${esc(n)}</button>`; }).join("");
+        return `<div class="lrow"><div class="lname">${esc(names[k])}</div><div class="nums">${btns || '<span class="muted small">još nepoznato</span>'}</div></div>`;
       }).join("");
       $("lineup").querySelectorAll(".numb").forEach((b) => b.onclick = () => { highlight = highlight === b.dataset.p ? null : b.dataset.p; lastHL = "x"; draw(); });
     }

@@ -1,3 +1,4 @@
+import { safeUrl } from "./safe.js";
 // Učitavanje i izvedene statistike iz podataka analize (export_web.py).
 import { useEffect, useState } from "react";
 
@@ -13,7 +14,7 @@ async function readJson(r) {
   return JSON.parse(new TextDecoder().decode(buf));
 }
 export function useAnalysis(m) {
-  const url = m?.analysis?.status === "done" ? m.analysis.data : null;
+  const url = m?.analysis?.status === "done" ? safeUrl(m.analysis.data, { relative: true }) : null;
   const [st, setSt] = useState(() => (url && cache[url] ? { D: cache[url] } : { D: null }));
   useEffect(() => {
     if (!url) { setSt({ D: null }); return; }

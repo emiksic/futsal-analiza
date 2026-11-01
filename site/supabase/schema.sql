@@ -36,9 +36,13 @@ create index if not exists matches_comp_round on public.matches (comp, round);
 create index if not exists players_club on public.players (club, season, cat);
 
 -- ---------- tko je admin ----------
+-- admin = prijavljeni korisnik s potvrđenim emailom koji je u tablici admins (provjera po ID-ju korisnika, ne samo po tekstu iz tokena)
 create or replace function public.is_admin() returns boolean
-language sql stable security definer set search_path = public as $$
-  select exists (select 1 from public.admins where lower(email) = lower(coalesce(auth.jwt() ->> 'email', '')));
+language sql stable security definer set search_path = public, auth as $$
+  select exists (
+    select 1 from public.admins a join auth.users u on lower(u.email) = lower(a.email)
+    where u.id = auth.uid() and u.email_confirmed_at is not null and u.deleted_at is null
+      and (u.banned_until is null or u.banned_until < now()));
 $$;
 
 -- ---------- prezime i javno ime ----------
@@ -59,7 +63,7 @@ end $$;
 
 create or replace view public.players_public as
 select p.id, p.club, p.season, p.cat, p.num, p.gk,
-  case coalesce(f.fmt, 'full')
+  case coalesce(f.fmt, 'number')   -- kategorija bez lige: ne otkrivaj ime
     when 'number' then null
     when 'last' then coalesce(p.last, public.surname_guess(p.name))
     when 'initials' then case when p.name is null or p.name = '' then null
@@ -135,3 +139,6 @@ alter default privileges in schema public grant select, insert, update, delete o
 
 -- ---------- ažuriranje 2026-10-31: službeni naziv lige ----------
 -- update public.leagues set name = 'SuperSport HMNL' where id = '1-hmnl';
+
+-- ---------- ažuriranje 2026-11-01: sigurnost ----------
+-- Pokreni ponovno blokove "tko je admin" i "prezime i javno ime" iznad (create or replace), ili datoteku sigurnost-2026-11-01.sql.

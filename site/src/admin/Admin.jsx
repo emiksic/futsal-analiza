@@ -9,8 +9,21 @@ import { Halls } from "./Halls.jsx";
 import { HallCalib } from "./HallCalib.jsx";
 import { update } from "../lib/store.js";
 
+// Admin se ne smije otvarati unutar tuđeg okvira (clickjacking) ni preko nešifriranog http-a (lozinka bi išla otvoreno).
+const framed = (() => { try { return window.top !== window.self; } catch { return true; } })();
+const insecure = location.protocol === "http:" && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+
 export function Admin({ db, ix, route }) {
   const st = useStore();
+  if (framed) return <div className="admin"><div /><div className="panel empty">Admin se ne može otvoriti unutar druge stranice. Otvori ga izravno u pregledniku.</div></div>;
+  if (insecure && st.mode === "remote") return (
+    <div className="admin" style={{ gridTemplateColumns: "minmax(0, 520px)", justifyContent: "center" }}>
+      <section className="panel"><div className="ph"><h2>Veza nije šifrirana</h2></div>
+        <div className="pb" style={{ display: "grid", gap: 10 }}>
+          <p style={{ margin: 0 }}>Stranica je otvorena preko <b>http://</b>, pa bi lozinka putovala nešifrirano. Otvori admin preko <b>https://</b>.</p>
+          <div><a className="btn primary" href={"https://" + location.host + location.pathname + location.hash}>Otvori preko https</a></div>
+        </div></section>
+    </div>);
   if (st.status === "loading") return <div className="admin"><div /><div className="panel empty">Spajam se na bazu…</div></div>;
   if (st.mode === "remote" && !st.isAdmin) return <Login st={st} />;
   if (st.status === "empty") return <ImportSeed />;
