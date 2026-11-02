@@ -37,7 +37,7 @@ const T = {
   comps: ["id", "league", "season", "teams", "rounds"],
   players: ["id", "club", "season", "cat", "num", "name", "last", "gk"],
   matches: ["id", "comp", "round", "date", "home", "away", "hall", "status", "result", "no_score", "time_tbd", "extra",
-    "youtube", "tv", "source", "roster", "events", "analysis", "highlights"],
+    "youtube", "tv", "source", "roster", "events", "analysis", "highlights", "stats"],
 };
 const REN = { clubs: { full: "full_name" }, matches: { noScore: "no_score", timeTbd: "time_tbd" } };
 // zadane vrijednosti za stupce koji ne smiju biti prazni
@@ -77,7 +77,7 @@ async function fetchAll() {
     ["seasons", "halls", "leagues", "clubs", "comps", "matches", "site"].map((t) => get(t)));
   const players = await get("players", state.isAdmin ? "players" : "players_public");
   // novi stupci koje baza možda još nema
-  for (const c of ["highlights"]) { if (matches.length && !(c in matches[0])) missing.add("matches." + c); else missing.delete("matches." + c); }
+  for (const c of ["highlights", "stats"]) { if (matches.length && !(c in matches[0])) missing.add("matches." + c); else missing.delete("matches." + c); }
   leagues.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)); seasons.sort((a, b) => b.id.localeCompare(a.id));
   return {
     version: SEED_VERSION, site: site[0] ? { name: site[0].name || "", contact: site[0].contact || "" } : { name: "", contact: "" },

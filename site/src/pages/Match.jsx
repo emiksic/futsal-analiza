@@ -279,6 +279,22 @@ function Cmp({ label, a, b, fmt = (x) => x, ca, cb }) {
   );
 }
 
+// tempo igre s TV trake: koliko često se igra prekida i koliko je stvarno trajalo poluvrijeme
+function Tempo({ T }) {
+  const mm = (x) => `${Math.floor(x / 60)}:${String(Math.round(x % 60)).padStart(2, "0")}`;
+  const row = (l, v) => <div style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderTop: "1px solid var(--line)" }}><span className="muted">{l}</span><b>{v}</b></div>;
+  return (
+    <div className="pb">
+      <h4 style={{ font: "600 13px/1 var(--body)", color: "var(--muted)", margin: "4px 0 8px" }}>Tempo igre</h4>
+      {row("Prekida igre", T.stoppages)}
+      {row("Igra bez prekida, prosječno", `${String(T.avgPlay).replace(".", ",")} s`)}
+      {row("Najdulje bez prekida", `${T.longestPlay} s (od ${Math.floor(T.longestAt / 60)}'${String(T.longestAt % 60).padStart(2, "0")}")`)}
+      {T.halves.map((h) => <div key={h.period}>{row(`${h.period}. poluvrijeme trajalo je`, `${mm(h.real)} min za 20:00 igre`)}</div>)}
+      <div className="note" style={{ marginTop: 8 }}>Iz sata na TV prijenosu: igra teče kad teče sat.</div>
+    </div>
+  );
+}
+
 function Stats({ m, ix, A }) {
   const H = ix.club[m.home], Aw = ix.club[m.away];
   const ca = "var(--primary)", cb = "var(--signal)";
@@ -309,6 +325,7 @@ function Stats({ m, ix, A }) {
         <Cmp label="Time-out" a={c("timeout", "home")} b={c("timeout", "away")} ca={ca} cb={cb} />
         {!st && <div className="src">Posjed i kretanje igrača pojavljuju se kad utakmica ima video analizu.</div>}
       </div>
+      {m.stats?.tempo && <Tempo T={m.stats.tempo} />}
       {st && !per && <div className="pb"><div className="note">U kadetskoj ligi ne prikazujemo podatke o kretanju pojedinih igrača.</div></div>}
       {st && per && st.players.length > 0 && (
         <div className="pb">

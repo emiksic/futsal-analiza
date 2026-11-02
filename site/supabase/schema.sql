@@ -145,3 +145,6 @@ alter default privileges in schema public grant select, insert, update, delete o
 
 -- ---------- ažuriranje 2026-11-01: službeni sažetak utakmice ----------
 alter table public.matches add column if not exists highlights text;
+
+-- tempo igre i druge izračunate statistike utakmice (scripts/stats_to_site.py)
+alter table public.matches add column if not exists stats jsonb;
