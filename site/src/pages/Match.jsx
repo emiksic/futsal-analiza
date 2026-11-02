@@ -184,13 +184,13 @@ function Incidents({ m, ix }) {
           <div className={"ev " + e.side}>
             <span className="ico">{icon}</span>
             <span className="txt">{main}{sub && <small>{sub}</small>}</span>
-            {e.type === "goal" && e.map && <button type="button" className="gs-play" onClick={() => setSk(e)} aria-label="Prikaži kako je pao gol" title="Kako je pao gol">{Icon.play(14)}</button>}
             {(e.type === "goal" || e.type === "owngoal" || e.type === "so") && <span className="sc">{r.sc[0]}:{r.sc[1]}</span>}
           </div>);
         return (
           <div key={r.k} className="irow">
             {e.side === "home" ? body : <span />}
-            <span className="min">{e.type === "so" ? `${r.kick}.` : goalTime(e)}</span>
+            <span className="min">{e.type === "so" ? `${r.kick}.` : goalTime(e)}
+              {e.type === "goal" && e.map && <button type="button" className="gs-play" onClick={() => setSk(e)} aria-label="Prikaži kako je pao gol" title="Kako je pao gol">{Icon.play(11)}</button>}</span>
             {e.side === "away" ? body : <span />}
           </div>
         );
