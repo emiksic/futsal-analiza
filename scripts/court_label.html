@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Točke terena</title>
+<style>
+  :root { --bg:#0f141b; --panel:#171e28; --line:#2a3546; --fg:#e6ecf3; --muted:#93a1b3; --acc:#ffcc33; --ok:#4cd17a; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.4 system-ui, sans-serif; display:flex; height:100vh; }
+  #main { flex:1; display:flex; flex-direction:column; min-width:0; }
+  #top { display:flex; gap:10px; align-items:center; padding:8px 12px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  button { background:#24303f; color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:6px 10px; cursor:pointer; font:inherit; }
+  button:hover { background:#2d3b4d; }
+  #wrap { flex:1; position:relative; overflow:hidden; }
+  canvas#cv { position:absolute; inset:0; margin:auto; cursor:crosshair; }
+  canvas#mag { position:absolute; right:10px; top:10px; width:200px; height:200px; border:2px solid var(--acc); border-radius:6px; pointer-events:none; display:none; }
+  #side { width:300px; border-left:1px solid var(--line); background:var(--panel); padding:10px; overflow:auto; }
+  .pt { display:flex; justify-content:space-between; padding:5px 8px; border-radius:5px; cursor:pointer; }
+  .pt.sel { background:#33405a; outline:1px solid var(--acc); }
+  .pt .s { color:var(--muted); }
+  .pt.done .s { color:var(--ok); }
+  .muted { color:var(--muted); }
+  kbd { background:#24303f; border:1px solid var(--line); border-radius:4px; padding:0 5px; font-size:12px; }
+  svg { width:100%; height:auto; margin:6px 0 10px; }
+</style>
+</head>
+<body>
+<div id="main">
+  <div id="top">
+    <button id="open">Otvori mapu</button>
+    <button id="prev">←</button><span id="fname" class="muted">—</span><button id="next">→</button>
+    <span id="cnt" class="muted"></span>
+    <span id="saved" class="muted" style="margin-left:auto"></span>
+  </div>
+  <div id="wrap"><canvas id="cv"></canvas><canvas id="mag" width="200" height="200"></canvas></div>
+</div>
+<div id="side">
+  <b>Točka</b> <span class="muted">(odaberi pa klikni na slici)</span>
+  <svg id="court" viewBox="-22 -12 44 24"></svg>
+  <div id="list"></div>
+  <p class="muted" style="font-size:12px">
+    „Daleko” = strana terena dalje od kamere (gore na slici). Stativa = mjesto gdje stativa dodiruje pod.<br>
+    <kbd>klik</kbd> postavi i prijeđi na sljedeću · <kbd>N</kbd> preskoči točku · <kbd>Del</kbd> obriši odabranu ·
+    <kbd>←</kbd><kbd>→</kbd> kadar · <kbd>X</kbd> obriši sve na kadru<br>
+    Dovoljno je 4+ točke po kadru i 5+ kadrova koji zajedno pokrivaju cijeli teren. Sprema se samo u <i>court_refs.json</i>.
+  </p>
+</div>
+<script>
+const L = 40, W = 20;   // samo za crtež; prave dimenzije računa court_calib.py
+const PTS = [
+  ["LFC", "Lijevi kut, daleko", -L/2, -W/2], ["LNC", "Lijevi kut, blizu", -L/2, W/2],
+  ["LGF", "Lijevi gol: daleka stativa", -L/2, -1.5], ["LGN", "Lijevi gol: bliža stativa", -L/2, 1.5],
+  ["L6", "Lijevih 6 m (točka)", -L/2+6, 0], ["L10", "Lijevih 10 m (točka)", -L/2+10, 0],
+  ["MF", "Središnja linija, daleko", 0, -W/2], ["CF", "Krug, daleko", 0, -3], ["C", "Centar", 0, 0],
+  ["CN", "Krug, blizu", 0, 3], ["MN", "Središnja linija, blizu", 0, W/2],
+  ["R10", "Desnih 10 m (točka)", L/2-10, 0], ["R6", "Desnih 6 m (točka)", L/2-6, 0],
+  ["RGF", "Desni gol: daleka stativa", L/2, -1.5], ["RGN", "Desni gol: bliža stativa", L/2, 1.5],
+  ["RFC", "Desni kut, daleko", L/2, -W/2], ["RNC", "Desni kut, blizu", L/2, W/2],
+];
+let dir = null, files = [], idx = 0, data = { frames: {} }, img = new Image(), sel = 0, scale = 1, mouse = null, saveT = null;
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d"), mag = document.getElementById("mag"), mctx = mag.getContext("2d");
+const $ = (id) => document.getElementById(id);
+
+function cur() { const f = files[idx]; if (!f) return null; return (data.frames[f.name] ||= { t: parseFloat(f.name.slice(2)), pts: {} }); }
+
+function drawCourt() {
+  const s = $("court"), c = cur(); const done = c ? c.pts : {};
+  let h = `<rect x="${-L/2}" y="${-W/2}" width="${L}" height="${W}" fill="#1d4d2f" stroke="#fff" stroke-width=".25"/>
+    <line x1="0" y1="${-W/2}" x2="0" y2="${W/2}" stroke="#fff" stroke-width=".25"/><circle r="3" fill="none" stroke="#fff" stroke-width=".25"/>
+    <path d="M${-L/2},-1.5 h-1 v3 h1 M${L/2},-1.5 h1 v3 h-1" fill="none" stroke="#fff" stroke-width=".3"/>`;
+  PTS.forEach(([id, , x, y], i) => {
+    const col = i === sel ? "#ffcc33" : done[id] ? "#4cd17a" : "#93a1b3";
+    h += `<circle cx="${x}" cy="${y}" r="${i === sel ? 1.1 : .7}" fill="${col}" stroke="#000" stroke-width=".15"/>`;
+  });
+  s.innerHTML = h;
+}
+
+function drawList() {
+  const c = cur(); const done = c ? c.pts : {};
+  $("list").innerHTML = PTS.map(([id, name], i) =>
+    `<div class="pt${i === sel ? " sel" : ""}${done[id] ? " done" : ""}" data-i="${i}"><span>${name}</span><span class="s">${done[id] ? "✓" : "–"}</span></div>`).join("");
+  $("list").querySelectorAll(".pt").forEach((el) => el.onclick = () => { sel = +el.dataset.i; refresh(); });
+}
+
+function layout() {
+  const wr = $("wrap"); if (!img.naturalWidth) return;
+  scale = Math.min(wr.clientWidth / img.naturalWidth, wr.clientHeight / img.naturalHeight);
+  cv.width = Math.round(img.naturalWidth * scale); cv.height = Math.round(img.naturalHeight * scale);
+  cv.style.width = cv.width + "px"; cv.style.height = cv.height + "px";
+}
+
+function draw() {
+  if (!img.naturalWidth) return;
+  ctx.drawImage(img, 0, 0, cv.width, cv.height);
+  const c = cur();
+  for (const [id, name] of PTS) {
+    const p = c.pts[id]; if (!p) continue;
+    const x = p[0] * scale, y = p[1] * scale, on = PTS[sel][0] === id;
+    ctx.strokeStyle = on ? "#ffcc33" : "#4cd17a"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x - 8, y); ctx.lineTo(x + 8, y); ctx.moveTo(x, y - 8); ctx.lineTo(x, y + 8); ctx.stroke();
+    ctx.font = "12px system-ui"; ctx.fillStyle = "#000"; ctx.fillText(id, x + 7, y - 5); ctx.fillStyle = ctx.strokeStyle; ctx.fillText(id, x + 6, y - 6);
+  }
+  if (mouse) {                                   // povećalo 4x oko pokazivača
+    mag.style.display = "block"; const z = 4, r = 25;
+    mctx.imageSmoothingEnabled = false;
+    mctx.drawImage(img, mouse[0] - r, mouse[1] - r, 2 * r, 2 * r, 0, 0, 200, 200);
+    mctx.strokeStyle = "#ffcc33"; mctx.beginPath(); mctx.moveTo(100, 0); mctx.lineTo(100, 200); mctx.moveTo(0, 100); mctx.lineTo(200, 100); mctx.stroke();
+  } else mag.style.display = "none";
+}
+
+function refresh() {
+  $("fname").textContent = files[idx] ? files[idx].name : "—";
+  const n = Object.values(data.frames).filter((f) => Object.keys(f.pts).length >= 4).length;
+  $("cnt").textContent = files.length ? `${idx + 1}/${files.length} · kadrova s 4+ točke: ${n}` : "";
+  drawList(); drawCourt(); draw();
+}
+
+async function load(i) {
+  idx = Math.max(0, Math.min(files.length - 1, i));
+  const url = URL.createObjectURL(await files[idx].getFile());
+  img.onload = () => { layout(); sel = PTS.findIndex(([id]) => !cur().pts[id]); if (sel < 0) sel = 0; refresh(); URL.revokeObjectURL(url); };
+  img.src = url;
+}
+
+function save() {
+  clearTimeout(saveT);
+  saveT = setTimeout(async () => {
+    const out = { frames: Object.fromEntries(Object.entries(data.frames).filter(([, f]) => Object.keys(f.pts).length)), points: Object.fromEntries(PTS.map(([id, n]) => [id, n])) };
+    const fh = await dir.getFileHandle("court_refs.json", { create: true }); const w = await fh.createWritable();
+    await w.write(JSON.stringify(out, null, 1)); await w.close();
+    $("saved").textContent = "spremljeno " + new Date().toLocaleTimeString("hr");
+  }, 300);
+}
+
+function nextOpen() { const c = cur(); for (let k = 1; k <= PTS.length; k++) { const j = (sel + k) % PTS.length; if (!c.pts[PTS[j][0]]) { sel = j; return; } } sel = (sel + 1) % PTS.length; }
+
+$("open").onclick = async () => {
+  dir = await window.showDirectoryPicker({ mode: "readwrite" }); files = [];
+  for await (const [name, h] of dir.entries()) if (h.kind === "file" && /\.(jpe?g|png)$/i.test(name)) files.push(h);
+  files.sort((a, b) => a.name.localeCompare(b.name));
+  try { const f = await (await dir.getFileHandle("court_refs.json")).getFile(); data = JSON.parse(await f.text()); data.frames ||= {}; } catch { data = { frames: {} }; }
+  if (files.length) load(0); else alert("U mapi nema slika (.jpg). Prvo pokreni court_frames.py.");
+};
+$("prev").onclick = () => load(idx - 1); $("next").onclick = () => load(idx + 1);
+cv.onclick = (e) => {
+  if (!files.length) return; const r = cv.getBoundingClientRect();
+  cur().pts[PTS[sel][0]] = [Math.round((e.clientX - r.left) / scale * 10) / 10, Math.round((e.clientY - r.top) / scale * 10) / 10];
+  nextOpen(); save(); refresh();
+};
+cv.onmousemove = (e) => { const r = cv.getBoundingClientRect(); mouse = [(e.clientX - r.left) / scale, (e.clientY - r.top) / scale]; draw(); };
+cv.onmouseleave = () => { mouse = null; draw(); };
+addEventListener("resize", () => { layout(); draw(); });
+addEventListener("keydown", (e) => {
+  if (!files.length) return;
+  if (e.key === "ArrowRight") load(idx + 1);
+  else if (e.key === "ArrowLeft") load(idx - 1);
+  else if (e.key === "n" || e.key === "N") { sel = (sel + 1) % PTS.length; refresh(); }
+  else if (e.key === "Delete" || e.key === "Backspace") { delete cur().pts[PTS[sel][0]]; save(); refresh(); }
+  else if (e.key === "x" || e.key === "X") { if (confirm("Obrisati sve točke na ovom kadru?")) { cur().pts = {}; save(); refresh(); } }
+});
+</script>
+</body>
+</html>
