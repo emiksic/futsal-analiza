@@ -31,6 +31,15 @@ pip install -r requirements.txt
 PARSeq (čitanje brojeva) se automatski skida preko `torch.hub`. Bez interneta:
 `git clone https://github.com/baudm/parseq` i `export PARSEQ_REPO=/putanja/do/parseq`.
 
+## Cijela utakmica jednom naredbom
+
+```
+python analyze.py <YouTube link | YouTube ID | ID utakmice sa stranice> [--render]
+```
+Skine snimku u 720p, pa napravi loptu (TrackNet, 30/s) i igrače (15/s) u `run/<youtube id>/`. Svaki gotov korak se preskače,
+pa nakon prekida samo pokreneš istu naredbu. Dok radi, Windows ne ide na spavanje. Ostali koraci iz tablice dolje
+(kamera, teren, ekipe, brojevi) dodaju se kad se provjere na cijeloj utakmici.
+
 ## Pipeline (redoslijed koraka)
 
 Primjer za jednu snimku `clip.mp4` u radnoj mapi `run/`:
