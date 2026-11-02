@@ -1,7 +1,7 @@
 """Korak 2: detekcija + tracking + ekipa po boji + preskakanje replaya.
 Upotreba: python3 track.py clip.mp4 out_dir [--step 5]
 """
-import argparse, json, collections
+import argparse, json, collections, os
 import cv2, numpy as np
 from ultralytics import YOLO
 
@@ -13,6 +13,8 @@ ap.add_argument("--conf", type=float, default=0.25)
 ap.add_argument("--tracker", default="bytetrack.yaml")
 ap.add_argument("--start", type=float, default=0)
 ap.add_argument("--end", type=float, default=1e9)
+ap.add_argument("--no-video", action="store_true", help="bez annotated.mp4 (brže, manje mjesta)")
+ap.add_argument("--save-every", type=float, default=300, help="spremi tracks.json svakih N s snimke")
 a = ap.parse_args()
 
 TEAM_BGR = {"ljubicasti": (200, 60, 140), "bijeli": (255, 255, 255), "golman_z": (0, 230, 255),
@@ -46,14 +48,26 @@ def black_ratio(frame):
     g = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)[60:, :]
     return (g < 15).mean()
 
+os.makedirs(a.out, exist_ok=True)              # izlazna mapa (prije: pad na samom kraju ako je nema)
 model = YOLO("yolo11s.pt")
 cap = cv2.VideoCapture(a.video); fps = cap.get(cv2.CAP_PROP_FPS)
 cap.set(cv2.CAP_PROP_POS_FRAMES, int(a.start*fps))
 W, H = int(cap.get(3)), int(cap.get(4))
-vw = cv2.VideoWriter(f"{a.out}/annotated.mp4", cv2.VideoWriter_fourcc(*"mp4v"), fps / a.step, (W, H))
+class _NoVW:
+    def write(self, f): pass
+    def release(self): pass
+vw = _NoVW() if a.no_video else cv2.VideoWriter(f"{a.out}/annotated.mp4", cv2.VideoWriter_fourcc(*"mp4v"), fps / a.step, (W, H))
 
 votes = collections.defaultdict(collections.Counter)   # track_id -> boje
 timeline = []
+
+def save(done):
+    """Atomarno spremanje: restart ili pad usred posla ne ostavlja pokvarenu datoteku."""
+    tmp = f"{a.out}/tracks.json.tmp"
+    with open(tmp, "w") as fh:
+        json.dump({"timeline": timeline, "votes": {k: dict(v) for k, v in votes.items()}, "done": done}, fh)
+    os.replace(tmp, f"{a.out}/tracks.json")
+next_save = a.start + a.save_every
 replay, in_trans, replay_start = False, False, 0.0
 i = int(a.start*fps)
 while True:
@@ -96,8 +110,8 @@ while True:
             timeline.append({"t": round(t, 2), "players": rows})
     i += 1
     if i % 300 == 0: print(f"{t:6.1f}s obradjeno", flush=True)
+    if t >= next_save: save(False); next_save += a.save_every
 
 vw.release()
-json.dump({"timeline": timeline, "votes": {k: dict(v) for k, v in votes.items()}},
-          open(f"{a.out}/tracks.json", "w"))
+save(True)
 print("gotovo, trackova:", len(votes))
