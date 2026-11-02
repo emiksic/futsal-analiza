@@ -4,12 +4,13 @@
   python analyze.py 7g1c-gR2Sck
   python analyze.py https://www.youtube.com/watch?v=7g1c-gR2Sck
   python analyze.py 1-hmnl-2026-27-k2-square-rijeka           (ID utakmice sa stranice, link se uzme iz podataka)
-        [--model ~/futsal-ball/runs/tracknet/last.pt] [--height 720] [--render] [--only video,lopta,igraci]
+        [--model ~/futsal-ball/runs/tracknet/last.pt] [--height 720] [--render] [--only video,traka,lopta,igraci]
 
 Rezultat ide u run/<youtube id>/:
   video.mp4     snimka (720p, H.264, bez zvuka)
   lopta.json    TrackNet detekcije lopte, 30 u sekundi snimke (isti format kao tracknet.py detect)
   tracks.json   igrači: okviri, ID-jevi i boja dresa, 15 u sekundi snimke
+  traka.json    TV traka: sat, poluvrijeme, rezultat svakih 0.5 s, kad sat teče i trenuci golova
   lopta.mp4     (samo uz --render) snimka s ucrtanom loptom za pregled
   log.txt       sve što su koraci ispisali
 
@@ -83,7 +84,7 @@ def main():
     out = Path(a.out) if a.out else ROOT / "run" / vid
     out.mkdir(parents=True, exist_ok=True)
     log = Log(out / "log.txt"); py = sys.executable
-    steps = a.only.split(",") if a.only else ["video", "lopta", "igraci"] + (["render"] if a.render else [])
+    steps = a.only.split(",") if a.only else ["video", "traka", "lopta", "igraci"] + (["render"] if a.render else [])
     keep_awake(True); T0 = time.time()
     log(f"=== {vid} -> {out}   koraci: {', '.join(steps)}")
     video = out / "video.mp4"
@@ -102,6 +103,11 @@ def main():
                     log(f"video: skidanje nije uspjelo (pokušaj {attempt + 1}/3)")
                 if not ok: sys.exit("Video se nije skinuo. Probaj: pip install -U yt-dlp, pa ista naredba ponovno.")
             fps, dur = video_fps(video); log(f"video: {fps:.0f} fps, {dur / 60:.0f} min")
+
+        if "traka" in steps:
+            tj = out / "traka.json"
+            if tj.exists(): log("traka: već pročitana")
+            elif not run([py, "scripts/scoreboard.py", video, tj], log): log("traka: greška (nastavljam bez nje)")
 
         if "lopta" in steps:
             lj = out / "lopta.json"; done = out / "lopta.done"
