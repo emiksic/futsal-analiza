@@ -320,11 +320,10 @@ function Stats({ m, ix, A }) {
       <div className="cmp">
         <div className="lab" style={{ fontWeight: 700 }}><span style={{ display: "flex", gap: 6, alignItems: "center" }}><Jersey kit={H.kit} size={20} />{H.short}</span><span />
           <span style={{ display: "flex", gap: 6, alignItems: "center", justifyContent: "flex-end" }}>{Aw.short}<Jersey kit={Aw.kit} size={20} /></span></div>
-        {st && <h4>Iz video analize ({st.dur} s snimke)</h4>}
+        {(st || m.stats?.territory) && <h4>Iz video analize</h4>}
         {st?.poss && <Cmp label="Posjed" a={st.poss[0]} b={st.poss[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />}
-        {st?.terr && <Cmp label="Lopta na protivničkoj polovini" a={st.terr[0]} b={st.terr[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />}
+        {st?.terr && !m.stats?.territory && <Cmp label="Lopta na protivničkoj polovini" a={st.terr[0]} b={st.terr[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />}
         {m.stats?.territory && <>
-          <h4>Gdje je bila lopta (video)</h4>
           <Cmp label="Lopta na protivničkoj polovini" a={m.stats.territory.half[0]} b={m.stats.territory.half[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />
           <Cmp label="Lopta u napadačkoj trećini" a={m.stats.territory.third[0]} b={m.stats.territory.third[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />
         </>}
