@@ -366,3 +366,41 @@ export function currentRound(db, compId) {
   const fin = ms.filter((m) => m.status === "finished" && Number.isFinite(m.round)).map((m) => m.round);   // isječci bez kola se preskaču
   return fin.length ? Math.max(...fin) : 1;
 }
+
+// ---------- minute u vodstvu (kao "laps led" u F1) ----------
+// Regularnih 40 minuta podijeljeno na vrijeme u kojem je vodio domaćin, bilo neriješeno ili vodio gost.
+// Bez točne sekunde gol se računa u sredini minute, pa je točnost oko ±30 s po golu.
+export const REG = 2400;
+export function leadTime(m) {
+  const f = flow(m); if (!f) return null;
+  const segs = []; let t0 = 0, d = 0;
+  const push = (t1) => {
+    const a = Math.min(t0, REG), b = Math.min(t1, REG); if (b <= a) return;
+    const k = d > 0 ? "home" : d < 0 ? "away" : "level", last = segs[segs.length - 1];
+    if (last && last.k === k) last.b = b; else segs.push({ k, a, b });
+  };
+  for (const g of f.seq) { push(g.t); t0 = g.t; d = g.s[0] - g.s[1]; }
+  push(REG);
+  const T = { home: 0, level: 0, away: 0, longest: { home: 0, away: 0 }, segs };
+  for (const x of segs) { T[x.k] += x.b - x.a; if (x.k !== "level") T.longest[x.k] = Math.max(T.longest[x.k], x.b - x.a); }
+  return T;
+}
+export const mins = (sec) => Math.round(sec / 60);
+// Po klubu za natjecanje: vrijeme u vodstvu / neriješeno / u zaostatku, najduže neprekinuto vodstvo, utakmice bez zaostatka
+export function leadTable(db, compId) {
+  const comp = db.comps.find((c) => c.id === compId); if (!comp) return [];
+  const T = Object.fromEntries(comp.teams.map((t) => [t, { club: t, n: 0, lead: 0, level: 0, trail: 0, longest: 0, longestM: null, neverBehind: 0 }]));
+  for (const m of db.matches) {
+    if (m.comp !== compId) continue;
+    const L = leadTime(m); if (!L) continue;
+    for (const side of ["home", "away"]) {
+      const r = T[m[side]]; if (!r) continue;
+      const op = side === "home" ? "away" : "home";
+      r.n++; r.lead += L[side]; r.level += L.level; r.trail += L[op];
+      if (!L[op]) r.neverBehind++;
+      if (L.longest[side] > r.longest) { r.longest = L.longest[side]; r.longestM = m.id; }
+    }
+  }
+  return Object.values(T).filter((r) => r.n).map((r) => ({ ...r, pct: r.lead / (r.n * REG) }))
+    .sort((a, b) => b.pct - a.pct || a.trail - b.trail || a.club.localeCompare(b.club));
+}

@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { href, go, replaceClick, replaceGo } from "../lib/router.js";
-import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft, leadTable, mins } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
 import { AnalysedCard, ScorersCard, MiniTable } from "../components/Side.jsx";
 import { Jersey, LeagueBadge, Form, Icon } from "../components/ui.jsx";
 
-const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["preokreti", "Preokreti"], ["minute", "Po minutama"], ["kartoni", "Kartoni"], ["analize", "Video analize"], ["pravila", "Pravila"]];
+const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["preokreti", "Preokreti"], ["vodstvo", "Vodstvo"], ["minute", "Po minutama"], ["kartoni", "Kartoni"], ["analize", "Video analize"], ["pravila", "Pravila"]];
 
 export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roundArg }) {
   const L = ix.league[leagueId], cup = isCup(L);
@@ -42,6 +42,7 @@ export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roun
           {tab === "rezultati" && <Rounds db={db} ix={ix} comp={comp} league={L} round={roundArg ? +roundArg : null} />}
           {tab === "strijelci" && <Scorers db={db} ix={ix} comp={comp} />}
           {tab === "preokreti" && <Comebacks db={db} ix={ix} comp={comp} />}
+          {tab === "vodstvo" && <LeadTime db={db} ix={ix} comp={comp} />}
           {tab === "minute" && <Minutes db={db} ix={ix} comp={comp} />}
           {tab === "kartoni" && <Cards db={db} ix={ix} comp={comp} league={L} />}
           {tab === "analize" && <Analysed db={db} ix={ix} comp={comp} />}
@@ -296,6 +297,48 @@ function Comebacks({ db, ix, comp }) {
               <span className="muted small cb-when">{roundName(ix.league[comp.league], m.round)}, {fmtDate(m.date)}</span>
             </a>);
         })}</div>)}
+    </>
+  );
+}
+
+// Minute u vodstvu po klubu (kao "laps led" u F1)
+function LeadTime({ db, ix, comp }) {
+  const rows = leadTable(db, comp.id);
+  if (!rows.length) return <div className="empty">Još nema utakmica s minutama svih golova.</div>;
+  const pc = (x) => `${Math.round(100 * x)} %`;
+  return (
+    <>
+      <div className="tbl-wrap">
+        <table className="st lead-tbl">
+          <thead><tr>
+            <th className="l">Klub</th>
+            <th title="Utakmice s minutama svih golova">Ut.</th>
+            <th title="Minute u vodstvu">Vodio</th>
+            <th title="Minute pri neriješenom rezultatu">Nerij.</th>
+            <th title="Minute u zaostatku">Gubio</th>
+            <th className="lead-col" title="Udio vremena u vodstvu / neriješeno / u zaostatku">Udio vremena</th>
+            <th title="Najduže neprekinuto vodstvo u jednoj utakmici">Najduže</th>
+            <th title="Utakmice u kojima klub nijednom nije gubio">Bez zaost.</th>
+          </tr></thead>
+          <tbody>{rows.map((r) => {
+            const c = ix.club[r.club], tot = r.n * 2400;
+            return (
+              <tr key={r.club}>
+                <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={22} />{c.name}</a></td>
+                <td className="muted">{r.n}</td>
+                <td className="pts">{mins(r.lead)}'</td>
+                <td>{mins(r.level)}'</td>
+                <td>{mins(r.trail)}'</td>
+                <td className="lead-col"><div className="lead-bar" aria-label={`u vodstvu ${pc(r.lead / tot)}`}>
+                  <i className="w" style={{ width: `${100 * r.lead / tot}%` }} /><i className="d" style={{ width: `${100 * r.level / tot}%` }} /><i className="l" style={{ width: `${100 * r.trail / tot}%` }} />
+                </div><span className="lead-pct">{pc(r.pct)}</span></td>
+                <td>{r.longestM ? <a href={href("utakmica", r.longestM, "detalji")}>{mins(r.longest)}'</a> : <span className="muted">–</span>}</td>
+                <td className={r.neverBehind ? "" : "muted"}>{r.neverBehind}</td>
+              </tr>);
+          })}</tbody>
+        </table>
+      </div>
+      <div className="zones"><span>Koliko je od 40 minuta svake utakmice klub vodio, bilo je neriješeno ili je gubio (poredano po udjelu vremena u vodstvu). Najduže: najduže neprekinuto vodstvo u jednoj utakmici (klik vodi na utakmicu). Kad je poznata samo minuta gola, gol se računa u sredini te minute. Računaju se samo utakmice za koje su uneseni svi golovi.</span></div>
     </>
   );
 }

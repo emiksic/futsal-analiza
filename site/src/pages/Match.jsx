@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { safeYouTube } from "../lib/safe.js";
 import { href, replaceClick } from "../lib/router.js";
-import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, suspensions, goalTime, flow, comeback, sideScore, roundName, winner, shootout } from "../lib/derive.js";
+import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, suspensions, goalTime, flow, comeback, sideScore, roundName, winner, shootout, leadTime, mins } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
@@ -158,6 +158,7 @@ function Incidents({ m, ix }) {
   return (
     <>
     <ScoreFlow m={m} ix={ix} />
+    <LeadShare m={m} ix={ix} />
     <div className="inc">
       {rows.map((r) => {
         if (r.head) return <div key={r.k} className="per">{r.head}{r.sc && <b>{r.sc[0]}:{r.sc[1]}</b>}</div>;
@@ -239,6 +240,28 @@ function ScoreFlow({ m, ix }) {
           </div>);
       })()}
       </div>
+    </div>
+  );
+}
+
+// Koliko je od 40 minuta koja ekipa vodila (kao "laps led" u F1)
+function LeadShare({ m, ix }) {
+  const L = leadTime(m);
+  if (!L || (!L.home && !L.away)) return null;
+  const [hk, ak] = lineColors(ix.club[m.home].kit, ix.club[m.away].kit);
+  const H = ix.club[m.home], A = ix.club[m.away], nm = (c) => c.short || c.name;
+  return (
+    <div className="flow lead">
+      <div className="flow-h"><span>Vrijeme u vodstvu</span><span className="muted small">od 40 minuta</span></div>
+      <div className="lead-line">
+        <span className="lead-n"><b>{mins(L.home)}'</b> {nm(H)}</span>
+        <div className="lead-bar big" role="img" aria-label={`${H.name} vodio ${mins(L.home)} min, neriješeno ${mins(L.level)} min, ${A.name} vodio ${mins(L.away)} min`}>
+          {L.segs.map((x, i) => <i key={i} className={x.k === "level" ? "d" : ""} title={`${Math.floor(x.a / 60)}'–${Math.ceil(x.b / 60)}': ${x.k === "level" ? "neriješeno" : `vodi ${ix.club[m[x.k]].name}`}`}
+            style={{ width: `${100 * (x.b - x.a) / 2400}%`, ...(x.k !== "level" ? { background: x.k === "home" ? hk : ak } : {}) }} />)}
+        </div>
+        <span className="lead-n r">{nm(A)} <b>{mins(L.away)}'</b></span>
+      </div>
+      <div className="muted small lead-sub">Neriješeno {mins(L.level)}'{(L.longest.home || L.longest.away) ? ` · najduže vodstvo: ${L.longest.home >= L.longest.away ? H.name : A.name} ${mins(Math.max(L.longest.home, L.longest.away))}'` : ""}</div>
     </div>
   );
 }
