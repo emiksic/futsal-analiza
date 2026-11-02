@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { href, go, replaceClick } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
 import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
 import { Jersey, Icon, Toast, NumInput } from "../components/ui.jsx";
 import { ShotTagger } from "./ShotTagger.jsx";
+import { GoalSketch } from "../components/GoalSketch.jsx";
 
 const toLocal = (iso) => { const d = new Date(iso), p = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
@@ -216,6 +217,7 @@ function Events({ ix, m, upd }) {
   const empty = { type: "goal", side: "home", period: 1, time: "", player: "", assist: "" };
   const [f, setF] = useState(empty);
   const [editing, setEditing] = useState(null);   // id događaja koji se uređuje
+  const [sketch, setSketch] = useState(null);     // id gola čija se skica crta
   const set = (k, v) => setF((o) => ({ ...o, [k]: v, ...(k === "side" || k === "type" ? { player: "", assist: "" } : {}) }));
   const roster = (side) => (m.roster[side]?.players || []).map((p) => ix.player[p]).filter(Boolean).sort((a, b) => a.num - b.num);
   const parse = (t) => { const mm = /^(\d{1,2})(?::(\d{1,2}))?$/.exec(t.trim()); if (!mm) return null; const sec = +mm[1] * 60 + (+mm[2] || 0); return sec <= 1200 ? sec : null; };
@@ -274,8 +276,8 @@ function Events({ ix, m, upd }) {
       <div className="tbl-wrap">
         <table className="atbl">
           <thead><tr><th>Min.</th><th>Vrsta</th><th>Ekipa</th><th>Igrač</th><th /></tr></thead>
-          <tbody>{evs.map((e) => (
-            <tr key={e.id}>
+          <tbody>{evs.map((e) => (<Fragment key={e.id}>
+            <tr>
               <td style={{ font: "700 16px/1 var(--display)" }}>{minute(e)}</td>
               <td>{L[e.type]}</td>
               <td><span className="mt">{(() => { const s = e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side; return <><Jersey kit={ix.club[m[s]].kit} size={18} />{ix.club[m[s]].short}</>; })()}</span></td>
@@ -287,9 +289,17 @@ function Events({ ix, m, upd }) {
                   {e.type === "owngoal" ? <span className="muted small">({ix.club[m[e.side]].short}, u svoju mrežu)</span> : null}
                   {e.assist ? <span className="muted small">asist. {ix.player[e.assist]?.num}</span> : null}
                 </span>)}</td>
-              <td className="nowrap"><button className="btn sm ghost" onClick={() => edit(e)} aria-pressed={editing === e.id}>Uredi</button>
+              <td className="nowrap">{e.type === "goal" && <button className="btn sm ghost" onClick={() => setSketch(sketch === e.id ? null : e.id)} aria-pressed={sketch === e.id}>Skica{e.map ? " ✓" : ""}</button>}
+                <button className="btn sm ghost" onClick={() => edit(e)} aria-pressed={editing === e.id}>Uredi</button>
                 <button className="btn sm ghost danger" onClick={() => { if (editing === e.id) { setEditing(null); setF(empty); } upd((x) => { x.events = x.events.filter((q) => q.id !== e.id); }); }} aria-label="Obriši događaj">{Icon.trash()}</button></td>
-            </tr>))}</tbody>
+            </tr>
+            {sketch === e.id && <tr><td colSpan={5}>
+              <div style={{ display: "flex", gap: 12, alignItems: "flex-start", flexWrap: "wrap", padding: "6px 0" }}>
+                <GoalSketch map={e.map} color={e.side === "home" ? "var(--primary)" : "var(--signal)"} onChange={(mp) => upd((x) => { const q = x.events.find((z) => z.id === e.id); q.map = mp; })} />
+                <div className="muted small" style={{ maxWidth: 260 }}>Ekipa uvijek napada <b>desni</b> gol. Prvi klik: gdje je strijelac pucao. Drugi klik (neobavezno): gdje je bio dodavač. Treći klik kreće ispočetka.
+                  <div style={{ marginTop: 8 }}><button className="btn sm ghost" onClick={() => upd((x) => { delete x.events.find((z) => z.id === e.id).map; })}>Obriši skicu</button></div></div>
+              </div></td></tr>}
+          </Fragment>))}</tbody>
         </table>
         {!evs.length && <div className="empty">Još nema događaja.</div>}
       </div>

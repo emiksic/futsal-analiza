@@ -4,6 +4,7 @@ import { href, replaceClick } from "../lib/router.js";
 import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, suspensions, goalTime, flow, comeback, sideScore, roundName, winner, shootout, leadTime, mins } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
+import { GoalSketch } from "../components/GoalSketch.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
 import { MiniTable } from "../components/Side.jsx";
 import { Shots } from "./Shots.jsx";
@@ -173,7 +174,7 @@ function Incidents({ m, ix }) {
         const body = (
           <div className={"ev " + e.side}>
             <span className="ico">{icon}</span>
-            <span className="txt">{main}{sub && <small>{sub}</small>}</span>
+            <span className="txt">{main}{sub && <small>{sub}</small>}{e.type === "goal" && e.map && <span style={{ display: "block", marginTop: 4 }}><GoalSketch map={e.map} color={e.side === "home" ? "var(--primary)" : "var(--signal)"} /></span>}</span>
             {(e.type === "goal" || e.type === "owngoal" || e.type === "so") && <span className="sc">{r.sc[0]}:{r.sc[1]}</span>}
           </div>);
         return (
