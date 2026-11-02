@@ -102,7 +102,9 @@ def cmd_fit(a):
         img = cv2.imread(os.path.join(a.teren, n)); draw_court(img, Hm, L, W)
         for q, v in refs[n]["pts"].items(): cv2.circle(img, (int(v[0]), int(v[1])), 5, (0, 0, 255), 2)
         cv2.imwrite(os.path.join(a.teren, f"provjera_{os.path.splitext(n)[0]}.jpg"), img)
-        print(f"  {n}: {np_} točaka, greška do {e.max():.1f} px")
+        ks = [q for q in refs[n]["pts"] if q in PTS]
+        bad = ", ".join(f"{q} {v:.0f} px" for q, v in zip(ks, e) if v > 5)
+        print(f"  {n}: {np_} točaka, greška do {e.max():.1f} px" + (f"   <- provjeri: {bad}" if bad else ""))
     json.dump(model, open(os.path.join(a.teren, "court_model.json"), "w"), indent=1)
     print(f"-> {os.path.join(a.teren, 'court_model.json')}; pogledaj provjera_*.jpg (žute crte moraju sjesti na prave)")
 
