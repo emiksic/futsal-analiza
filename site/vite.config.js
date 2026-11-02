@@ -7,18 +7,22 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 const SB = "https://bidsjhztvkbcynawcknp.supabase.co";
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' https://www.youtube.com https://s.ytimg.com",
+  "script-src 'self' https://www.youtube.com https://s.ytimg.com https://static.cloudflareinsights.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://i.ytimg.com",
-  `connect-src 'self' ${SB} ${SB.replace("https", "wss")}`,
+  `connect-src 'self' ${SB} ${SB.replace("https", "wss")} https://cloudflareinsights.com`,
   "frame-src https://www.youtube-nocookie.com https://www.youtube.com",
   `media-src 'self' blob: ${SB} https:`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
 ].join("; ");
-const csp = () => ({ name: "csp", transformIndexHtml: (html) => html.replace(/(<meta charset="utf-8">)/, `$1\n  <meta http-equiv="Content-Security-Policy" content="${CSP}">\n  <meta name="referrer" content="strict-origin-when-cross-origin">`) });
+// Cloudflare Web Analytics (bez kolačića) – samo u objavljenoj stranici, ne u dev serveru ni pregledu
+const CF_BEACON = `<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "15fa634ece21446cbf109128113ec433"}'></script>`;
+const csp = () => ({ name: "csp", apply: "build", transformIndexHtml: (html) => html
+  .replace(/(<meta charset="utf-8">)/, `$1\n  <meta http-equiv="Content-Security-Policy" content="${CSP}">\n  <meta name="referrer" content="strict-origin-when-cross-origin">`)
+  .replace("</body>", `  ${CF_BEACON}\n</body>`) });
 
 // "single" = sve u jednu HTML datoteku (pregled), inače normalan build za GitHub Pages
 export default defineConfig(({ mode }) => ({
