@@ -312,6 +312,11 @@ function Stats({ m, ix, A }) {
         {st && <h4>Iz video analize ({st.dur} s snimke)</h4>}
         {st?.poss && <Cmp label="Posjed" a={st.poss[0]} b={st.poss[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />}
         {st?.terr && <Cmp label="Lopta na protivničkoj polovini" a={st.terr[0]} b={st.terr[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />}
+        {m.stats?.territory && <>
+          <h4>Gdje je bila lopta (video)</h4>
+          <Cmp label="Lopta na protivničkoj polovini" a={m.stats.territory.half[0]} b={m.stats.territory.half[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />
+          <Cmp label="Lopta u napadačkoj trećini" a={m.stats.territory.third[0]} b={m.stats.territory.third[1]} fmt={(x) => x + "%"} ca={ca} cb={cb} />
+        </>}
         <h4>Zapisnik</h4>
         <Cmp label="Golovi" a={s[0]} b={s[1]} ca={ca} cb={cb} />
         {sh.home.shots + sh.away.shots > 0 && <>
