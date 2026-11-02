@@ -130,6 +130,8 @@ function AnalysisTab({ m, ix, A }) {
 }
 
 function Incidents({ m, ix }) {
+  const [sk, setSk] = useState(null);           // gol čija je skica otvorena
+  useEffect(() => { if (!sk) return; const k = (ev) => ev.key === "Escape" && setSk(null); addEventListener("keydown", k); return () => removeEventListener("keydown", k); }, [sk]);
   const cbGoal = comeback(m)?.goal;
   if (m.status !== "finished" && !m.events.length) return <div className="empty">Utakmica još nije odigrana.</div>;
   const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(a) - absSec(b));
@@ -160,6 +162,13 @@ function Incidents({ m, ix }) {
     <>
     <ScoreFlow m={m} ix={ix} />
     <LeadShare m={m} ix={ix} />
+    {sk && <div className="gs-modal" onClick={() => setSk(null)} role="dialog" aria-modal="true" aria-label="Kako je pao gol">
+      <div className="gs-box" onClick={(ev) => ev.stopPropagation()}>
+        <div className="gs-head"><b>{playerName(ix.player[sk.player]) || "Gol"} · {goalTime(sk)}</b>
+          <button type="button" className="btn sm ghost" onClick={() => setSk(null)} aria-label="Zatvori">✕</button></div>
+        <GoalSketch map={sk.map} width={420} color={sk.side === "home" ? "var(--primary)" : "var(--signal)"} />
+        <div className="muted small" style={{ marginTop: 6 }}>{sk.map.a ? "Dodavanje (isprekidano) i udarac (žuto). " : "Udarac (žuto). "}Klikni teren za ponavljanje.{sk.map.auto ? " Položaji su iz video analize." : ""}</div>
+      </div></div>}
     <div className="inc">
       {rows.map((r) => {
         if (r.head) return <div key={r.k} className="per">{r.head}{r.sc && <b>{r.sc[0]}:{r.sc[1]}</b>}</div>;
@@ -174,7 +183,8 @@ function Incidents({ m, ix }) {
         const body = (
           <div className={"ev " + e.side}>
             <span className="ico">{icon}</span>
-            <span className="txt">{main}{sub && <small>{sub}</small>}{e.type === "goal" && e.map && <span style={{ display: "block", marginTop: 4 }}><GoalSketch map={e.map} color={e.side === "home" ? "var(--primary)" : "var(--signal)"} /></span>}</span>
+            <span className="txt">{main}{sub && <small>{sub}</small>}</span>
+            {e.type === "goal" && e.map && <button type="button" className="gs-play" onClick={() => setSk(e)} aria-label="Prikaži kako je pao gol" title="Kako je pao gol">{Icon.play(14)}</button>}
             {(e.type === "goal" || e.type === "owngoal" || e.type === "so") && <span className="sc">{r.sc[0]}:{r.sc[1]}</span>}
           </div>);
         return (
