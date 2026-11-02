@@ -48,7 +48,7 @@ def draw_court(img, H_c2i, L, W, col=(0, 255, 255)):
 # ---------------- fit ----------------
 def cmd_fit(a):
     from scipy.optimize import least_squares
-    refs = json.load(open(os.path.join(a.teren, "court_refs.json")))["frames"]
+    refs = json.load(open(os.path.join(a.teren, "court_refs.json"), encoding="utf-8"))["frames"]
     names = [n for n, f in sorted(refs.items()) if any(k in PTS for k in f["pts"])]
     # 1) klikovi se prenose između kadrova koji se preklapaju (SIFT): tako svaki kadar ima točke s više dijelova
     #    terena, pa se mogu procijeniti i dužina i širina (iz jednog kadra se vidi samo dio)
@@ -130,7 +130,7 @@ def match(bf, A, B, min_in):
 
 
 def cmd_track(a):
-    model = json.load(open(os.path.join(a.teren, "court_model.json"))); L, W = model["L"], model["W"]
+    model = json.load(open(os.path.join(a.teren, "court_model.json"), encoding="utf-8")); L, W = model["L"], model["W"]
     sift = cv2.SIFT_create(nfeatures=2000); bf = cv2.BFMatcher(cv2.NORM_L2)
     refs = []
     for r in model["refs"]:
