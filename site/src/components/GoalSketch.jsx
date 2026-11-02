@@ -32,7 +32,7 @@ export function GoalSketch({ map, color = "var(--primary)", onChange, width = 13
   const anim = !edit && run > 0;
   const path = map ? (map.a ? `M${map.a[0]},${map.a[1]} L${map.s[0]},${map.s[1]} L${g[0]},${g[1]}` : `M${map.s[0]},${map.s[1]} L${g[0]},${g[1]}`) : "";
   return (
-    <svg ref={ref} viewBox={`${x0} ${y0} ${x1 - x0} ${h}`} width={edit ? 360 : width}
+    <svg key={run} ref={ref} viewBox={`${x0} ${y0} ${x1 - x0} ${h}`} width={edit ? 360 : width}
       style={{ display: "block", background: "var(--court, #2f6b3f)", borderRadius: 4, cursor: edit ? "crosshair" : map ? "pointer" : "default", maxWidth: "100%" }}
       onClick={click} role="img" aria-label={edit ? "Skica gola: klikni mjesto udarca, pa dodavača" : "Skica gola: dodavanje, udarac i gol. Klikni za animaciju."}>
       <g fill="none" stroke={line} strokeWidth={half ? 0.12 : 0.18} opacity=".8">
@@ -41,7 +41,7 @@ export function GoalSketch({ map, color = "var(--primary)", onChange, width = 13
         {[-1, 1].map((s) => <path key={s} d={`M${s * LL / 2},${-1.58 - 6} A6,6 0 0 ${s > 0 ? 0 : 1} ${s * (LL / 2 - 6)},-1.58 L${s * (LL / 2 - 6)},1.58 A6,6 0 0 ${s > 0 ? 0 : 1} ${s * LL / 2},${1.58 + 6}`} />)}
         <rect x={LL / 2} y="-1.5" width="1" height="3" strokeWidth="0.25" /><rect x={-LL / 2 - 1} y="-1.5" width="1" height="3" strokeWidth="0.25" />
       </g>
-      {map && <g key={run} strokeLinecap="round">
+      {map && <g strokeLinecap="round">
         {map.a && <line x1={map.a[0]} y1={map.a[1]} x2={map.s[0]} y2={map.s[1]} stroke={line} strokeWidth="0.3" strokeDasharray="0.8 0.6" opacity={anim ? 0 : 1}>
           {anim && <animate attributeName="opacity" from="0" to="1" begin="0s" dur={`${tp}s`} fill="freeze" />}</line>}
         <line x1={map.s[0]} y1={map.s[1]} x2={g[0]} y2={g[1]} stroke="var(--signal, #ffcc33)" strokeWidth="0.4" strokeDasharray={anim ? `${d2} ${d2}` : undefined} strokeDashoffset={anim ? d2 : undefined}>
