@@ -121,7 +121,7 @@ export function AnalysisViewer({ D, video: video0, order, names, note, youtube: 
       const dpr = window.devicePixelRatio || 1, cssW = w / dpr;
       const X = (x) => ox + x * kx, Y = (y) => oy + y * ky, S = dpr * Math.min(1.3, Math.max(0.6, cssW / 900));
       const H = f.H, sig = css("--signal");
-      if (show.court) {
+      if (show.court && H) {
         octx.strokeStyle = "rgba(120,200,255,.7)"; octx.lineWidth = 1.6 * S;
         for (const poly of polys) { octx.beginPath(); let pen = false;
           for (const [x, y] of poly) { const p = proj(H, x, y);
@@ -152,7 +152,7 @@ export function AnalysisViewer({ D, video: video0, order, names, note, youtube: 
       const trail = trailAt(fi);
       if (show.ball) {
         octx.strokeStyle = sig; octx.lineWidth = 2 * S;
-        for (let k = 1; k < trail.length; k++) { if (trail[k].gap) continue;
+        for (let k = 1; H && k < trail.length; k++) { if (trail[k].gap) continue;
           const a = proj(H, trail[k - 1].x, trail[k - 1].y), b = proj(H, trail[k].x, trail[k].y); if (!a || !b) continue;
           octx.globalAlpha = 0.25 + 0.75 * k / trail.length; octx.beginPath(); octx.moveTo(X(a[0]), Y(a[1])); octx.lineTo(X(b[0]), Y(b[1])); octx.stroke(); }
         octx.globalAlpha = 1;

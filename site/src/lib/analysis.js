@@ -50,7 +50,9 @@ export function analysisStats(D, order) {
   for (const f of D.frames) {
     if (!f.b || !f.live) continue; n++;
     const x = f.b[2];
-    if (Math.sign(x) === -side[0]) terr[0]++; else if (Math.sign(x) === -side[1]) terr[1]++;
+    // f.dir (cijela utakmica): smjer napada ekipe 0 u tom poluvremenu; inače strana iz golmana
+    const sd = f.dir ? order.map((ti) => (ti === 0 ? -f.dir : f.dir)) : side;
+    if (Math.sign(x) === -sd[0]) terr[0]++; else if (Math.sign(x) === -sd[1]) terr[1]++;
   }
   const terrPct = n ? [Math.round(100 * terr[0] / (terr[0] + terr[1] || 1)), 0] : null;
   if (terrPct) terrPct[1] = 100 - terrPct[0];

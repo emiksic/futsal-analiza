@@ -25,6 +25,15 @@ PTS = {"LFC": lambda L, W: (-L / 2, -W / 2), "LNC": lambda L, W: (-L / 2, W / 2)
 SC = 0.5                                   # SIFT radi na pola rezolucije (1280x720 -> 640x360)
 
 
+def sane(H_img2court, L, W):
+    """Donja polovica slike mora biti razuman komad poda (ne crta, ne cijela dvorana): 40-1500 m2, ispred kamere."""
+    if H_img2court is None or not np.isfinite(H_img2court).all(): return False
+    q = cv2.perspectiveTransform(np.float32([[[0, 300], [1280, 300], [1280, 720], [0, 720]]]), H_img2court)[0]
+    if not np.isfinite(q).all(): return False
+    w = (H_img2court @ np.array([[0, 1280, 1280, 0], [300, 300, 720, 720], [1, 1, 1, 1.0]]))[2]
+    return bool((np.sign(w) == np.sign(w[0])).all() and 40 < abs(cv2.contourArea(q)) < 1500)
+
+
 def court_lines(L, W):
     """Crte terena (u metrima) za provjeru: rub, središnja linija, krug, kazneni prostori (lukovi 6 m), točke."""
     out = [[(-L / 2, -W / 2), (L / 2, -W / 2), (L / 2, W / 2), (-L / 2, W / 2), (-L / 2, -W / 2)], [(0, -W / 2), (0, W / 2)]]
@@ -93,6 +102,16 @@ def cmd_fit(a):
             if k in PTS:
                 q = Hm @ np.array([*PTS[k](L, W), 1.0]); err.append(np.hypot(q[0] / q[2] - v[0], q[1] / q[2] - v[1]))
     err = np.array(err); names = use
+    good = [i for i, Hm in enumerate(H) if sane(np.linalg.inv(Hm), L, W)]
+    for i, n in enumerate(names):
+        if i in good: continue
+        best = (None, 0)
+        for j in good:
+            Hh, nin = match(bf, F[names[j]], F[n], 40)
+            if Hh is not None and nin > best[1]: best = (Si @ Hh @ S @ H[j], nin)
+        if best[0] is not None and sane(np.linalg.inv(best[0]), L, W):
+            H[i] = best[0] / best[0][2, 2]; print(f"  {n}: točke gotovo na jednom pravcu -> teren preuzet od susjednog kadra ({best[1]} poklapanja)")
+        else: print(f"  ! {n}: neispravan i nema dobrog susjeda; dodaj točke izvan jednog pravca")
     print(f"teren {L:.2f} x {W:.2f} m, {len(names)} kadrova, {len(err)} točaka, greška: medijan {np.median(err):.1f} px, najveća {err.max():.1f} px")
     model = {"L": round(float(L), 3), "W": round(float(W), 3), "refs": []}
     k = 0
@@ -176,7 +195,7 @@ def cmd_track(a):
             Hf = Si @ Hm @ S                                         # kadar -> referentni (puna rezolucija)
             Hic = np.linalg.inv(refs[i]["H"]) @ Hf                   # kadar -> teren
             c = cv2.perspectiveTransform(np.float32([[[640, 560]]]), Hic)[0, 0]
-            if abs(c[0]) < L / 2 + 8 and abs(c[1]) < W / 2 + 8:
+            if abs(c[0]) < L / 2 + 8 and abs(c[1]) < W / 2 + 8 and sane(Hic, L, W):
                 Hic = Hic / Hic[2, 2]; rec = [round(t, 3), [round(float(v), 7) for v in Hic.ravel()], i, n]; last = i; ok_n += 1
         out.append(rec)
         if fi in checks and rec[1]:
