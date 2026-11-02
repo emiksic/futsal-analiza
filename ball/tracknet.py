@@ -230,6 +230,78 @@ def cmd_eval(a):
 
 
 def cmd_detect(a):
+    """Brža detekcija: čitanje videa u zasebnoj niti (grab() za frameove koji ne trebaju), priprema ulaza na grafičkoj,
+    paketi od --batch predviđanja. Izlaz je isti kao detect-old. Napredak se sprema svakih ~5 min snimke (--resume nastavlja)."""
+    import torch, threading, queue
+    dev = torch.device("cuda" if torch.cuda.is_available() else "cpu"); model = load_model(a.model, dev)
+    if dev.type == "cuda":
+        torch.backends.cudnn.benchmark = True; model = model.to(memory_format=torch.channels_last)
+    cap = cv2.VideoCapture(a.video); fps = cap.get(cv2.CAP_PROP_FPS) or 30; nfr = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    W, H = int(cap.get(3)), int(cap.get(4)); sx, sy = NW / W, NH / H
+    gap = max(1, round(fps / 30)); step = max(1, round(fps / a.hz)) if a.hz else a.step
+    f0 = round(a.start * fps); f1 = min(nfr, round(min(a.end, nfr / fps) * fps))
+    res = []
+    if a.resume and os.path.exists(a.out):
+        res = json.load(open(a.out))
+        if res:
+            last = round(res[-1]["t"] * fps); f0 += ((last - f0) // step + 1) * step
+            print(f"nastavljam od {f0 / fps:.1f} s ({len(res)} već gotovih)")
+    fs = max(0, f0 - gap)                                   # prvi frame koji čitamo (kao detect-old)
+    def is_center(c): return f0 <= c < f1 and (c - f0) % step == 0 and c - gap >= fs
+    def needed(fi): return any(is_center(c) for c in (fi - gap, fi, fi + gap))
+    q = queue.Queue(maxsize=64)
+    def reader():
+        cap.set(cv2.CAP_PROP_POS_FRAMES, fs)
+        for fi in range(fs, f1 + gap + 1):
+            if needed(fi):
+                ok, f = cap.read()
+                if not ok: break
+                if (W, H) != (NW, NH): f = cv2.resize(f, (NW, NH), interpolation=cv2.INTER_AREA)
+                q.put((fi, f))
+            elif not cap.grab(): break
+        q.put(None)
+    threading.Thread(target=reader, daemon=True).start()
+
+    frames, pend = {}, []                                   # fi -> uint8 HxWx3 na grafičkoj; centri koji čekaju
+    def run_batch(cs):
+        x = torch.stack([torch.cat([frames[c - gap], frames[c], frames[c + gap]], 2) for c in cs])  # B,H,W,9 (BGR x3)
+        x = x[..., [2, 1, 0, 5, 4, 3, 8, 7, 6]].permute(0, 3, 1, 2).float() / 255.0                # RGB, kao to_tensor
+        if dev.type == "cuda": x = x.contiguous(memory_format=torch.channels_last)
+        with torch.no_grad(), torch.autocast(device_type=dev.type, enabled=dev.type == "cuda"):
+            prob = torch.sigmoid(model(x).float())[:, 0]
+        mp = torch.nn.functional.max_pool2d(prob[:, None], 9, 1, 4)[:, 0]
+        bi, ys, xs = torch.nonzero((prob == mp) & (prob >= 0.05), as_tuple=True)
+        vs = prob[bi, ys, xs].tolist(); bi, ys, xs = bi.tolist(), ys.tolist(), xs.tolist()
+        per = [[] for _ in cs]
+        for b, y, x_, v in zip(bi, ys, xs, vs): per[b].append((float(x_), float(y), v))
+        for c, pk in zip(cs, per):
+            pk = sorted(pk, key=lambda p: -p[2])[:3]
+            res.append({"t": round(c / fps, 3), "dets": [[round(x / sx, 1), round(y / sy, 1), round(12 / sx, 1), round(12 / sy, 1), round(p, 3)] for x, y, p in pk]})
+            if len(res) % 600 == 0:
+                el = time.time() - t0; done = (c - f0) / max(1, f1 - f0)
+                print(f"  {c / fps:6.1f} s   {(c - f0) / fps / max(el, 1e-6):4.1f}x brzina snimke   još ~{el / max(done, 1e-6) * (1 - done) / 60:.0f} min", flush=True)
+    def save():
+        tmp = a.out + ".tmp"; json.dump(res, open(tmp, "w")); os.replace(tmp, a.out)
+
+    t0 = time.time(); next_save = f0 + round(300 * fps)
+    while True:
+        it = q.get()
+        if it is None: break
+        fi, f = it
+        frames[fi] = torch.from_numpy(f).to(dev, non_blocking=True)
+        c = fi - gap
+        if is_center(c) and c in frames: pend.append(c)
+        if len(pend) >= a.batch:
+            run_batch(pend); pend = []
+            lo = res[-1]["t"] * fps - gap
+            for k in [k for k in frames if k < lo]: del frames[k]
+            if c >= next_save: save(); next_save += round(300 * fps)
+    if pend: run_batch(pend)
+    save()
+    print("frameova", len(res), " s barem jednom detekcijom:", sum(bool(r["dets"]) for r in res), f"  ({(time.time() - t0) / 60:.1f} min)")
+
+
+def cmd_detect_old(a):
     import torch
     dev = torch.device("cuda" if torch.cuda.is_available() else "cpu"); model = load_model(a.model, dev)
     cap = cv2.VideoCapture(a.video); fps = cap.get(cv2.CAP_PROP_FPS) or 30; nfr = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -255,7 +327,7 @@ def main():
         try: st.reconfigure(encoding="utf-8", errors="replace")
         except Exception: pass
     ap = argparse.ArgumentParser(); sub = ap.add_subparsers(dest="cmd", required=True)
-    for c in ("train", "eval", "detect"):
+    for c in ("train", "eval", "detect", "detect-old"):
         p = sub.add_parser(c)
         p.add_argument("--data", default=str(Path.home() / "futsal-ball")); p.add_argument("--val", nargs="*")
         p.add_argument("--model", default=str(Path.home() / "futsal-ball" / "runs" / "tracknet" / "best.pt"))
@@ -263,11 +335,13 @@ def main():
             p.add_argument("--epochs", type=int, default=40); p.add_argument("--batch", type=int, default=6)
             p.add_argument("--lr", type=float, default=2e-3); p.add_argument("--workers", type=int, default=4)
             p.add_argument("--patience", type=int, default=15)
-        if c == "detect":
+        if c.startswith("detect"):
             p.add_argument("video"); p.add_argument("out")
             p.add_argument("--start", type=float, default=0); p.add_argument("--end", type=float, default=1e9); p.add_argument("--step", type=int, default=1)
+            p.add_argument("--hz", type=float, help="predviđanja u sekundi snimke (npr. 30); zamjenjuje --step, radi za 30 i 60 fps")
+            p.add_argument("--batch", type=int, default=4); p.add_argument("--resume", action="store_true")
     a = ap.parse_args()
-    {"train": cmd_train, "eval": cmd_eval, "detect": cmd_detect}[a.cmd](a)
+    {"train": cmd_train, "eval": cmd_eval, "detect": cmd_detect, "detect-old": cmd_detect_old}[a.cmd](a)
 
 
 if __name__ == "__main__":
