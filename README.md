@@ -1,6 +1,6 @@
 # Futsal analiza
 
-Automatska analiza snimki futsal utakmica (1. HMNL juniori/kadeti) s YouTube streamova:
+Automatska analiza snimki futsal utakmica (SuperSport HMNL, 1. HMNL juniori/kadeti) s YouTube streamova:
 igrači i ekipe, brojevi na dresu (uz zapisnik), golmani, lopta, posjed, postava „na terenu“,
 mini-mapa terena i web preglednik sinkroniziran s videom.
 
