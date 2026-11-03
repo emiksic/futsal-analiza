@@ -9,6 +9,7 @@ Za svaku utakmicu:
   3. ako je dvorana kalibrirana (run/dvorane/<dvorana>/court_model.json + klikani kadrovi):
      teren za svaki kadar, video analiza s mini-mapom (upload) i automatske skice golova
 Gotova utakmica dobije run/<id>/batch.done; korak koji ne uspije se zapiše i ide se na sljedeću utakmicu.
+Kad se dvorana naknadno kalibrira, isto pokretanje za već analizirane utakmice napravi samo mini-mapu i skice (analiza se ne ponavlja).
 Sve se zapisuje i u run/batch_log.txt.
 
 Dres domaćih (tamni/svijetli, za boje ekipa na mini-mapi) je u data/dresovi.json po klubu domaćinu;
@@ -69,7 +70,11 @@ def main():
             if v in a.skip or m["id"] in a.skip: continue
             ms.append((m["date"], m, v))
     ms.sort(key=lambda x: x[0], reverse=True)                                  # od zadnjeg kola prema početku
-    todo = [(m, v) for _, m, v in ms if not (RUN / v / "batch.done").exists()]
+    def hall_of(m): return m.get("hall") or clubs.get(m["home"], {}).get("hall")
+    def pending(m, v):     # nije analizirana, ili je dvorana u međuvremenu kalibrirana a mini-mapa još nije napravljena
+        if not (RUN / v / "batch.done").exists(): return True
+        return (RUN / "dvorane" / str(hall_of(m)) / "court_model.json").exists() and kits.get(m["home"]) and not (RUN / v / "minimapa.done").exists()
+    todo = [(m, v) for _, m, v in ms if pending(m, v)]
     log(f"=== batch: {len(ms)} utakmica s prijenosom, gotovih {len(ms) - len(todo)}, ostaje {len(todo)}")
     if a.max: todo = todo[:a.max]
     if a.list:
@@ -85,7 +90,7 @@ def main():
         if not a.no_upload and traka.exists():
             run(["scripts/goals_to_site.py", traka, "--match", m["id"], "--write"], "sekunde golova")
             run(["scripts/stats_to_site.py", traka, "--match", m["id"], "--write"], "tempo igre")
-        hall = m.get("hall") or clubs.get(m["home"], {}).get("hall")
+        hall = hall_of(m)
         teren = RUN / "dvorane" / str(hall)
         kit = kits.get(m["home"])
         if (teren / "court_model.json").exists() and traka.exists():
@@ -98,6 +103,7 @@ def main():
                 base = ["--tracks", out / "tracks.json", "--ball", out / "lopta.json", "--court", court, "--traka", traka]
                 if run(["scripts/export_match.py", *base, "--home", H, "--away", A, "--home-kit", kit, "--out", out / "web.json"], "izvoz"):
                     run(["scripts/upload_analysis.py", out / "web.json", "--match", m["id"], "--yt-offset", "0", "--team-map", f"{H}=home", f"{A}=away"], "upload analize")
+                    (out / "minimapa.done").write_text(time.strftime("%Y-%m-%d %H:%M:%S"))
                 run(["scripts/goal_sketches.py", *base, "--home-kit", kit, "--match", m["id"], "--write"], "skice golova")
             elif not kit: log(f"   mini-mapa preskočena: nema dresa za {m['home']} u data/dresovi.json")
         else:
