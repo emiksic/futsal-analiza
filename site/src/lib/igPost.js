@@ -80,7 +80,7 @@ function caption(post, lid, L, rn, rows, slides) {
   }
   const lines = rows.map((r) => `${r.home.name} ${r.s ? `${r.s[0]}:${r.s[1]}` : "–"} ${r.away.name}${r.so ? ` (11 m ${r.so[0]}:${r.so[1]})` : ""}`);
   const extra = slides.some((x) => x.kind === "table") ? `📊 ${slides.some((x) => x.kind === "scorers") ? "Tablica i strijelci" : "Tablica"} u objavi ➡️\n` : "";
-  return `⚽ ${head}: rezultati\n\n${lines.join("\n")}\n\n${extra}Strijelci po minutama, statistika i video analize na hmnl.hr\n\n${tags}`;
+  return `⚽ ${head}: rezultati\n\n${lines.join("\n")}\n\n${extra}Strijelci po minutama i detaljna statistika na hmnl.hr\n\n${tags}`;
 }
 
 function span(ms) {
