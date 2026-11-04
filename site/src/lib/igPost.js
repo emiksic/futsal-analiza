@@ -1,6 +1,6 @@
 // Instagram objava za kolo (raspored ili rezultati), 1080×1350, crta se na canvas pa se preuzme kao PNG.
 // Boja po kategoriji: seniori žuta, juniori zelena, kadeti narančasta, kup crvena. Tema tamna ili svijetla.
-import { score, shootout, winner, roundName, isCup } from "./derive.js";
+import { score, shootout, winner, roundName, isCup, standings, scorers, playerName, zoneOf } from "./derive.js";
 
 export const W = 1080, H = 1350;
 const PAD = 56;
@@ -38,13 +38,49 @@ export function buildPost(db, ix, compId, round, mode = "auto") {
     };
   });
   const per = rows.length <= MAX_PER_PAGE ? MAX_PER_PAGE : 5;
-  const pages = [];
-  for (let i = 0; i < rows.length; i += per) pages.push(rows.slice(i, i + per));
-  return {
+  const rn = roundName(L, round), dates = span(ms), rnG = rn.replace(/kolo$/, "kola");
+  const slides = [];
+  for (let i = 0; i < rows.length; i += per) slides.push({ kind: "matches", rows: rows.slice(i, i + per), title: [rn, res ? "Rezultati" : "Raspored"] });
+  if (!slides.length) slides.push({ kind: "matches", rows: [], title: [rn, "Raspored"] });
+  // uz rezultate: tablica nakon kola (ne za kup) i strijelci (samo seniori)
+  if (res && !isCup(L)) {
+    const upTo = { ...db, matches: db.matches.filter((m) => m.comp !== compId || m.round <= round) };
+    const tbl = standings(upTo, compId);
+    if (tbl.some((r) => r.p)) slides.push({ kind: "table", rows: tbl.map((r) => ({ ...r, c: ix.club[r.club] })), zones: L.zones || {}, title: ["Tablica", `nakon ${rnG}`] });
+    if (C.league === "1-hmnl") {
+      const sc = scorers(upTo, compId).filter((r) => r.goals);
+      const cut = sc.length > 10 ? sc[9].goals : 0;
+      const top = sc.filter((r, i) => i < 10 || r.goals === cut).slice(0, 12);
+      if (top.length) slides.push({ kind: "scorers", rows: top.map((r) => ({ ...r, name: playerName(ix.player[r.player]), c: ix.club[r.club] })), title: ["Strijelci", `nakon ${rnG}`] });
+    }
+  }
+  const post = {
     pal, cat: pal.cat, league: C.league === "kup" ? "Seniori" : C.league === "1-hmnl" ? "SuperSport HMNL" : L.name,
-    title: [roundName(L, round), res ? "Rezultati" : "Raspored"], dates: span(ms), res,
-    sub: res ? "službeni rezultati" : "službeni termini", pages: pages.length ? pages : [[]],
+    dates, res, sub: res ? "službeni rezultati" : "službeni termini", slides,
   };
+  post.caption = caption(post, C.league, L, rn, rows, slides);
+  return post;
+}
+
+// ---------- opis objave i hashtagovi ----------
+const TAGS = {
+  "1-hmnl": ["#SuperSportHMNL", "#SHMNL", "#futsalcroatia"],
+  juniori: ["#HMNLjuniori", "#U19", "#futsalmladi"],
+  kadeti: ["#HMNLkadeti", "#U17", "#futsalmladi"],
+  kup: ["#HrvatskiKup", "#futsalkup"],
+};
+const tag = (n) => "#" + n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").replace(/[^A-Za-z0-9]/g, "");
+function caption(post, lid, L, rn, rows, slides) {
+  const clubs = [...new Set(rows.flatMap((r) => [r.home.name, r.away.name]))].slice(0, 12).map(tag);
+  const tags = ["#futsal", "#malinogomet", "#futsalhrvatska", ...(TAGS[lid] || []), ...clubs, "#hmnlhr"].slice(0, 30).join(" ");
+  const head = `${lid === "1-hmnl" ? "SuperSport HMNL" : L.name} · ${rn}`;
+  if (!post.res) {
+    const lines = rows.map((r) => `▫️ ${r.home.name} – ${r.away.name}${r.s ? ` ${r.s[0]}:${r.s[1]}` : r.time ? ` · ${r.day} ${r.time}` : " · termin naknadno"}${r.city ? ` · ${r.city}` : ""}`);
+    return `📅 ${head} | ${post.dates}\n\n${lines.join("\n")}\n\n📺 Prijenosi, rezultati i statistika na hmnl.hr\n\n${tags}`;
+  }
+  const lines = rows.map((r) => `${r.home.name} ${r.s ? `${r.s[0]}:${r.s[1]}` : "–"} ${r.away.name}${r.so ? ` (11 m ${r.so[0]}:${r.so[1]})` : ""}`);
+  const extra = slides.some((x) => x.kind === "table") ? `📊 ${slides.some((x) => x.kind === "scorers") ? "Tablica i strijelci" : "Tablica"} u objavi ➡️\n` : "";
+  return `⚽ ${head}: rezultati\n\n${lines.join("\n")}\n\n${extra}Strijelci po minutama, statistika i video analize na hmnl.hr\n\n${tags}`;
 }
 
 function span(ms) {
@@ -87,7 +123,7 @@ function fit(ctx, t, weight, max, min, width) {
 export function drawPage(ctx, post, pageIx, theme = "dark") {
   const P = post.pal, T = theme === "light" ? LIGHT : DARK, light = theme === "light";
   const bg = light ? T.bg : P.bg, row = light ? T.row : P.row, deep = light ? T.deep : P.deep;
-  const rows = post.pages[pageIx], n = rows.length, many = post.pages.length > 1;
+  const slide = post.slides[pageIx], rows = slide.rows, n = rows.length, many = post.slides.length > 1;
   ctx.clearRect(0, 0, W, H); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
   // linije terena (samo tamna tema)
@@ -115,16 +151,25 @@ export function drawPage(ctx, post, pageIx, theme = "dark") {
   text(ctx, post.cat, PAD + 14, cy + 33, { font: `900 26px ${RC}`, color: light ? P.acc : P.on, ls: 3, upper: true });
   text(ctx, post.league, PAD + cw + 14, cy + 33, { font: `700 26px ${RC}`, color: onHead, ls: 3, upper: true });
   // naslov
-  const tf = fit(ctx, post.title[0], 900, 112, 70, 620);
-  text(ctx, post.title[0], PAD - 4, 222, { font: `900 ${tf}px ${RC}`, color: onHead, upper: true });
+  const tf = fit(ctx, slide.title[0], 900, 112, 70, 620), tf2 = fit(ctx, slide.title[1], 900, 112, 60, 620);
+  text(ctx, slide.title[0], PAD - 4, 222, { font: `900 ${tf}px ${RC}`, color: onHead, upper: true });
   ctx.save(); if (light) ctx.globalAlpha = 0.55;
-  text(ctx, post.title[1], PAD - 4, 320, { font: `900 112px ${RC}`, color: light ? P.on : P.acc, upper: true });
+  text(ctx, slide.title[1], PAD - 4, 320, { font: `900 ${tf2}px ${RC}`, color: light ? P.on : P.acc, upper: true });
   ctx.restore();
   text(ctx, post.dates, W - PAD, 292, { font: `700 30px ${RC}`, color: onHead, align: "right", ls: 1.5, upper: true });
   ctx.save(); ctx.globalAlpha = 0.7;
-  text(ctx, post.sub + (many ? `  ·  ${pageIx + 1}/${post.pages.length}` : ""), W - PAD, 322, { font: `500 21px ${RB}`, color: onHead, align: "right" });
+  text(ctx, post.sub + (many ? `  ·  ${pageIx + 1}/${post.slides.length}` : ""), W - PAD, 322, { font: `500 21px ${RB}`, color: onHead, align: "right" });
   ctx.restore();
 
+  const Tt = { T, light, row, deep, top: headH + 30, bottom: H - 44 - 42 - 22 - 30 };
+  if (slide.kind === "table") drawTable(ctx, P, Tt, slide);
+  else if (slide.kind === "scorers") drawScorers(ctx, P, Tt, slide);
+  else drawMatches(ctx, P, Tt, rows);
+  footer(ctx, P, T, light);
+}
+
+function drawMatches(ctx, P, { T, light, row, deep }, rows) {
+  const n = rows.length, headH = 364;
   // utakmice
   const rh = n >= 6 ? 128 : 148, gap = n >= 6 ? 12 : 16, top = headH + 30, bottom = H - 44 - 42 - 22 - 30;
   const total = n * rh + Math.max(0, n - 1) * gap;
@@ -173,7 +218,9 @@ export function drawPage(ctx, post, pageIx, theme = "dark") {
     }
     y += rh + gap;
   }
+}
 
+function footer(ctx, P, T, light) {
   // podnožje
   const fy = H - 44 - 42 - 22;
   ctx.fillStyle = light ? T.line : DARK.line; ctx.fillRect(PAD, fy, W - 2 * PAD, 2);
@@ -182,4 +229,54 @@ export function drawPage(ctx, post, pageIx, theme = "dark") {
   text(ctx, ".hr", PAD + bw, H - 52, { font: `900 42px ${RC}`, color: light ? T.fg : P.acc });
   ctx.restore();
   text(ctx, "Neslužbena stranica · hmnl.hr", W - PAD, H - 58, { font: `400 18px ${RB}`, color: T.muted, align: "right" });
+}
+
+// tablica po bodovima: #, klub, U, P, N, I, GR, B
+function drawTable(ctx, P, { T, light, row, deep, top, bottom }, slide) {
+  const rows = slide.rows, n = rows.length, x0 = PAD, x1 = W - PAD;
+  const hh = 44, rh = Math.min(68, Math.floor((bottom - top - hh) / n));
+  let y = top + Math.max(0, (bottom - top - hh - rh * n) / 2);
+  const cols = [["U", "p"], ["P", "w"], ["N", "d"], ["I", "l"], ["GR", "gd"], ["B", "pts"]];
+  const cx = (i) => x1 - 30 - (cols.length - 1 - i) * 74 - (i === cols.length - 1 ? 0 : 20);
+  cols.forEach(([h], i) => text(ctx, h, cx(i), y + 30, { font: `700 20px ${RC}`, color: T.muted, align: "center", ls: 2 }));
+  text(ctx, "#", x0 + 30, y + 30, { font: `700 20px ${RC}`, color: T.muted, align: "center" });
+  text(ctx, "Klub", x0 + 120, y + 30, { font: `700 20px ${RC}`, color: T.muted, ls: 2, upper: true });
+  y += hh;
+  rows.forEach((r, i) => {
+    ctx.fillStyle = i % 2 ? deep : row; ctx.fillRect(x0, y, x1 - x0, rh);
+    const z = zoneOf(slide.zones, i, n), mid = y + rh / 2;
+    const zc = z === "z-a2" || z === "z-a" ? P.acc : z === "z-b" ? "#e0453b" : z === "z-q" ? "#e07b16" : null;
+    if (zc) { ctx.fillStyle = zc; ctx.fillRect(x0, y, 8, rh); }
+    text(ctx, String(i + 1), x0 + 30, mid + 10, { font: `900 28px ${RC}`, color: T.fg, align: "center" });
+    jersey(ctx, r.c?.kit, x0 + 60, mid - 21, 42);
+    const nf = fit(ctx, r.c?.name || r.club, 700, 30, 18, cx(0) - 40 - (x0 + 120));
+    text(ctx, r.c?.name || r.club, x0 + 120, mid + nf * 0.36, { font: `700 ${nf}px ${RC}`, color: T.fg, upper: true });
+    cols.forEach(([, k], j) => {
+      const last = j === cols.length - 1, v = k === "gd" && r.gd > 0 ? "+" + r.gd : String(r[k]);
+      if (last) { ctx.fillStyle = P.acc; ctx.fillRect(cx(j) - 40, y, 80 + 30, rh); }
+      text(ctx, v, last ? cx(j) + 15 : cx(j), mid + 10, { font: `${last ? 900 : 700} ${last ? 32 : 27}px ${RC}`, color: last ? P.on : T.fg, align: "center" });
+    });
+    y += rh;
+  });
+}
+
+// strijelci: #, igrač, klub, golovi
+function drawScorers(ctx, P, { T, light, row, deep, top, bottom }, slide) {
+  const rows = slide.rows, n = rows.length, x0 = PAD, x1 = W - PAD;
+  const rh = Math.min(76, Math.floor((bottom - top) / n));
+  let y = top + Math.max(0, (bottom - top - rh * n) / 2), prev = null, pos = 0;
+  rows.forEach((r, i) => {
+    if (r.goals !== prev) { pos = i + 1; prev = r.goals; }
+    ctx.fillStyle = i % 2 ? deep : row; ctx.fillRect(x0, y, x1 - x0, rh);
+    const mid = y + rh / 2;
+    text(ctx, i && rows[i - 1].goals === r.goals ? "" : `${pos}.`, x0 + 40, mid + 11, { font: `900 30px ${RC}`, color: T.muted, align: "center" });
+    const nf = fit(ctx, r.name, 700, 34, 20, 520);
+    text(ctx, r.name, x0 + 90, mid + nf * 0.36, { font: `700 ${nf}px ${RC}`, color: T.fg, upper: true });
+    jersey(ctx, r.c?.kit, x1 - 400, mid - 20, 40);
+    const cf = fit(ctx, r.c?.name || "", 500, 24, 16, 230);
+    text(ctx, r.c?.name || "", x1 - 350, mid + 8, { font: `500 ${cf}px ${RC}`, color: T.muted, upper: true });
+    ctx.fillStyle = P.acc; ctx.fillRect(x1 - 96, y, 96, rh);
+    text(ctx, String(r.goals), x1 - 48, mid + 14, { font: `900 40px ${RC}`, color: P.on, align: "center" });
+    y += rh;
+  });
 }
