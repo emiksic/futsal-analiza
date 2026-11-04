@@ -1,6 +1,6 @@
 // Instagram objava za kolo (raspored ili rezultati), 1080×1350, crta se na canvas pa se preuzme kao PNG.
 // Boja po kategoriji: seniori žuta, juniori zelena, kadeti narančasta, kup crvena. Tema tamna ili svijetla.
-import { score, shootout, winner, roundName, isCup, standings, scorers, playerName, zoneOf } from "./derive.js";
+import { score, shootout, winner, roundName, isCup, standings, scorers, playerName, zoneOf, absSec, goalTime, comeback } from "./derive.js";
 
 export const W = 1080, H = 1350;
 const PAD = 56;
@@ -42,7 +42,8 @@ export function buildPost(db, ix, compId, round, mode = "auto") {
   const slides = [];
   for (let i = 0; i < rows.length; i += per) slides.push({ kind: "matches", rows: rows.slice(i, i + per), title: [rn, res ? "Rezultati" : "Raspored"] });
   if (!slides.length) slides.push({ kind: "matches", rows: [], title: [rn, "Raspored"] });
-  // uz rezultate: tablica nakon kola (ne za kup) i strijelci (samo seniori)
+  // uz rezultate: brojke kola, tablica nakon kola i strijelci
+  if (res) { const f = facts(ms, ix, L); if (f) slides.push({ kind: "facts", ...f, title: ["Brojke", rnG] }); }
   if (res && !isCup(L)) {
     const upTo = { ...db, matches: db.matches.filter((m) => m.comp !== compId || m.round <= round) };
     const tbl = standings(upTo, compId);
@@ -164,6 +165,7 @@ export function drawPage(ctx, post, pageIx, theme = "dark") {
   const Tt = { T, light, row, deep, top: headH + 30, bottom: H - 44 - 42 - 22 - 30 };
   if (slide.kind === "table") drawTable(ctx, P, Tt, slide);
   else if (slide.kind === "scorers") drawScorers(ctx, P, Tt, slide);
+  else if (slide.kind === "facts") drawFacts(ctx, P, Tt, slide);
   else drawMatches(ctx, P, Tt, rows);
   footer(ctx, P, T, light);
 }
@@ -279,4 +281,87 @@ function drawScorers(ctx, P, { T, light, row, deep, top, bottom }, slide) {
     text(ctx, String(r.goals), x1 - 48, mid + 14, { font: `900 40px ${RC}`, color: P.on, align: "center" });
     y += rh;
   });
+}
+
+// ---------- brojke kola ----------
+const golova = (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "gol" : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? "gola" : "golova"}`;
+function facts(ms, ix, L) {
+  const fin = ms.filter((m) => m.status === "finished" && score(m));
+  if (!fin.length) return null;
+  const S = new Map(fin.map((m) => [m, score(m)]));
+  const total = fin.reduce((a, m) => a + S.get(m)[0] + S.get(m)[1], 0);
+  const wdl = [0, 0, 0]; for (const m of fin) { const [h, a] = S.get(m); wdl[h > a ? 0 : h === a ? 1 : 2]++; }
+  const tiles = [["Golova", String(total)], ["Po utakmici", (total / fin.length).toFixed(1).replace(".", ",")], ["Domaćin · N · gost", wdl.join(" · ")]];
+  const seniors = /senior/i.test(L.category || "");
+  const pair = (m) => ({ a: ix.club[m.home], b: ix.club[m.away] });
+  const items = [];
+  const big = [...fin].sort((x, y) => Math.abs(S.get(y)[0] - S.get(y)[1]) - Math.abs(S.get(x)[0] - S.get(x)[1]))[0];
+  const bs = S.get(big);
+  if (bs[0] !== bs[1]) items.push({ label: "Najveća pobjeda", ...pair(big), value: `${bs[0]}:${bs[1]}` });
+  const most = [...fin].sort((x, y) => (S.get(y)[0] + S.get(y)[1]) - (S.get(x)[0] + S.get(x)[1]))[0];
+  if (most !== big || bs[0] === bs[1]) items.push({ label: "Najviše golova", ...pair(most), value: golova(S.get(most)[0] + S.get(most)[1]) });
+  // golovi s poznatim vremenom
+  const goals = fin.flatMap((m) => m.events.filter((e) => (e.type === "goal" || e.type === "owngoal") && Number.isFinite(e.sec) && e.period <= 2)
+    .map((e) => ({ m, e, side: (e.side === "home") !== (e.type === "owngoal") ? "home" : "away" })));
+  const who = (g) => {
+    const club = ix.club[g.m[g.side]], opp = ix.club[g.m[g.side === "home" ? "away" : "home"]];
+    const pl = seniors && g.e.type === "goal" && ix.player[g.e.player] ? playerName(ix.player[g.e.player]) : null;
+    return { club, text: pl || club.name, note: `${pl ? club.name + ", " : ""}protiv ${opp.name}` };
+  };
+  if (goals.length) {
+    goals.sort((x, y) => absSec(x.e) - absSec(y.e));
+    const f0 = goals[0], fl = goals[goals.length - 1];
+    items.push({ label: "Najbrži gol", ...who(f0), value: goalTime(f0.e) });
+    if (fl !== f0) items.push({ label: "Najkasniji gol", ...who(fl), value: goalTime(fl.e) });
+  }
+  const cb = fin.map((m) => ({ m, c: comeback(m) })).filter((x) => x.c).sort((x, y) => y.c.deficit - x.c.deficit)[0];
+  if (cb) { const side = cb.c.side, club = ix.club[cb.m[side]], opp = ix.club[cb.m[side === "home" ? "away" : "home"]];
+    const fr = side === "home" ? cb.c.from : [cb.c.from[1], cb.c.from[0]], fi = side === "home" ? cb.c.final : [cb.c.final[1], cb.c.final[0]];
+    items.push({ label: "Preokret kola", club, text: club.name, note: `protiv ${opp.name}, s ${fr[0]}:${fr[1]} do ${fi[0]}:${fi[1]}`, value: `${fi[0]}:${fi[1]}` }); }
+  if (seniors) {
+    const t = {}; for (const m of fin) for (const e of m.events) if (e.type === "goal" && e.player) (t[e.player] ||= { p: e.player, club: m[e.side], n: 0 }).n++;
+    const best = Object.values(t).sort((a, b) => b.n - a.n), top = best.filter((x) => x.n === best[0]?.n && x.n >= 2);
+    if (top.length && top.length <= 2) for (const x of top) items.push({ label: "Igrač kola", club: ix.club[x.club], text: playerName(ix.player[x.p]), note: ix.club[x.club].name, value: golova(x.n) });
+  }
+  return { tiles, rows: items.slice(0, 6) };
+}
+
+function drawFacts(ctx, P, { T, light, row, deep, top, bottom }, slide) {
+  const x0 = PAD, x1 = W - PAD, gap = 12, tw = (x1 - x0 - 2 * gap) / 3, th = 150;
+  const rows = slide.rows, k = rows.length;
+  const rh = Math.min(112, Math.floor((bottom - top - th - 24 - (k - 1) * 10) / Math.max(1, k)));
+  let y = top + Math.max(0, (bottom - top - th - 24 - k * rh - (k - 1) * 10) / 2);
+  slide.tiles.forEach(([l, v], i) => {
+    const x = x0 + i * (tw + gap);
+    ctx.fillStyle = i ? row : P.acc; ctx.fillRect(x, y, tw, th);
+    text(ctx, v, x + tw / 2, y + 92, { font: `900 ${fit(ctx, v, 900, 76, 40, tw - 30)}px ${RC}`, color: i ? T.fg : P.on, align: "center" });
+    ctx.save(); ctx.globalAlpha = i ? 1 : 0.75;
+    text(ctx, l, x + tw / 2, y + 128, { font: `700 19px ${RC}`, color: i ? T.muted : P.on, align: "center", ls: 2, upper: true });
+    ctx.restore();
+  });
+  y += th + 24;
+  const lw = 210, vw = 170;
+  for (const r of rows) {
+    ctx.fillStyle = row; ctx.fillRect(x0, y, x1 - x0, rh);
+    ctx.fillStyle = deep; ctx.fillRect(x0, y, lw, rh);
+    const mid = y + rh / 2, words = r.label.split(" ");
+    const l1 = words.slice(0, Math.ceil(words.length / 2)).join(" "), l2 = words.slice(Math.ceil(words.length / 2)).join(" ");
+    text(ctx, l1, x0 + 22, mid - (l2 ? 4 : -8), { font: `700 22px ${RC}`, color: light ? T.fg : P.acc, ls: 2, upper: true });
+    if (l2) text(ctx, l2, x0 + 22, mid + 22, { font: `700 22px ${RC}`, color: light ? T.fg : P.acc, ls: 2, upper: true });
+    const cx = x0 + lw + 22, cw = x1 - vw - 22 - cx;
+    if (r.a) {   // utakmica: dva dresa i imena
+      jersey(ctx, r.a.kit, cx, mid - 20, 40); jersey(ctx, r.b.kit, cx + 46, mid - 20, 40);
+      const t = `${r.a.name} – ${r.b.name}`, f = fit(ctx, t, 700, 30, 18, cw - 104);
+      text(ctx, t, cx + 104, mid + f * 0.36, { font: `700 ${f}px ${RC}`, color: T.fg, upper: true });
+    } else {
+      jersey(ctx, r.club?.kit, cx, mid - 22, 44);
+      const f = fit(ctx, r.text, 700, 32, 18, cw - 60);
+      text(ctx, r.text, cx + 60, mid + (r.note ? -2 : f * 0.36), { font: `700 ${f}px ${RC}`, color: T.fg, upper: true });
+      if (r.note) { ctx.font = `400 19px ${RB}`; let n = r.note; while (n.length > 4 && ctx.measureText(n).width > cw - 60) n = n.slice(0, -2).trimEnd() + "…";
+        text(ctx, n, cx + 60, mid + 26, { font: `400 19px ${RB}`, color: T.muted }); }
+    }
+    ctx.fillStyle = P.acc; ctx.fillRect(x1 - vw, y, vw, rh);
+    text(ctx, r.value, x1 - vw / 2, mid + 14, { font: `900 ${fit(ctx, r.value, 900, 42, 22, vw - 24)}px ${RC}`, color: P.on, align: "center" });
+    y += rh + 10;
+  }
 }
