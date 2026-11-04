@@ -7,6 +7,7 @@ import { Clubs, ClubEdit } from "./Clubs.jsx";
 import { Leagues } from "./Leagues.jsx";
 import { Halls } from "./Halls.jsx";
 import { HallCalib } from "./HallCalib.jsx";
+import { Posts } from "./Posts.jsx";
 import { update } from "../lib/store.js";
 
 // Admin se ne smije otvarati unutar tuđeg okvira (clickjacking) ni preko nešifriranog http-a (lozinka bi išla otvoreno).
@@ -82,7 +83,7 @@ function AdminInner({ db, ix, route }) {
   const [sec, a, b] = route;
   const s = sec || "utakmice";
   const queue = db.matches.filter((m) => ["queued", "processing"].includes(m.analysis?.status)).length;
-  const NAV = [["utakmice", "Utakmice", queue ? `${queue} u redu` : ""], ["klubovi", "Klubovi i igrači"], ["lige", "Lige i sezone"], ["dvorane", "Dvorane"], ["postavke", "Postavke stranice"]];
+  const NAV = [["utakmice", "Utakmice", queue ? `${queue} u redu` : ""], ["klubovi", "Klubovi i igrači"], ["lige", "Lige i sezone"], ["dvorane", "Dvorane"], ["objave", "Objave"], ["postavke", "Postavke stranice"]];
   const cur = s === "utakmica" ? "utakmice" : s === "klub" ? "klubovi" : s === "dvorana" ? "dvorane" : s;
   return (
     <div className="admin">
@@ -100,6 +101,7 @@ function AdminInner({ db, ix, route }) {
         {s === "lige" && <Leagues db={db} ix={ix} />}
         {s === "dvorane" && <Halls db={db} ix={ix} />}
         {s === "dvorana" && <HallCalib db={db} id={a} />}
+        {s === "objave" && <Posts db={db} ix={ix} comp={a} round={b} />}
         {s === "postavke" && <Settings db={db} />}
       </main>
     </div>
