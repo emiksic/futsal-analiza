@@ -184,6 +184,7 @@ def pick_layout(path, layouts, R, n=24):
     for k in np.linspace(0.1, 0.9, n):
         cap.set(cv2.CAP_PROP_POS_FRAMES, int(k * N)); ok, f = cap.read()
         if ok: S.append(f)
+    if not S: raise SystemExit(f"ne mogu otvoriti video: {path}")
     score = {name: sum(r is not None for r in read_frames(S, lay, R)) for name, lay in layouts.items()}
     best = max(score, key=score.get)
     print("rasporedi:", ", ".join(f"{k} {v}/{len(S)}" for k, v in score.items()), "->", best)
