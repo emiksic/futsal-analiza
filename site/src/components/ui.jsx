@@ -101,3 +101,30 @@ export function NumInput({ value, onChange, empty = 0, ...rest }) {
     onBlur={() => { setFocus(false); if (t === "") onChange(empty); }}
     onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, "").slice(0, 3); setT(v); if (v !== "") onChange(+v); }} />;
 }
+
+// Datum i vrijeme u europskom obliku (13. 11. 2026., 20:00, 24 sata), neovisno o jeziku preglednika.
+// value/onChange su lokalni "YYYY-MM-DDTHH:mm"; prazno polje = "".
+const p2 = (n) => String(n).padStart(2, "0");
+export function DateTimeInput({ value, onChange, noTime }) {
+  const [d0, t0] = (value || "").split("T");
+  const show = (d, t) => [d ? d.split("-").reverse().map((x, i) => (i < 2 ? +x : x)).join(". ") + "." : "", t || ""];
+  const [txt, setTxt] = useState(() => show(d0, t0));
+  const [err, setErr] = useState(false);
+  useEffect(() => { setTxt(show(d0, t0)); setErr(false); }, [value]);
+  const commit = (dt, tt) => {
+    const dm = dt.trim().match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})\.?$/);
+    const tm = (tt.trim() || (noTime ? "00:00" : "")).match(/^(\d{1,2})[:.](\d{2})$/);
+    if (!dm || !tm || +dm[2] < 1 || +dm[2] > 12 || +dm[1] < 1 || +dm[1] > 31 || +tm[1] > 23 || +tm[2] > 59) { setErr(true); return; }
+    const v = `${dm[3]}-${p2(dm[2])}-${p2(dm[1])}T${p2(tm[1])}:${tm[2]}`;
+    if (isNaN(new Date(v))) { setErr(true); return; }
+    setErr(false); if (v !== value) onChange(v);
+  };
+  return (
+    <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+      <input className="input" style={{ width: 130, borderColor: err ? "var(--live)" : undefined }} inputMode="numeric" placeholder="13. 11. 2026." aria-label="Datum (dd. mm. gggg.)"
+        value={txt[0]} onChange={(e) => setTxt([e.target.value, txt[1]])} onBlur={() => commit(txt[0], txt[1])} onKeyDown={(e) => e.key === "Enter" && commit(txt[0], txt[1])} />
+      {!noTime && <input className="input" style={{ width: 80, borderColor: err ? "var(--live)" : undefined }} inputMode="numeric" placeholder="20:00" aria-label="Vrijeme (hh:mm, 24 sata)"
+        value={txt[1]} onChange={(e) => setTxt([txt[0], e.target.value])} onBlur={() => commit(txt[0], txt[1])} onKeyDown={(e) => e.key === "Enter" && commit(txt[0], txt[1])} />}
+      {err && <small style={{ color: "var(--live)" }}>Npr. 13. 11. 2026. i 20:00</small>}
+    </div>);
+}

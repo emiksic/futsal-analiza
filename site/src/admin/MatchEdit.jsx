@@ -3,7 +3,7 @@ import { href, go, replaceClick } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
 import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
-import { Jersey, Icon, Toast, NumInput } from "../components/ui.jsx";
+import { Jersey, Icon, Toast, NumInput, DateTimeInput } from "../components/ui.jsx";
 import { ShotTagger } from "./ShotTagger.jsx";
 import { GoalSketch } from "../components/GoalSketch.jsx";
 
@@ -96,8 +96,11 @@ function Basic({ db, ix, m, upd }) {
         </select></label>
       <label className="field"><span>Kolo</span>
         <NumInput className="input" value={m.round} empty={m.round || 1} onChange={(v) => upd((x) => { x.round = Math.max(1, v); })} /></label>
-      <label className="field"><span>Datum i vrijeme</span>
-        <input className="input" type="datetime-local" value={toLocal(m.date)} onChange={(e) => e.target.value && upd((x) => { x.date = new Date(e.target.value).toISOString(); })} /></label>
+      <div className="field"><span>Datum i vrijeme</span>
+        <DateTimeInput value={toLocal(m.date)} onChange={(v) => upd((x) => { x.date = new Date(v).toISOString(); delete x.timeTbd; })} />
+        <label className="small" style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          <input type="checkbox" checked={!!m.timeTbd} onChange={(e) => upd((x) => { if (e.target.checked) x.timeTbd = true; else delete x.timeTbd; })} />
+          Termin još nije objavljen (na stranici piše vikend pet – ned)</label></div>
       <label className="field"><span>Status</span>
         <select className="input" value={m.status} onChange={(e) => upd((x) => { x.status = e.target.value; })}>
           <option value="scheduled">Zakazano</option><option value="finished">Odigrano</option>

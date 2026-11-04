@@ -322,6 +322,14 @@ const DAYS = ["ned", "pon", "uto", "sri", "čet", "pet", "sub"];
 export const fmtDay = (iso) => { const d = new Date(iso); return `${DAYS[d.getDay()]}, ${d.getDate()}. ${d.getMonth() + 1}.`; };
 export const fmtDate = (iso) => { const d = new Date(iso); return `${d.getDate()}. ${d.getMonth() + 1}. ${d.getFullYear()}.`; };
 export const fmtTime = (iso) => { const d = new Date(iso); return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
+// kolo bez objavljenog termina: vikend u kojem se igra (petak – nedjelja)
+export const fmtWeekend = (iso) => {
+  const d = new Date(iso), back = { 5: 0, 6: 1, 0: 2 }[d.getDay()] ?? d.getDay() - 5;
+  const f = new Date(d); f.setDate(d.getDate() - back); const n = new Date(f); n.setDate(f.getDate() + 2);
+  return `pet ${f.getDate()}. ${f.getMonth() + 1}. – ned ${n.getDate()}. ${n.getMonth() + 1}.`;
+};
+// naslov dana u rasporedu: za utakmice bez termina cijeli vikend
+export const dayLabel = (m) => (m.timeTbd ? fmtWeekend(m.date) : fmtDay(m.date));
 export const sameDay = (a, b) => new Date(a).toDateString() === new Date(b).toDateString();
 
 // kadeti (U-17, maloljetnici): javno se prikazuje samo broj
@@ -351,6 +359,13 @@ export function playerName(p) {
   if (fmt === "initials") return `${n[0]}. ${(last || n)[0]}.${p.num ? ` #${p.num}` : ""}`;
   if (fmt === "initial") return last && last !== n ? `${n[0]}. ${last}` : n;
   return n;
+}
+// kratko ime za traku golova: "I. Prezime" (stroža pravila privatnosti ostaju)
+export function shortName(p) {
+  const n = playerName(p);
+  if (!p || (NAMES[p.cat] || "full") !== "full") return n;
+  const last = surnameOf(p), full = (p.name || "").trim();
+  return last && last !== full ? `${full[0]}. ${last}` : n;
 }
 export const NAME_FORMATS = { full: "Ime i prezime", initial: "Inicijal i prezime", last: "Samo prezime", initials: "Inicijali i broj", number: "Samo broj" };
 export const perPlayerAllowed = (ix, compId) => ix.league[ix.comp[compId]?.league]?.privacy?.perPlayer !== false;

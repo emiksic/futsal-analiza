@@ -1,5 +1,5 @@
 import { href } from "../lib/router.js";
-import { score, fmtTime, fmtDay, winner, shootout } from "../lib/derive.js";
+import { score, fmtTime, fmtDay, fmtWeekend, winner, shootout } from "../lib/derive.js";
 import { Jersey, Icon } from "./ui.jsx";
 
 export function MatchRow({ m, ix, showDay }) {
@@ -10,8 +10,9 @@ export function MatchRow({ m, ix, showDay }) {
   return (
     <a className="mrow" href={href("utakmica", m.id)}>
       <div className={"when" + (fin ? " fin" : "")}>
-        {showDay && <div>{fmtDay(m.date)}</div>}
-        <div>{fin ? "Kraj" : m.timeTbd ? "—" : fmtTime(m.date)}</div>
+        {showDay && !(m.timeTbd && !fin) && <div>{fmtDay(m.date)}</div>}
+        {showDay && m.timeTbd && !fin ? <div>{fmtWeekend(m.date).replace(" – ", " –\u00a0")}</div>
+          : <div>{fin ? "Kraj" : m.timeTbd ? "—" : fmtTime(m.date)}</div>}
         {so && <div className="sotag" title={`Kazneni udarci ${so[0]}:${so[1]}`}>11m {so[0]}:{so[1]}</div>}
         {(m.youtube || m.tv) && <div className="tvtag" title={m.youtube || m.tv === "YouTube" ? "Prijenos na YouTubeu" : `Prijenos: ${m.tv}`}>{m.youtube ? "YouTube" : m.tv}</div>}
       </div>

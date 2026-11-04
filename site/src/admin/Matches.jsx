@@ -5,9 +5,14 @@ import { score, fmtDay, fmtTime, currentRound, compName, roundName } from "../li
 import { Jersey, Icon, analysisPill } from "../components/ui.jsx";
 
 export function Matches({ db, ix }) {
-  const [comp, setComp] = useState(() => db.comps[0].id);
+  // odabir natjecanja i kola se pamti, pa povratak s uređivanja utakmice vraća na isto mjesto
+  const saved = (() => { try { return JSON.parse(sessionStorage.getItem("adm-matches") || "{}"); } catch { return {}; } })();
+  const [comp, setComp0] = useState(() => (ix.comp[saved.comp] ? saved.comp : db.comps[0].id));
   const C = ix.comp[comp];
-  const [round, setRound] = useState(() => currentRound(db, comp));
+  const [round, setRound0] = useState(() => (ix.comp[saved.comp] && saved.round ? saved.round : currentRound(db, comp)));
+  const keep = (c, r) => { try { sessionStorage.setItem("adm-matches", JSON.stringify({ comp: c, round: r })); } catch { /* */ } };
+  const setComp = (c) => { setComp0(c); keep(c, round); };
+  const setRound = (r) => { setRound0(r); keep(comp, r); };
   const ms = db.matches.filter((m) => m.comp === comp && (round === "all" || m.round === +round)).sort((a, b) => a.date.localeCompare(b.date));
   const queue = db.matches.filter((m) => ["queued", "processing"].includes(m.analysis?.status)).sort((a, b) => a.date.localeCompare(b.date));
   const add = () => {
@@ -38,7 +43,7 @@ export function Matches({ db, ix }) {
         </section>)}
       <section className="panel">
         <div className="toolbar" style={{ paddingTop: 14 }}>
-          <select className="select" aria-label="Natjecanje" value={comp} onChange={(e) => { setComp(e.target.value); setRound(currentRound(db, e.target.value)); }}>
+          <select className="select" aria-label="Natjecanje" value={comp} onChange={(e) => { const c = e.target.value, r = currentRound(db, c); setComp0(c); setRound0(r); keep(c, r); }}>
             {db.comps.map((c) => <option key={c.id} value={c.id}>{compName(ix, c.id)}</option>)}
           </select>
           <select className="select" aria-label="Kolo" value={round} onChange={(e) => setRound(e.target.value)}>
@@ -56,7 +61,7 @@ export function Matches({ db, ix }) {
               return (
                 <tr key={m.id}>
                   <td className="nowrap">{m.round}.</td>
-                  <td className="nowrap">{fmtDay(m.date)}<div className="small muted">{fmtTime(m.date)}</div></td>
+                  <td className="nowrap">{fmtDay(m.date)}<div className="small muted">{m.timeTbd ? "termin nepoznat" : fmtTime(m.date)}</div></td>
                   <td><span className="mt"><Jersey kit={ix.club[m.home].kit} size={18} />{ix.club[m.home].name}<span className="muted">–</span><Jersey kit={ix.club[m.away].kit} size={18} />{ix.club[m.away].name}</span></td>
                   <td className="nowrap" style={{ font: "700 17px/1 var(--display)" }}>{s && m.status === "finished" ? `${s[0]}:${s[1]}` : <span className="muted small" style={{ fontFamily: "var(--body)", fontWeight: 400 }}>zakazano</span>}</td>
                   <td>{rosterOk(m) ? <span className="pill done">unesen</span> : <span className="pill">nema</span>}</td>

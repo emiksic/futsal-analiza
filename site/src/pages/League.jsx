@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { href, go, replaceClick, replaceGo } from "../lib/router.js";
-import { standings, scorers, currentRound, fmtDay, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft, leadTable, mins } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, dayLabel, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft, leadTable, mins } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
@@ -58,7 +58,7 @@ export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roun
   );
 }
 
-const VIEWS = [["all", "Ukupno"], ["home", "Doma"], ["away", "U gostima"], ["h1", "1. poluvrijeme"], ["h2", "2. poluvrijeme"]];
+const VIEWS = [["all", "Ukupno"], ["home", "Doma"], ["away", "U gostima", "Gosti"], ["h1", "1. poluvrijeme", "1. pol."], ["h2", "2. poluvrijeme", "2. pol."]];
 function Standings({ db, ix, comp, league }) {
   const [view, setView0] = useState(() => { try { return sessionStorage.getItem("tbl-view") || "all"; } catch { return "all"; } });
   const setView = (v) => { setView0(v); try { sessionStorage.setItem("tbl-view", v); } catch { /* */ } };
@@ -69,7 +69,8 @@ function Standings({ db, ix, comp, league }) {
   return (
     <>
       <div className="seg tbl-views" role="tablist" aria-label="Vrsta tablice">
-        {VIEWS.map(([k, n]) => <button key={k} type="button" role="tab" aria-selected={view === k} onClick={() => setView(k)}>{n}</button>)}
+        {VIEWS.map(([k, n, sh]) => <button key={k} type="button" role="tab" aria-selected={view === k} onClick={() => setView(k)} aria-label={n}>
+          {sh ? <><span className="lg-only">{n}</span><span className="sm-only">{sh}</span></> : n}</button>)}
       </div>
       <div className="tbl-wrap">
         <table className="st">
@@ -111,27 +112,25 @@ function Standings({ db, ix, comp, league }) {
 function Rounds({ db, ix, comp, league, round }) {
   const r = round || currentRound(db, comp.id);
   const ms = db.matches.filter((m) => m.comp === comp.id && m.round === r).sort((a, b) => a.date.localeCompare(b.date));
-  const days = [...new Set(ms.map((m) => fmtDay(m.date)))];
+  const days = [...new Set(ms.map(dayLabel))];
   const nav = (k) => replaceGo("liga", comp.league, comp.season, "rezultati", k);
   return (
     <>
       <div className="toolbar" style={{ paddingTop: 12 }}>
         <div className="stepper">
           <button onClick={() => nav(r - 1)} disabled={r <= 1} aria-label="Prethodno kolo">{Icon.chevL()}</button>
-          <b>{roundName(league, r)}</b>
+          <select className="select round-pick" aria-label="Odaberi kolo" value={r} onChange={(e) => nav(e.target.value)}>
+            {Array.from({ length: comp.rounds }, (_, i) => <option key={i} value={i + 1}>{roundName(league, i + 1)}</option>)}
+          </select>
           <button onClick={() => nav(r + 1)} disabled={r >= comp.rounds} aria-label="Sljedeće kolo">{Icon.chevR()}</button>
         </div>
-        <span className="grow" />
-        <select className="select" aria-label="Odaberi kolo" value={r} onChange={(e) => nav(e.target.value)}>
-          {Array.from({ length: comp.rounds }, (_, i) => <option key={i} value={i + 1}>{roundName(league, i + 1)}</option>)}
-        </select>
       </div>
       <div className="mlist">
         {!ms.length && <div className="empty">Raspored za {roundName(league, r)} još nije unesen.</div>}
         {days.map((d) => (
           <div key={d}>
             <div className="mgroup"><b>{d}</b></div>
-            {ms.filter((m) => fmtDay(m.date) === d).map((m) => <MatchRow key={m.id} m={m} ix={ix} />)}
+            {ms.filter((m) => dayLabel(m) === d).map((m) => <MatchRow key={m.id} m={m} ix={ix} />)}
           </div>
         ))}
       </div>
@@ -329,9 +328,9 @@ function LeadTime({ db, ix, comp }) {
                 <td className="pts">{mins(r.lead)}'</td>
                 <td>{mins(r.level)}'</td>
                 <td>{mins(r.trail)}'</td>
-                <td className="lead-col"><div className="lead-bar" aria-label={`u vodstvu ${pc(r.lead / tot)}`}>
+                <td className="lead-col"><div className="lead-cell"><div className="lead-bar" aria-label={`u vodstvu ${pc(r.lead / tot)}`}>
                   <i className="w" style={{ width: `${100 * r.lead / tot}%` }} /><i className="d" style={{ width: `${100 * r.level / tot}%` }} /><i className="l" style={{ width: `${100 * r.trail / tot}%` }} />
-                </div><span className="lead-pct">{pc(r.pct)}</span></td>
+                </div><span className="lead-pct">{pc(r.pct)}</span></div></td>
                 <td>{r.longestM ? <a href={href("utakmica", r.longestM, "detalji")}>{mins(r.longest)}'</a> : <span className="muted">–</span>}</td>
                 <td className={r.neverBehind ? "" : "muted"}>{r.neverBehind}</td>
               </tr>);

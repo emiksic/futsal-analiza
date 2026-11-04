@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { href } from "../lib/router.js";
-import { currentRound, fmtDay, roundName } from "../lib/derive.js";
+import { currentRound, dayLabel, roundName } from "../lib/derive.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
 import { AnalysedCard, ScorersCard } from "../components/Side.jsx";
@@ -35,7 +35,7 @@ export function Home({ db, ix }) {
               const last = currentRound(db, c.id);
               const round = mode === "rez" ? last : Math.min(c.rounds, last + 1);
               const ms = db.matches.filter((m) => m.comp === c.id && m.round === round).sort((a, b) => a.date.localeCompare(b.date));
-              const days = [...new Set(ms.map((m) => fmtDay(m.date)))];
+              const days = [...new Set(ms.map(dayLabel))];
               const open = !closed.has(c.id);
               return (
                 <div key={c.id}>
@@ -46,7 +46,7 @@ export function Home({ db, ix }) {
                     <span className="r">{open ? days.join(", ") : `${ms.length} ${ms.length === 1 ? "utakmica" : ms.length < 5 && ms.length > 1 ? "utakmice" : "utakmica"}`}</span>
                     <button type="button" className="mg-tog" aria-expanded={open} aria-label={open ? `Skupi ${L.name}` : `Proširi ${L.name}`} onClick={() => toggle(c.id)}>{Icon.chevR(16)}</button>
                   </div>
-                  {open && ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} />)}
+                  {open && ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} showDay={m.status !== "finished"} />)}
                   {open && !ms.length && <div className="empty">Raspored za {roundName(L, round)} još nije unesen.</div>}
                 </div>
               );

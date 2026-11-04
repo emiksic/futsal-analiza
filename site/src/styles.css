@@ -622,8 +622,9 @@ table.st { font-size: 13px; }
 .lead-bar.big { height: 14px; flex: 1; }
 .lead-bar.big i + i { box-shadow: inset 1px 0 0 var(--surface); }
 .lead-col { width: 34%; }
-.lead-tbl td.lead-col { display: flex; align-items: center; gap: 8px; }
-.lead-tbl td.lead-col .lead-bar { flex: 1; }
+.lead-cell { display: flex; align-items: center; gap: 8px; }
+.lead-cell .lead-bar { flex: 1; }
+.lead-tbl td { vertical-align: middle; }
 .lead-pct { font-weight: 700; min-width: 38px; text-align: right; }
 .lead-line { display: flex; align-items: center; gap: 10px; font-size: 13px; }
 .lead-n { white-space: nowrap; } .lead-n b { font: 700 16px/1 var(--display); }
@@ -670,7 +671,10 @@ table.st { font-size: 13px; }
   .calib-side { border-left: 0; border-top: 1px solid var(--line); max-height: none; }
 }
 
-.tbl-views { margin: 12px 16px 4px; display: flex; flex-wrap: wrap; width: fit-content; max-width: calc(100% - 32px); }
+.tbl-views { margin: 12px 16px 4px; display: flex; flex-wrap: nowrap; width: fit-content; max-width: calc(100% - 32px); overflow-x: auto; scrollbar-width: none; }
+.tbl-views::-webkit-scrollbar { display: none; }
+.tbl-views .sm-only { display: none; }
+@media (max-width: 560px) { .tbl-views .lg-only { display: none; } .tbl-views .sm-only { display: inline; } .tbl-views button { padding: 7px 9px; font-size: 13px; flex: 1 0 auto; } }
 .tbl-views button { white-space: nowrap; }
 
 .st.bins td.bin { font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -708,3 +712,6 @@ table.st { font-size: 13px; }
 .irow .ev .ico { flex: none; }
 .irow .ev .txt .cbtag { display: block; width: max-content; margin: 4px 0 0; }
 .irow .ev.home .txt .cbtag { margin-left: auto; }
+
+/* kolo: strelice + padajući izbornik u jednom (bez zasebnog izbornika desno) */
+.stepper .round-pick { min-width: 120px; text-align: center; text-align-last: center; font: 700 15px/1 var(--body); height: 32px; padding-block: 0; }

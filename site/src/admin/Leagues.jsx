@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { update } from "../lib/store.js";
 import { compName, NAME_FORMATS } from "../lib/derive.js";
+import { DateTimeInput } from "../components/ui.jsx";
 import { Jersey, Icon, LeagueBadge, NumInput } from "../components/ui.jsx";
 
 function roundRobin(ids) {
@@ -107,7 +108,7 @@ function CompEditor({ db, ix, comp }) {
           </div>
           {n > 0 ? <div className="small muted">Raspored je napravljen, pa se popis klubova više ne mijenja ovdje. Pojedine utakmice uređuješ pod Utakmice.</div> : (
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "end" }}>
-              <label className="field"><span>Prvo kolo</span><input className="input" type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} /></label>
+              <div className="field"><span>Prvo kolo</span><DateTimeInput value={start} onChange={setStart} /></div>
               <button className="btn primary" disabled={!start || comp.teams.length < 2} onClick={gen}>Napravi raspored (dvokružno)</button>
             </div>)}
         </div>)}
