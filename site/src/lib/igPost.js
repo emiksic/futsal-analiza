@@ -34,7 +34,7 @@ export function buildPost(db, ix, compId, round, mode = "auto") {
     return {
       home: ix.club[m.home], away: ix.club[m.away], s, so: s ? shootout(m) : null, w: s ? winner(m) : 0,
       day: DAYS[d.getDay()], time: m.timeTbd ? null : `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`,
-      city: hall?.city || "", tv: m.youtube || m.tv === "YouTube" ? "YouTube" : m.tv || null,
+      city: hall?.name || hall?.city || "", tv: m.youtube || m.tv === "YouTube" ? "YouTube" : m.tv || null,
     };
   });
   const per = rows.length <= MAX_PER_PAGE ? MAX_PER_PAGE : 5;
@@ -43,7 +43,7 @@ export function buildPost(db, ix, compId, round, mode = "auto") {
   return {
     pal, cat: pal.cat, league: C.league === "kup" ? "Seniori" : C.league === "1-hmnl" ? "SuperSport HMNL" : L.name,
     title: [roundName(L, round), res ? "Rezultati" : "Raspored"], dates: span(ms), res,
-    sub: res ? "službeno: HNS Semafor" : "termini prema HNS Semaforu", pages: pages.length ? pages : [[]],
+    sub: res ? "službeni rezultati" : "službeni termini", pages: pages.length ? pages : [[]],
   };
 }
 
@@ -163,7 +163,9 @@ export function drawPage(ctx, post, pageIx, theme = "dark") {
     }
     // grad i prijenos (samo raspored)
     if (!fin) {
-      if (r.city) text(ctx, r.city, x0 + 22, y + rh - 14, { font: `400 19px ${RB}`, color: T.muted });
+      if (r.city) { ctx.font = `400 19px ${RB}`; let t = r.city;   // dvorana; predugačka se skrati
+        while (t.length > 4 && ctx.measureText(t).width > side + 120) t = t.slice(0, -2).trimEnd() + "…";
+        text(ctx, t, x0 + 22, y + rh - 14, { font: `400 19px ${RB}`, color: T.muted }); }
       if (r.tv) {
         const tw = text(ctx, r.tv, W - PAD - 22, y + rh - 14, { font: `700 16px ${RC}`, color: T.fg, align: "right", ls: 1.6, upper: true });
         ctx.fillStyle = light ? T.fg : P.acc; ctx.beginPath(); ctx.arc(W - PAD - 22 - tw - 12, y + rh - 20, 4, 0, 2 * Math.PI); ctx.fill();
