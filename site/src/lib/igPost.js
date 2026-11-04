@@ -47,7 +47,11 @@ export function buildPost(db, ix, compId, round, mode = "auto") {
   if (res && !isCup(L)) {
     const upTo = { ...db, matches: db.matches.filter((m) => m.comp !== compId || m.round <= round) };
     const tbl = standings(upTo, compId);
-    if (tbl.some((r) => r.p)) slides.push({ kind: "table", rows: tbl.map((r) => ({ ...r, c: ix.club[r.club] })), zones: L.zones || {}, title: ["Tablica", `nakon ${rnG}`] });
+    // pomak u odnosu na tablicu nakon prethodnog kola (+ gore, - dolje)
+    const before = round > 1 ? standings({ ...db, matches: db.matches.filter((m) => m.comp !== compId || m.round < round) }, compId) : [];
+    const prev = before.some((r) => r.p) ? Object.fromEntries(before.map((r, i) => [r.club, i])) : null;
+    if (tbl.some((r) => r.p)) slides.push({ kind: "table", rows: tbl.map((r, i) => ({ ...r, c: ix.club[r.club], move: prev && r.club in prev ? prev[r.club] - i : null })),
+      zones: L.zones || {}, title: ["Tablica", `nakon ${rnG}`] });
     if (C.league === "1-hmnl") {
       const sc = scorers(upTo, compId).filter((r) => r.goals);
       const cut = sc.length > 10 ? sc[9].goals : 0;
@@ -239,10 +243,10 @@ function drawTable(ctx, P, { T, light, row, deep, top, bottom }, slide) {
   const hh = 44, rh = Math.min(68, Math.floor((bottom - top - hh) / n));
   let y = top + Math.max(0, (bottom - top - hh - rh * n) / 2);
   const cols = [["U", "p"], ["P", "w"], ["N", "d"], ["I", "l"], ["GR", "gd"], ["B", "pts"]];
-  const cx = (i) => x1 - 30 - (cols.length - 1 - i) * 74 - (i === cols.length - 1 ? 0 : 20);
+  const cx = (i) => (i === cols.length - 1 ? x1 - 55 : x1 - 150 - (cols.length - 2 - i) * 74);
   cols.forEach(([h], i) => text(ctx, h, cx(i), y + 30, { font: `700 20px ${RC}`, color: T.muted, align: "center", ls: 2 }));
   text(ctx, "#", x0 + 30, y + 30, { font: `700 20px ${RC}`, color: T.muted, align: "center" });
-  text(ctx, "Klub", x0 + 120, y + 30, { font: `700 20px ${RC}`, color: T.muted, ls: 2, upper: true });
+  text(ctx, "Klub", x0 + 160, y + 30, { font: `700 20px ${RC}`, color: T.muted, ls: 2, upper: true });
   y += hh;
   rows.forEach((r, i) => {
     ctx.fillStyle = i % 2 ? deep : row; ctx.fillRect(x0, y, x1 - x0, rh);
@@ -250,13 +254,23 @@ function drawTable(ctx, P, { T, light, row, deep, top, bottom }, slide) {
     const zc = z === "z-a2" || z === "z-a" ? P.acc : z === "z-b" ? "#e0453b" : z === "z-q" ? "#e07b16" : null;
     if (zc) { ctx.fillStyle = zc; ctx.fillRect(x0, y, 8, rh); }
     text(ctx, String(i + 1), x0 + 30, mid + 10, { font: `900 28px ${RC}`, color: T.fg, align: "center" });
-    jersey(ctx, r.c?.kit, x0 + 60, mid - 21, 42);
-    const nf = fit(ctx, r.c?.name || r.club, 700, 30, 18, cx(0) - 40 - (x0 + 120));
-    text(ctx, r.c?.name || r.club, x0 + 120, mid + nf * 0.36, { font: `700 ${nf}px ${RC}`, color: T.fg, upper: true });
+    // strelica pomaka: zelena gore, crvena dolje, siva crtica bez promjene
+    const ax = x0 + 72;
+    if (r.move > 0 || r.move < 0) {
+      const up = r.move > 0, c = up ? (light ? "#14894a" : "#3cd07f") : (light ? "#d3362b" : "#ff6259");
+      ctx.fillStyle = c; ctx.beginPath();
+      if (up) { ctx.moveTo(ax - 10, mid); ctx.lineTo(ax + 10, mid); ctx.lineTo(ax, mid - 14); }
+      else { ctx.moveTo(ax - 10, mid - 12); ctx.lineTo(ax + 10, mid - 12); ctx.lineTo(ax, mid + 2); }
+      ctx.fill();
+      text(ctx, String(Math.abs(r.move)), ax, mid + 24, { font: `700 21px ${RC}`, color: c, align: "center" });
+    } else if (r.move === 0) { ctx.fillStyle = T.muted; ctx.fillRect(ax - 7, mid - 2, 14, 3); }
+    jersey(ctx, r.c?.kit, x0 + 100, mid - 21, 42);
+    const nf = fit(ctx, r.c?.name || r.club, 700, 30, 18, cx(0) - 40 - (x0 + 160));
+    text(ctx, r.c?.name || r.club, x0 + 160, mid + nf * 0.36, { font: `700 ${nf}px ${RC}`, color: T.fg, upper: true });
     cols.forEach(([, k], j) => {
       const last = j === cols.length - 1, v = k === "gd" && r.gd > 0 ? "+" + r.gd : String(r[k]);
-      if (last) { ctx.fillStyle = P.acc; ctx.fillRect(cx(j) - 40, y, 80 + 30, rh); }
-      text(ctx, v, last ? cx(j) + 15 : cx(j), mid + 10, { font: `${last ? 900 : 700} ${last ? 32 : 27}px ${RC}`, color: last ? P.on : T.fg, align: "center" });
+      if (last) { ctx.fillStyle = P.acc; ctx.fillRect(x1 - 110, y, 110, rh); }
+      text(ctx, v, cx(j), mid + 10, { font: `${last ? 900 : 700} ${last ? 32 : 27}px ${RC}`, color: last ? P.on : T.fg, align: "center" });
     });
     y += rh;
   });
