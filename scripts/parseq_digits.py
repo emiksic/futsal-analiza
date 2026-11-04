@@ -1,4 +1,7 @@
-"""PARSeq prepoznavanje ograničeno na znamenke. Uvoz: from parseq_digits import DigitReader"""
+"""PARSeq prepoznavanje ograničeno na znamenke (ili zadani skup znakova). Uvoz: from parseq_digits import DigitReader
+  r.read(crops)                      samo znamenke (brojevi dresova)
+  r.read(crops, chars="0123456789:") znamenke i dvotočka (sat na TV traci)
+"""
 import os, torch, warnings, numpy as np, cv2
 warnings.filterwarnings("ignore")
 
@@ -15,6 +18,15 @@ class DigitReader:
         mask[self.digit_ids] = 0; mask[self.eos] = 0
         self.mask = mask[: self.m.hparams.num_tokens] if hasattr(self.m.hparams, "num_tokens") else mask
         H, W = self.m.hparams.img_size; self.H, self.W = H, W
+        self._masks = {}
+
+    def _mask(self, chars):
+        if chars is None: return self.mask
+        if chars not in self._masks:
+            m = torch.full((len(self.itos),), float("-inf"))
+            m[[i for i, c in enumerate(self.itos) if c in chars]] = 0; m[self.eos] = 0
+            self._masks[chars] = m[: self.m.hparams.num_tokens] if hasattr(self.m.hparams, "num_tokens") else m
+        return self._masks[chars]
 
     def _prep(self, bgr):
         canvas = cv2.resize(bgr, (self.W, self.H), interpolation=cv2.INTER_CUBIC)   # razvuci kao u treningu
@@ -23,13 +35,14 @@ class DigitReader:
         return (t - 0.5) / 0.5
 
     @torch.no_grad()
-    def read(self, crops):
-        """crops: lista BGR slika -> lista (tekst, conf)"""
+    def read(self, crops, chars=None):
+        """crops: lista BGR slika -> lista (tekst, conf); chars: dopušteni znakovi (zadano znamenke)"""
         if not crops: return []
-        x = torch.stack([self._prep(c) for c in crops])
+        dev = next(self.m.parameters()).device
+        x = torch.stack([self._prep(c) for c in crops]).to(dev)
         logits = self.m(x)                                       # [B, T, C]
         C = logits.shape[-1]
-        logits = logits + self.mask[:C].to(logits)
+        logits = logits + self._mask(chars)[:C].to(logits)
         probs = logits.softmax(-1)
         out = []
         for p in probs:

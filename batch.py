@@ -12,6 +12,9 @@ Gotova utakmica dobije run/<id>/batch.done; korak koji ne uspije se zapiše i id
 Kad se dvorana naknadno kalibrira, isto pokretanje za već analizirane utakmice napravi samo mini-mapu i skice (analiza se ne ponavlja).
 Sve se zapisuje i u run/batch_log.txt.
 
+  python batch.py --retraka    samo ponovno pročitaj TV traku (PARSeq) za već skinute utakmice kojima je traka
+                               pročitana starim čitačem, pa upiši sekunde golova i tempo (stara ostaje kao traka_stara.json)
+
 Dres domaćih (tamni/svijetli, za boje ekipa na mini-mapi) je u data/dresovi.json po klubu domaćinu;
 bez toga se mini-mapa preskoči, a sve ostalo se napravi.
 """
@@ -50,6 +53,7 @@ def main():
     ap.add_argument("--max", type=int, default=0, help="najviše toliko utakmica u ovom pokretanju (0 = sve)")
     ap.add_argument("--no-upload", action="store_true", help="samo analiza, ništa na stranicu")
     ap.add_argument("--list", action="store_true", help="samo ispiši redoslijed, ništa ne pokreći")
+    ap.add_argument("--retraka", action="store_true", help="samo ponovno čitanje TV trake za već skinute utakmice")
     a = ap.parse_args()
     RUN.mkdir(exist_ok=True)
     if not a.list: subprocess.run(["git", "pull", "--ff-only", "-q"], cwd=ROOT)    # najnoviji raspored i rezultati
@@ -74,6 +78,25 @@ def main():
     def pending(m, v):     # nije analizirana, ili je dvorana u međuvremenu kalibrirana a mini-mapa još nije napravljena
         if not (RUN / v / "batch.done").exists(): return True
         return (RUN / "dvorane" / str(hall_of(m)) / "court_model.json").exists() and kits.get(m["home"]) and not (RUN / v / "minimapa.done").exists()
+    if a.retraka:
+        def old(v):
+            tj = RUN / v / "traka.json"
+            if not (RUN / v / "video.mp4").exists(): return False
+            return not tj.exists() or json.load(open(tj, encoding="utf-8")).get("reader") != "parseq"
+        todo = [(m, v) for _, m, v in ms if old(v)]
+        log(f"=== retraka: {len(todo)} utakmica")
+        for n, (m, v) in enumerate(todo, 1):
+            if a.list: print(f"  {m['date'][:10]}  {m['id']:45s} {v}"); continue
+            tj = RUN / v / "traka.json"; t0 = time.time()
+            log(f"--- [{n}/{len(todo)}] {m['id']}  traka")
+            if tj.exists(): tj.replace(RUN / v / "traka_stara.json")
+            if not run(["scripts/scoreboard.py", RUN / v / "video.mp4", tj], "traka"): continue
+            if not a.no_upload:
+                run(["scripts/goals_to_site.py", tj, "--match", m["id"], "--write"], "sekunde golova")
+                run(["scripts/stats_to_site.py", tj, "--match", m["id"], "--write"], "tempo igre")
+            (RUN / v / "court.done").unlink(missing_ok=True); (RUN / v / "minimapa.done").unlink(missing_ok=True)  # teren ovisi o traci
+            log(f"   gotovo za {(time.time() - t0) / 60:.0f} min")
+        return
     todo = [(m, v) for _, m, v in ms if pending(m, v)]
     log(f"=== batch: {len(ms)} utakmica s prijenosom, gotovih {len(ms) - len(todo)}, ostaje {len(todo)}")
     if a.max: todo = todo[:a.max]

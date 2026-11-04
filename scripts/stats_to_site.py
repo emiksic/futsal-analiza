@@ -16,6 +16,7 @@ def tempo(tr):
         if segs and segs[-1][2] == per and t0 - segs[-1][1] < 1.5 and abs((el - segs[-1][3]) - (t0 - segs[-1][4])) <= 1.5:
             segs[-1][1] = t1
         else: segs.append([t0, t1, per, el, t0])
+    if not segs: return None                                       # traka nije pročitana (nepoznata grafika)
     out = {"source": "TV traka", "halves": []}
     L = [s[1] - s[0] for s in segs]
     for p in sorted({s[2] for s in segs}):
@@ -31,8 +32,9 @@ def tempo(tr):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("traka"); ap.add_argument("--match", required=True)
     ap.add_argument("--write", action="store_true"); a = ap.parse_args()
-    st = {"tempo": tempo(json.load(open(a.traka)))}
-    t = st["tempo"]
+    t = tempo(json.load(open(a.traka)))
+    if t is None: print("nema dijelova igre s TV trake (sat nije pročitan), tempo se ne upisuje"); return
+    st = {"tempo": t}
     print(f"prekida {t['stoppages']}, igra bez prekida prosječno {t['avgPlay']} s, najdulje {t['longestPlay']} s (od {t['longestAt'] // 60}'{t['longestAt'] % 60:02d}\")")
     for h in t["halves"]: print(f"  {h['period']}. poluvrijeme: trajalo {h['real'] // 60} min {h['real'] % 60} s, prekida {h['stoppages']}")
     if not a.write: print("Za upis dodaj --write."); return
