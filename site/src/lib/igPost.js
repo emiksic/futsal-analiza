@@ -61,7 +61,7 @@ export function buildPost(db, ix, compId, round, mode = "auto", factKeys = FACTS
     }
   }
   const post = {
-    pal, cat: pal.cat, league: C.league === "kup" ? "Seniori" : C.league === "1-hmnl" ? "SuperSport HMNL" : L.name,
+    pal, cat: pal.cat, league: C.league === "kup" ? "Seniori" : C.league === "1-hmnl" ? "SS HMNL" : L.name,
     dates, res, sub: res ? "službeni rezultati" : "službeni termini", slides, factsAll,
   };
   post.caption = caption(post, C.league, L, rn, rows, slides);
@@ -70,7 +70,7 @@ export function buildPost(db, ix, compId, round, mode = "auto", factKeys = FACTS
 
 // ---------- opis objave i hashtagovi ----------
 const TAGS = {
-  "1-hmnl": ["#SuperSportHMNL", "#SHMNL", "#futsalcroatia"],
+  "1-hmnl": ["#SSHMNL", "#SHMNL", "#futsalcroatia"],
   juniori: ["#HMNLjuniori", "#U19", "#futsalmladi"],
   kadeti: ["#HMNLkadeti", "#U17", "#futsalmladi"],
   kup: ["#HrvatskiKup", "#futsalkup"],
@@ -79,7 +79,7 @@ const tag = (n) => "#" + n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").repl
 function caption(post, lid, L, rn, rows, slides) {
   const clubs = [...new Set(rows.flatMap((r) => [r.home.name, r.away.name]))].slice(0, 12).map(tag);
   const tags = ["#futsal", "#malinogomet", "#futsalhrvatska", ...(TAGS[lid] || []), ...clubs, "#hmnlhr"].slice(0, 30).join(" ");
-  const head = `${lid === "1-hmnl" ? "SuperSport HMNL" : L.name} · ${rn}`;
+  const head = `${lid === "1-hmnl" ? "SS HMNL" : L.name} · ${rn}`;
   if (!post.res) {
     const lines = rows.map((r) => `▫️ ${r.home.name} – ${r.away.name}${r.s ? ` ${r.s[0]}:${r.s[1]}` : r.time ? ` · ${r.day} ${r.time}` : " · termin naknadno"}${r.city ? ` · ${r.city}` : ""}`);
     return `📅 ${head} | ${post.dates}\n\n${lines.join("\n")}\n\n📺 Prijenosi, rezultati i statistika na hmnl.hr\n\n${tags}`;

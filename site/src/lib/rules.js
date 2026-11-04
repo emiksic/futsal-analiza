@@ -1,7 +1,7 @@
 // Sažeci službenih propozicija HNS-a (2026./27.). Mjerodavan je izvorni dokument.
 export const RULES = {
   "1-hmnl-2026-27": {
-    title: "Propozicije natjecanja SuperSport HMNL 2026./27.",
+    title: "Propozicije natjecanja SS HMNL 2026./27.",
     url: "https://hns.family/files/documents/33425/Propozicije%20natjecanja%20Supersport%20HMNL%202026-27.pdf",
     sections: [
       ["Sustav natjecanja", [

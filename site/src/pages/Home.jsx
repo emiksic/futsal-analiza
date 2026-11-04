@@ -56,7 +56,7 @@ export function Home({ db, ix }) {
       </main>
       <aside className="ctx col">
         <AnalysedCard db={db} ix={ix} />
-        <ScorersCard db={db} ix={ix} comp={`1-hmnl-${cur}`} title={`Strijelci ${ix.league["1-hmnl"]?.name || "SuperSport HMNL"}`} limit={5} />
+        <ScorersCard db={db} ix={ix} comp={`1-hmnl-${cur}`} title={`Strijelci ${ix.league["1-hmnl"]?.name || "SS HMNL"}`} limit={5} />
       </aside>
     </div>
   );
