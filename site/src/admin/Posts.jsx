@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { replaceGo } from "../lib/router.js";
 import { currentRound, compName, roundName } from "../lib/derive.js";
-import { buildPost, drawPage, loadFonts, W, H } from "../lib/igPost.js";
+import { buildPost, drawPage, loadFonts, W, H, FACTS, FACTS_DEFAULT, FACTS_MAX_ROWS } from "../lib/igPost.js";
 import { publishSocial } from "../lib/store.js";
 
 const pref = (k, d) => { try { return localStorage.getItem(k) || d; } catch { return d; } };
@@ -22,7 +22,10 @@ export function Posts({ db, ix, comp: comp0, round: round0 }) {
   const setTheme = (t) => { setTheme0(t); keep("ig-theme", t); };
   const [ready, setReady] = useState(false);
   useEffect(() => { loadFonts().then(() => setReady(true)); }, []);
-  const post = useMemo(() => buildPost(db, ix, comp, round, mode), [db, ix, comp, round, mode]);
+  // odabrane brojke kola (redoslijed = redoslijed na slici); pamti se u ovom pregledniku
+  const [fk, setFk0] = useState(() => { try { const v = JSON.parse(localStorage.getItem("ig-facts")); return Array.isArray(v) ? v : FACTS_DEFAULT; } catch { return FACTS_DEFAULT; } });
+  const setFk = (v) => { setFk0(v); keep("ig-facts", JSON.stringify(v)); };
+  const post = useMemo(() => buildPost(db, ix, comp, round, mode, fk), [db, ix, comp, round, mode, fk]);
   const [cap, setCap] = useState(post.caption);
   useEffect(() => setCap(post.caption), [post.caption]);
   const blobs = useRef([]);
@@ -62,6 +65,7 @@ export function Posts({ db, ix, comp: comp0, round: round0 }) {
             <button className="btn" onClick={() => document.querySelectorAll(".igpost a.btn").forEach((a, k) => setTimeout(() => a.click(), k * 400))}>Preuzmi sve ({n})</button>
           </div>)}
       </section>
+      {post.res && post.factsAll && <FactPicker all={post.factsAll} keys={fk} setKeys={setFk} />}
       <section className="panel">
         <div className="ph"><h2>Opis objave</h2><span className="aside">možeš ga urediti prije objave</span></div>
         <div className="pb" style={{ display: "grid", gap: 10 }}>
@@ -126,6 +130,39 @@ function Publish({ n, cap, blobs, folder }) {
             <button className="btn sm ghost" onClick={() => setAsk(false)}>Odustani</button></span>}
         {msg && <div className={"callout" + (msg.ok ? "" : " warn")} role="status">{msg.text}</div>}
         <div className="small muted">Slike se spremaju u javni bucket „objave” (Instagram traži javni link), a objavljuje ih funkcija na serveru. Dok Meta nije spojena, gumb javlja da nedostaju postavke.</div>
+      </div>
+    </section>
+  );
+}
+
+// odabir brojki kola: uključi/isključi i redoslijed; prikazuje što bi pisalo za ovo kolo
+function FactPicker({ all, keys, setKeys }) {
+  const rows = keys.reduce((a, k) => a + (all[k]?.length || 0), 0);
+  const move = (k, d) => { const i = keys.indexOf(k), j = i + d; if (j < 0 || j >= keys.length) return; const n = [...keys]; [n[i], n[j]] = [n[j], n[i]]; setKeys(n); };
+  const line = (r) => [r.a ? `${r.a.name} – ${r.b.name}` : r.text, r.value, r.note].filter(Boolean).join(" · ");
+  const order = [...keys.filter((k) => FACTS.some((f) => f[0] === k)), ...FACTS.map((f) => f[0]).filter((k) => !keys.includes(k))];
+  return (
+    <section className="panel">
+      <div className="ph"><h2>Brojke kola</h2><span className="aside" style={{ color: rows > FACTS_MAX_ROWS ? "var(--live)" : undefined }}>
+        {rows} / {FACTS_MAX_ROWS} redaka{rows > FACTS_MAX_ROWS ? ", višak se ne prikazuje" : ""}</span></div>
+      <div className="pb" style={{ display: "grid", gap: 6, paddingTop: 0 }}>
+        <div className="small muted">Uključi brojke koje želiš na slici. Izjednačene (npr. dvije jednako velike pobjede) zauzimaju više redaka. Odabir se pamti za sljedeća kola.</div>
+        {order.map((k) => {
+          const on = keys.includes(k), r = all[k], name = FACTS.find((f) => f[0] === k)[1];
+          return (
+            <div key={k} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "6px 0", borderTop: "1px solid var(--line)", opacity: r ? 1 : 0.5 }}>
+              <input type="checkbox" checked={on} disabled={!r && !on} aria-label={name} style={{ marginTop: 3 }}
+                onChange={(e) => setKeys(e.target.checked ? [...keys, k] : keys.filter((x) => x !== k))} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <b style={{ fontWeight: 600 }}>{name}</b>{r && r.length > 1 && <span className="small muted"> · {r.length} izjednačena</span>}
+                <div className="small muted">{r ? r.map(line).join(" | ") : "nema podataka za ovo kolo"}</div>
+              </div>
+              {on && <span style={{ display: "flex", gap: 4 }}>
+                <button className="btn sm ghost" aria-label="Gore" onClick={() => move(k, -1)}>↑</button>
+                <button className="btn sm ghost" aria-label="Dolje" onClick={() => move(k, 1)}>↓</button></span>}
+            </div>);
+        })}
+        <div><button className="btn sm ghost" onClick={() => setKeys(FACTS_DEFAULT)}>Vrati zadano</button></div>
       </div>
     </section>
   );
