@@ -9,6 +9,7 @@ import { Club } from "./pages/Club.jsx";
 import { Match } from "./pages/Match.jsx";
 import { Admin } from "./admin/Admin.jsx";
 import { Posts } from "./admin/Posts.jsx";
+import { Render } from "./pages/Render.jsx";
 import { Privacy } from "./pages/Privacy.jsx";
 import { Notice } from "./components/Notice.jsx";
 import { useTheme, toggleTheme } from "./lib/theme.js";
@@ -46,7 +47,7 @@ export default function App() {
           <a className="adm" href={href("admin")} aria-current={page === "admin" || page === "objave" ? "page" : undefined}>Admin</a>
         </div>
       </header>
-      {page !== "admin" && page !== "objave" && (
+      {page !== "admin" && page !== "objave" && page !== "izrada" && (
         <div className="demo-bar"><div>Testna verzija. Podaci se još unose i mogu biti nepotpuni.</div></div>
       )}
       {!page && <Home db={db} ix={ix} />}
@@ -54,10 +55,11 @@ export default function App() {
       {page === "klub" && <Club key={rest[0]} db={db} ix={ix} id={rest[0]} />}
       {page === "utakmica" && <Match db={db} ix={ix} id={rest[0]} tab={rest[1]} />}
       {page === "admin" && <Admin db={db} ix={ix} route={rest} />}
+      {page === "izrada" && <Render db={db} ix={ix} comp={rest[0]} round={rest[1]} mode={rest[2]} theme={rest[3]} />}
       {page === "objave" && <Admin db={db} ix={ix} route={rest}><Posts db={db} ix={ix} comp={rest[0]} round={rest[1]} /></Admin>}
       {page === "privatnost" && <Privacy db={db} />}
-      {page !== "admin" && page !== "objave" && page !== "privatnost" && <Notice name={db.site?.name || "Ova stranica"} />}
-      {page !== "admin" && page !== "objave" && (
+      {page !== "admin" && page !== "objave" && page !== "izrada" && page !== "privatnost" && <Notice name={db.site?.name || "Ova stranica"} />}
+      {page !== "admin" && page !== "objave" && page !== "izrada" && (
         <footer className="site-foot">
           <span>Neslužbena stranica, nije povezana s HNS-om ni s klubovima. Video prijenosi pripadaju njihovim vlasnicima i prikazuju se kroz YouTube player.</span>
           <a href={href("privatnost")}>Privatnost i uklanjanje podataka</a>

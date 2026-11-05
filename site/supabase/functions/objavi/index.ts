@@ -1,5 +1,6 @@
 // Edge funkcija "objavi": objava slika (jedna ili karusel do 10) s opisom na Instagram i Facebook stranicu.
-// Poziva je samo admin iz admin panela (Objave). Meta token je tajna funkcije, nikad u kodu stranice.
+// Pozivaju je admin iz #/objave (prijava) ili skripta scripts/objava.py s tajnim ključem baze (zaglavlje x-objavi-key).
+// Meta token je tajna funkcije, nikad u kodu stranice. Svaka objava se zapiše u public.objave_log.
 //
 // Tajne (Supabase -> Edge Functions -> Secrets):
 //   META_PAGE_TOKEN   dugotrajni Page access token (instagram_content_publish, pages_manage_posts, pages_read_engagement)
@@ -10,7 +11,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-objavi-key",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 const json = (o: unknown, status = 200) => new Response(JSON.stringify(o), { status, headers: { ...CORS, "Content-Type": "application/json" } });
@@ -19,17 +20,28 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "Samo POST." }, 405);
 
-  // samo admin (ista provjera kao u bazi: public.is_admin())
-  const auth = req.headers.get("Authorization") || "";
-  const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } } });
-  const { data: isAdmin, error: aerr } = await sb.rpc("is_admin");
-  if (aerr || !isAdmin) return json({ error: "Samo admin može objavljivati." }, 403);
+  // pristup: prijavljeni admin (public.is_admin()) ili tajni ključ baze (zaglavlje x-objavi-key)
+  const URL_ = Deno.env.get("SUPABASE_URL")!;
+  let allowed = false;
+  const key = req.headers.get("x-objavi-key");
+  if (key) {
+    // tajni ključ zaobilazi RLS: samo on vidi tablicu admins
+    const s2 = createClient(URL_, key, { auth: { persistSession: false } });
+    const { data } = await s2.from("admins").select("email").limit(1);
+    allowed = !!data?.length;
+  } else {
+    const auth = req.headers.get("Authorization") || "";
+    const sb = createClient(URL_, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } } });
+    const { data: isAdmin, error: aerr } = await sb.rpc("is_admin");
+    allowed = !aerr && !!isAdmin;
+  }
+  if (!allowed) return json({ error: "Samo admin može objavljivati." }, 403);
 
   const TOKEN = Deno.env.get("META_PAGE_TOKEN"), PAGE = Deno.env.get("META_PAGE_ID"), IG = Deno.env.get("META_IG_USER_ID");
   const G = `https://graph.facebook.com/${Deno.env.get("META_GRAPH") || "v21.0"}`;
   if (!TOKEN || !PAGE || !IG) return json({ error: "Meta još nije spojena: u Supabaseu postavi tajne META_PAGE_TOKEN, META_PAGE_ID i META_IG_USER_ID." }, 503);
 
-  let body: { images?: string[]; caption?: string; targets?: string[] };
+  let body: { images?: string[]; caption?: string; targets?: string[]; meta?: { comp?: string; round?: number; kind?: string; auto?: boolean } };
   try { body = await req.json(); } catch { return json({ error: "Neispravan zahtjev." }, 400); }
   const images = (body.images || []).filter((u) => typeof u === "string");
   const caption = String(body.caption || "").slice(0, 2200);
@@ -87,5 +99,11 @@ Deno.serve(async (req) => {
     } catch (e) { results.fb = { ok: false, error: (e as Error).message }; }
   }
   const ok = Object.values(results).every((r) => r.ok);
+  // dnevnik objava (za izbjegavanje duplikata kod automatske objave)
+  try {
+    const svc = createClient(URL_, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
+    const m = body.meta || {};
+    await svc.from("objave_log").insert({ comp: m.comp || null, round: m.round ?? null, kind: m.kind || null, auto: !!m.auto, targets, ok, results, images: images.length });
+  } catch { /* dnevnik nije obavezan */ }
   return json({ ok, results }, ok ? 200 : 502);
 });

@@ -238,7 +238,7 @@ export const getDB = () => state.db;
 export const uid = (p = "x") => p + Math.random().toString(36).slice(2, 9);
 
 // Objava na Instagram i Facebook: slike u javni bucket "objave", zatim Edge funkcija "objavi" (Meta token je samo na serveru).
-export async function publishSocial(blobs, caption, targets, folder) {
+export async function publishSocial(blobs, caption, targets, folder, meta) {
   if (!sb || !state.isAdmin) throw new Error("Nisi prijavljen kao admin.");
   const urls = [];
   for (let i = 0; i < blobs.length; i++) {
@@ -254,7 +254,7 @@ export async function publishSocial(blobs, caption, targets, folder) {
     if (error) throw new Error("Upload slike: " + error.message);
     urls.push(sb.storage.from("objave").getPublicUrl(path).data.publicUrl);
   }
-  const { data, error } = await sb.functions.invoke("objavi", { body: { images: urls, caption, targets } });
+  const { data, error } = await sb.functions.invoke("objavi", { body: { images: urls, caption, targets, meta } });
   if (error) {
     let msg = error.message;
     try { const j = await error.context?.json?.(); if (j?.results) return j; if (j?.error) msg = j.error; } catch { /* */ }

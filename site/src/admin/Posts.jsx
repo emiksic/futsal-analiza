@@ -79,7 +79,7 @@ export function Posts({ db, ix, comp: comp0, round: round0 }) {
             </div>
           </div>
         </section>
-        <Publish key={`${comp}-${round}-${mode}-${theme}`} n={n} cap={cap} blobs={blobs} folder={`${comp}/${round}`} />
+        <Publish key={`${comp}-${round}-${mode}-${theme}`} n={n} cap={cap} blobs={blobs} folder={`${comp}/${round}`} meta={{ comp, round, kind: post.res ? "rezultati" : "raspored" }} />
       </div>
       <aside className="posts-side"><Preview urls={urls.slice(0, n)} cap={cap} /></aside>
     </div>
@@ -185,7 +185,7 @@ function FbPost({ urls, cap }) {
 }
 
 // objava na Instagram i Facebook (preko Edge funkcije "objavi"); traži potvrdu prije slanja
-function Publish({ n, cap, blobs, folder }) {
+function Publish({ n, cap, blobs, folder, meta }) {
   const [t, setT] = useState({ ig: true, fb: true });
   const [ask, setAsk] = useState(false), [busy, setBusy] = useState(false), [msg, setMsg] = useState(null);
   const targets = Object.keys(t).filter((k) => t[k]);
@@ -194,7 +194,7 @@ function Publish({ n, cap, blobs, folder }) {
     setAsk(false); setBusy(true); setMsg(null);
     try {
       const b = blobs.current.slice(0, n); if (b.length < n || b.some((x) => !x)) throw new Error("Slike još nisu spremne, pričekaj sekundu.");
-      const r = await publishSocial(b, cap, targets, folder);
+      const r = await publishSocial(b, cap, targets, folder, meta);
       setMsg({ ok: true, text: `Objavljeno: ${Object.entries(r?.results || {}).map(([k, v]) => `${k === "ig" ? "Instagram" : "Facebook"} ${v.ok ? "✓" : "✗ " + v.error}`).join(", ") || "gotovo"}` });
     } catch (e) { setMsg({ ok: false, text: e.message }); }
     setBusy(false);
