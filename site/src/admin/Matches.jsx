@@ -51,7 +51,7 @@ export function Matches({ db, ix }) {
             {Array.from({ length: C.rounds }, (_, i) => <option key={i} value={i + 1}>{roundName(ix.league[C.league], i + 1)}</option>)}
           </select>
           <span className="grow" />
-          {round !== "all" && <a className="btn sm" href={href("admin", "objave", comp, round)}>Objava za kolo</a>}
+          {round !== "all" && <a className="btn sm" href={href("objave", comp, round)}>Objava za kolo</a>}
           <span className="small muted">{ms.length} utakmica</span>
         </div>
         <div className="tbl-wrap">

@@ -8,6 +8,7 @@ import { League } from "./pages/League.jsx";
 import { Club } from "./pages/Club.jsx";
 import { Match } from "./pages/Match.jsx";
 import { Admin } from "./admin/Admin.jsx";
+import { Posts } from "./admin/Posts.jsx";
 import { Privacy } from "./pages/Privacy.jsx";
 import { Notice } from "./components/Notice.jsx";
 import { useTheme, toggleTheme } from "./lib/theme.js";
@@ -42,10 +43,10 @@ export default function App() {
             {db.leagues.filter((l) => db.comps.some((c) => c.league === l.id && c.season === cur)).map((l) => <a key={l.id} href={href("liga", l.id, cur)} aria-current={activeLeague === l.id ? "page" : undefined}>{l.name}</a>)}
           </nav>
           <ThemeToggle />
-          <a className="adm" href={href("admin")} aria-current={page === "admin" ? "page" : undefined}>Admin</a>
+          <a className="adm" href={href("admin")} aria-current={page === "admin" || page === "objave" ? "page" : undefined}>Admin</a>
         </div>
       </header>
-      {page !== "admin" && (
+      {page !== "admin" && page !== "objave" && (
         <div className="demo-bar"><div>Testna verzija. Podaci se još unose i mogu biti nepotpuni.</div></div>
       )}
       {!page && <Home db={db} ix={ix} />}
@@ -53,9 +54,10 @@ export default function App() {
       {page === "klub" && <Club key={rest[0]} db={db} ix={ix} id={rest[0]} />}
       {page === "utakmica" && <Match db={db} ix={ix} id={rest[0]} tab={rest[1]} />}
       {page === "admin" && <Admin db={db} ix={ix} route={rest} />}
+      {page === "objave" && <Admin db={db} ix={ix} route={rest}><Posts db={db} ix={ix} comp={rest[0]} round={rest[1]} /></Admin>}
       {page === "privatnost" && <Privacy db={db} />}
-      {page !== "admin" && page !== "privatnost" && <Notice name={db.site?.name || "Ova stranica"} />}
-      {page !== "admin" && (
+      {page !== "admin" && page !== "objave" && page !== "privatnost" && <Notice name={db.site?.name || "Ova stranica"} />}
+      {page !== "admin" && page !== "objave" && (
         <footer className="site-foot">
           <span>Neslužbena stranica, nije povezana s HNS-om ni s klubovima. Video prijenosi pripadaju njihovim vlasnicima i prikazuju se kroz YouTube player.</span>
           <a href={href("privatnost")}>Privatnost i uklanjanje podataka</a>

@@ -7,14 +7,13 @@ import { Clubs, ClubEdit } from "./Clubs.jsx";
 import { Leagues } from "./Leagues.jsx";
 import { Halls } from "./Halls.jsx";
 import { HallCalib } from "./HallCalib.jsx";
-import { Posts } from "./Posts.jsx";
 import { update } from "../lib/store.js";
 
 // Admin se ne smije otvarati unutar tuđeg okvira (clickjacking) ni preko nešifriranog http-a (lozinka bi išla otvoreno).
 const framed = (() => { try { return window.top !== window.self; } catch { return true; } })();
 const insecure = location.protocol === "http:" && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
 
-export function Admin({ db, ix, route }) {
+export function Admin({ db, ix, route, children }) {
   const st = useStore();
   const [httpOk, setHttpOk] = useState(() => { try { return sessionStorage.getItem("http-ok") === "1"; } catch { return false; } });
   if (framed) return <div className="admin"><div /><div className="panel empty">Admin se ne može otvoriti unutar druge stranice. Otvori ga izravno u pregledniku.</div></div>;
@@ -33,7 +32,7 @@ export function Admin({ db, ix, route }) {
   if (st.status === "loading") return <div className="admin"><div /><div className="panel empty">Spajam se na bazu…</div></div>;
   if (st.mode === "remote" && !st.isAdmin) return <Login st={st} />;
   if (st.status === "empty") return <ImportSeed />;
-  return <AdminInner db={db} ix={ix} route={route} />;
+  return children || <AdminInner db={db} ix={ix} route={route} />;
 }
 
 function Login({ st }) {
@@ -89,7 +88,7 @@ function AdminInner({ db, ix, route }) {
     <div className="admin">
       <aside className="col">
         <nav className="panel anav" aria-label="Admin">
-          {NAV.map(([k, n, x]) => <a key={k} href={href("admin", k)} aria-current={cur === k ? "page" : undefined}>{n}{x && <small>{x}</small>}</a>)}
+          {NAV.map(([k, n, x]) => <a key={k} href={k === "objave" ? href("objave") : href("admin", k)} aria-current={cur === k ? "page" : undefined}>{n}{x && <small>{x}</small>}</a>)}
         </nav>
         <Local />
       </aside>
@@ -101,7 +100,6 @@ function AdminInner({ db, ix, route }) {
         {s === "lige" && <Leagues db={db} ix={ix} />}
         {s === "dvorane" && <Halls db={db} ix={ix} />}
         {s === "dvorana" && <HallCalib db={db} id={a} />}
-        {s === "objave" && <Posts db={db} ix={ix} comp={a} round={b} />}
         {s === "postavke" && <Settings db={db} />}
       </main>
     </div>
