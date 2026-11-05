@@ -243,7 +243,14 @@ export async function publishSocial(blobs, caption, targets, folder) {
   const urls = [];
   for (let i = 0; i < blobs.length; i++) {
     const path = `${folder}/${Date.now()}-${i + 1}.png`;
-    const { error } = await sb.storage.from("objave").upload(path, blobs[i], { contentType: "image/png", upsert: false });
+    // šalje se kao sirovi PNG (ne multipart), s jednim ponovnim pokušajem kod prolazne greške poslužitelja
+    const body = await blobs[i].arrayBuffer();
+    let error = null;
+    for (let k = 0; k < 2; k++) {
+      ({ error } = await sb.storage.from("objave").upload(path, body, { contentType: "image/png", upsert: true }));
+      if (!error) break;
+      await new Promise((r) => setTimeout(r, 1500));
+    }
     if (error) throw new Error("Upload slike: " + error.message);
     urls.push(sb.storage.from("objave").getPublicUrl(path).data.publicUrl);
   }
