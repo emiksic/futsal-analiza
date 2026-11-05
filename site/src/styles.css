@@ -50,7 +50,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .top-in { max-width: 1320px; margin: 0 auto; display: flex; align-items: center; gap: 18px; min-height: 56px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .brand { display: flex; align-items: center; gap: 9px; font: 700 23px/1 var(--display); letter-spacing: .01em; white-space: nowrap; }
-.brand svg { flex: none; }
+.brand svg, .brand img { flex: none; }
+.brand img { border-radius: 50%; box-shadow: 0 0 0 1px rgba(255,255,255,.14); }
 .lnav { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; overscroll-behavior: none; scrollbar-width: none; min-width: 0; flex: 1; }
 .lnav::-webkit-scrollbar { display: none; }
 .lnav a { font: 600 16px/1 var(--display); letter-spacing: .02em; padding: 9px 12px; border-radius: 2px; color: var(--band-muted); white-space: nowrap; }

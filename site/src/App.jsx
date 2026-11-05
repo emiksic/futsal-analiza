@@ -27,7 +27,7 @@ function ThemeToggle() {
 export default function App() {
   const db = useDB();
   const ix = useMemo(() => index(db), [db]);
-  useEffect(() => { document.title = db.site?.name || "Futsal statistika"; }, [db.site?.name]);
+  useEffect(() => { document.title = db.site?.name || "HMNL Statistika"; }, [db.site?.name]);
   const r = useRoute();
   const [page, ...rest] = r;
   const cur = db.seasons[0].id;

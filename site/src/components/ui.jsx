@@ -49,15 +49,11 @@ export const Icon = {
 };
 
 export function Brand({ name }) {
-  // znak: luk kaznenog prostora (6 m) i lopta
+  // logo kao na Instagramu i Facebooku (hmnl.hr na tamno plavoj podlozi) + naziv stranice
   return (
     <a className="brand" href="#/">
-      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
-        <rect x="0.5" y="0.5" width="29" height="29" rx="7" fill="var(--band-2)" />
-        <path d="M4 5v20M4 9.5a9.5 6 0 0 1 9.5 5.5A9.5 6 0 0 1 4 20.5" fill="none" stroke="var(--band-fg)" strokeWidth="1.8" strokeLinecap="round" />
-        <circle cx="21.5" cy="15" r="4" fill="var(--signal)" />
-      </svg>
-      {name || "Futsal statistika"}
+      <img src="hmnl-avatar.png" width="34" height="34" alt="" />
+      {name || "HMNL Statistika"}
     </a>
   );
 }
