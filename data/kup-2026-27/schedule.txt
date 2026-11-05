@@ -17,3 +17,11 @@
 1|31.10.2026 19:30|vrgorac|aurelia-boso|7:0|makarska|yt:zUZJJWc0Erg
 1|31.10.2026 20:00|heroji-2007|hajduk|1:11|racice|
 1|17.11.2026|olmissum|crnica||omis|
+2|01.-02.12.2026|gauni|novi-marof||biograd|
+2|01.-02.12.2026|gimka|rijeka||zagreb|
+2|01.-02.12.2026|vrgorac|torcida|||
+2|01.-02.12.2026|hajduk|osijek||gripe|
+2|15.-16.12.2026|olmissum-crnica|murter|||
+2|15.-16.12.2026|square|fotex||gospino|
+2|15.-16.12.2026|mala-mljekara|bjelovar||valpovo|
+2|15.-16.12.2026|kijevo|futsal-dinamo|||

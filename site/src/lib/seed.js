@@ -9,7 +9,7 @@ import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build
 import KADETI from "../data/kadeti-2026-27.json";   // gradi: python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
 import KUP from "../data/kup-2026-27.json";         // gradi: python3 data/build.py kup-2026-27 kup-2026-27 Seniori
 
-export const SEED_VERSION = 21;
+export const SEED_VERSION = 22;
 
 const leagues = [
   { id: "1-hmnl", name: "SS HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
@@ -85,6 +85,8 @@ const clubs = [
     ["vrgorac", "Vrgorac", "HMNK Vrgorac", "VRG", "Vrgorac", null],
     ["aurelia-boso", "Aurelia Boso", "MNK Aurelia Boso", "AUR", "", null],
     ["heroji-2007", "Heroji 2007", "MNK Heroji 2007", "HER", "Vodice", "racice"],
+    // privremeno: pobjednik Olmissum – Crnica (1/16, 17. 11.) u 1/8 finala; nakon utakmice zamijeniti pravim klubom
+    ["olmissum-crnica", "Olmissum/Crnica", "Pobjednik Olmissum – Crnica", "O/C", "", null],
   ].map(([id, name, full, short, city, hall]) => ({ id, name, full, short, city, hall, kit: { shirt: "#cfd6de", trim: "#8995a3", num: "#111111" } })),
 ];
 
@@ -117,7 +119,7 @@ function build() {
   comps.push({ id: "kup-2026-27", league: "kup", season: "2026-27", teams: [...new Set(KUP.matches.flatMap((m) => [m.home, m.away]))], rounds: 5 });
   const have = new Set(players.map((p) => p.id));
   players.push(...KUP.players.filter((p) => !have.has(p.id)));
-  matches.push(...KUP.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
+  matches.push(...KUP.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString(), ...(m.dateTo && { dateTo: new Date(m.dateTo).toISOString() }) })));
 
   const site = { name: "", contact: "" };   // naziv još nije odabran
   return { version: SEED_VERSION, site, leagues, seasons, halls, clubs, players, comps, matches };

@@ -2547,6 +2547,158 @@
 "events": [],
 "analysis": null,
 "timeTbd": true
+},
+{
+"id": "kup-2026-27-k2-gauni-novi-marof",
+"comp": "kup-2026-27",
+"round": 2,
+"date": "2026-12-01T20:00:00+01:00",
+"home": "gauni",
+"away": "novi-marof",
+"hall": "biograd",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true,
+"dateTo": "2026-12-02T20:00:00+01:00"
+},
+{
+"id": "kup-2026-27-k2-gimka-rijeka",
+"comp": "kup-2026-27",
+"round": 2,
+"date": "2026-12-01T20:00:00+01:00",
+"home": "gimka",
+"away": "rijeka",
+"hall": "zagreb",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true,
+"dateTo": "2026-12-02T20:00:00+01:00"
+},
+{
+"id": "kup-2026-27-k2-vrgorac-torcida",
+"comp": "kup-2026-27",
+"round": 2,
+"date": "2026-12-01T20:00:00+01:00",
+"home": "vrgorac",
+"away": "torcida",
+"hall": "",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true,
+"dateTo": "2026-12-02T20:00:00+01:00"
+},
+{
+"id": "kup-2026-27-k2-hajduk-osijek",
+"comp": "kup-2026-27",
+"round": 2,
+"date": "2026-12-01T20:00:00+01:00",
+"home": "hajduk",
+"away": "osijek",
+"hall": "gripe",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true,
+"dateTo": "2026-12-02T20:00:00+01:00"
+},
+{
+"id": "kup-2026-27-k2-olmissum-crnica-murter",
+"comp": "kup-2026-27",
+"round": 2,
+"date": "2026-12-15T20:00:00+01:00",
+"home": "olmissum-crnica",
+"away": "murter",
+"hall": "",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true,
+"dateTo": "2026-12-16T20:00:00+01:00"
+},
+{
+"id": "kup-2026-27-k2-square-fotex",
+"comp": "kup-2026-27",
+"round": 2,
+"date": "2026-12-15T20:00:00+01:00",
+"home": "square",
+"away": "fotex",
+"hall": "gospino",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true,
+"dateTo": "2026-12-16T20:00:00+01:00"
+},
+{
+"id": "kup-2026-27-k2-mala-mljekara-bjelovar",
+"comp": "kup-2026-27",
+"round": 2,
+"date": "2026-12-15T20:00:00+01:00",
+"home": "mala-mljekara",
+"away": "bjelovar",
+"hall": "valpovo",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true,
+"dateTo": "2026-12-16T20:00:00+01:00"
+},
+{
+"id": "kup-2026-27-k2-kijevo-futsal-dinamo",
+"comp": "kup-2026-27",
+"round": 2,
+"date": "2026-12-15T20:00:00+01:00",
+"home": "kijevo",
+"away": "futsal-dinamo",
+"hall": "",
+"status": "scheduled",
+"youtube": "",
+"roster": {
+"home": null,
+"away": null
+},
+"events": [],
+"analysis": null,
+"timeTbd": true,
+"dateTo": "2026-12-16T20:00:00+01:00"
 }
 ],
 "players": [

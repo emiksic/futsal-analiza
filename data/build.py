@@ -88,12 +88,17 @@ for ln in open(os.path.join(D, "schedule.txt"), encoding="utf-8"):
     rnd = int(rnd)
     if " " in when: d, t = when.split(" "); tbd = False
     else: d, t, tbd = when, "20:00", True
+    d2 = None
+    if "-" in d:   # raspon dana bez satnice, npr. "1.-2.12.2026" (kup, utorak ili srijeda)
+        a, b = d.split("-"); d = a.rstrip(".") + "." + b.split(".", 1)[1]; d2 = b
     dd, mm, yy = d.split(".")
     off = "+01:00" if (int(mm) in (11, 12, 1, 2) or (int(mm) == 3 and int(dd) < 28) or (int(mm) == 10 and int(dd) >= 25)) else "+02:00"
     mid = f"{CID}-k{rnd}-{home}-{away}"
     m = {"id": mid, "comp": CID, "round": rnd, "date": f"{yy}-{mm}-{dd}T{t}:00{off}", "home": home, "away": away, "hall": hall,
          "status": "finished" if res else "scheduled", "youtube": "", "roster": {"home": None, "away": None}, "events": [], "analysis": None}
     if tbd: m["timeTbd"] = True
+    if d2:
+        d2d, d2m, d2y = d2.split("."); m["dateTo"] = f"{d2y}-{d2m}-{d2d}T{t}:00{off}"
     if bc.startswith("yt:"): m["youtube"] = "https://www.youtube.com/watch?v=" + bc[3:]
     elif bc.startswith("tv:"): m["tv"] = bc[3:]
     if res:

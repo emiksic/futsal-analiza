@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { safeYouTube } from "../lib/safe.js";
 import { href, replaceClick } from "../lib/router.js";
-import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, suspensions, goalTime, flow, comeback, sideScore, roundName, winner, shootout, leadTime, mins, shortName, fmtWeekend } from "../lib/derive.js";
+import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, suspensions, goalTime, flow, comeback, sideScore, roundName, winner, shootout, leadTime, mins, shortName, dayLabel } from "../lib/derive.js";
 import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { GoalSketch } from "../components/GoalSketch.jsx";
@@ -55,7 +55,7 @@ function Board({ m, ix }) {
     <section className="board" aria-label="Rezultat">
       <div className="board-top">
         <a href={href("liga", comp.league, comp.season, "rezultati", m.round)}>{L.name}{m.round ? `, ${roundName(L, m.round)}` : ", isječak"}</a>
-        {!m.extra && <span>{m.timeTbd ? fmtWeekend(m.date) : `${fmtDay(m.date)} u ${fmtTime(m.date)}`}</span>}
+        {!m.extra && <span>{m.timeTbd ? dayLabel(m) : `${fmtDay(m.date)} u ${fmtTime(m.date)}`}</span>}
         <span>{ix.hall[m.hall]?.name}, {ix.hall[m.hall]?.city}</span>
         {safeYouTube(m.youtube) ? <a className="r" href={safeYouTube(m.youtube)} target="_blank" rel="noreferrer" style={{ display: "inline-flex", gap: 6, alignItems: "center", color: "var(--band-fg)" }}>
           Prijenos na YouTubeu {Icon.ext()}</a>

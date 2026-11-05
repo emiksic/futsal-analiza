@@ -329,7 +329,12 @@ export const fmtWeekend = (iso) => {
   return `pet ${f.getDate()}. ${f.getMonth() + 1}. – ned ${n.getDate()}. ${n.getMonth() + 1}.`;
 };
 // naslov dana u rasporedu: za utakmice bez termina cijeli vikend
-export const dayLabel = (m) => (m.timeTbd ? fmtWeekend(m.date) : fmtDay(m.date));
+// kup usred tjedna: raspon dana (dateTo, npr. uto – sri) ili jedan poznati dan
+export const dayLabel = (m) => {
+  if (!m.timeTbd) return fmtDay(m.date);
+  if (m.dateTo) return `${fmtDay(m.date)} – ${fmtDay(m.dateTo)}`;
+  return [5, 6, 0].includes(new Date(m.date).getDay()) ? fmtWeekend(m.date) : fmtDay(m.date);
+};
 export const sameDay = (a, b) => new Date(a).toDateString() === new Date(b).toDateString();
 
 // kadeti (U-17, maloljetnici): javno se prikazuje samo broj

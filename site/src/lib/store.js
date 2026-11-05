@@ -36,10 +36,10 @@ const T = {
   clubs: ["id", "name", "full_name", "short", "city", "hall", "kit"],
   comps: ["id", "league", "season", "teams", "rounds"],
   players: ["id", "club", "season", "cat", "num", "name", "last", "gk"],
-  matches: ["id", "comp", "round", "date", "home", "away", "hall", "status", "result", "no_score", "time_tbd", "extra",
+  matches: ["id", "comp", "round", "date", "home", "away", "hall", "status", "result", "no_score", "time_tbd", "date_to", "extra",
     "youtube", "tv", "source", "roster", "events", "analysis", "highlights", "stats"],
 };
-const REN = { clubs: { full: "full_name" }, matches: { noScore: "no_score", timeTbd: "time_tbd" } };
+const REN = { clubs: { full: "full_name" }, matches: { noScore: "no_score", timeTbd: "time_tbd", dateTo: "date_to" } };
 // zadane vrijednosti za stupce koji ne smiju biti prazni
 const DEF = { calibrated: false, gk: false, no_score: false, time_tbd: false, extra: false, zones: {}, privacy: { names: "full", perPlayer: true },
   kit: {}, teams: [], rounds: 0, status: "scheduled", roster: { home: null, away: null }, events: [] };
@@ -77,7 +77,7 @@ async function fetchAll() {
     ["seasons", "halls", "leagues", "clubs", "comps", "matches", "site"].map((t) => get(t)));
   const players = await get("players", state.isAdmin ? "players" : "players_public");
   // novi stupci koje baza možda još nema
-  for (const c of ["highlights", "stats"]) { if (matches.length && !(c in matches[0])) missing.add("matches." + c); else missing.delete("matches." + c); }
+  for (const c of ["highlights", "stats", "date_to"]) { if (matches.length && !(c in matches[0])) missing.add("matches." + c); else missing.delete("matches." + c); }
   leagues.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)); seasons.sort((a, b) => b.id.localeCompare(a.id));
   return {
     version: SEED_VERSION, site: site[0] ? { name: site[0].name || "", contact: site[0].contact || "" } : { name: "", contact: "" },
