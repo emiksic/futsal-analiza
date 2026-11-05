@@ -70,7 +70,11 @@ def main():
     # već objavljeno?
     q = urllib.parse.urlencode({"select": "id,created_at", "comp": f"eq.{a.comp}", "round": f"eq.{a.round}", "kind": f"eq.{a.kind}", "ok": "eq.true"})
     st, rows = req(f"{base}/rest/v1/objave_log?{q}", key)
-    if st != 200: print(f"Upozorenje: dnevnik objava nije dostupan ({st}): {rows}"); rows = []
+    if st != 200:
+        # bez dnevnika se ne može znati je li kolo već objavljeno, pa se (osim uz --force) ne objavljuje
+        print(f"GREŠKA: dnevnik objava (public.objave_log) nije dostupan ({st}): {rows}")
+        if not (a.force or a.dry_run): return 1
+        rows = []
     if rows and not a.force:
         print(f"PRESKOČENO: {tag} je već objavljeno ({rows[0]['created_at']})."); return 0
 
