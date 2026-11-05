@@ -1,6 +1,6 @@
 // Instagram objava za kolo (raspored ili rezultati), 1080×1350, crta se na canvas pa se preuzme kao PNG.
 // Boja po kategoriji: seniori žuta, juniori zelena, kadeti narančasta, kup crvena. Tema tamna ili svijetla.
-import { score, shootout, winner, roundName, isCup, standings, scorers, playerName, zoneOf, absSec, goalTime, comeback } from "./derive.js";
+import { score, shootout, winner, roundName, isCup, standings, scorers, playerName, zoneOf, combinedZones, absSec, goalTime, comeback } from "./derive.js";
 
 export const W = 1080, H = 1350;
 const PAD = 56;
@@ -52,7 +52,7 @@ export function buildPost(db, ix, compId, round, mode = "auto", factKeys = FACTS
     const before = round > 1 ? standings({ ...db, matches: db.matches.filter((m) => m.comp !== compId || m.round < round) }, compId) : [];
     const prev = before.some((r) => r.p) ? Object.fromEntries(before.map((r, i) => [r.club, i])) : null;
     if (tbl.some((r) => r.p)) slides.push({ kind: "table", rows: tbl.map((r, i) => ({ ...r, c: ix.club[r.club], move: prev && r.club in prev ? prev[r.club] - i : null })),
-      zones: L.zones || {}, title: ["Tablica", `nakon ${rnG}`] });
+      zones: L.zones || {}, rel: combinedZones(upTo, compId), title: ["Tablica", `nakon ${rnG}`] });
     if (C.league === "1-hmnl") {
       const sc = scorers(upTo, compId).filter((r) => r.goals);
       const cut = sc.length > 10 ? sc[9].goals : 0;
@@ -251,7 +251,7 @@ function drawTable(ctx, P, { T, light, row, deep, top, bottom }, slide) {
   y += hh;
   rows.forEach((r, i) => {
     ctx.fillStyle = i % 2 ? deep : row; ctx.fillRect(x0, y, x1 - x0, rh);
-    const z = zoneOf(slide.zones, i, n), mid = y + rh / 2;
+    const z = slide.rel?.[r.club] || zoneOf(slide.zones, i, n), mid = y + rh / 2;
     const zc = z === "z-a2" || z === "z-a" ? P.acc : z === "z-b" ? "#e0453b" : z === "z-q" ? "#e07b16" : null;
     if (zc) { ctx.fillStyle = zc; ctx.fillRect(x0, y, 8, rh); }
     text(ctx, String(i + 1), x0 + 30, mid + 10, { font: `900 28px ${RC}`, color: T.fg, align: "center" });

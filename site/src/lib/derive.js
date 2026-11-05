@@ -17,6 +17,35 @@ export function zoneOf(z = {}, i, n) {
   return "";
 }
 
+// Zbirna tablica kadeta i juniora (propozicije čl. 31 i 32): zbroj bodova obje momčadi kluba,
+// kod istih bodova bolji plasman kadetske momčadi, zatim zbirna gol-razlika i više golova.
+// Posljednji ispada, pretposljednji igra kvalifikacije.
+export const YOUTH = ["juniori", "kadeti"];
+export function combinedTable(db, compId) {
+  const comp = db.comps.find((c) => c.id === compId);
+  if (!comp || !YOUTH.includes(comp.league)) return [];
+  const cs = YOUTH.map((l) => db.comps.find((c) => c.league === l && c.season === comp.season));
+  if (cs.some((c) => !c)) return [];
+  const [J, K] = cs.map((c) => standings(db, c.id));
+  const kpos = Object.fromEntries(K.map((r, i) => [r.club, i]));
+  const t = {};
+  for (const r of [...J, ...K]) {
+    const x = (t[r.club] ||= { club: r.club, p: 0, pts: 0, gd: 0, gf: 0 });
+    x.p += r.p; x.pts += r.pts; x.gd += r.gd; x.gf += r.gf;
+  }
+  const kr = (c) => (c in kpos ? kpos[c] : 99);
+  return Object.values(t).sort((a, b) => b.pts - a.pts || kr(a.club) - kr(b.club) || b.gd - a.gd || b.gf - a.gf || a.club.localeCompare(b.club));
+}
+// oznaka ispadanja/kvalifikacija po klubu iz zbirne tablice
+export function combinedZones(db, compId) {
+  const T = combinedTable(db, compId);
+  if (!T.some((r) => r.p)) return {};
+  const n = T.length, out = {};
+  if (n >= 1) out[T[n - 1].club] = "z-b";
+  if (n >= 2) out[T[n - 2].club] = "z-q";
+  return out;
+}
+
 // Konačni rezultat: ručno upisan (m.result) ili iz golova. Međurezultat samo kad su uneseni svi golovi.
 export function score(m, upto = Infinity) {
   if (m.noScore) return null;

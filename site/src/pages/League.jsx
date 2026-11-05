@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { href, go, replaceClick, replaceGo } from "../lib/router.js";
-import { standings, scorers, currentRound, fmtDay, dayLabel, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft, leadTable, mins } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, dayLabel, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft, leadTable, mins, combinedZones, combinedTable } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
@@ -65,6 +65,10 @@ function Standings({ db, ix, comp, league }) {
   const all = view === "all";
   const V = all ? { rows: standings(db, comp.id), skipped: 0 } : standingsView(db, comp.id, view);
   const rows = V.rows, z = all ? league.zones || {} : {};
+  // juniori/kadeti: ispadanje po zbirnoj tablici, oznaka na klubu bez obzira na mjesto u ovoj tablici
+  const R = all ? combinedZones(db, comp.id) : {}, youth = Object.keys(R).length > 0;
+  const CT = youth ? combinedTable(db, comp.id) : [];
+  const ctPos = (club) => CT.findIndex((r) => r.club === club) + 1;
   if (!standings(db, comp.id).some((r) => r.p)) return <div className="empty">Rezultati za ovu ligu još nisu uneseni.</div>;
   return (
     <>
@@ -80,10 +84,11 @@ function Standings({ db, ix, comp, league }) {
           </tr></thead>
           <tbody>
             {rows.map((r, i) => {
-              const zone = zoneOf(z, i, rows.length);
+              const zone = R[r.club] || zoneOf(z, i, rows.length);
               const c = ix.club[r.club];
+              const ct = R[r.club] ? CT.find((x) => x.club === r.club) : null;
               return (
-                <tr key={r.club} className={zone}>
+                <tr key={r.club} className={zone} title={ct ? `Zbirna tablica: ${ctPos(r.club)}. mjesto, ${ct.pts} bod.` : undefined}>
                   <td className="pos"><span>{i + 1}</span></td>
                   <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={22} />{c.name}</a></td>
                   <td>{r.p}</td><td>{r.w}</td><td>{r.d}</td><td>{r.l}</td>
@@ -100,7 +105,8 @@ function Standings({ db, ix, comp, league }) {
         {z.playoff ? <span><i style={{ background: "var(--zone-a)" }} />{z.direct ? `Četvrtfinale (${z.direct + 1}.–${z.playoff}.)` : `Doigravanje (1.–${z.playoff}.)`}</span> : null}
         {z.qual ? <span><i style={{ background: "var(--zone-q)" }} />Kvalifikacije</span> : null}
         {z.relegation ? <span><i style={{ background: "var(--zone-b)" }} />Ispadanje</span> : null}
-        {z.note ? <span>{z.note}</span> : null}
+        {youth ? <span><i style={{ background: "var(--zone-q)" }} />Kvalifikacije i <i style={{ background: "var(--zone-b)", marginLeft: 6 }} />ispadanje po zbirnoj tablici kadeta i juniora (zbroj bodova obje momčadi; kod istih bodova plasman kadeta, pa gol-razlika i golovi)</span>
+          : z.note ? <span>{z.note}</span> : null}
         {!all && <span>{view === "home" ? "Samo utakmice kod kuće." : view === "away" ? "Samo utakmice u gostima." : `Bodovi kao da je utakmica trajala samo ${view === "h1" ? "prvo" : "drugo"} poluvrijeme.`}
           {V.skipped ? ` Nije uračunato ${V.skipped} utakmica bez minuta svih golova.` : ""} Poredak po bodovima, gol-razlici i golovima.</span>}
         {all && <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova: {league.id === "juniori" ? "plasman kadetske momčadi, " : ""}gol-razlika, više golova, međusobne utakmice, fair-play.</span>}
