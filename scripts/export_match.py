@@ -139,6 +139,11 @@ def main():
              {"name": a.away, "color": "#ffffff" if a.home_kit == "dark" else "#1d1d1f"}, {"name": "Sudac", "color": "#e5484d"}]
     D = {"title": a.title or f"{a.home} – {a.away}", "fps": a.hz, "img": [1280, 720], "teams": teams,
          "court": {"L": L, "W": W, "D": 6.0}, "players": [], "states": [], "events": [], "frames": frames}
+    cnt = collections.Counter(p[0] for f in frames for p in f["p"]); tot = sum(cnt.values()) or 1
+    print("osobe na terenu po ekipi: " + ", ".join(f"{teams[k]['name']} {cnt[k] / tot:.0%}" for k in (0, 1, 2)))
+    for k in (0, 1, 2):
+        ids = [i for i in lab if team_of(i) == k and len(F[i]) >= 30]
+        if ids: print(f"  {teams[k]['name']}: {len(ids)} trackova, LAB medijan {np.median([lab[i] for i in ids], 0).round().astype(int).tolist()}")
     from possession import add_possession, summary
     print(summary(D, add_possession(D)))
     json.dump(D, open(a.out, "w"), separators=(",", ":"))
