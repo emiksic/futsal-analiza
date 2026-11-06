@@ -45,6 +45,7 @@ def main():
     ap.add_argument("--home", required=True); ap.add_argument("--away", required=True)
     ap.add_argument("--home-kit", choices=["dark", "light"], required=True, help="domaći igraju u tamnom ili svijetlom dresu")
     ap.add_argument("--hz", type=float, default=5); ap.add_argument("--title", default="")
+    ap.add_argument("--no-ref", action="store_true", help="ne izdvajaj suce po crvenoj boji (ekipa u crvenom dresu)")
     a = ap.parse_args()
 
     print("učitavam…", flush=True)
@@ -73,6 +74,10 @@ def main():
             if p.get("feat"): F[p["id"]].append(p["feat"])
     lab = {i: np.median(v, 0) for i, v in F.items()}
     ref = {i for i, v in lab.items() if v[1] > 145}                         # crveno: suci (i tamnocrveni golman, vidi dolje)
+    n_ref, n_all = sum(len(F[i]) for i in ref), sum(len(v) for v in F.values())
+    if a.no_ref or n_ref > 0.3 * n_all:                                     # crveno-plavi dres (Torcida, Hajduk): "suci" su pola ljudi
+        print(f"crveno ima {n_ref / max(1, n_all):.0%} opažanja: jedna ekipa igra u crvenom, suci se ne izdvajaju po boji")
+        ref = set()
     Ls = np.array([v[0] for i, v in lab.items() if i not in ref and len(F[i]) >= 30])
     thr = otsu(Ls); print(f"prag svijetlo/tamno: L = {thr:.0f}")
     dark_team = 0 if a.home_kit == "dark" else 1
