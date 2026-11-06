@@ -9,7 +9,7 @@ import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build
 import KADETI from "../data/kadeti-2026-27.json";   // gradi: python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
 import KUP from "../data/kup-2026-27.json";         // gradi: python3 data/build.py kup-2026-27 kup-2026-27 Seniori
 
-export const SEED_VERSION = 22;
+export const SEED_VERSION = 23;
 
 const leagues = [
   { id: "1-hmnl", name: "SS HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
@@ -100,15 +100,11 @@ function build() {
   players.push(...HMNL.players);
   matches.push(...HMNL.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
 
-  // --- juniori: raspored i rezultati + analiza isječka
+  // --- juniori: raspored i rezultati
   const jid = "juniori-2026-27";
   comps.push({ id: jid, league: "juniori", season: "2026-27", teams: [...new Set(JUNIORI.matches.flatMap((m) => [m.home, m.away]))], rounds: 22 });
   matches.push(...JUNIORI.matches.map((m) => ({ ...m, date: new Date(m.date).toISOString() })));
   players.push(...JUNIORI.players);    // samo brojevi; imena su u privatnoj bazi
-  const u1 = matches.find((m) => m.id === `${jid}-k3-rijeka-novo-vrijeme`);
-  Object.assign(u1, {
-    analysis: { status: "done", clip: "u1", video: "media/u1.mp4", data: "media/u1.json", from: 128, to: 148, rights: "embed", ytOffset: null,
-      note: "Isječak od 20 s (07:49–08:09 na satu, 1:0 za Rijeku). Brojevi su ograničeni na zapisnik.", teamMap: { RIJ: "home", NVR: "away" } } });
 
   // --- kadeti: isti raspored kao juniori, rezultati 1.–3. kola
   comps.push({ id: "kadeti-2026-27", league: "kadeti", season: "2026-27", teams: [...new Set(KADETI.matches.flatMap((m) => [m.home, m.away]))], rounds: 22 });
