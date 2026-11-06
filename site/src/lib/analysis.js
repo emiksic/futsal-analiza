@@ -84,3 +84,15 @@ export function heatPoints(D, key, homeIdx, isHome) {
   for (const f of D.frames) for (const p of f.p) if (p[1] === idx) pts.push(flip ? [-p[7], -p[8]] : [p[7], p[8]]);
   return pts;
 }
+
+// točke za toplinsku mapu ekipe (bez golmana, samo dok teče sat), okrenute tako da ekipa napada udesno.
+// f.dir = smjer napada ekipe 0 (domaćin u izvozu) u tom poluvremenu.
+export function teamHeatPoints(D, ti) {
+  const pts = [];
+  for (const f of D.frames) {
+    if (!f.live || !f.dir) continue;
+    const d = ti === 0 ? f.dir : -f.dir;
+    for (const p of f.p) if (p[0] === ti && !p[2]) pts.push(d > 0 ? [p[7], p[8]] : [-p[7], -p[8]]);
+  }
+  return pts;
+}

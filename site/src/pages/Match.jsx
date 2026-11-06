@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { safeYouTube } from "../lib/safe.js";
 import { href, replaceClick } from "../lib/router.js";
 import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, suspensions, goalTime, flow, comeback, sideScore, roundName, winner, shootout, leadTime, mins, shortName, dayLabel } from "../lib/derive.js";
-import { useAnalysis, teamOrder, analysisStats, heatPoints } from "../lib/analysis.js";
+import { useAnalysis, teamOrder, analysisStats, heatPoints, teamHeatPoints } from "../lib/analysis.js";
 import { AnalysisViewer } from "../components/AnalysisViewer.jsx";
 import { GoalSketch } from "../components/GoalSketch.jsx";
 import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
@@ -306,6 +306,46 @@ function Tempo({ T }) {
   );
 }
 
+// toplinska mapa na canvasu preko terena 42.4 x 22.4 m (teren 40 x 20 + rub)
+function drawHeat(ctx, c, pts, R = 3.2) {
+    const GW = 106, GH = 56, g = new Float32Array(GW * GH);
+    const toG = (x, y) => [(x + 21.2) / 42.4 * GW, (y + 11.2) / 22.4 * GH];
+    const rr = R * R;
+    for (const [x, y] of pts) { const [gx, gy] = toG(x, y);
+      for (let j = Math.max(0, Math.floor(gy - 3 * R)); j < Math.min(GH, gy + 3 * R); j++)
+        for (let i = Math.max(0, Math.floor(gx - 3 * R)); i < Math.min(GW, gx + 3 * R); i++) {
+          const dx = i - gx, dy = j - gy; g[j * GW + i] += Math.exp(-(dx * dx + dy * dy) / (2 * rr)); } }
+    let mx = 0; for (const v of g) mx = Math.max(mx, v);
+    const img = ctx.createImageData(GW, GH);
+    for (let k = 0; k < g.length; k++) { const v = g[k] / mx; if (v < 0.04) continue;
+      const [cr, cg, cb] = v < 0.5 ? [255, Math.round(220 - 60 * v), 60] : [255, Math.round(190 - 260 * (v - 0.5)), 40];
+      img.data[k * 4] = cr; img.data[k * 4 + 1] = cg; img.data[k * 4 + 2] = cb; img.data[k * 4 + 3] = Math.round(40 + 175 * Math.sqrt(v)); }
+    const tmp = document.createElement("canvas"); tmp.width = GW; tmp.height = GH; tmp.getContext("2d").putImageData(img, 0, 0);
+    ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, 0, 0, c.width, c.height);
+}
+
+function TeamHeat({ m, ix, D, order }) {
+  const [side, setSide] = useState("home");
+  const cv = useRef(null);
+  useEffect(() => {
+    const c = cv.current; if (!c) return;
+    const ctx = c.getContext("2d"), rect = c.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+    c.width = Math.round(rect.width * d); c.height = Math.round(rect.height * d); ctx.clearRect(0, 0, c.width, c.height);
+    const pts = teamHeatPoints(D, order[side === "home" ? 0 : 1]);
+    if (pts.length) drawHeat(ctx, c, pts, 2.6);
+  }, [side, D]);
+  return (
+    <div className="pb">
+      <div className="ph"><h3>Toplinska mapa ekipe</h3>
+        <div className="seg">{["home", "away"].map((k) => <button key={k} type="button" aria-pressed={side === k} onClick={() => setSide(k)}>{ix.club[m[k]].short}</button>)}</div></div>
+      <div className="pitch-wrap"><div className="pitch">
+        <svg className="lines" viewBox="-21.2 -11.2 42.4 22.4" aria-hidden="true"><CourtLines sw={0.12} /></svg>
+        <canvas ref={cv} aria-hidden="true" />
+      </div></div>
+      <div className="note" style={{ marginTop: 8 }}>Gdje su bili igrači ekipe (bez golmana) dok je tekao sat. Ekipa napada udesno u oba poluvremena. Iz automatske video analize.</div>
+    </div>);
+}
+
 function Stats({ m, ix, A }) {
   const H = ix.club[m.home], Aw = ix.club[m.away];
   const ca = "var(--primary)", cb = "var(--signal)";
@@ -341,6 +381,7 @@ function Stats({ m, ix, A }) {
         {!st && <div className="src">Posjed i kretanje igrača pojavljuju se kad utakmica ima video analizu.</div>}
       </div>
       {m.stats?.tempo && <Tempo T={m.stats.tempo} />}
+      {A.D && <TeamHeat m={m} ix={ix} D={A.D} order={teamOrder(A.D, m)} />}
       {st && !per && <div className="pb"><div className="note">U kadetskoj ligi ne prikazujemo podatke o kretanju pojedinih igrača.</div></div>}
       {st && per && st.players.length > 0 && (
         <div className="pb">
@@ -391,20 +432,7 @@ function Lineups({ m, ix, A }) {
     if (!sel || !D) return;
     let pts = heatPoints(D, sel.key, order[0], sel.side === "home");
     if (!pts.length) return;
-    const GW = 106, GH = 56, g = new Float32Array(GW * GH);
-    const toG = (x, y) => [(x + 21.2) / 42.4 * GW, (y + 11.2) / 22.4 * GH];
-    const R = 3.2, rr = R * R;
-    for (const [x, y] of pts) { const [gx, gy] = toG(x, y);
-      for (let j = Math.max(0, Math.floor(gy - 3 * R)); j < Math.min(GH, gy + 3 * R); j++)
-        for (let i = Math.max(0, Math.floor(gx - 3 * R)); i < Math.min(GW, gx + 3 * R); i++) {
-          const dx = i - gx, dy = j - gy; g[j * GW + i] += Math.exp(-(dx * dx + dy * dy) / (2 * rr)); } }
-    let mx = 0; for (const v of g) mx = Math.max(mx, v);
-    const img = ctx.createImageData(GW, GH);
-    for (let k = 0; k < g.length; k++) { const v = g[k] / mx; if (v < 0.04) continue;
-      const [cr, cg, cb] = v < 0.5 ? [255, Math.round(220 - 60 * v), 60] : [255, Math.round(190 - 260 * (v - 0.5)), 40];
-      img.data[k * 4] = cr; img.data[k * 4 + 1] = cg; img.data[k * 4 + 2] = cb; img.data[k * 4 + 3] = Math.round(40 + 175 * Math.sqrt(v)); }
-    const tmp = document.createElement("canvas"); tmp.width = GW; tmp.height = GH; tmp.getContext("2d").putImageData(img, 0, 0);
-    ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, 0, 0, c.width, c.height);
+drawHeat(ctx, c, pts);
   }, [sel, D]);
   if (!r?.home || !r?.away) return <div className="empty">Zapisnik za ovu utakmicu još nije unesen.</div>;
   const pos = (x, y) => ({ left: `${(x + 21.2) / 42.4 * 100}%`, top: `${(y + 11.2) / 22.4 * 100}%` });

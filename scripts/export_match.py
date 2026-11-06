@@ -7,7 +7,7 @@
 Ulazi: igrači (track.py), lopta (tracknet.py detect), teren (court_calib.py track), TV traka (scoreboard.py).
 Vrijeme u podacima = vrijeme snimke, pa je za isti YouTube prijenos --yt-offset 0.
 Ekipe: po boji dresa (svijetla / tamna, prag se nađe sam), samo osobe na terenu; golman uz svoj gol ide svojoj ekipi.
-Smjer napada po poluvremenu se odredi iz položaja lopte pri golovima. Posjed se (još) ne izvozi.
+Smjer napada po poluvremenu se odredi iz položaja lopte pri golovima. Posjed: scripts/possession.py (najbliži igrač lopti, samo dok teče sat).
 """
 import argparse, collections, json, os, sys, types
 import numpy as np
@@ -134,6 +134,8 @@ def main():
              {"name": a.away, "color": "#ffffff" if a.home_kit == "dark" else "#1d1d1f"}, {"name": "Sudac", "color": "#e5484d"}]
     D = {"title": a.title or f"{a.home} – {a.away}", "fps": a.hz, "img": [1280, 720], "teams": teams,
          "court": {"L": L, "W": W, "D": 6.0}, "players": [], "states": [], "events": [], "frames": frames}
+    from possession import add_possession, summary
+    print(summary(D, add_possession(D)))
     json.dump(D, open(a.out, "w"), separators=(",", ":"))
     cal = sum(f["H"] is not None for f in frames); nb = sum(f["b"] is not None for f in frames)
     npl = np.mean([len(f["p"]) for f in frames if f["H"]]) if cal else 0
