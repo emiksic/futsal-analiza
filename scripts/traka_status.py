@@ -1,7 +1,7 @@
 """Pregled TV trake za sve utakmice u run/ i (po želji) ponovni upis golova i tempa u bazu.
 
   python scripts/traka_status.py                  tablica: koja utakmica ima kakvu traku (novi PARSeq / stari čitač / nema)
-  python scripts/traka_status.py --promote        traka_test.json (PARSeq) postaje traka.json, stara ide u traka_stara.json
+  python scripts/traka_status.py --promote        traka_test.json (PARSeq) postaje traka.json ako je bolja (stari čitač, ili više sata / pročitanih slika), stara ide u traka_stara.json
   python scripts/traka_status.py --write          za sve s PARSeq trakom: goals_to_site.py i stats_to_site.py --write
 """
 import argparse, glob, json, os, re, subprocess, sys
@@ -38,7 +38,10 @@ def main():
     for d in sorted(RUN.iterdir()):
         if not d.is_dir() or d.name not in matches: continue
         m = matches[d.name]; tj, tt = d / "traka.json", d / "traka_test.json"
-        if a.promote and tt.exists() and (info(tt) or {}).get("reader") == "parseq" and (info(tj) or {}).get("reader") != "parseq":
+        new, cur = info(tt) if tt.exists() else None, info(tj) or {}
+        better = new and new["reader"] == "parseq" and (cur.get("reader") != "parseq" or new["play"] > cur["play"] + 1 or new["pct"] > cur["pct"] + 0.05)
+        if a.promote and tt.exists() and not better: print(f"  {d.name}: traka_test.json nije bolja od traka.json, ostaje")
+        if a.promote and better:
             if tj.exists(): tj.replace(d / "traka_stara.json")
             tt.replace(tj); print(f"  {d.name}: traka_test.json -> traka.json")
         rows.append((m, d, info(tj), (d / "video.mp4").exists()))
