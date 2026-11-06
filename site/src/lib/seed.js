@@ -9,7 +9,7 @@ import JUNIORI from "../data/juniori-2026-27.json"; // gradi: python3 data/build
 import KADETI from "../data/kadeti-2026-27.json";   // gradi: python3 data/build.py kadeti-2026-27 kadeti-2026-27 U-17
 import KUP from "../data/kup-2026-27.json";         // gradi: python3 data/build.py kup-2026-27 kup-2026-27 Seniori
 
-export const SEED_VERSION = 23;
+export const SEED_VERSION = 24;
 
 const leagues = [
   { id: "1-hmnl", name: "SS HMNL", category: "Seniori", zones: { playoff: 8, qual: 1, relegation: 1 }, privacy: { names: "full", perPlayer: true } },
@@ -21,6 +21,7 @@ const seasons = [{ id: "2026-27", name: "2026./27." }];
 
 const halls = [
   { id: "gripe", name: "SC Gripe", city: "Split", calibrated: false },
+  { id: "dvorana-gripe", name: "Dvorana Gripe", city: "Split", calibrated: false },
   { id: "baldekin", name: "SD Baldekin", city: "Šibenik", calibrated: false },
   { id: "maksimir", name: "Stadion Maksimir", city: "Zagreb", calibrated: false },
   { id: "sutinska", name: "Sutinska Vrela", city: "Zagreb", calibrated: false },
@@ -62,7 +63,7 @@ const clubs = [
   { id: "rijeka", name: "Rijeka", full: "HMNK Rijeka", short: "RIJ", city: "Rijeka", hall: "zamet", kit: { shirt: "#ffffff", trim: "#21b3d6", num: "#1f6fb5" } },
   { id: "universitas", name: "Universitas Split", full: "AMNK Universitas Split", short: "UNI", city: "Split", hall: "gripe", kit: { shirt: "#8fd3ee", trim: "#0e2f66", num: "#0e2f66" } },
   { id: "gimka", name: "Uspinjača Gimka", full: "MNK Uspinjača Gimka", short: "GIM", city: "Zagreb", hall: "zagreb", kit: { shirt: "#1f3a6b", trim: "#ffffff", num: "#ffffff" } },
-  { id: "hajduk", name: "Hajduk", full: "MNK Hajduk", short: "HAJ", city: "Split", hall: "gripe", kit: { shirt: "#ffffff", trim: "#c8102e", num: "#1d3c8f" } },
+  { id: "hajduk", name: "Hajduk", full: "MNK Hajduk", short: "HAJ", city: "Split", hall: "dvorana-gripe", kit: { shirt: "#ffffff", trim: "#c8102e", num: "#1d3c8f" } },
   // ostali klubovi iz kupa 2026./27. (boje dresova još nisu poznate: sivi dres, mijenja se u adminu)
   ...[
     ["split", "Split", "MNK Split", "SPL", "Split", "gripe"],

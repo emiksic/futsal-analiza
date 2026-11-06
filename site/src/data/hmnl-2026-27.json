@@ -2444,7 +2444,7 @@
 "date": "2026-10-11T19:45:00+02:00",
 "home": "hajduk",
 "away": "square",
-"hall": "gripe",
+"hall": "dvorana-gripe",
 "status": "finished",
 "youtube": "https://www.youtube.com/watch?v=TLmLa6rbOfk",
 "roster": {
@@ -3440,7 +3440,7 @@
 "date": "2026-11-13T20:00:00+01:00",
 "home": "hajduk",
 "away": "pula",
-"hall": "gripe",
+"hall": "dvorana-gripe",
 "status": "scheduled",
 "youtube": "",
 "roster": {
@@ -3602,7 +3602,7 @@
 "date": "2026-11-27T20:00:00+01:00",
 "home": "hajduk",
 "away": "futsal-dinamo",
-"hall": "gripe",
+"hall": "dvorana-gripe",
 "status": "scheduled",
 "youtube": "",
 "roster": {
@@ -3764,7 +3764,7 @@
 "date": "2026-12-18T20:00:00+01:00",
 "home": "hajduk",
 "away": "novo-vrijeme",
-"hall": "gripe",
+"hall": "dvorana-gripe",
 "status": "scheduled",
 "youtube": "",
 "roster": {
@@ -3908,7 +3908,7 @@
 "date": "2027-01-15T20:00:00+01:00",
 "home": "hajduk",
 "away": "rijeka",
-"hall": "gripe",
+"hall": "dvorana-gripe",
 "status": "scheduled",
 "youtube": "",
 "roster": {
@@ -3926,7 +3926,7 @@
 "date": "2027-01-22T20:00:00+01:00",
 "home": "hajduk",
 "away": "olmissum",
-"hall": "gripe",
+"hall": "dvorana-gripe",
 "status": "scheduled",
 "youtube": "",
 "roster": {
@@ -4124,7 +4124,7 @@
 "date": "2027-02-05T20:00:00+01:00",
 "home": "hajduk",
 "away": "osijek",
-"hall": "gripe",
+"hall": "dvorana-gripe",
 "status": "scheduled",
 "youtube": "",
 "roster": {
@@ -4322,7 +4322,7 @@
 "date": "2027-03-05T20:00:00+01:00",
 "home": "hajduk",
 "away": "torcida",
-"hall": "gripe",
+"hall": "dvorana-gripe",
 "status": "scheduled",
 "youtube": "",
 "roster": {
@@ -4520,7 +4520,7 @@
 "date": "2027-04-02T20:00:00+02:00",
 "home": "hajduk",
 "away": "crnica",
-"hall": "gripe",
+"hall": "dvorana-gripe",
 "status": "scheduled",
 "youtube": "",
 "roster": {

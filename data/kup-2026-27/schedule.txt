@@ -20,7 +20,7 @@
 2|01.-02.12.2026|gauni|novi-marof||biograd|
 2|01.-02.12.2026|gimka|rijeka||zagreb|
 2|01.-02.12.2026|vrgorac|torcida|||
-2|01.-02.12.2026|hajduk|osijek||gripe|
+2|01.-02.12.2026|hajduk|osijek||dvorana-gripe|
 2|15.-16.12.2026|olmissum-crnica|murter|||
 2|15.-16.12.2026|square|fotex||gospino|
 2|15.-16.12.2026|mala-mljekara|bjelovar||valpovo|
