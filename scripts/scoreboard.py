@@ -248,10 +248,16 @@ def analyse(reads):
         nxt = [tuple(reads[j][3:5]) for j in ok[k:k + 6]]
         if sc != prev and all(x == sc for x in nxt):
             per, clk = reads[i][1], reads[i][2]
-            side = "home" if sc[0] > prev[0] else "away" if sc[1] > prev[1] else "?"
-            goals.append({"t": round(t[i], 2), "period": per, "clock": clk, "sec": (per - 1) * 1200 + 1200 - clk,
-                          "score": list(sc), "side": side, "corrected": sc[0] < prev[0] or sc[1] < prev[1]})
-            prev = sc
+            d = (sc[0] - prev[0], sc[1] - prev[1])
+            if sorted(d) in ([0, 1], [-1, 0]):        # gol jedne ekipe (+1) ili poništen gol (-1)
+                side = "home" if d[0] else "away"
+                goals.append({"t": round(t[i], 2), "period": per, "clock": clk, "sec": (per - 1) * 1200 + 1200 - clk,
+                              "score": list(sc), "side": side, "corrected": min(d) < 0})
+                prev = sc
+            elif min(d) >= 0 and sum(d) <= 3:         # propušten gol između: samo nastavi od novog rezultata, bez pogađanja
+                print(f"  ! snimka {t[i]:.1f}: {prev[0]}-{prev[1]} -> {sc[0]}-{sc[1]} (propušten gol), preskačem")
+                prev = sc
+            # inače krivo pročitan rezultat (npr. 4-1 -> 4-10): zanemari
     return play, goals
 
 
