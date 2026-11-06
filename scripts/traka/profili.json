@@ -1,8 +1,84 @@
 {
-  "_opis": "Raspored TV trake po produkciji. Kutije [x, y, w, h] na 1280x720. Polja: per (poluvrijeme, može izostati), clk (sat), score (cijeli rezultat 'd-d'). dir: down/up/auto (smjer sata).",
-  "supersport": {"per": [110, 48, 32, 32], "clk": [176, 50, 76, 30], "score": [333, 50, 52, 30], "dir": "down",
-                 "napomena": "SuperSport HMNL plava (bilo koji font) i ljubičasta Makarska - isti raspored"},
-  "torcida":    {"per": [380, 20, 42, 26], "clk": [304, 20, 70, 26], "score": [128, 20, 70, 26], "dir": "auto"},
-  "hajduk":     {"clk": [310, 44, 86, 36], "score": [134, 44, 78, 36], "dir": "auto",
-                 "napomena": "nema oznake poluvremena: određuje se po resetu sata"}
+ "_opis": "Raspored TV trake po produkciji. Kutije [x, y, w, h] na 1280x720. Polja: per (poluvrijeme, može izostati), clk (sat), score (cijeli rezultat 'd-d'). dir: down/up/auto (smjer sata).",
+ "supersport": {
+  "per": [
+   110,
+   48,
+   32,
+   32
+  ],
+  "clk": [
+   176,
+   50,
+   76,
+   30
+  ],
+  "score": [
+   333,
+   50,
+   52,
+   30
+  ],
+  "dir": "down",
+  "napomena": "SuperSport HMNL plava (bilo koji font) i ljubičasta Makarska - isti raspored"
+ },
+ "torcida": {
+  "per": [
+   380,
+   20,
+   42,
+   26
+  ],
+  "clk": [
+   304,
+   20,
+   70,
+   26
+  ],
+  "score": [
+   128,
+   20,
+   70,
+   26
+  ],
+  "dir": "auto"
+ },
+ "hajduk": {
+  "clk": [
+   310,
+   44,
+   86,
+   36
+  ],
+  "score": [
+   134,
+   44,
+   78,
+   36
+  ],
+  "dir": "auto",
+  "napomena": "nema oznake poluvremena: određuje se po resetu sata"
+ },
+ "torcida-k1": {
+  "per": [
+   28,
+   27,
+   50,
+   38
+  ],
+  "clk": [
+   386,
+   27,
+   94,
+   38
+  ],
+  "score": [
+   190,
+   27,
+   82,
+   38
+  ],
+  "dir": "auto",
+  "napomena": "Torcida na početku sezone (1. kolo): P1 | TOR | 1:1 | OLM | sat"
+ }
 }

@@ -37,6 +37,9 @@ def main():
     st = {"tempo": t}
     print(f"prekida {t['stoppages']}, igra bez prekida prosječno {t['avgPlay']} s, najdulje {t['longestPlay']} s (od {t['longestAt'] // 60}'{t['longestAt'] % 60:02d}\")")
     for h in t["halves"]: print(f"  {h['period']}. poluvrijeme: trajalo {h['real'] // 60} min {h['real'] % 60} s, prekida {h['stoppages']}")
+    bad = [h for h in t["halves"] if not (1200 <= h["real"] <= 3600)]
+    if len(t["halves"]) != 2 or bad:
+        print("! poluvremena nisu realna (svako mora trajati 20-60 min, točno dva): traka je krivo pročitana, tempo se NE upisuje"); return
     if not a.write: print("Za upis dodaj --write."); return
     base, key = load_env()
     rows = api(f"{base}/rest/v1/matches?id=eq.{a.match}&select=id,stats", key)
