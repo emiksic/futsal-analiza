@@ -78,14 +78,28 @@ def main():
     if a.no_ref or n_ref > 0.3 * n_all:                                     # crveno-plavi dres (Torcida, Hajduk): "suci" su pola ljudi
         print(f"crveno ima {n_ref / max(1, n_all):.0%} opažanja: jedna ekipa igra u crvenom, suci se ne izdvajaju po boji")
         ref = set()
-    Ls = np.array([v[0] for i, v in lab.items() if i not in ref and len(F[i]) >= 30])
-    thr = otsu(Ls); print(f"prag svijetlo/tamno: L = {thr:.0f}")
+    # ekipe: 2 grupe po boji dresa (k-means u LAB, boja (a, b) ima veću težinu od svjetline), jer npr. zeleni i
+    # crveno-plavi dres imaju sličnu svjetlinu pa sam prag na L (stari način) ne razdvaja ekipe
+    ids = [i for i in lab if i not in ref and len(F[i]) >= 30]
+    wts = np.array([len(F[i]) for i in ids], float)
+    X = np.array([[lab[i][0], 2.0 * (lab[i][1] - 128), 2.0 * (lab[i][2] - 128)] for i in ids])
+    thr = otsu(X[:, 0]); lo, hi = X[:, 0] < thr, X[:, 0] >= thr
+    C = np.array([X[lo].mean(0) if lo.any() else X.min(0), X[hi].mean(0) if hi.any() else X.max(0)])
+    for _ in range(50):
+        lbl = np.argmin(((X[:, None, :] - C[None]) ** 2).sum(-1), 1)
+        C2 = np.array([np.average(X[lbl == k], 0, wts[lbl == k]) if (lbl == k).any() else C[k] for k in (0, 1)])
+        if np.allclose(C2, C): break
+        C = C2
+    dark = int(np.argmin(C[:, 0]))                                           # grupa s tamnijim dresom
+    print(f"grupe dresova (L, 2a, 2b): tamnija {C[dark].round().astype(int).tolist()}, svjetlija {C[1 - dark].round().astype(int).tolist()}")
     dark_team = 0 if a.home_kit == "dark" else 1
     def team_of(i):
         if i in ref: return 2
         v = lab.get(i)
         if v is None: return -1
-        return dark_team if v[0] < thr else 1 - dark_team
+        x = np.array([v[0], 2.0 * (v[1] - 128), 2.0 * (v[2] - 128)])
+        k = int(np.argmin(((C - x) ** 2).sum(1)))
+        return dark_team if k == dark else 1 - dark_team
 
     # smjer: u kojem poluvremenu domaći napadaju +x (iz lopte pri golovima)
     votes = collections.Counter()
