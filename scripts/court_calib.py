@@ -61,7 +61,7 @@ def cmd_fit(a):
     if not os.path.exists(rp):
         sys.exit(f"Nema {rp}: prvo klikni točke u scripts/court_label.html (Otvori mapu -> {a.teren}) i spremi.")
     refs = json.load(open(rp, encoding="utf-8"))["frames"]
-    names = [n for n, f in sorted(refs.items()) if any(k in PTS for k in f["pts"])]
+    names = [n for n, f in sorted(refs.items()) if not n.startswith("provjera_") and any(k in PTS for k in f["pts"])]
     # 1) klikovi se prenose između kadrova koji se preklapaju (SIFT): tako svaki kadar ima točke s više dijelova
     #    terena, pa se mogu procijeniti i dužina i širina (iz jednog kadra se vidi samo dio)
     sift = cv2.SIFT_create(nfeatures=3000); bf = cv2.BFMatcher(cv2.NORM_L2)

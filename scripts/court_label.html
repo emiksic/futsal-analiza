@@ -137,7 +137,7 @@ function nextOpen() { const c = cur(); for (let k = 1; k <= PTS.length; k++) { c
 
 $("open").onclick = async () => {
   dir = await window.showDirectoryPicker({ mode: "readwrite" }); files = [];
-  for await (const [name, h] of dir.entries()) if (h.kind === "file" && /\.(jpe?g|png)$/i.test(name)) files.push(h);
+  for await (const [name, h] of dir.entries()) if (h.kind === "file" && /\.(jpe?g|png)$/i.test(name) && !name.startsWith("provjera_")) files.push(h);
   files.sort((a, b) => a.name.localeCompare(b.name));
   try { const f = await (await dir.getFileHandle("court_refs.json")).getFile(); data = JSON.parse(await f.text()); data.frames ||= {}; } catch { data = { frames: {} }; }
   if (files.length) load(0); else alert("U mapi nema slika (.jpg). Prvo pokreni court_frames.py.");
