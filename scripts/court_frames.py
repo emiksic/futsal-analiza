@@ -16,8 +16,12 @@ cap = cv2.VideoCapture(a.video); fps = cap.get(cv2.CAP_PROP_FPS) or 30; dur = ca
 if a.traka:
     play = [p for p in json.load(open(a.traka))["play"] if p[1] - p[0] >= 4]
     cand = [(p[0] + p[1]) / 2 for p in play]
+    if len(cand) < a.n:
+        print(f"traka ima samo {len(cand)} odsječaka igre (stari čitač?) -> kadrovi ravnomjerno kroz snimku")
+        cand = []
 else:
-    cand = list(np.linspace(dur * 0.1, dur * 0.9, a.n * 3))
+    cand = []
+if not cand: cand = list(np.linspace(dur * 0.1, dur * 0.9, a.n * 3))
 times = [cand[int(i)] for i in np.linspace(0, len(cand) - 1, a.n)]
 for t in times:
     cap.set(cv2.CAP_PROP_POS_MSEC, t * 1000); ok, f = cap.read()

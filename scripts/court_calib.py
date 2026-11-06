@@ -57,7 +57,10 @@ def draw_court(img, H_c2i, L, W, col=(0, 255, 255)):
 # ---------------- fit ----------------
 def cmd_fit(a):
     from scipy.optimize import least_squares
-    refs = json.load(open(os.path.join(a.teren, "court_refs.json"), encoding="utf-8"))["frames"]
+    rp = os.path.join(a.teren, "court_refs.json")
+    if not os.path.exists(rp):
+        sys.exit(f"Nema {rp}: prvo klikni točke u scripts/court_label.html (Otvori mapu -> {a.teren}) i spremi.")
+    refs = json.load(open(rp, encoding="utf-8"))["frames"]
     names = [n for n, f in sorted(refs.items()) if any(k in PTS for k in f["pts"])]
     # 1) klikovi se prenose između kadrova koji se preklapaju (SIFT): tako svaki kadar ima točke s više dijelova
     #    terena, pa se mogu procijeniti i dužina i širina (iz jednog kadra se vidi samo dio)
