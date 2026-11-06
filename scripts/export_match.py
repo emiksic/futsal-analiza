@@ -165,6 +165,9 @@ def main():
     npl = np.mean([len(f["p"]) for f in frames if f["H"]]) if cal else 0
     print(f"{len(frames)} kadrova ({a.hz:g}/s), teren {cal / len(frames):.0%}, lopta {nb / len(frames):.0%}, "
           f"prosječno {npl:.1f} osoba na terenu -> {a.out} ({os.path.getsize(a.out) / 1e6:.1f} MB)")
+    if cal < 0.2 * len(frames):
+        sys.exit(f"! teren je poznat u samo {cal / len(frames):.0%} kadrova: kamera ne odgovara kalibraciji dvorane, izvoz se NE uploada "
+                 "(za drugu produkciju u istoj dvorani napravi run/dvorane/<dvorana>-<domaćin>)")
 
 
 if __name__ == "__main__":
