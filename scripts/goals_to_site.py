@@ -25,7 +25,13 @@ def main():
     rows = api(f"{base}/rest/v1/matches?id=eq.{a.match}&select=id,events", key)
     if not rows: sys.exit(f"Nema utakmice {a.match} u bazi.")
     events = rows[0]["events"] or []
-    tv = [g for g in json.load(open(a.traka))["goals"] if not g["corrected"]]
+    TR = json.load(open(a.traka)); tv = [g for g in TR["goals"] if not g["corrected"]]
+    reads = [r for r in TR.get("reads", []) if r[1] is not None]
+    def vtime(g):
+        # sekunda YouTube snimke kad je gol pao: prvo čitanje na kojem sat već stoji na vremenu gola
+        # (traka pokaže novi rezultat tek nekoliko sekundi kasnije, g["t"])
+        c = [r[0] for r in reads if r[1] == g["period"] and r[2] == g["clock"] and g["t"] - 120 <= r[0] <= g["t"]]
+        return round(min(c) if c else g["t"] - 3, 1)
     db = [e for e in events if e["type"] in ("goal", "owngoal")]
     def scorer(e): return e["side"] if e["type"] == "goal" else ("away" if e["side"] == "home" else "home")
     def tsec(e): return (e["period"] - 1) * 1200 + e["sec"]
@@ -52,6 +58,8 @@ def main():
         old = tsec(e); who = f"{scorer(e):4s}"
         if i not in match: print(f"  --  {who} baza {old // 60}'{old % 60:02d}\"  nema para na traci, ne mijenjam"); continue
         g = tv[match[i]]; new = g["sec"]
+        vt = vtime(g)
+        if e.get("vt") is None or abs(e["vt"] - vt) > 1: e["vt"] = vt; changed += 1          # za video u adminu (skica gola)
         if e.get("exact"):
             print(f"  ==  {who} baza {old // 60}'{old % 60:02d}\"  već točno sa Semafora (traka {new // 60}'{new % 60:02d}\"), ne mijenjam"); continue
         print(f"  ok  {who} baza {old // 60}'{old % 60:02d}\"  ->  {new // 60}'{new % 60:02d}\"" + ("  (redoslijed po traci)" if i in order else ""))

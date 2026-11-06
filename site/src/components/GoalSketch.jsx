@@ -32,7 +32,7 @@ export function GoalSketch({ map, color = "var(--primary)", onChange, width = 13
   const anim = !edit && run > 0;
   const path = map ? (map.a ? `M${map.a[0]},${map.a[1]} L${map.s[0]},${map.s[1]} L${g[0]},${g[1]}` : `M${map.s[0]},${map.s[1]} L${g[0]},${g[1]}`) : "";
   return (
-    <svg key={run} ref={ref} viewBox={`${x0} ${y0} ${x1 - x0} ${h}`} width={edit ? 360 : width}
+    <svg key={run} ref={ref} viewBox={`${x0} ${y0} ${x1 - x0} ${h}`} width={edit ? 520 : width}
       style={{ display: "block", background: "var(--court, #2f6b3f)", borderRadius: 4, cursor: edit ? "crosshair" : map ? "pointer" : "default", maxWidth: "100%" }}
       onClick={click} role="img" aria-label={edit ? "Skica gola: klikni mjesto udarca, pa dodavača" : "Skica gola: dodavanje, udarac i gol. Klikni za animaciju."}>
       <g fill="none" stroke={line} strokeWidth={half ? 0.12 : 0.18} opacity=".8">

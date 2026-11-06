@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useRef } from "react";
 import { href, go, replaceClick } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
 import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL } from "../lib/derive.js";
@@ -6,6 +6,31 @@ import { useAnalysis } from "../lib/analysis.js";
 import { Jersey, Icon, Toast, NumInput, DateTimeInput } from "../components/ui.jsx";
 import { ShotTagger } from "./ShotTagger.jsx";
 import { GoalSketch } from "../components/GoalSketch.jsx";
+import { Player, fmtVT } from "../components/Player.jsx";
+
+// Video ispod skice gola: YouTube na trenutku gola (e.vt, s TV trake), da se vidi gdje su bili strijelac i dodavač.
+function GoalVideo({ m, e, upd }) {
+  const P = useRef(null);
+  const setVt = (v) => upd((x) => { const q = x.events.find((z) => z.id === e.id); if (v == null) delete q.vt; else q.vt = Math.round(v * 10) / 10; });
+  if (!m.youtube) return <div className="callout warn">Utakmica nema YouTube snimku, pa video nije moguć.</div>;
+  const at = (d) => { if (e.vt == null) return; P.current?.seek(e.vt + d); P.current?.play(); };
+  const nudge = (d) => { const t = P.current?.time(); if (t != null) { P.current.seek(t + d); P.current.pause(); } };
+  return (
+    <div style={{ width: "100%", maxWidth: 720 }}>
+      <Player ref={P} key={e.id} youtube={m.youtube} start={e.vt != null ? e.vt - 6 : 0} />
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 6, alignItems: "center" }}>
+        <button className="btn sm" disabled={e.vt == null} onClick={() => at(-6)}>{Icon.play(12)} Akcija (−6 s)</button>
+        <button className="btn sm ghost" disabled={e.vt == null} onClick={() => { P.current?.seek(e.vt); P.current?.pause(); }}>Trenutak gola</button>
+        <button className="btn sm ghost" onClick={() => nudge(-1)}>−1 s</button>
+        <button className="btn sm ghost" onClick={() => nudge(-0.2)}>−0,2 s</button>
+        <button className="btn sm ghost" onClick={() => nudge(0.2)}>+0,2 s</button>
+        <button className="btn sm ghost" onClick={() => nudge(1)}>+1 s</button>
+        <button className="btn sm ghost" onClick={() => { const t = P.current?.time(); if (t != null) setVt(t); }}>Ovdje je gol</button>
+        <span className="muted small">{e.vt != null ? `gol u snimci: ${fmtVT(e.vt)}` : "Vrijeme u snimci nije poznato: nađi gol i klikni „Ovdje je gol”."}</span>
+      </div>
+    </div>
+  );
+}
 
 const toLocal = (iso) => { const d = new Date(iso), p = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
@@ -299,8 +324,10 @@ function Events({ ix, m, upd }) {
             {sketch === e.id && <tr><td colSpan={5}>
               <div style={{ display: "flex", gap: 12, alignItems: "flex-start", flexWrap: "wrap", padding: "6px 0" }}>
                 <GoalSketch map={e.map} color={e.side === "home" ? "var(--primary)" : "var(--signal)"} onChange={(mp) => upd((x) => { const q = x.events.find((z) => z.id === e.id); q.map = mp; })} />
-                <div className="muted small" style={{ maxWidth: 260 }}>Ekipa uvijek napada <b>desni</b> gol. Prvi klik: gdje je strijelac pucao. Drugi klik (neobavezno): gdje je bio dodavač. Treći klik kreće ispočetka.
+                <div className="muted small" style={{ maxWidth: 260 }}>Ekipa uvijek napada <b>desni</b> gol: ako na videu napada ulijevo, klikni zrcalno. Prvi klik: gdje je strijelac pucao. Drugi klik (neobavezno): gdje je bio dodavač. Treći klik kreće ispočetka.
+                  {e.map?.auto && <div style={{ marginTop: 6 }}>Skica je automatska. Kad je promijeniš, postaje ručna i analiza je više ne mijenja.</div>}
                   <div style={{ marginTop: 8 }}><button className="btn sm ghost" onClick={() => upd((x) => { delete x.events.find((z) => z.id === e.id).map; })}>Obriši skicu</button></div></div>
+                <GoalVideo m={m} e={e} upd={upd} />
               </div></td></tr>}
           </Fragment>))}</tbody>
         </table>
