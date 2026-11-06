@@ -126,9 +126,13 @@ def parse(txt):
         if not m: return None
         clk = sec = int(m[1])
     if sec > 59 or clk > 2400: return None
-    m = re.fullmatch(r"(\d{1,2})[-:](\d{1,2})", txt.get("score", ""))
+    sc = txt.get("score", "")
+    parts = re.split(r"[-:]", sc)
+    # PARSeq kod "1:1" zna zapeti i ponavljati ("1:1:1:1"): ako se dijelovi ponavljaju s periodom 2, uzmi prva dva
+    if len(parts) > 2 and all(parts) and all(q == parts[i % 2] for i, q in enumerate(parts)): sc = f"{parts[0]}-{parts[1]}"
+    m = re.fullmatch(r"(\d{1,2})[-:](\d{1,2})", sc)
     if not m:
-        d = re.sub(r"\D", "", txt.get("score", ""))
+        d = re.sub(r"\D", "", sc)
         if len(d) != 2: return None                                 # crtica nije pročitana: samo za d-d
         m = [None, d[0], d[1]]
     per = re.sub(r"\D", "", txt.get("per", ""))
