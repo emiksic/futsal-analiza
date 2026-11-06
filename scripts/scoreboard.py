@@ -94,7 +94,7 @@ def strips(path, is_strip, hz):
         fi += 1
 
 # ---------------- PARSeq čitač (bilo koji font, raspored iz profili.json) ----------------
-CHARS = {"per": "0123456789P", "clk": "0123456789:.", "score": "0123456789-"}
+CHARS = {"per": "0123456789P", "clk": "0123456789:.", "score": "0123456789-:"}
 
 
 def load_layouts():
@@ -126,7 +126,7 @@ def parse(txt):
         if not m: return None
         clk = sec = int(m[1])
     if sec > 59 or clk > 2400: return None
-    m = re.fullmatch(r"(\d{1,2})-(\d{1,2})", txt.get("score", ""))
+    m = re.fullmatch(r"(\d{1,2})[-:](\d{1,2})", txt.get("score", ""))
     if not m:
         d = re.sub(r"\D", "", txt.get("score", ""))
         if len(d) != 2: return None                                 # crtica nije pročitana: samo za d-d
