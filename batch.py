@@ -76,7 +76,9 @@ def main():
             if v in a.skip or m["id"] in a.skip: continue
             ms.append((m["date"], m, v))
     ms.sort(key=lambda x: x[0], reverse=True)                                  # od zadnjeg kola prema početku
-    def hall_of(m): return m.get("hall") or clubs.get(m["home"], {}).get("hall")
+    def hall_of(m):        # dvorana; ako ista dvorana ima više produkcija (npr. Gripe: Torcida i Hajduk), run/dvorane/<dvorana>-<domaćin> ima prednost
+        h = m.get("hall") or clubs.get(m["home"], {}).get("hall")
+        return f"{h}-{m['home']}" if (RUN / "dvorane" / f"{h}-{m['home']}" / "court_model.json").exists() else h
     def pending(m, v):     # nije analizirana, ili je dvorana u međuvremenu kalibrirana a mini-mapa još nije napravljena
         if not (RUN / v / "batch.done").exists(): return True
         return (RUN / "dvorane" / str(hall_of(m)) / "court_model.json").exists() and (kits.get(m["id"]) or kits.get(m["home"])) and not (RUN / v / "minimapa.done").exists()
