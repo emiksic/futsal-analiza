@@ -73,11 +73,19 @@ def main():
         for p in fr["players"]:
             if p.get("feat"): F[p["id"]].append(p["feat"])
     lab = {i: np.median(v, 0) for i, v in F.items()}
-    ref = {i for i, v in lab.items() if v[1] > 145}                         # crveno: suci (i tamnocrveni golman, vidi dolje)
-    n_ref, n_all = sum(len(F[i]) for i in ref), sum(len(v) for v in F.values())
-    if a.no_ref or n_ref > 0.3 * n_all:                                     # crveno-plavi dres (Torcida, Hajduk): "suci" su pola ljudi
-        print(f"crveno ima {n_ref / max(1, n_all):.0%} opažanja: jedna ekipa igra u crvenom, suci se ne izdvajaju po boji")
-        ref = set()
+    # suci: crveni dres I većinu vremena uz aut-liniju (u futsalu suci stoje izvan terena, uz bočne linije).
+    # Samo po boji bi igrači u crveno-plavom dresu (Torcida, Hajduk) djelomično postali suci i ispali iz posjeda.
+    edge, seen = collections.Counter(), collections.Counter()
+    for fr in tl[::5]:
+        H = H_at(fr["t"])
+        if H is None: continue
+        for p in fr["players"]:
+            if lab.get(p["id"]) is None or lab[p["id"]][1] <= 145: continue
+            x1, y1, x2, y2 = p["box"]; cx, cy = proj(H, (x1 + x2) / 2, y2)
+            seen[p["id"]] += 1; edge[p["id"]] += abs(cy) > W / 2 - 1.5 or abs(cx) > L / 2
+    red = {i for i, v in lab.items() if v[1] > 145}
+    ref = set() if a.no_ref else {i for i in red if seen[i] < 5 or edge[i] / seen[i] > 0.5}
+    print(f"crveni dres: {len(red)} trackova, od toga suci (uz aut-liniju) {len(ref)}, ostali idu ekipama po boji")
     # ekipe: 2 grupe po boji dresa (k-means u LAB, boja (a, b) ima veću težinu od svjetline), jer npr. zeleni i
     # crveno-plavi dres imaju sličnu svjetlinu pa sam prag na L (stari način) ne razdvaja ekipe
     ids = [i for i in lab if i not in ref and len(F[i]) >= 30]
