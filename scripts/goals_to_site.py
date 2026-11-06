@@ -36,6 +36,17 @@ def main():
     used_e, used_g, match = set(), set(), {}
     for _, i, j in pairs:
         if i not in used_e and j not in used_g: used_e.add(i); used_g.add(j); match[i] = j
+    # Semafor zna samo minutu, pa redoslijed golova u istoj ili bliskoj minuti zna biti zamijenjen (domaći/gosti).
+    # Kad traka ima sve golove (isti broj kao baza), preostale golove iste ekipe u istom poluvremenu spoji
+    # redom kojim su zabijeni na traci, bez obzira na razliku u vremenu.
+    order = set()
+    if len(tv) == len(db):
+        for per in {e["period"] for e in db}:
+            for side in ("home", "away"):
+                E = sorted((i for i, e in enumerate(db) if i not in used_e and e["period"] == per and scorer(e) == side and not e.get("exact")), key=lambda i: tsec(db[i]))
+                G = sorted((j for j, g in enumerate(tv) if j not in used_g and g["period"] == per and g["side"] == side), key=lambda j: tv[j]["sec"])
+                if E and len(E) == len(G):
+                    for i, j in zip(E, G): used_e.add(i); used_g.add(j); match[i] = j; order.add(i)
     changed = 0
     for i, e in sorted(enumerate(db), key=lambda x: tsec(x[1])):
         old = tsec(e); who = f"{scorer(e):4s}"
@@ -43,7 +54,7 @@ def main():
         g = tv[match[i]]; new = g["sec"]
         if e.get("exact"):
             print(f"  ==  {who} baza {old // 60}'{old % 60:02d}\"  već točno sa Semafora (traka {new // 60}'{new % 60:02d}\"), ne mijenjam"); continue
-        print(f"  ok  {who} baza {old // 60}'{old % 60:02d}\"  ->  {new // 60}'{new % 60:02d}\"")
+        print(f"  ok  {who} baza {old // 60}'{old % 60:02d}\"  ->  {new // 60}'{new % 60:02d}\"" + ("  (redoslijed po traci)" if i in order else ""))
         e["sec"] = new - (g["period"] - 1) * 1200; e["exact"] = True; changed += 1
     for j, g in enumerate(tv):
         if j not in used_g: print(f"  ??  traka {g['sec'] // 60}'{g['sec'] % 60:02d}\" {g['side']} ({g['score'][0]}-{g['score'][1]}) nema para u bazi")
