@@ -56,6 +56,7 @@ def main():
     ap.add_argument("--list", action="store_true", help="samo ispiši redoslijed, ništa ne pokreći")
     ap.add_argument("--retraka", action="store_true", help="samo ponovno čitanje TV trake: stari čitač ili loše pročitane (< 90 %% slika ili sat < 35 min)")
     ap.add_argument("--sve", action="store_true", help="uz --retraka: ponovno pročitaj sve trake")
+    ap.add_argument("--matches", help="JSON s popisom utakmica umjesto site/src/data (red.py: utakmice iz reda na stranici)")
     a = ap.parse_args()
     RUN.mkdir(exist_ok=True)
     if not a.list: subprocess.run(["git", "pull", "--ff-only", "-q"], cwd=ROOT)    # najnoviji raspored i rezultati
@@ -68,10 +69,12 @@ def main():
     kits = json.load(open(ROOT / "data/dresovi.json", encoding="utf-8")) if (ROOT / "data/dresovi.json").exists() else {}
 
     ms = []
-    for f in glob.glob(str(ROOT / "site/src/data/*.json")):
-        for m in json.load(open(f, encoding="utf-8"))["matches"]:
+    src = [json.load(open(a.matches, encoding="utf-8"))] if a.matches else \
+          [json.load(open(f, encoding="utf-8"))["matches"] for f in glob.glob(str(ROOT / "site/src/data/*.json"))]
+    for L in src:
+        for m in L:
             v = yt_id(m.get("youtube"))
-            if m.get("status") != "finished" or not v: continue
+            if not v or (m.get("status") != "finished" and not a.matches): continue
             if a.comps and m["comp"] not in a.comps: continue
             if v in a.skip or m["id"] in a.skip: continue
             ms.append((m["date"], m, v))

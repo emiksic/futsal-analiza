@@ -359,11 +359,12 @@ function Analysis({ ix, m, upd }) {
       <label className="field"><span>Status analize</span>
         <select className="input" value={a.status} onChange={(e) => ua((x) => { x.status = e.target.value; })}>
           {Object.entries(ANALYSIS_LABEL).map(([k, n]) => <option key={k} value={k}>{n}</option>)}
-        </select></label>
+        </select>
+        {a.error && <small style={{ color: "var(--danger, #e5484d)" }}>Zadnja obrada: {a.error}</small>}</label>
       <div className="field"><span>Red za obradu</span>
         <button className="btn primary" disabled={!m.youtube || a.status === "queued" || a.status === "processing"} onClick={() => ua((x) => { x.status = "queued"; })}>
           {Icon.video()} Stavi u red</button>
-        <small>{m.youtube ? "Obrada kreće sljedeći put kad se pokrene analyze.py --queue." : "Prvo dodaj link snimke pod Osnovno."}</small></div>
+        <small>{m.youtube ? "Obrada kreće kad na računalu pokreneš python red.py." : "Prvo dodaj link snimke pod Osnovno."}</small></div>
       <div className="field wide"><span>Prava na video</span>
         <div className="seg">
           <button type="button" aria-pressed={(a.rights || "embed") === "embed"} onClick={() => ua((x) => { x.rights = "embed"; })}>Samo YouTube embed</button>
