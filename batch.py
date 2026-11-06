@@ -58,6 +58,7 @@ def main():
     ap.add_argument("--sve", action="store_true", help="uz --retraka: ponovno pročitaj sve trake")
     ap.add_argument("--matches", help="JSON s popisom utakmica umjesto site/src/data (red.py: utakmice iz reda na stranici)")
     a = ap.parse_args()
+    if a.comps is not None and not a.comps: ap.error("--comps bez natjecanja (npr. --comps 1-hmnl-2026-27); bez --comps idu sva natjecanja")
     RUN.mkdir(exist_ok=True)
     if not a.list: subprocess.run(["git", "pull", "--ff-only", "-q"], cwd=ROOT)    # najnoviji raspored i rezultati
 
