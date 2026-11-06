@@ -12,7 +12,8 @@ Gotova utakmica dobije run/<id>/batch.done; korak koji ne uspije se zapiše i id
 Kad se dvorana naknadno kalibrira, isto pokretanje za već analizirane utakmice napravi samo mini-mapu i skice (analiza se ne ponavlja).
 Sve se zapisuje i u run/batch_log.txt.
 
-  python batch.py --retraka    samo ponovno pročitaj TV traku (PARSeq) za već skinute utakmice kojima je traka
+  python batch.py --retraka [--sve]   ponovno pročitaj TV traku: stari čitač ili loše pročitana (< 90 % slika, sat < 35 min);
+                               --sve za sve; za već skinute utakmice kojima je traka
                                pročitana starim čitačem, pa upiši sekunde golova i tempo (stara ostaje kao traka_stara.json)
 
 Dres domaćih (tamni/svijetli, za boje ekipa na mini-mapi) je u data/dresovi.json po klubu domaćinu;
@@ -53,7 +54,8 @@ def main():
     ap.add_argument("--max", type=int, default=0, help="najviše toliko utakmica u ovom pokretanju (0 = sve)")
     ap.add_argument("--no-upload", action="store_true", help="samo analiza, ništa na stranicu")
     ap.add_argument("--list", action="store_true", help="samo ispiši redoslijed, ništa ne pokreći")
-    ap.add_argument("--retraka", action="store_true", help="samo ponovno čitanje TV trake za već skinute utakmice")
+    ap.add_argument("--retraka", action="store_true", help="samo ponovno čitanje TV trake: stari čitač ili loše pročitane (< 90 %% slika ili sat < 35 min)")
+    ap.add_argument("--sve", action="store_true", help="uz --retraka: ponovno pročitaj sve trake")
     a = ap.parse_args()
     RUN.mkdir(exist_ok=True)
     if not a.list: subprocess.run(["git", "pull", "--ff-only", "-q"], cwd=ROOT)    # najnoviji raspored i rezultati
@@ -82,7 +84,12 @@ def main():
         def old(v):
             tj = RUN / v / "traka.json"
             if not (RUN / v / "video.mp4").exists(): return False
-            return not tj.exists() or json.load(open(tj, encoding="utf-8")).get("reader") != "parseq"
+            if a.sve or not tj.exists(): return True
+            d = json.load(open(tj, encoding="utf-8"))
+            if d.get("reader") != "parseq": return True
+            R = d.get("reads", []); good = sum(r[1] is not None for r in R) / max(1, len(R))
+            sat = sum(p[1] - p[0] for p in d.get("play", [])) / 60
+            return good < 0.9 or sat < 35                      # loše pročitana: ponovno, s novijim čitačem
         todo = [(m, v) for _, m, v in ms if old(v)]
         log(f"=== retraka: {len(todo)} utakmica")
         for n, (m, v) in enumerate(todo, 1):
