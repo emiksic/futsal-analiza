@@ -20,7 +20,9 @@ def api(url, key, method="GET", body=None):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("traka"); ap.add_argument("--match", required=True)
-    ap.add_argument("--write", action="store_true"); a = ap.parse_args()
+    ap.add_argument("--write", action="store_true")
+    ap.add_argument("--reset", action="store_true", help="zaboravi stara točna vremena (exact, vt) s krivo pročitane trake i upari ispočetka")
+    a = ap.parse_args()
     base, key = load_env()
     rows = api(f"{base}/rest/v1/matches?id=eq.{a.match}&select=id,events", key)
     if not rows: sys.exit(f"Nema utakmice {a.match} u bazi.")
@@ -33,6 +35,12 @@ def main():
         c = [r[0] for r in reads if r[1] == g["period"] and r[2] == g["clock"] and g["t"] - 120 <= r[0] <= g["t"]]
         return round(min(c) if c else g["t"] - 3, 1)
     db = [e for e in events if e["type"] in ("goal", "owngoal")]
+    reset = 0
+    if a.reset:
+        for e in db:
+            if e.pop("exact", None) is not None: reset += 1
+            e.pop("vt", None)
+        print(f"--reset: {reset} golova više nema točno vrijeme, uparujem ispočetka")
     def scorer(e): return e["side"] if e["type"] == "goal" else ("away" if e["side"] == "home" else "home")
     def tsec(e): return (e["period"] - 1) * 1200 + e["sec"]
     print(f"golova: baza {len(db)}, traka {len(tv)}")
@@ -67,6 +75,7 @@ def main():
     for j, g in enumerate(tv):
         if j not in used_g: print(f"  ??  traka {g['sec'] // 60}'{g['sec'] % 60:02d}\" {g['side']} ({g['score'][0]}-{g['score'][1]}) nema para u bazi")
     events.sort(key=lambda e: (e.get("period", 0), e.get("sec", 0)))
+    changed += reset
     if not changed: print("Nema promjena."); return
     if a.write:
         api(f"{base}/rest/v1/matches?id=eq.{a.match}", key, "PATCH", {"events": events}); print("Upisano.")
