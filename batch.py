@@ -77,7 +77,7 @@ def main():
     def hall_of(m): return m.get("hall") or clubs.get(m["home"], {}).get("hall")
     def pending(m, v):     # nije analizirana, ili je dvorana u međuvremenu kalibrirana a mini-mapa još nije napravljena
         if not (RUN / v / "batch.done").exists(): return True
-        return (RUN / "dvorane" / str(hall_of(m)) / "court_model.json").exists() and kits.get(m["home"]) and not (RUN / v / "minimapa.done").exists()
+        return (RUN / "dvorane" / str(hall_of(m)) / "court_model.json").exists() and (kits.get(m["id"]) or kits.get(m["home"])) and not (RUN / v / "minimapa.done").exists()
     if a.retraka:
         def old(v):
             tj = RUN / v / "traka.json"
@@ -115,7 +115,7 @@ def main():
             run(["scripts/stats_to_site.py", traka, "--match", m["id"], "--write"], "tempo igre")
         hall = hall_of(m)
         teren = RUN / "dvorane" / str(hall)
-        kit = kits.get(m["home"])
+        kit = kits.get(m["id"]) or kits.get(m["home"])   # dres po utakmici, inače po klubu domaćinu
         if (teren / "court_model.json").exists() and traka.exists():
             court = out / "court.json"
             if not (out / "court.done").exists():

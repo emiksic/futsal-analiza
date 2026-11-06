@@ -1,1 +1,20 @@
-{"square": "dark"}
+{
+ "_": "domaćin: dark = tamniji dres od gosta, light = svjetliji. Ključ: ID utakmice ili klub (zadano za sve njegove domaće utakmice).",
+ "square": "dark",
+ "rijeka": "light",
+ "hajduk": "light",
+ "novo-vrijeme": "light",
+ "torcida": "dark",
+ "1-hmnl-2026-27-k1-torcida-olmissum": "dark",
+ "1-hmnl-2026-27-k1-crnica-osijek": "dark",
+ "1-hmnl-2026-27-k1-novo-vrijeme-square": "light",
+ "1-hmnl-2026-27-k2-square-rijeka": "dark",
+ "1-hmnl-2026-27-k2-olmissum-hajduk": "light",
+ "1-hmnl-2026-27-k2-pula-crnica": "light",
+ "1-hmnl-2026-27-k3-rijeka-osijek": "light",
+ "1-hmnl-2026-27-k3-novo-vrijeme-pula": "light",
+ "1-hmnl-2026-27-k3-hajduk-square": "light",
+ "1-hmnl-2026-27-k4-futsal-dinamo-crnica": "light",
+ "1-hmnl-2026-27-k4-torcida-novo-vrijeme": "dark",
+ "1-hmnl-2026-27-k4-pula-rijeka": "dark"
+}
