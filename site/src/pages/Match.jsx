@@ -393,13 +393,16 @@ function Stats({ m, ix, A }) {
           <h4 style={{ font: "600 13px/1 var(--body)", color: "var(--muted)", margin: "4px 0 8px" }}>Kretanje igrača s prepoznatim brojem</h4>
           <div className="tbl-wrap">
             <table className="squad">
-              <thead><tr><th>#</th><th>Klub</th><th className="c">Prijeđeno</th><th className="c">U kadru</th></tr></thead>
-              <tbody>{st.players.map((p) => (
-                <tr key={p.key}><td className="n">{p.num}</td><td><span style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>{keyClub[p.team] && <Jersey kit={keyClub[p.team].kit} size={18} />}{keyClub[p.team]?.name || p.team}</span></td>
-                  <td className="c">{p.dist} m</td><td className="c">{p.time} s</td></tr>))}</tbody>
+              <thead><tr><th>#</th><th>Igrač</th><th className="c">Prijeđeno</th><th className="c">Prepoznat</th></tr></thead>
+              <tbody>{st.players.map((p) => {
+                const side = keyClub[p.team] === ix.club[m.home] ? "home" : "away";
+                const pid = (m.roster?.[side]?.players || []).find((q) => String(ix.player[q]?.num) === p.num);
+                return (
+                <tr key={p.key}><td className="n">{p.num}</td><td><span style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>{keyClub[p.team] && <Jersey kit={keyClub[p.team].kit} size={18} />}{pid ? shortName(ix.player[pid]) : keyClub[p.team]?.name || p.team}</span></td>
+                  <td className="c">{p.dist >= 1000 ? (p.dist / 1000).toFixed(2) + " km" : p.dist + " m"}</td><td className="c">{p.time >= 60 ? Math.round(p.time / 60) + " min" : p.time + " s"}</td></tr>); })}</tbody>
             </table>
           </div>
-          <div className="note" style={{ marginTop: 8 }}>Udaljenost se računa iz pozicija na mini-mapi i vrijedi samo za vrijeme u kadru.</div>
+          <div className="note" style={{ marginTop: 8 }}>Samo vrijeme dok teče sat i dok je igrač prepoznat po broju na dresu (nije cijela minutaža). Udaljenost iz pozicija na mini-mapi u tom vremenu.</div>
         </div>)}
     </>
   );

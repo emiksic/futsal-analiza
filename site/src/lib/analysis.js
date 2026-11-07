@@ -60,7 +60,9 @@ export function analysisStats(D, order) {
   if (terrPct) terrPct[1] = 100 - terrPct[0];
   // kretanje igrača s prepoznatim brojem
   const dist = {}, seen = {}, prev = {};
+  const full = D.frames.some((f) => f.dir);
   for (const f of D.frames) {
+    if (full && !f.live) continue;                       // cijela utakmica: samo dok teče sat
     for (const p of f.p) {
       const pi = p[1]; if (pi < 0 || p[0] > 1) continue;
       const k = D.players[pi]; seen[k] = (seen[k] || 0) + 1;
@@ -80,9 +82,14 @@ export function analysisStats(D, order) {
 // točke za toplinsku mapu igrača, okrenute tako da domaćin napada udesno
 export function heatPoints(D, key, homeIdx, isHome) {
   const idx = D.players.indexOf(key); if (idx < 0) return [];
-  const homeLeft = defendSide(D, homeIdx) < 0;
-  const flip = !homeLeft;
   const pts = [];
+  if (D.frames.some((f) => f.dir)) {
+    // cijela utakmica: smjer po poluvremenu (f.dir = smjer napada ekipe 0); igrač uvijek napada udesno, samo dok teče sat
+    for (const f of D.frames) { if (!f.live || !f.dir) continue;
+      for (const p of f.p) if (p[1] === idx) { const d = p[0] === 0 ? f.dir : -f.dir; pts.push(d > 0 ? [p[7], p[8]] : [-p[7], -p[8]]); } }
+    return pts;
+  }
+  const flip = defendSide(D, homeIdx) >= 0;
   for (const f of D.frames) for (const p of f.p) if (p[1] === idx) pts.push(flip ? [-p[7], -p[8]] : [p[7], p[8]]);
   return pts;
 }
