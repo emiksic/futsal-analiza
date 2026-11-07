@@ -46,8 +46,10 @@ def main():
     ap.add_argument("video"); ap.add_argument("tracks"); ap.add_argument("teams")
     ap.add_argument("--match", required=True); ap.add_argument("--out", required=True)
     ap.add_argument("--every", type=float, default=0.4, help="isti track najviše svakih N s")
-    ap.add_argument("--min-h", type=int, default=55, help="najmanja visina igrača u px")
-    ap.add_argument("--min-post", type=float, default=0.6); ap.add_argument("--min-abs", type=float, default=0.1)
+    ap.add_argument("--min-h", type=int, default=75, help="najmanja visina igrača u px (manji: broj je premalen)")
+    ap.add_argument("--min-post", type=float, default=0.7); ap.add_argument("--min-abs", type=float, default=0.3)
+    ap.add_argument("--min-greedy", type=float, default=0.4, help="slobodno čitanje (bez zapisnika) mora dati isti broj s ovom sigurnošću")
+    ap.add_argument("--debug", help="mapa: spremi uzorak izrezaka s pročitanim brojem (za provjeru)")
     a = ap.parse_args()
 
     from parseq_digits import DigitReader
@@ -62,7 +64,7 @@ def main():
 
     last_read, pos, t0 = {}, 0, time.time()
     reads = collections.defaultdict(list)                  # track -> [(t, num, post, p_abs)]
-    span = collections.defaultdict(lambda: [1e9, -1e9]); crops_n = 0
+    span = collections.defaultdict(lambda: [1e9, -1e9]); crops_n = 0; dbg, dbg_n = [], [0]
     for k, fr in enumerate(tl):
         for p in fr["players"]:
             s = span[p["id"]]; s[0] = min(s[0], fr["t"]); s[1] = max(s[1], fr["t"])
@@ -80,21 +82,32 @@ def main():
             if c is not None and c.shape[0] >= 6 and c.shape[1] >= 4: crops.append(c); who.append(p)
         if not crops: continue
         crops_n += len(crops)
-        for p, sc in zip(who, R.score(crops, [ROS[team[p["id"]]]["nums"] for p in who])):
+        greedy = R.read(crops)
+        for p, c, sc, (gt, gc) in zip(who, crops, R.score(crops, [ROS[team[p["id"]]]["nums"] for p in who]), greedy):
             if not sc: continue
             ks = list(sc); v = np.array([sc[q] for q in ks]); post = np.exp(v - v.max()); post /= post.sum()
             b = int(np.argmax(v))
-            if post[b] >= a.min_post and np.exp(v[b]) >= a.min_abs:
-                reads[p["id"]].append((fr["t"], ks[b], float(post[b]), float(np.exp(v[b]))))
+            # ocjena samo među brojevima iz zapisnika uvijek nekoga izabere; zato i slobodno čitanje mora reći isto
+            ok_ = post[b] >= a.min_post and np.exp(v[b]) >= a.min_abs and gt == ks[b] and gc >= a.min_greedy
+            if ok_: reads[p["id"]].append((fr["t"], ks[b], float(post[b]), float(np.exp(v[b]))))
+            if a.debug and dbg_n[0] < 400 and np.random.random() < 0.05:
+                big = cv2.resize(c, (64, int(64 * c.shape[0] / max(1, c.shape[1])) or 1)); big = cv2.copyMakeBorder(big, 0, 22, 0, 0, cv2.BORDER_CONSTANT)
+                cv2.putText(big, f"{gt}/{ks[b]}{'+' if ok_ else ''}", (2, big.shape[0] - 6), 0, 0.45, (0, 255, 0) if ok_ else (0, 0, 255), 1)
+                dbg.append(big); dbg_n[0] += 1
         if k % 3000 == 0: print(f"  {fr['t'] / 60:5.1f} min  izrezaka {crops_n}  ({time.time() - t0:.0f} s)", flush=True)
 
+    if a.debug and dbg:                                   # mreža izrezaka: slobodno/zapisnik, + = prihvaćeno
+        os.makedirs(a.debug, exist_ok=True); H_ = max(x.shape[0] for x in dbg)
+        dbg = [cv2.copyMakeBorder(x, 0, H_ - x.shape[0], 0, 0, cv2.BORDER_CONSTANT) for x in dbg]
+        rows = [np.hstack(dbg[i:i + 16] + [np.zeros_like(dbg[0])] * (16 - len(dbg[i:i + 16]))) for i in range(0, len(dbg), 16)]
+        cv2.imwrite(os.path.join(a.debug, "izrezi.jpg"), np.vstack(rows)); print("uzorak izrezaka:", os.path.join(a.debug, "izrezi.jpg"))
     # glasanje po tracku
     tracks = {}
     for tid, L in reads.items():
         sc = collections.defaultdict(float)
         for _, num, post, _ in L: sc[num] += post ** 2
         num, best = max(sc.items(), key=lambda z: z[1]); share = best / sum(sc.values())
-        if best >= 0.8 and share >= 0.5 and sum(1 for x in L if x[1] == num) >= 2:
+        if best >= 1.0 and share >= 0.6 and sum(1 for x in L if x[1] == num) >= 3:
             tracks[tid] = {"num": num, "team": team[tid], "score": round(best, 2), "share": round(share, 2), "n": len(L)}
     # isti broj u istoj ekipi u isto vrijeme: ostaje jači track
     keep, by = {}, collections.defaultdict(list)
