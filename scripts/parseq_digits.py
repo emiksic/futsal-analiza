@@ -10,6 +10,7 @@ class DigitReader:
         repo = repo or os.environ.get("PARSEQ_REPO")          # lokalni klon (bez interneta) ili torch.hub
         if repo: self.m = torch.hub.load(repo, "parseq", pretrained=True, source="local").eval()
         else: self.m = torch.hub.load("baudm/parseq", "parseq", pretrained=True, trust_repo=True).eval()
+        if torch.cuda.is_available(): self.m = self.m.cuda()   # grafička kartica, ako postoji
         tok = self.m.tokenizer
         self.itos = tok._itos
         self.eos = tok.eos_id
@@ -59,7 +60,8 @@ class DigitReader:
         """crops: lista BGR slika, cands: lista lista kandidata (npr. brojevi iz zapisnika)
         -> lista dict {kandidat: log-vjerojatnost} (+ pohlepno čitanje pod ključem '_greedy')"""
         if not crops: return []
-        x = torch.stack([self._prep(c) for c in crops])
+        dev = next(self.m.parameters()).device
+        x = torch.stack([self._prep(c) for c in crops]).to(dev)
         logits = self.m(x); C = logits.shape[-1]
         logp = (logits + self.mask[:C].to(logits)).log_softmax(-1)
         stoi = {c: i for i, c in enumerate(self.itos)}

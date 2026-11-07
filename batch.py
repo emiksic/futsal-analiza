@@ -56,6 +56,7 @@ def main():
     ap.add_argument("--list", action="store_true", help="samo ispiši redoslijed, ništa ne pokreći")
     ap.add_argument("--retraka", action="store_true", help="samo ponovno čitanje TV trake: stari čitač ili loše pročitane (< 90 %% slika ili sat < 35 min)")
     ap.add_argument("--sve", action="store_true", help="uz --retraka: ponovno pročitaj sve trake")
+    ap.add_argument("--no-numbers", action="store_true", help="bez čitanja brojeva na dresovima")
     ap.add_argument("--matches", help="JSON s popisom utakmica umjesto site/src/data (red.py: utakmice iz reda na stranici)")
     a = ap.parse_args()
     if a.comps is not None and not a.comps: ap.error("--comps bez natjecanja (npr. --comps 1-hmnl-2026-27); bez --comps idu sva natjecanja")
@@ -144,7 +145,14 @@ def main():
             if court.exists() and kit and not a.no_upload:
                 H, A = clubs.get(m["home"], {}).get("short", "DOM"), clubs.get(m["away"], {}).get("short", "GOS")
                 base = ["--tracks", out / "tracks.json", "--ball", out / "lopta.json", "--court", court, "--traka", traka]
-                if run(["scripts/export_match.py", *base, "--home", H, "--away", A, "--home-kit", kit, "--out", out / "web.json"], "izvoz"):
+                exp = ["scripts/export_match.py", *base, "--home", H, "--away", A, "--home-kit", kit, "--out", out / "web.json",
+                       "--numbers", out / "numbers.json"]
+                ok = run(exp, "izvoz")
+                if ok and not (out / "numbers.json").exists() and not a.no_numbers:      # brojevi na dresovima (treba teams.json iz izvoza)
+                    if run(["scripts/jersey_numbers.py", out / "video.mp4", out / "tracks.json", out / "teams.json",
+                            "--match", m["id"], "--out", out / "numbers.json"], "brojevi na dresovima"):
+                        ok = run(exp, "izvoz s brojevima")
+                if ok:
                     run(["scripts/upload_analysis.py", out / "web.json", "--match", m["id"], "--yt-offset", "0", "--team-map", f"{H}=home", f"{A}=away"], "upload analize")
                     (out / "minimapa.done").write_text(time.strftime("%Y-%m-%d %H:%M:%S"))
                 run(["scripts/goal_sketches.py", *base, "--home-kit", kit, "--match", m["id"], "--write"], "skice golova")

@@ -46,6 +46,7 @@ def main():
     ap.add_argument("--home-kit", choices=["dark", "light"], required=True, help="domaći igraju u tamnom ili svijetlom dresu")
     ap.add_argument("--hz", type=float, default=5); ap.add_argument("--title", default="")
     ap.add_argument("--no-ref", action="store_true", help="ne izdvajaj suce po crvenoj boji (ekipa u crvenom dresu)")
+    ap.add_argument("--numbers", help="numbers.json (jersey_numbers.py): broj na dresu po tracku")
     a = ap.parse_args()
 
     print("učitavam…", flush=True)
@@ -127,6 +128,17 @@ def main():
         x = np.array([v[0], 2.0 * (v[1] - 128), 2.0 * (v[2] - 128)])
         k = int(np.argmin(((C - x) ** 2).sum(1)))
         return dark_team if k == dark else 1 - dark_team
+    # za čitanje brojeva (jersey_numbers.py): ekipa po tracku i Lab boja dresa po ekipi
+    def to_lab(c): return [round(float(c[0]), 1), round(float(c[1] / 2 + 128), 1), round(float(c[2] / 2 + 128), 1)]
+    kit = [None, None]; kit[dark_team] = to_lab(C[dark]); kit[1 - dark_team] = to_lab(C[1 - dark])
+    json.dump({"names": [a.home, a.away], "kit_lab": kit, "track_team": {str(i): team_of(i) for i in lab}},
+              open(os.path.join(os.path.dirname(os.path.abspath(a.out)), "teams.json"), "w"))
+    NUM = {}
+    if a.numbers and os.path.exists(a.numbers):
+        NUM = {int(k): v for k, v in json.load(open(a.numbers))["tracks"].items()}
+    names = [a.home, a.away]; plist = sorted({f"{names[v['team']]} {v['num']}" for v in NUM.values()},
+                                            key=lambda s_: (s_.split()[0] != a.home, int(s_.split()[1])))
+    pidx = {s_: n for n, s_ in enumerate(plist)}
 
     # smjer: u kojem poluvremenu domaći napadaju +x (iz lopte pri golovima)
     votes = collections.Counter()
@@ -168,7 +180,8 @@ def main():
                 if ti == 2 and abs(cx) > L / 2 - 6 and abs(cy) < 6:                   # tamnocrveni golman uz gol, ne sudac
                     defends_home = np.sign(cx) == -hdir[per]; ti = 0 if defends_home else 1; gk = 1
                 if ti < 0: continue
-                rec["p"].append([ti, -1, gk, x1, y1, x2, y2, round(cx, 2), round(cy, 2)])
+                nu = NUM.get(p["id"]); pi = pidx[f"{names[ti]} {nu['num']}"] if nu and ti in (0, 1) and nu["team"] == ti else -1
+                rec["p"].append([ti, pi, gk, x1, y1, x2, y2, round(cx, 2), round(cy, 2)])
             j = int(np.searchsorted(bt, fr["t"]))
             j = min(max(j, 0), len(bt) - 1)
             if abs(bt[j] - fr["t"]) < 0.05 and not np.isnan(bxy[j, 0]):
@@ -179,7 +192,7 @@ def main():
     teams = [{"name": a.home, "color": "#1d1d1f" if a.home_kit == "dark" else "#ffffff"},
              {"name": a.away, "color": "#ffffff" if a.home_kit == "dark" else "#1d1d1f"}, {"name": "Sudac", "color": "#e5484d"}]
     D = {"title": a.title or f"{a.home} – {a.away}", "fps": a.hz, "img": [1280, 720], "teams": teams,
-         "court": {"L": L, "W": W, "D": 6.0}, "players": [], "states": [], "events": [], "frames": frames}
+         "court": {"L": L, "W": W, "D": 6.0}, "players": plist, "states": [], "events": [], "frames": frames}
     cnt = collections.Counter(p[0] for f in frames for p in f["p"]); tot = sum(cnt.values()) or 1
     print("osobe na terenu po ekipi: " + ", ".join(f"{teams[k]['name']} {cnt[k] / tot:.0%}" for k in (0, 1, 2)))
     for k in (0, 1, 2):
