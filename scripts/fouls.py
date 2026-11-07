@@ -116,6 +116,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("video"); ap.add_argument("traka")
     ap.add_argument("--match"); ap.add_argument("--write", action="store_true"); ap.add_argument("--debug")
+    ap.add_argument("--reread", action="store_true", help="ponovno pročitaj video i kad su brojevi već spremljeni")
     a = ap.parse_args()
     T = json.load(open(a.traka)); prof = T.get("profile", "")
     cfg = FOULS.get(prof) or next((v for k, v in FOULS.items() if prof.startswith(k)), None)
@@ -132,9 +133,13 @@ def main():
             c = cv2.resize(f[0:120, 0:640], None, fx=2, fy=2)
             cv2.putText(c, lbl, (10, 230), 0, 0.9, (0, 0, 255), 2); tiles.append(c)
         cv2.imwrite(a.debug, np.vstack(tiles)); print(a.debug); return
-    cnt_ok = series(a.video, [reads[i][0] for i in idx], cfg)
-    cnt = [(None, None)] * len(reads)
-    for i, c in zip(idx, cnt_ok): cnt[i] = c
+    if T.get("foul_counts") and len(T["foul_counts"]) == len(reads) and not a.reread:
+        cnt = [tuple(c) for c in T["foul_counts"]]; cnt_ok = [cnt[i] for i in idx]      # već pročitano: bez videa
+    else:
+        cnt_ok = series(a.video, [reads[i][0] for i in idx], cfg)
+        cnt = [(None, None)] * len(reads)
+        for i, c in zip(idx, cnt_ok): cnt[i] = c
+        T["foul_counts"] = cnt
     seen = sum(c[0] is not None and c[1] is not None for c in cnt_ok) / max(1, len(cnt_ok))
     ev = detect(reads, cnt)
     T["fouls"] = ev; json.dump(T, open(a.traka, "w"))
