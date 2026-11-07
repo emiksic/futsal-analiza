@@ -9,7 +9,6 @@ import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
 import { MiniTable } from "../components/Side.jsx";
 import { Shots } from "./Shots.jsx";
 import { Player } from "../components/Player.jsx";
-import { shotStats } from "../components/ShotMap.jsx";
 
 export function Match({ db, ix: ix0, id, tab }) {
   const m = ix0.match[id];
@@ -353,7 +352,6 @@ function Stats({ m, ix, A }) {
   const s = score(m) || [0, 0];
   const st = A.D ? analysisStats(A.D, teamOrder(A.D, m)) : null;
   const per = perPlayerAllowed(ix, m.comp);
-  const sh = shotStats(m);
   const keyClub = st ? Object.fromEntries(Object.entries(m.analysis.teamMap || {}).map(([k, v]) => [k, v === "home" ? H : Aw])) : {};
   return (
     <>
@@ -369,15 +367,7 @@ function Stats({ m, ix, A }) {
         </>}
         <h4>Zapisnik</h4>
         <Cmp label="Golovi" a={s[0]} b={s[1]} ca={ca} cb={cb} />
-        {sh.home.shots + sh.away.shots > 0 && <>
-          <Cmp label="Udarci" a={sh.home.shots} b={sh.away.shots} ca={ca} cb={cb} />
-          <Cmp label="Udarci u okvir" a={sh.home.on} b={sh.away.on} ca={ca} cb={cb} />
-          <Cmp label="Obrane golmana" a={sh.home.saves} b={sh.away.saves} ca={ca} cb={cb} />
-          <Cmp label="Blokirani udarci" a={sh.home.blocked} b={sh.away.blocked} ca={ca} cb={cb} />
-        </>}
-        <Cmp label="Prekršaji" a={c("foul", "home")} b={c("foul", "away")} ca={ca} cb={cb} />
         <Cmp label="Žuti kartoni" a={c("yellow", "home")} b={c("yellow", "away")} ca={ca} cb={cb} />
-        <Cmp label="Time-out" a={c("timeout", "home")} b={c("timeout", "away")} ca={ca} cb={cb} />
         {!st && <div className="src">Posjed i kretanje igrača pojavljuju se kad utakmica ima video analizu.</div>}
       </div>
       {m.stats?.tempo && <Tempo T={m.stats.tempo} />}
