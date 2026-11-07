@@ -76,7 +76,7 @@ def main():
     lab = {i: np.median(v, 0) for i, v in F.items()}
     # suci: crveni dres I većinu vremena uz aut-liniju (u futsalu suci stoje izvan terena, uz bočne linije).
     # Samo po boji bi igrači u crveno-plavom dresu (Torcida, Hajduk) djelomično postali suci i ispali iz posjeda.
-    edge, seen, onc = collections.Counter(), collections.Counter(), collections.Counter()
+    edge, seen, onc, box = collections.Counter(), collections.Counter(), collections.Counter(), collections.Counter()
     for fr in tl[::5]:
         H = H_at(fr["t"])
         if H is None: continue
@@ -85,6 +85,7 @@ def main():
             x1, y1, x2, y2 = p["box"]; cx, cy = proj(H, (x1 + x2) / 2, y2)
             seen[p["id"]] += 1; edge[p["id"]] += abs(cy) > W / 2 - 1.5 or abs(cx) > L / 2
             onc[p["id"]] += abs(cx) < L / 2 + 0.5 and abs(cy) < W / 2 + 0.5
+            box[p["id"]] += abs(cx) > L / 2 - 6.5 and abs(cx) < L / 2 + 1 and abs(cy) < 6.5
     red = {i for i, v in lab.items() if v[1] > 145}
     ref = set() if a.no_ref else {i for i in red if seen[i] < 5 or edge[i] / seen[i] > 0.5}
     # suci u bilo kojoj boji (npr. crni dres): skoro cijelo vrijeme uz aut-liniju ili izvan terena
@@ -139,6 +140,8 @@ def main():
         d = ((C - x) ** 2).sum(1); k = int(np.argmin(d))
         if refX is not None and ((refX - x) ** 2).sum() < 0.6 * d[k]: return 2   # boja sudaca, ne ekipe (sudac i u sredini terena)
         return dark_team if k == dark else 1 - dark_team
+    gks = {i for i in lab if seen[i] >= 10 and box[i] / seen[i] > 0.6}       # trackovi većinom u kaznenom prostoru = golmani
+    print(f"golmani: {len(gks)} trackova većinom u kaznenom prostoru")
     # za čitanje brojeva (jersey_numbers.py): ekipa po tracku i Lab boja dresa po ekipi
     def to_lab(c): return [round(float(c[0]), 1), round(float(c[1] / 2 + 128), 1), round(float(c[2] / 2 + 128), 1)]
     kit = [None, None]; kit[dark_team] = to_lab(C[dark]); kit[1 - dark_team] = to_lab(C[1 - dark])
@@ -188,7 +191,9 @@ def main():
                 x1, y1, x2, y2 = p["box"]; cx, cy = proj(H, (x1 + x2) / 2, y2)
                 if not (abs(cx) < L / 2 + 0.7 and abs(cy) < W / 2 + 0.7): continue      # samo na terenu
                 ti = team_of(p["id"]); gk = 0
-                if ti == 2 and abs(cx) > L / 2 - 6 and abs(cy) < 6:                   # tamnocrveni golman uz gol, ne sudac
+                if p["id"] in gks and abs(cx) > L / 2 - 6.5 and abs(cy) < 6.5:       # golman (bilo koje boje dresa): ekipa = ona koja brani taj gol
+                    defends_home = np.sign(cx) == -hdir[per]; ti = 0 if defends_home else 1; gk = 1
+                elif ti == 2 and abs(cx) > L / 2 - 6 and abs(cy) < 6:                 # tamnocrveni golman uz gol, ne sudac
                     defends_home = np.sign(cx) == -hdir[per]; ti = 0 if defends_home else 1; gk = 1
                 if ti < 0: continue
                 nu = NUM.get(p["id"]); pi = pidx[f"{names[ti]} {nu['num']}"] if nu and ti in (0, 1) and nu["team"] == ti else -1
