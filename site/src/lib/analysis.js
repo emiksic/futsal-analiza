@@ -44,7 +44,9 @@ export function defendSide(D, ti) {
 export function analysisStats(D, order) {
   const last = D.frames[D.frames.length - 1];
   const pc = [last.pc[order[0]], last.pc[order[1]]], tot = pc[0] + pc[1];
-  const poss = tot ? [Math.round(100 * pc[0] / tot), 100 - Math.round(100 * pc[0] / tot)] : null;
+  // posjed samo kad je poznat barem 60 % vremena igre (inače je lopta premalo praćena da bi postotak vrijedio)
+  const live = D.frames.filter((f) => f.live).length / (D.fps || 5);
+  const poss = tot && tot >= 0.6 * live ? [Math.round(100 * pc[0] / tot), 100 - Math.round(100 * pc[0] / tot)] : null;
   const side = order.map((ti) => defendSide(D, ti));
   let terr = [0, 0], n = 0;
   for (const f of D.frames) {
