@@ -19,7 +19,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 FOULS = {
     "supersport": {"style": "blocks", "home": [254, 41, 64, 10], "away": [386, 41, 80, 10]},
     "torcida": {"style": "cells", "home": [21, 52, 104, 10], "away": [201, 52, 104, 10], "n": 5},
-    "hajduk": {"style": "ticks", "home": [36, 83, 48, 10], "away": [264, 83, 48, 10], "first": 8.5, "pitch": 8, "n": 5},
+    # Hajduk: domaći se pune slijeva udesno, gosti zdesna ulijevo (prva crtica gostiju je krajnja desna)
+    "hajduk": {"style": "ticks", "home": [36, 83, 48, 10], "away": [252, 83, 52, 10], "n": 5,
+               "slots": {"home": (8.5, 8), "away": (44.5, -8)}},
 }
 
 
@@ -44,11 +46,13 @@ def count(f, cfg, side):
     if st == "ticks":                                   # crtice na stalnim mjestima (razmak 8 px): ima je ako se razlikuje od razmaka do susjedne
         Lm, Bm = lab[2:8, :, 0].mean(0), lab[2:8, :, 2].mean(0); k = 0
         for i in range(cfg.get("n", 5)):
-            c0 = int(round(cfg["first"] + i * cfg["pitch"]))
-            if c0 + 5 > w: break
+            first, pitch = cfg["slots"][side]
+            c0 = int(round(first + i * pitch))
+            if c0 + 5 > w or c0 - 4 < 0: break
             g = [c0 - 4, c0 + 4]
             dl = min(abs(Lm[c0 - 1:c0 + 1].mean() - Lm[q]) for q in g); db = min(Bm[c0 - 1:c0 + 1].mean() - Bm[q] for q in g)
             if dl > 40 or db > 20: k = i + 1
+            else: break                                 # crtice su uzastopne: prva prazna = kraj
         return k
     if st == "cells":                                   # 5 kućica: okvir svijetao, popunjena tamna
         g = cv2.cvtColor(c, cv2.COLOR_BGR2GRAY).astype(float); n = cfg.get("n", 5); cw = w / n
@@ -109,11 +113,11 @@ def main():
         for q in np.linspace(0.1, 0.9, 8):
             r = reads[idx[int(q * (len(idx) - 1))]]; cap.set(0, r[0] * 1000); ok, f = cap.read()
             if not ok: continue
-            f = cv2.resize(f, (1280, 720))
+            f = cv2.resize(f, (1280, 720)); lbl = f"{count(f, cfg, 'home')} - {count(f, cfg, 'away')}"   # prije crtanja kutija
             for s in ("home", "away"):
                 x, y, w, h = cfg[s]; cv2.rectangle(f, (x, y), (x + w, y + h), (0, 255, 255), 1)
             c = cv2.resize(f[0:120, 0:640], None, fx=2, fy=2)
-            cv2.putText(c, f"{count(f, cfg, 'home')} - {count(f, cfg, 'away')}", (10, 230), 0, 0.9, (0, 0, 255), 2); tiles.append(c)
+            cv2.putText(c, lbl, (10, 230), 0, 0.9, (0, 0, 255), 2); tiles.append(c)
         cv2.imwrite(a.debug, np.vstack(tiles)); print(a.debug); return
     cnt_ok = series(a.video, [reads[i][0] for i in idx], cfg)
     cnt = [(None, None)] * len(reads)
