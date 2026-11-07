@@ -36,13 +36,7 @@ def torso_color(frame, box):
     k = max(frac, key=frac.get)
     return k if frac[k] > 0.12 else "?"
 
-def torso_feat(frame, box):
-    """srednja Lab boja torza (bez piksela poda) - za automatsko grupiranje ekipa"""
-    x1, y1, x2, y2 = map(int, box); h, w = y2 - y1, x2 - x1
-    c = frame[y1 + int(.18*h): y1 + int(.5*h), x1 + int(.25*w): x2 - int(.25*w)]
-    if c.size == 0: return None
-    lab = cv2.cvtColor(c, cv2.COLOR_BGR2LAB).reshape(-1, 3).astype(float)
-    return [round(v, 1) for v in np.median(lab, 0)]
+from kitcolor import torso_feat   # boja dresa bez piksela poda
 
 def black_ratio(frame):
     g = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)[60:, :]
@@ -65,7 +59,7 @@ def save(done):
     """Atomarno spremanje: restart ili pad usred posla ne ostavlja pokvarenu datoteku."""
     tmp = f"{a.out}/tracks.json.tmp"
     with open(tmp, "w") as fh:
-        json.dump({"timeline": timeline, "votes": {k: dict(v) for k, v in votes.items()}, "done": done}, fh)
+        json.dump({"featv": 2, "timeline": timeline, "votes": {k: dict(v) for k, v in votes.items()}, "done": done}, fh)
     os.replace(tmp, f"{a.out}/tracks.json")
 next_save = a.start + a.save_every
 replay, in_trans, replay_start = False, False, 0.0

@@ -134,6 +134,11 @@ def main():
             if not (out / "court.done").exists():
                 if run(["scripts/court_calib.py", "track", out / "video.mp4", teren, court, "--traka", traka, "--resume"], "kalibracija"):
                     (out / "court.done").write_text(time.strftime("%Y-%m-%d %H:%M:%S"))
+            tr = out / "tracks.json"
+            if tr.exists():
+                with open(tr, encoding="utf-8") as fh: head = fh.read(40)
+                if '"featv": 2' not in head:                      # stara boja dresa (s podom): ponovno izračunaj
+                    run(["scripts/refeat.py", out / "video.mp4", tr], "boja dresa")
             if court.exists() and kit and not a.no_upload:
                 H, A = clubs.get(m["home"], {}).get("short", "DOM"), clubs.get(m["away"], {}).get("short", "GOS")
                 base = ["--tracks", out / "tracks.json", "--ball", out / "lopta.json", "--court", court, "--traka", traka]
