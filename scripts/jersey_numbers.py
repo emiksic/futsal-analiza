@@ -49,6 +49,7 @@ def main():
     ap.add_argument("--min-h", type=int, default=75, help="najmanja visina igrača u px (manji: broj je premalen)")
     ap.add_argument("--min-post", type=float, default=0.7); ap.add_argument("--min-abs", type=float, default=0.3)
     ap.add_argument("--min-greedy", type=float, default=0.4, help="slobodno čitanje (bez zapisnika) mora dati isti broj s ovom sigurnošću")
+    ap.add_argument("--end", type=float, default=1e9, help="samo do N-te minute snimke (brzi test)")
     ap.add_argument("--debug", help="mapa: spremi uzorak izrezaka s pročitanim brojem (za provjeru)")
     a = ap.parse_args()
 
@@ -59,7 +60,7 @@ def main():
     ROS = roster_numbers(a.match)
     for ti in (0, 1): print(f"{T['names'][ti]}: brojevi iz zapisnika {ROS[ti]['nums']} (golmani {ROS[ti]['gk']})")
     if not ROS[0]["nums"] or not ROS[1]["nums"]: sys.exit("zapisnik nema brojeve za obje ekipe")
-    tl = json.load(open(a.tracks))["timeline"]
+    tl = [fr for fr in json.load(open(a.tracks))["timeline"] if fr["t"] <= a.end * 60]
     R = DigitReader(); cap = cv2.VideoCapture(a.video); fps = cap.get(cv2.CAP_PROP_FPS) or 30
 
     last_read, pos, t0 = {}, 0, time.time()
