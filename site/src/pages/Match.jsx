@@ -309,7 +309,9 @@ function Tempo({ T }) {
 }
 
 // toplinska mapa na canvasu preko terena 42.4 x 22.4 m (teren 40 x 20 + rub)
-function drawHeat(ctx, c, pts, R = 3.2) {
+function drawHeat(ctx, c, pts, R = 3.2, court = null) {
+    // gustoća na mreži 0,4 m; boja relativno prema 98. percentilu (jedno vruće mjesto ne "ugasi" ostatak);
+    // ispod 15 % prozirno, pa se vidi gdje se stvarno igralo; s `court` samo unutar linija terena
     const GW = 106, GH = 56, g = new Float32Array(GW * GH);
     const toG = (x, y) => [(x + 21.2) / 42.4 * GW, (y + 11.2) / 22.4 * GH];
     const rr = R * R;
@@ -317,11 +319,20 @@ function drawHeat(ctx, c, pts, R = 3.2) {
       for (let j = Math.max(0, Math.floor(gy - 3 * R)); j < Math.min(GH, gy + 3 * R); j++)
         for (let i = Math.max(0, Math.floor(gx - 3 * R)); i < Math.min(GW, gx + 3 * R); i++) {
           const dx = i - gx, dy = j - gy; g[j * GW + i] += Math.exp(-(dx * dx + dy * dy) / (2 * rr)); } }
-    let mx = 0; for (const v of g) mx = Math.max(mx, v);
+    const inside = (k) => { if (!court) return true; const x = (k % GW + 0.5) / GW * 42.4 - 21.2, y = (Math.floor(k / GW) + 0.5) / GH * 22.4 - 11.2;
+      return Math.abs(x) <= court.L / 2 && Math.abs(y) <= court.W / 2; };
+    const vals = []; for (let k = 0; k < g.length; k++) if (g[k] > 0 && inside(k)) vals.push(g[k]);
+    vals.sort((a, b) => a - b); const top = vals[Math.floor(vals.length * 0.98)] || 1;
+    const stops = [[0, [46, 204, 113]], [0.45, [241, 196, 15]], [0.75, [243, 130, 30]], [1, [231, 60, 50]]];
+    const col = (v) => { for (let n = 1; n < stops.length; n++) if (v <= stops[n][0]) {
+      const [a0, c0] = stops[n - 1], [a1, c1] = stops[n], u = (v - a0) / (a1 - a0); return c0.map((q, z) => Math.round(q + (c1[z] - q) * u)); }
+      return stops[stops.length - 1][1]; };
     const img = ctx.createImageData(GW, GH);
-    for (let k = 0; k < g.length; k++) { const v = g[k] / mx; if (v < 0.04) continue;
-      const [cr, cg, cb] = v < 0.5 ? [255, Math.round(220 - 60 * v), 60] : [255, Math.round(190 - 260 * (v - 0.5)), 40];
-      img.data[k * 4] = cr; img.data[k * 4 + 1] = cg; img.data[k * 4 + 2] = cb; img.data[k * 4 + 3] = Math.round(40 + 175 * Math.sqrt(v)); }
+    for (let k = 0; k < g.length; k++) {
+      if (!inside(k)) continue;
+      const v = Math.min(1, g[k] / top); if (v < 0.15) continue;
+      const [cr, cg, cb] = col((v - 0.15) / 0.85);
+      img.data[k * 4] = cr; img.data[k * 4 + 1] = cg; img.data[k * 4 + 2] = cb; img.data[k * 4 + 3] = Math.round(255 * Math.min(0.85, (v - 0.15) / 0.85 * 1.1)); }
     const tmp = document.createElement("canvas"); tmp.width = GW; tmp.height = GH; tmp.getContext("2d").putImageData(img, 0, 0);
     ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, 0, 0, c.width, c.height);
 }
@@ -334,7 +345,7 @@ function TeamHeat({ m, ix, D, order }) {
     const ctx = c.getContext("2d"), rect = c.getBoundingClientRect(), d = window.devicePixelRatio || 1;
     c.width = Math.round(rect.width * d); c.height = Math.round(rect.height * d); ctx.clearRect(0, 0, c.width, c.height);
     const pts = teamHeatPoints(D, order[side === "home" ? 0 : 1]);
-    if (pts.length) drawHeat(ctx, c, pts, 2.6);
+    if (pts.length) drawHeat(ctx, c, pts, 2.6, D.court || { L: 40, W: 20 });
   }, [side, D]);
   return (
     <div className="pb">
@@ -426,7 +437,7 @@ function Lineups({ m, ix, A }) {
     if (!sel || !D) return;
     let pts = heatPoints(D, sel.key, order[0], sel.side === "home");
     if (!pts.length) return;
-drawHeat(ctx, c, pts);
+drawHeat(ctx, c, pts, 3.2, A.D?.court || { L: 40, W: 20 });
   }, [sel, D]);
   if (!r?.home || !r?.away) return <div className="empty">Zapisnik za ovu utakmicu još nije unesen.</div>;
   const pos = (x, y) => ({ left: `${(x + 21.2) / 42.4 * 100}%`, top: `${(y + 11.2) / 22.4 * 100}%` });
