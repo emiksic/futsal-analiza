@@ -88,7 +88,14 @@ def main():
     red = {i for i, v in lab.items() if v[1] > 145}
     ref = set() if a.no_ref else {i for i in red if seen[i] < 5 or edge[i] / seen[i] > 0.5}
     # suci u bilo kojoj boji (npr. crni dres): skoro cijelo vrijeme uz aut-liniju ili izvan terena
-    side = {i for i in lab if seen[i] >= 8 and edge[i] / seen[i] > 0.7} if not a.no_ref else set()
+    # boja sudaca = boja dugih trackova koji su gotovo cijelo vrijeme uz liniju; sudac = ta boja i često uz liniju
+    # (sama blizina linije nije dovoljna: krila kratko igraju uz aut-liniju)
+    side = set()
+    longe = [i for i in lab if seen[i] >= 30 and edge[i] / seen[i] > 0.75 and i not in red]
+    if longe and not a.no_ref:
+        refC = np.median([lab[i] for i in longe], 0)
+        side = {i for i in lab if seen[i] >= 5 and edge[i] / seen[i] > 0.4 and np.linalg.norm(lab[i] - refC) < 18} | set(longe)
+        print(f"boja sudaca (Lab) {np.round(refC).astype(int).tolist()} iz {len(longe)} dugih trackova uz liniju")
     ref |= side
     print(f"crveni dres: {len(red)} trackova; suci/uz liniju: {len(ref)} trackova (od toga {len(side - red)} ne-crvenih), ostali idu ekipama po boji")
     # ekipe: 2 grupe po boji dresa (k-means u LAB, boja (a, b) ima veću težinu od svjetline), jer npr. zeleni i
