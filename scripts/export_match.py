@@ -90,10 +90,10 @@ def main():
     # suci u bilo kojoj boji (npr. crni dres): skoro cijelo vrijeme uz aut-liniju ili izvan terena
     # boja sudaca = boja dugih trackova koji su gotovo cijelo vrijeme uz liniju; sudac = ta boja i često uz liniju
     # (sama blizina linije nije dovoljna: krila kratko igraju uz aut-liniju)
-    side = set()
+    side = set(); refX = None
     longe = [i for i in lab if seen[i] >= 30 and edge[i] / seen[i] > 0.75 and i not in red]
     if longe and not a.no_ref:
-        refC = np.median([lab[i] for i in longe], 0)
+        refC = np.median([lab[i] for i in longe], 0); refX = np.array([refC[0], 2.0 * (refC[1] - 128), 2.0 * (refC[2] - 128)])
         side = {i for i in lab if seen[i] >= 5 and edge[i] / seen[i] > 0.4 and np.linalg.norm(lab[i] - refC) < 18} | set(longe)
         print(f"boja sudaca (Lab) {np.round(refC).astype(int).tolist()} iz {len(longe)} dugih trackova uz liniju")
     ref |= side
@@ -136,7 +136,8 @@ def main():
         v = lab.get(i)
         if v is None: return -1
         x = np.array([v[0], 2.0 * (v[1] - 128), 2.0 * (v[2] - 128)])
-        k = int(np.argmin(((C - x) ** 2).sum(1)))
+        d = ((C - x) ** 2).sum(1); k = int(np.argmin(d))
+        if refX is not None and ((refX - x) ** 2).sum() < 0.6 * d[k]: return 2   # boja sudaca, ne ekipe (sudac i u sredini terena)
         return dark_team if k == dark else 1 - dark_team
     # za čitanje brojeva (jersey_numbers.py): ekipa po tracku i Lab boja dresa po ekipi
     def to_lab(c): return [round(float(c[0]), 1), round(float(c[1] / 2 + 128), 1), round(float(c[2] / 2 + 128), 1)]
