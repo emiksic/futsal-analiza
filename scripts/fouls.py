@@ -77,22 +77,35 @@ def series(video, times, cfg):
     return out
 
 
-def detect(reads, cnt, stable=3):
-    """prekršaji = porast broja koji se drži `stable` čitanja zaredom; svako poluvrijeme kreće od 0"""
+def detect(reads, cnt, win=9, hold=8.0):
+    """Prekršaji iz broja na traci, po poluvremenu i ekipi:
+    1) zaglađivanje (najčešća vrijednost u prozoru od `win` čitanja) protiv treperenja,
+    2) samo vrijednosti koje se drže barem `hold` s (prekršaji ostaju do kraja poluvremena, smetnje kratko traju),
+    3) porast = novi prekršaji (skok za više = više prekršaja u isto vrijeme, npr. kad traka nije bila prikazana),
+       pad usred poluvremena se zanemaruje (traka sakrivena / zaklonjena),
+    4) vrijednost na samom početku poluvremena (prvih 20 s) je stanje s trake, ne novi prekršaj."""
     ev = []
     for si, side in enumerate(("home", "away")):
-        cur, per_cur = 0, None
-        for i, r in enumerate(reads):
-            per, clk = r[1], r[2]
-            if per is None: continue
-            if per != per_cur: cur, per_cur = 0, per
-            v = cnt[i][si]
-            if v is None or v <= cur: continue
-            nxt = [cnt[j][si] for j in range(i, min(len(cnt), i + stable)) if reads[j][1] == per]
-            if len(nxt) < stable or any(x != v for x in nxt): continue
-            if v - cur > 2: cur = v; continue            # skok za 3+: vjerojatno je traka tek sad prikazana, bez događaja
-            for _ in range(v - cur):
-                ev.append({"t": r[0], "period": per, "sec": 1200 - clk, "side": side, "n": cur + 1}); cur += 1
+        for per in sorted({r[1] for r in reads if r[1] is not None}):
+            idx = [i for i, r in enumerate(reads) if r[1] == per and cnt[i][si] is not None]
+            if not idx: continue
+            vals = [cnt[i][si] for i in idx]
+            sm = []
+            for k in range(len(vals)):
+                w = vals[max(0, k - win // 2):k + win // 2 + 1]
+                sm.append(max(set(w), key=w.count))
+            segs = []                                    # [vrijednost, prvi indeks, zadnji indeks]
+            for k, v in zip(idx, sm):
+                if segs and segs[-1][0] == v: segs[-1][2] = k
+                else: segs.append([v, k, k])
+            segs = [g for g in segs if reads[g[2]][0] - reads[g[1]][0] >= hold]
+            cur = 0
+            for n, (v, a, b) in enumerate(segs):
+                el = int(round(1200 - reads[a][2]))
+                if n == 0 and el < 20: cur = v; continue
+                if v <= cur: continue
+                for _ in range(v - cur):
+                    ev.append({"t": reads[a][0], "period": per, "sec": el, "side": side, "n": cur + 1}); cur += 1
     return sorted(ev, key=lambda e: (e["period"], e["sec"]))
 
 
