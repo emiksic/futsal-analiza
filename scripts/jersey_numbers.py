@@ -48,7 +48,7 @@ def main():
     ap.add_argument("--every", type=float, default=0.4, help="isti track najviše svakih N s")
     ap.add_argument("--min-h", type=int, default=75, help="najmanja visina igrača u px (manji: broj je premalen)")
     ap.add_argument("--min-post", type=float, default=0.7); ap.add_argument("--min-abs", type=float, default=0.3)
-    ap.add_argument("--min-greedy", type=float, default=0.6, help="slobodno čitanje (bez zapisnika) mora dati isti broj s ovom sigurnošću")
+    ap.add_argument("--min-greedy", type=float, default=0.9, help="slobodno čitanje (bez zapisnika) mora dati isti broj s ovom sigurnošću")
     ap.add_argument("--crop", choices=["fixed", "color"], default="fixed",
                     help="fixed: stalni dio leđa (radi i za prugaste dresove); color: traženje piksela različitih od dresa (number_crop)")
     ap.add_argument("--end", type=float, default=1e9, help="samo do N-te minute snimke (brzi test)")
@@ -115,7 +115,7 @@ def main():
         sc = collections.defaultdict(float)
         for _, num, post, _ in L: sc[num] += post ** 2
         num, best = max(sc.items(), key=lambda z: z[1]); share = best / sum(sc.values())
-        if best >= 1.0 and share >= 0.6 and sum(1 for x in L if x[1] == num) >= 3:
+        if best >= 1.0 and share >= 0.6 and sum(1 for x in L if x[1] == num) >= 2:
             tracks[tid] = {"num": num, "team": team[tid], "score": round(best, 2), "share": round(share, 2), "n": len(L)}
     # isti broj u istoj ekipi u isto vrijeme: ostaje jači track
     keep, by = {}, collections.defaultdict(list)
