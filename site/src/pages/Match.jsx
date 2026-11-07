@@ -17,8 +17,11 @@ export function Match({ db, ix: ix0, id, tab }) {
   if (!m) return <div className="page"><div className="panel empty">Utakmica ne postoji.</div></div>;
   const has = m.analysis?.status === "done";
   const hl = safeYouTube(m.highlights);
-  const t = tab || (has || m.youtube ? "analiza" : hl ? "sazetak" : "detalji");
-  const TABS = [["analiza", "Video"], ...(hl ? [["sazetak", "Sažetak"]] : []), ["detalji", "Detalji"], ["udarci", "Udarci"], ["statistika", "Statistika"], ["postave", "Postave"]];
+  // Video (prijenos + mini-mapa) je glavna kartica samo dok je utakmica uživo; poslije sažetak, ako postoji, inače detalji.
+  const live = m.status === "live" && !!m.youtube;
+  const t = tab || (live ? "analiza" : hl ? "sazetak" : "detalji");
+  const vid = (has || m.youtube) ? [["analiza", live ? "Uživo" : "Video"]] : [];
+  const TABS = [...(live ? vid : []), ...(hl ? [["sazetak", "Sažetak"]] : []), ["detalji", "Detalji"], ["statistika", "Statistika"], ["postave", "Postave"], ["udarci", "Udarci"], ...(live ? [] : vid)];
   return (
     <div className="page">
       <Board m={m} ix={ix} />
