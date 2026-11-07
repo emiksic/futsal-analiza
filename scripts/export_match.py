@@ -87,7 +87,10 @@ def main():
             onc[p["id"]] += abs(cx) < L / 2 + 0.5 and abs(cy) < W / 2 + 0.5
     red = {i for i, v in lab.items() if v[1] > 145}
     ref = set() if a.no_ref else {i for i in red if seen[i] < 5 or edge[i] / seen[i] > 0.5}
-    print(f"crveni dres: {len(red)} trackova, od toga suci (uz aut-liniju) {len(ref)}, ostali idu ekipama po boji")
+    # suci u bilo kojoj boji (npr. crni dres): skoro cijelo vrijeme uz aut-liniju ili izvan terena
+    side = {i for i in lab if seen[i] >= 8 and edge[i] / seen[i] > 0.7} if not a.no_ref else set()
+    ref |= side
+    print(f"crveni dres: {len(red)} trackova; suci/uz liniju: {len(ref)} trackova (od toga {len(side - red)} ne-crvenih), ostali idu ekipama po boji")
     # ekipe: 2 grupe po boji dresa (k-means u LAB, boja (a, b) ima veću težinu od svjetline), jer npr. zeleni i
     # crveno-plavi dres imaju sličnu svjetlinu pa sam prag na L (stari način) ne razdvaja ekipe
     # samo ljudi koji su većinom NA terenu (bez publike, klupe i sudaca uz liniju), inače publika postane "ekipa"

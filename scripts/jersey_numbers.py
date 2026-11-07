@@ -48,7 +48,7 @@ def main():
     ap.add_argument("--every", type=float, default=0.4, help="isti track najviše svakih N s")
     ap.add_argument("--min-h", type=int, default=75, help="najmanja visina igrača u px (manji: broj je premalen)")
     ap.add_argument("--min-post", type=float, default=0.7); ap.add_argument("--min-abs", type=float, default=0.3)
-    ap.add_argument("--min-greedy", type=float, default=0.4, help="slobodno čitanje (bez zapisnika) mora dati isti broj s ovom sigurnošću")
+    ap.add_argument("--min-greedy", type=float, default=0.6, help="slobodno čitanje (bez zapisnika) mora dati isti broj s ovom sigurnošću")
     ap.add_argument("--crop", choices=["fixed", "color"], default="fixed",
                     help="fixed: stalni dio leđa (radi i za prugaste dresove); color: traženje piksela različitih od dresa (number_crop)")
     ap.add_argument("--end", type=float, default=1e9, help="samo do N-te minute snimke (brzi test)")
@@ -100,7 +100,7 @@ def main():
             if ok_: reads[p["id"]].append((fr["t"], ks[b], float(post[b]), float(np.exp(v[b]))))
             if a.debug and dbg_n[0] < 120 and np.random.random() < 0.05:
                 big = cv2.resize(c, (96, 96), interpolation=cv2.INTER_CUBIC); big = cv2.copyMakeBorder(big, 0, 26, 0, 4, cv2.BORDER_CONSTANT)
-                cv2.putText(big, f"{gt or '-'}/{ks[b]}{' OK' if ok_ else ''}", (3, big.shape[0] - 7), 0, 0.55, (0, 255, 0) if ok_ else (80, 80, 255), 1)
+                cv2.putText(big, f"{gt or '-'} {gc:.2f}/{ks[b]}{' OK' if ok_ else ''}", (3, big.shape[0] - 7), 0, 0.45, (0, 255, 0) if ok_ else (80, 80, 255), 1)
                 dbg.append(big); dbg_n[0] += 1
         if k % 3000 == 0: print(f"  {fr['t'] / 60:5.1f} min  izrezaka {crops_n}  ({time.time() - t0:.0f} s)", flush=True)
 
