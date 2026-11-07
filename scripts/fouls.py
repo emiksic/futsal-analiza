@@ -155,6 +155,8 @@ def main():
         for s in ("home", "away"):
             L = [e for e in ev if e["period"] == p and e["side"] == s]
             if L: print(f"  {p}. pol {s:4s}: " + ", ".join(f"{e['sec'] // 60}'{e['sec'] % 60:02d}\"" for e in L))
+    if len(ev) < 4:                                       # produkcija ne prikazuje prekršaje (ostaje šum): ne upisuj
+        print(f"samo {len(ev)} prekršaja u cijeloj utakmici: produkcija ih vjerojatno ne prikazuje, ne upisujem"); ev = []
     if not (a.match and a.write): return
     from upload_analysis import load_env, call
     url, key = load_env()

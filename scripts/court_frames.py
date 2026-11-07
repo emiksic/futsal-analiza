@@ -10,6 +10,7 @@ import cv2, numpy as np
 
 ap = argparse.ArgumentParser(); ap.add_argument("video"); ap.add_argument("out")
 ap.add_argument("--traka"); ap.add_argument("--n", type=int, default=16)
+ap.add_argument("--prefix", default="t", help="početak imena slika (druga snimka u istoj dvorani: npr. --prefix t2)")
 a = ap.parse_args()
 os.makedirs(a.out, exist_ok=True)
 cap = cv2.VideoCapture(a.video); fps = cap.get(cv2.CAP_PROP_FPS) or 30; dur = cap.get(cv2.CAP_PROP_FRAME_COUNT) / fps
@@ -27,5 +28,5 @@ for t in times:
     cap.set(cv2.CAP_PROP_POS_MSEC, t * 1000); ok, f = cap.read()
     if not ok: continue
     if f.shape[1] != 1280: f = cv2.resize(f, (1280, 720), interpolation=cv2.INTER_AREA)
-    cv2.imwrite(os.path.join(a.out, f"t_{t:08.2f}.jpg"), f, [cv2.IMWRITE_JPEG_QUALITY, 92])
+    cv2.imwrite(os.path.join(a.out, f"{a.prefix}_{t:08.2f}.jpg"), f, [cv2.IMWRITE_JPEG_QUALITY, 92])
 print(f"{len(times)} kadrova u {a.out}. Otvori scripts/court_label.html u Chromeu i odaberi tu mapu.")
