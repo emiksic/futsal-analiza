@@ -370,6 +370,7 @@ function Stats({ m, ix, A }) {
         </>}
         <h4>Zapisnik</h4>
         <Cmp label="Golovi" a={s[0]} b={s[1]} ca={ca} cb={cb} />
+        {m.events.some((e) => e.type === "foul") && <Cmp label="Prekršaji" a={c("foul", "home")} b={c("foul", "away")} ca={ca} cb={cb} />}
         <Cmp label="Žuti kartoni" a={c("yellow", "home")} b={c("yellow", "away")} ca={ca} cb={cb} />
         {!st && <div className="src">Posjed i kretanje igrača pojavljuju se kad utakmica ima video analizu.</div>}
       </div>
