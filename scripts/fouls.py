@@ -42,7 +42,7 @@ def count(f, cfg, side):
     if st == "blocks":                                  # bež: svijetlo i žućkasto
         m = (lab[..., 0] > 160) & (lab[..., 2] > 140)
         col = m.mean(0) > 0.5
-        return runs(col, 4)
+        return int(runs(col, 4))
     if st == "ticks":                                   # crtice na stalnim mjestima (razmak 8 px): ima je ako se razlikuje od razmaka do susjedne
         Lm, Bm = lab[2:8, :, 0].mean(0), lab[2:8, :, 2].mean(0); k = 0
         for i in range(cfg.get("n", 5)):
@@ -60,8 +60,8 @@ def count(f, cfg, side):
         k = 0
         for i in range(n):
             a, b = int(i * cw + cw * .3), int(i * cw + cw * .7)
-            k += g[int(h * .35):int(h * .75), a:b].mean() < 90
-        return k
+            k += int(g[int(h * .35):int(h * .75), a:b].mean() < 90)
+        return int(k)
     return None
 
 
@@ -84,7 +84,7 @@ def detect(reads, cnt, win=9, hold=8.0):
     3) porast = novi prekršaji (skok za više = više prekršaja u isto vrijeme, npr. kad traka nije bila prikazana),
        pad usred poluvremena se zanemaruje (traka sakrivena / zaklonjena),
     4) vrijednost na samom početku poluvremena (prvih 20 s) je stanje s trake, ne novi prekršaj."""
-    ev = []
+    ev, last_val = [], {}
     for si, side in enumerate(("home", "away")):
         for per in sorted({r[1] for r in reads if r[1] is not None}):
             idx = [i for i, r in enumerate(reads) if r[1] == per and cnt[i][si] is not None]
@@ -99,13 +99,15 @@ def detect(reads, cnt, win=9, hold=8.0):
                 if segs and segs[-1][0] == v: segs[-1][2] = k
                 else: segs.append([v, k, k])
             segs = [g for g in segs if reads[g[2]][0] - reads[g[1]][0] >= hold]
-            cur = 0
+            cur, carry = 0, last_val.get((side, per - 1), 0)
             for n, (v, a, b) in enumerate(segs):
                 el = int(round(1200 - reads[a][2]))
-                if n == 0 and el < 20: cur = v; continue
+                if per == 1 and n == 0 and el < 20: cur = v; continue
+                if per > 1 and el < 120 and v == carry and v > 0: continue   # traka još pokazuje stanje s kraja prošlog poluvremena
                 if v <= cur: continue
                 for _ in range(v - cur):
                     ev.append({"t": reads[a][0], "period": per, "sec": el, "side": side, "n": cur + 1}); cur += 1
+            if segs: last_val[(side, per)] = segs[-1][0]
     return sorted(ev, key=lambda e: (e["period"], e["sec"]))
 
 
@@ -139,10 +141,12 @@ def main():
         cnt_ok = series(a.video, [reads[i][0] for i in idx], cfg)
         cnt = [(None, None)] * len(reads)
         for i, c in zip(idx, cnt_ok): cnt[i] = c
-        T["foul_counts"] = cnt
+        T["foul_counts"] = [[None if x is None else int(x) for x in c] for c in cnt]
     seen = sum(c[0] is not None and c[1] is not None for c in cnt_ok) / max(1, len(cnt_ok))
     ev = detect(reads, cnt)
-    T["fouls"] = ev; json.dump(T, open(a.traka, "w"))
+    T["fouls"] = ev; tmp = a.traka + ".tmp"
+    with open(tmp, "w") as fh: json.dump(T, fh)
+    os.replace(tmp, a.traka)                              # atomarno: greška u pisanju ne kvari traka.json
     print(f"raspored {prof}: pokazivač prekršaja vidljiv u {seen:.0%} čitanja, prekršaja {len(ev)}")
     for p in (1, 2):
         for s in ("home", "away"):
