@@ -107,7 +107,7 @@ def main():
             if not a.no_upload:
                 run(["scripts/goals_to_site.py", tj, "--match", m["id"], "--write"], "sekunde golova")
                 run(["scripts/stats_to_site.py", tj, "--match", m["id"], "--write"], "tempo igre")
-                run(["scripts/fouls.py", out / "video.mp4", tj, "--match", m["id"], "--write", "--reread"], "prekršaji s trake")
+                run(["scripts/fouls.py", RUN / v / "video.mp4", tj, "--match", m["id"], "--write", "--reread"], "prekršaji s trake")
             (RUN / v / "court.done").unlink(missing_ok=True); (RUN / v / "minimapa.done").unlink(missing_ok=True)  # teren ovisi o traci
             log(f"   gotovo za {(time.time() - t0) / 60:.0f} min")
         return
