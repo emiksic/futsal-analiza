@@ -99,11 +99,14 @@ def detect(reads, cnt, win=9, hold=8.0):
                 if segs and segs[-1][0] == v: segs[-1][2] = k
                 else: segs.append([v, k, k])
             segs = [g for g in segs if reads[g[2]][0] - reads[g[1]][0] >= hold]
-            cur, carry = 0, last_val.get((side, per - 1), 0)
+            cur, carry, lead = 0, last_val.get((side, per - 1), 0), True
             for n, (v, a, b) in enumerate(segs):
                 el = int(round(1200 - reads[a][2]))
                 if per == 1 and n == 0 and el < 20: cur = v; continue
-                if per > 1 and el < 120 and v == carry and v > 0: continue   # traka još pokazuje stanje s kraja prošlog poluvremena
+                # traka još pokazuje stanje s kraja prošlog poluvremena (i tijekom odmora, kad već piše P2): preskoči
+                # sve takve dionice na početku poluvremena, dok se broj prvi put ne promijeni
+                if per > 1 and lead and v == carry and v > 0: continue
+                lead = False
                 if v <= cur: continue
                 for _ in range(v - cur):
                     ev.append({"t": reads[a][0], "period": per, "sec": el, "side": side, "n": cur + 1}); cur += 1
