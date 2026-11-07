@@ -75,29 +75,43 @@ def main():
     lab = {i: np.median(v, 0) for i, v in F.items()}
     # suci: crveni dres I većinu vremena uz aut-liniju (u futsalu suci stoje izvan terena, uz bočne linije).
     # Samo po boji bi igrači u crveno-plavom dresu (Torcida, Hajduk) djelomično postali suci i ispali iz posjeda.
-    edge, seen = collections.Counter(), collections.Counter()
+    edge, seen, onc = collections.Counter(), collections.Counter(), collections.Counter()
     for fr in tl[::5]:
         H = H_at(fr["t"])
         if H is None: continue
         for p in fr["players"]:
-            if lab.get(p["id"]) is None or lab[p["id"]][1] <= 145: continue
+            if lab.get(p["id"]) is None: continue
             x1, y1, x2, y2 = p["box"]; cx, cy = proj(H, (x1 + x2) / 2, y2)
             seen[p["id"]] += 1; edge[p["id"]] += abs(cy) > W / 2 - 1.5 or abs(cx) > L / 2
+            onc[p["id"]] += abs(cx) < L / 2 + 0.5 and abs(cy) < W / 2 + 0.5
     red = {i for i, v in lab.items() if v[1] > 145}
     ref = set() if a.no_ref else {i for i in red if seen[i] < 5 or edge[i] / seen[i] > 0.5}
     print(f"crveni dres: {len(red)} trackova, od toga suci (uz aut-liniju) {len(ref)}, ostali idu ekipama po boji")
     # ekipe: 2 grupe po boji dresa (k-means u LAB, boja (a, b) ima veću težinu od svjetline), jer npr. zeleni i
     # crveno-plavi dres imaju sličnu svjetlinu pa sam prag na L (stari način) ne razdvaja ekipe
-    ids = [i for i in lab if i not in ref and len(F[i]) >= 30]
+    # samo ljudi koji su većinom NA terenu (bez publike, klupe i sudaca uz liniju), inače publika postane "ekipa"
+    ids = [i for i in lab if i not in ref and len(F[i]) >= 30 and seen[i] >= 3 and onc[i] / seen[i] > 0.6]
+    if len(ids) < 4: ids = [i for i in lab if i not in ref and len(F[i]) >= 30]
     wts = np.array([len(F[i]) for i in ids], float)
     X = np.array([[lab[i][0], 2.0 * (lab[i][1] - 128), 2.0 * (lab[i][2] - 128)] for i in ids])
-    thr = otsu(X[:, 0]); lo, hi = X[:, 0] < thr, X[:, 0] >= thr
-    C = np.array([X[lo].mean(0) if lo.any() else X.min(0), X[hi].mean(0) if hi.any() else X.max(0)])
-    for _ in range(50):
+    def kmeans(C):
+        for _ in range(60):
+            lbl = np.argmin(((X[:, None, :] - C[None]) ** 2).sum(-1), 1)
+            C2 = np.array([np.average(X[lbl == k], 0, wts[lbl == k]) if (lbl == k).any() else C[k] for k in (0, 1)])
+            if np.allclose(C2, C): break
+            C = C2
         lbl = np.argmin(((X[:, None, :] - C[None]) ** 2).sum(-1), 1)
-        C2 = np.array([np.average(X[lbl == k], 0, wts[lbl == k]) if (lbl == k).any() else C[k] for k in (0, 1)])
-        if np.allclose(C2, C): break
-        C = C2
+        sse = sum(wts[j] * ((X[j] - C[lbl[j]]) ** 2).sum() for j in range(len(X)))
+        share = wts[lbl == 0].sum() / wts.sum()
+        return C, sse * (1 + 4 * max(0, abs(share - 0.5) - 0.2)), share    # kazna za jako neuravnotežene grupe
+    best = None
+    for d in range(3):                                                      # početna podjela po svjetlini, a i b
+        thr = otsu(X[:, d]); lo, hi = X[:, d] < thr, X[:, d] >= thr
+        if not lo.any() or not hi.any(): continue
+        r = kmeans(np.array([X[lo].mean(0), X[hi].mean(0)]))
+        if best is None or r[1] < best[1]: best = r
+    C = best[0]
+    print(f"podjela ekipa iz {len(ids)} trackova na terenu, omjer {best[2]:.0%} / {1 - best[2]:.0%}")
     dark = int(np.argmin(C[:, 0]))                                           # grupa s tamnijim dresom
     print(f"grupe dresova (L, 2a, 2b): tamnija {C[dark].round().astype(int).tolist()}, svjetlija {C[1 - dark].round().astype(int).tolist()}")
     dark_team = 0 if a.home_kit == "dark" else 1
