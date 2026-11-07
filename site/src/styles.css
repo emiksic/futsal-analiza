@@ -206,8 +206,8 @@ table.st { width: 100%; border-collapse: collapse; font-size: 14px; }
 .board-goals div { display: grid; gap: 2px; align-content: start; }
 .board-goals div:first-child { text-align: right; }
 .board-fouls { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 12px; padding: 0 16px 16px; font-size: 12px; color: var(--band-muted); align-items: center; }
-.board-fouls > .fbar:first-child { justify-self: end; }
-.board-fouls > span:nth-child(2) { text-align: center; }
+.board-fouls > .fbar:nth-child(3n + 1) { justify-self: end; }
+.board-fouls > span:nth-child(3n + 2) { text-align: center; }
 .fbar { display: inline-flex; gap: 3px; }
 .fbar i { width: 9px; height: 14px; border-radius: 2px; background: var(--band-2); }
 .fbar i.on { background: var(--band-fg); }

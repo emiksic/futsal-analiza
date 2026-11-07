@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { safeYouTube } from "../lib/safe.js";
 import { href, replaceClick } from "../lib/router.js";
 import { score, absSec, minute, fmtDay, fmtTime, playerName, fouls, perPlayerAllowed, withMatchNumbers, suspensions, goalTime, flow, comeback, sideScore, roundName, winner, shootout, leadTime, mins, shortName, dayLabel } from "../lib/derive.js";
@@ -52,7 +52,7 @@ function Board({ m, ix }) {
     .sort((a, b) => absSec(a) - absSec(b));
   const w = winner(m), lostH = w === -1, lostA = w === 1;
   const fin = m.status === "finished", so = fin && shootout(m);
-  const f2 = [fouls(m, "home", 2), fouls(m, "away", 2)];
+  const fp = [1, 2].map((p) => [fouls(m, "home", p), fouls(m, "away", p)]);
   return (
     <section className="board" aria-label="Rezultat">
       <div className="board-top">
@@ -80,8 +80,8 @@ function Board({ m, ix }) {
           ))}
         </div>) : null}
       {fin && m.events.some((e) => e.type === "foul") && (
-        <div className="board-fouls" title="Akumulirani prekršaji u 2. poluvremenu. Od 6. prekršaja izvodi se kazneni udarac s 10 m.">
-          <FoulBar n={f2[0]} /><span>Akumulirani prekršaji<br />2. poluvrijeme</span><FoulBar n={f2[1]} />
+        <div className="board-fouls" title="Akumulirani prekršaji po poluvremenu. Od 6. prekršaja u poluvremenu izvodi se kazneni udarac s 10 m.">
+          {fp.map((f, i) => <Fragment key={i}><FoulBar n={f[0]} /><span>Akumulirani prekršaji<br />{i + 1}. poluvrijeme</span><FoulBar n={f[1]} /></Fragment>)}
         </div>)}
     </section>
   );
