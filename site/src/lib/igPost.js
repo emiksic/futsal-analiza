@@ -82,7 +82,7 @@ function caption(post, lid, L, rn, rows, slides) {
   const head = `${lid === "1-hmnl" ? "SS HMNL" : L.name} · ${rn}`;
   if (!post.res) {
     const lines = rows.map((r) => `▫️ ${r.home.name} – ${r.away.name}${r.s ? ` ${r.s[0]}:${r.s[1]}` : r.time ? ` · ${r.day} ${r.time}` : " · termin naknadno"}${r.city ? ` · ${r.city}` : ""}`);
-    return `📅 ${head} | ${post.dates}\n\n${lines.join("\n")}\n\n📺 Prijenosi, rezultati i statistika na hmnl.hr\n\n${tags}`;
+    return `📅 ${head} | ${post.dates}\n\n${lines.join("\n")}\n\n📊 Rezultati i statistika na hmnl.hr\n\n${tags}`;
   }
   const lines = rows.map((r) => `${r.home.name} ${r.s ? `${r.s[0]}:${r.s[1]}` : "–"} ${r.away.name}${r.so ? ` (11 m ${r.so[0]}:${r.so[1]})` : ""}`);
   const extra = slides.some((x) => x.kind === "table") ? `📊 ${slides.some((x) => x.kind === "scorers") ? "Tablica i strijelci" : "Tablica"} u objavi ➡️\n` : "";
