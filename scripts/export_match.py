@@ -94,24 +94,29 @@ def main():
     if len(ids) < 4: ids = [i for i in lab if i not in ref and len(F[i]) >= 30]
     wts = np.array([len(F[i]) for i in ids], float)
     X = np.array([[lab[i][0], 2.0 * (lab[i][1] - 128), 2.0 * (lab[i][2] - 128)] for i in ids])
+    # k-means s 3 grupe (dvije ekipe + golmani / ostalo), više početaka (k-means++); ekipe = dvije najveće grupe
+    rng = np.random.default_rng(0)
     def kmeans(C):
-        for _ in range(60):
+        for _ in range(80):
             lbl = np.argmin(((X[:, None, :] - C[None]) ** 2).sum(-1), 1)
-            C2 = np.array([np.average(X[lbl == k], 0, wts[lbl == k]) if (lbl == k).any() else C[k] for k in (0, 1)])
+            C2 = np.array([np.average(X[lbl == k], 0, wts[lbl == k]) if (lbl == k).any() else C[k] for k in range(len(C))])
             if np.allclose(C2, C): break
             C = C2
         lbl = np.argmin(((X[:, None, :] - C[None]) ** 2).sum(-1), 1)
-        sse = sum(wts[j] * ((X[j] - C[lbl[j]]) ** 2).sum() for j in range(len(X)))
-        share = wts[lbl == 0].sum() / wts.sum()
-        return C, sse * (1 + 4 * max(0, abs(share - 0.5) - 0.2)), share    # kazna za jako neuravnotežene grupe
+        return C, float((wts * ((X - C[lbl]) ** 2).sum(1)).sum()), lbl
     best = None
-    for d in range(3):                                                      # početna podjela po svjetlini, a i b
-        thr = otsu(X[:, d]); lo, hi = X[:, d] < thr, X[:, d] >= thr
-        if not lo.any() or not hi.any(): continue
-        r = kmeans(np.array([X[lo].mean(0), X[hi].mean(0)]))
+    for _ in range(20):
+        C0 = [X[rng.choice(len(X), p=wts / wts.sum())]]
+        for _k in range(2):
+            d = np.min(((X[:, None, :] - np.array(C0)[None]) ** 2).sum(-1), 1) * wts
+            C0.append(X[rng.choice(len(X), p=d / d.sum())] if d.sum() > 0 else X[rng.integers(len(X))])
+        r = kmeans(np.array(C0, float))
         if best is None or r[1] < best[1]: best = r
-    C = best[0]
-    print(f"podjela ekipa iz {len(ids)} trackova na terenu, omjer {best[2]:.0%} / {1 - best[2]:.0%}")
+    C3, _, lbl = best
+    size = np.array([wts[lbl == k].sum() for k in range(3)])
+    top = np.argsort(-size)[:2]; C = C3[top]
+    share = size[top[0]] / size[top].sum()
+    print(f"podjela ekipa iz {len(ids)} trackova na terenu: grupe {[f'{v / size.sum():.0%}' for v in size]}, ekipe = dvije najveće ({share:.0%} / {1 - share:.0%})")
     dark = int(np.argmin(C[:, 0]))                                           # grupa s tamnijim dresom
     print(f"grupe dresova (L, 2a, 2b): tamnija {C[dark].round().astype(int).tolist()}, svjetlija {C[1 - dark].round().astype(int).tolist()}")
     dark_team = 0 if a.home_kit == "dark" else 1
