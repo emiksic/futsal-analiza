@@ -61,7 +61,9 @@ export function score(m, upto = Infinity) {
   return s;
 }
 export const absSec = (e) => (e.period - 1) * 1200 + e.sec;
-export const minute = (e) => e.period > 2 ? `${40 + Math.floor(e.sec / 60) + 1}'` : `${(e.period - 1) * 20 + Math.floor(e.sec / 60) + 1}'`;
+// minuta = započeta minuta, ali točno na cijeloj minuti ostaje ta minuta (10:00 → 10', 10:01 → 11', 0:00 → 1')
+const minOf = (sec) => Math.max(1, Math.ceil(sec / 60));
+export const minute = (e) => e.period > 2 ? `${40 + minOf(e.sec)}'` : `${(e.period - 1) * 20 + minOf(e.sec)}'`;
 // vrijeme gola: s točnom sekundom kad je poznata (e.exact: Semafor sa sekundama ili očitano sa snimke), inače minuta
 export const goalTime = (e) => e.exact && e.period <= 2 ? `${(e.period - 1) * 20 + Math.floor(e.sec / 60)}:${String(e.sec % 60).padStart(2, "0")}` : minute(e);
 export const clock = (sec) => `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
