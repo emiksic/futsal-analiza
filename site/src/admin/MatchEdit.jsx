@@ -437,16 +437,16 @@ function Events({ ix, m, upd }) {
           <select className="input" value={f.assist} onChange={(e) => set("assist", e.target.value)}>
             <option value="">—</option>{pl.filter((p) => p.id !== f.player).map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
           </select></label>}
+        <div style={{ display: "flex", gap: 8, alignItems: "end" }}>
+          <button className="btn primary" type="submit" disabled={sec == null}>{editing ? "Spremi izmjene" : "Dodaj događaj"}</button>
+          {editing && <button className="btn ghost" type="button" onClick={() => { setEditing(null); setF(empty); }}>Odustani</button>}
+        </div>
         {(f.type === "penmiss" || f.type === "goal") && <div className="field" style={{ gridColumn: "1 / -1" }}><span>Kazneni udarac</span>
           <div className="seg">
             {f.type === "goal" && <button type="button" aria-pressed={!f.pen} onClick={() => setF((o) => ({ ...o, pen: false, dist: "" }))}>Ne</button>}
             {[["", f.type === "goal" ? "Da" : "Nepoznato"], ["6", "6 m"], ["10", "10 m"]].map(([k, n]) => (
               <button type="button" key={k} aria-pressed={(f.type === "penmiss" || f.pen) && f.dist === k} onClick={() => setF((o) => ({ ...o, pen: true, dist: k }))}>{n}</button>))}
           </div></div>}
-        <div style={{ display: "flex", gap: 8, alignItems: "end" }}>
-          <button className="btn primary" type="submit" disabled={sec == null}>{editing ? "Spremi izmjene" : "Dodaj događaj"}</button>
-          {editing && <button className="btn ghost" type="button" onClick={() => { setEditing(null); setF(empty); }}>Odustani</button>}
-        </div>
       </form>
       {!pl.length && needsPlayer && <div className="pb"><div className="callout warn">Zapisnik za {ix.club[m[plSide]].name} nije unesen, pa igrača nije moguće odabrati.</div></div>}
       <div className="tbl-wrap">
