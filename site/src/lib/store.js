@@ -20,7 +20,9 @@ let state = {
   session: null, isAdmin: false,
   sync: "idle",           // idle | saving | saved | error
   syncError: "",
+  holding: false, held: 0, holdRev: 0, // upis bez slanja u bazu (vidi holdStart) i broj neposlanih izmjena
 };
+let hold = null;   // upis bez slanja: { base, ids: Set(id utakmica koje se uređuju), refreshLater }
 const set = (p) => { state = { ...state, ...p }; emit(); };
 function loadLocal() {
   try { const s = localStorage.getItem(KEY); if (s) { const d = JSON.parse(s); if (d.version === SEED_VERSION) return d; } } catch { /* */ }
@@ -94,6 +96,7 @@ async function checkAdmin() {
 
 export async function refresh() {
   if (!sb) { set({ status: "offline" }); return; }
+  if (hold) { hold.refreshLater = true; return; }   // ne gazi neobjavljene izmjene; osvježi kad se spreme ili odbace
   try {
     const d = await fetchAll();
     if (!d.matches.length) { set({ mode: "remote", status: "empty" }); return; }
@@ -141,20 +144,27 @@ function live() {
     .on("postgres_changes", { event: "*", schema: "public", table: "matches" }, (p) => {
       const id = (p.new && p.new.id) || (p.old && p.old.id); if (!id) return;
       if (base || Date.now() - (pushedAt.get(id) || 0) < 3000) return;   // naša izmjena u tijeku
-      const db = { ...state.db };
-      if (p.eventType === "DELETE") db.matches = db.matches.filter((m) => m.id !== id);
-      else {
-        const m = fromRow("matches", p.new), i = db.matches.findIndex((x) => x.id === id);
-        db.matches = i < 0 ? [...db.matches, m] : db.matches.map((x, k) => (k === i ? m : x));
-        // novi igrač u događajima (npr. unesen tek uživo) → osvježi igrače
-        const known = new Set(db.players.map((x) => x.id));
-        if ((m.events || []).some((e) => (e.player && !known.has(e.player)) || (e.assist && !known.has(e.assist)))) {
-          clearTimeout(playersTimer); playersTimer = setTimeout(refresh, 1500);
-        }
+      if (hold) {   // dok se piše bez slanja: tuđe promjene primi i u polaznu točku, osim za utakmicu koju upravo uređujemo
+        if (hold.ids.has(id)) return;
+        hold.base = applyRow(hold.base, p, id);
       }
-      set({ db });
+      set({ db: applyRow(state.db, p, id) });
     })
     .subscribe((status) => { if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") { channel = null; setTimeout(live, 5000); } });
+}
+function applyRow(src, p, id) {
+  const db = { ...src };
+  if (p.eventType === "DELETE") db.matches = db.matches.filter((m) => m.id !== id);
+  else {
+    const m = fromRow("matches", p.new), i = db.matches.findIndex((x) => x.id === id);
+    db.matches = i < 0 ? [...db.matches, m] : db.matches.map((x, k) => (k === i ? m : x));
+    // novi igrač u događajima (npr. unesen tek uživo) → osvježi igrače
+    const known = new Set(db.players.map((x) => x.id));
+    if ((m.events || []).some((e) => (e.player && !known.has(e.player)) || (e.assist && !known.has(e.assist)))) {
+      clearTimeout(playersTimer); playersTimer = setTimeout(refresh, 1500);
+    }
+  }
+  return db;
 }
 
 export const signIn = async (email, password) => {
@@ -185,17 +195,57 @@ export function update(fn) {
   set({ db: next });
   if (state.mode !== "remote") { persistLocal(); return; }
   if (!state.isAdmin) { set({ sync: "error", syncError: "Nisi prijavljen kao admin, promjena se ne sprema." }); return; }
+  if (hold) { set({ held: countHeld() }); return; }   // piše se bez slanja: ostaje samo u ovom pregledniku
   // skupi brze uzastopne izmjene (tipkanje) u jedno spremanje
   if (!base) base = prev;
   clearTimeout(timer);
   set({ sync: "saving" });
-  timer = setTimeout(() => {
-    const from = base, to = state.db; base = null;
-    queue = queue.then(() => pushDiff(from, to))
-      .then(() => set({ sync: "saved", syncError: "" }))
-      .catch((e) => set({ sync: "error", syncError: e.message || String(e) }));
-  }, 600);
+  timer = setTimeout(flush, 600);
 }
+function flush() {
+  clearTimeout(timer); if (!base) return;
+  const from = base, to = state.db; base = null;
+  queue = queue.then(() => pushDiff(from, to))
+    .then(() => set({ sync: "saved", syncError: "" }))
+    .catch((e) => set({ sync: "error", syncError: e.message || String(e) }));
+}
+
+// ---------- upis bez slanja u bazu ("nije uživo") ----------
+// Dok je uključeno, izmjene ostaju samo u ovom pregledniku (nisu u bazi ni na javnoj stranici).
+// "Spremi u bazu" pošalje sve odjednom, "Odbaci" (ili odlazak s utakmice) vraća stanje iz baze.
+const countHeld = () => {
+  if (!hold) return 0; let n = 0;
+  for (const t of ORDER) {
+    const a = Object.fromEntries((hold.base[t] || []).map((x, i) => [x.id, JSON.stringify(toRow(t, x, i))]));
+    const rows = (state.db[t] || []).map((x, i) => toRow(t, x, i));
+    n += rows.filter((r) => a[r.id] !== JSON.stringify(r)).length + Object.keys(a).filter((id) => !rows.some((r) => r.id === id)).length;
+  }
+  return n;
+};
+export function holdStart(id) {
+  if (state.mode !== "remote") return;
+  if (hold) { hold.ids.add(id); return; }
+  flush();   // ono što je upisano uživo prije prekidača ide u bazu odmah
+  hold = { base: state.db, ids: new Set([id]), refreshLater: false };
+  set({ holding: true, held: 0 });
+}
+const holdEnd = () => { const later = hold?.refreshLater; hold = null; set({ holding: false, held: 0 }); if (later) refresh(); };
+export function holdDiscard() { if (!hold) return; set({ db: hold.base, holdRev: state.holdRev + 1 }); holdEnd(); }
+export async function holdCommit(keepHolding = false) {
+  if (!hold) return;
+  const from = hold.base, to = state.db, ids = hold.ids;
+  set({ sync: "saving" });
+  try {
+    const job = queue.then(() => pushDiff(from, to));
+    queue = job.catch(() => {});   // greška ne smije zaključati kasnija spremanja
+    await job;
+    set({ sync: "saved", syncError: "" });
+    if (keepHolding) { hold.base = to; set({ held: countHeld() }); }
+    else holdEnd();
+  } catch (e) { set({ sync: "error", syncError: e.message || String(e) }); throw e; }
+  return ids;
+}
+export const isHolding = () => !!hold && state.held > 0;
 
 export async function importSeed() {
   const s = clone(seed);

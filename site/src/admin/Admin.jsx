@@ -143,7 +143,7 @@ function Local() {
     return (
       <section className="panel">
         <div className="pb" style={{ paddingTop: 12, display: "grid", gap: 10 }}>
-          <div className="small" style={{ color: st.sync === "error" ? "var(--live)" : "var(--muted)" }} role="status">{L[st.sync]}</div>
+          <div className="small" style={{ color: st.sync === "error" ? "var(--live)" : "var(--muted)" }} role="status">{st.held && st.sync !== "error" ? `Nije uživo: ${st.held} izmjena čeka spremanje.` : L[st.sync]}</div>
           <div className="small muted">{st.session?.user?.email}</div>
           <div><button className="btn sm" onClick={signOut}>Odjava</button></div>
         </div>

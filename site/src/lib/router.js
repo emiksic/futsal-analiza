@@ -17,10 +17,19 @@ let last = key();
 // položaj tekuće stranice spremamo dok se skrola, jer u trenutku hashchange-a je već kasno
 addEventListener("scroll", () => { const o = load(); o[last] = scrollY; save(o); }, { passive: true });
 
+// Čuvar odlaska: funkcija (nova ruta) → true ako se smije otići. Ako odbije, adresa se vraća na staru stranicu.
+let guard = null, lastHash = location.hash;
+export function setLeaveGuard(fn) { guard = fn; return () => { if (guard === fn) guard = null; }; }
+
 export function useRoute() {
   const [r, setR] = useState(parse);
   useEffect(() => {
     const f = () => {
+      if (guard && location.hash !== lastHash && !guard(parse())) {
+        history.replaceState(history.state, "", lastHash || "#/");   // ostani gdje si bio
+        return;
+      }
+      lastHash = location.hash;
       const back = !!key();          // unos u povijesti koji smo već vidjeli → natrag/naprijed
       mark(); last = key();
       setR(parse());

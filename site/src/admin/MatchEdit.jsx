@@ -1,6 +1,6 @@
-import { Fragment, useState, useRef } from "react";
-import { href, go, replaceClick } from "../lib/router.js";
-import { update, uid } from "../lib/store.js";
+import { Fragment, useState, useRef, useEffect } from "react";
+import { href, go, replaceClick, setLeaveGuard } from "../lib/router.js";
+import { update, uid, useStore, holdStart, holdDiscard, holdCommit, isHolding } from "../lib/store.js";
 import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
 import { Jersey, Icon, Toast, NumInput, DateTimeInput } from "../components/ui.jsx";
@@ -38,7 +38,64 @@ const MAX_ROSTER = 14;
 const fmtHms = (s) => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
 const parseHms = (t) => { if (!t.trim()) return null; const p = t.trim().split(":").map(Number); if (p.some(isNaN)) return null; return p.reduce((a, b) => a * 60 + b, 0); };
 
-export function MatchEdit({ db, ix, id, tab = "osnovno" }) {
+export function MatchEdit(props) {
+  // svaka utakmica kreće iznova (zadano: upis bez slanja u bazu)
+  return <MatchEditInner key={props.id} {...props} />;
+}
+
+// Prekidač "Uživo": isključen = izmjene ostaju samo u ovom pregledniku dok se ne klikne "Spremi u bazu".
+// Odlazak na drugu stranicu (ili zatvaranje kartice) s nespremljenim izmjenama pita za potvrdu i odbacuje ih.
+function useHold(id) {
+  const st = useStore();
+  const [live, setLive] = useState(false);
+  const remote = st.mode === "remote";
+  useEffect(() => {
+    if (!remote || live) return;
+    holdStart(id);
+    return () => holdDiscard();
+  }, [id, live, remote]);
+  useEffect(() => {
+    const msg = () => `Upisano je ${st.held} ${st.held === 1 ? "izmjena koja nije spremljena" : "izmjena koje nisu spremljene"} u bazu. Ako odeš s ove stranice, sve će se izgubiti.\n\nNastaviti?`;
+    const off = setLeaveGuard((r) => (r[0] === "admin" && r[1] === "utakmica" && r[2] === id) || !isHolding() || confirm(msg()));
+    const unload = (e) => { if (isHolding()) { e.preventDefault(); e.returnValue = ""; } };
+    addEventListener("beforeunload", unload);
+    return () => { off(); removeEventListener("beforeunload", unload); };
+  }, [id, st.held]);
+  const toLive = async () => {
+    if (st.held > 0) {
+      if (!confirm(`Spremiti ${st.held} neposlanih izmjena u bazu i nastaviti uživo?`)) return;
+      try { await holdCommit(); } catch { return; }
+    }
+    setLive(true);
+  };
+  return { st, remote, live, toLive, toHold: () => setLive(false) };
+}
+
+function LiveBar({ h }) {
+  const { st, live } = h;
+  const [busy, setBusy] = useState(false);
+  if (!h.remote) return null;
+  const save = async () => { setBusy(true); try { await holdCommit(true); } catch { /* poruka je u st.syncError */ } setBusy(false); };
+  return (
+    <section className={"panel livebar" + (live ? " on" : "")}>
+      <label className="sw">
+        <input type="checkbox" role="switch" checked={live} onChange={(e) => (e.target.checked ? h.toLive() : h.toHold())} />
+        <span className="sw-t" aria-hidden="true" />
+        <span><b>{live ? "Uživo" : "Nije uživo"}</b><small>{live ? "svaka izmjena odmah ide u bazu i na stranicu" : "izmjene su samo u ovom pregledniku"}</small></span>
+      </label>
+      {!live && (
+        <div className="lb-r">
+          <span className="small" role="status" style={{ color: st.sync === "error" ? "var(--live)" : undefined }}>
+            {st.sync === "error" ? `Greška: ${st.syncError}` : st.held ? `${st.held} ${st.held === 1 ? "izmjena nije spremljena" : "izmjena nije spremljeno"}` : "Nema neposlanih izmjena"}</span>
+          <button className="btn sm ghost" disabled={!st.held || busy} onClick={() => { if (confirm("Odbaciti sve neposlane izmjene?")) { holdDiscard(); h.toHold(); holdStart(h.id); } }}>Odbaci</button>
+          <button className="btn sm primary" disabled={!st.held || busy} onClick={save}>{busy ? "Spremam…" : "Spremi u bazu"}</button>
+        </div>)}
+    </section>
+  );
+}
+
+function MatchEditInner({ db, ix, id, tab = "osnovno" }) {
+  const h = useHold(id); h.id = id;
   const m = ix.match[id];
   if (!m) return <div className="panel empty">Utakmica ne postoji.</div>;
   const upd = (fn) => update((d) => fn(d.matches.find((x) => x.id === id), d));
@@ -54,18 +111,19 @@ export function MatchEdit({ db, ix, id, tab = "osnovno" }) {
         <div className="r">
           {m.draft ? (
             <>
-              <button className="btn primary" onClick={() => { upd((x) => { delete x.draft; }); go("admin", "utakmice"); }}>Dodaj utakmicu</button>
-              <button className="btn" onClick={() => { update((d) => { d.matches = d.matches.filter((x) => x.id !== id); }); go("admin", "utakmice"); }}>Odustani</button>
+              <button className="btn primary" onClick={async () => { upd((x) => { delete x.draft; }); try { await holdCommit(); } catch { return; } go("admin", "utakmice"); }}>Dodaj utakmicu</button>
+              <button className="btn" onClick={() => { holdDiscard(); update((d) => { d.matches = d.matches.filter((x) => x.id !== id); }); go("admin", "utakmice"); }}>Odustani</button>
             </>
           ) : (
             <>
               <a className="btn" href={href("utakmica", m.id)}>Javna stranica {Icon.ext()}</a>
-              <DeleteMatch onDelete={() => { update((d) => { d.matches = d.matches.filter((x) => x.id !== id); }); go("admin", "utakmice"); }} />
+              <DeleteMatch onDelete={() => { holdDiscard(); update((d) => { d.matches = d.matches.filter((x) => x.id !== id); }); go("admin", "utakmice"); }} />
             </>
           )}
         </div>
       </div>
-      <section className="panel">
+      <LiveBar h={h} />
+      <section className="panel" key={h.st.holdRev}>
         <nav className="tabs" aria-label="Uređivanje">
           {TABS.map(([k, n]) => <a key={k} href={href("admin", "utakmica", id, k)} onClick={replaceClick} aria-current={tab === k ? "page" : undefined}>{n}</a>)}
         </nav>
