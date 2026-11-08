@@ -221,7 +221,7 @@ table.st { width: 100%; border-collapse: collapse; font-size: 14px; }
 .irow { display: grid; grid-template-columns: minmax(0, 1fr) 52px minmax(0, 1fr); align-items: center; gap: 8px; padding: 9px 16px; border-bottom: 1px solid var(--line); }
 .irow .min { font: 700 15px/1 var(--display); text-align: center; color: var(--muted); }
 .irow .ev { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.irow .ev.home { justify-content: flex-end; text-align: right; flex-direction: row-reverse; }
+.irow .ev.home { justify-content: flex-start; text-align: right; flex-direction: row-reverse; }   /* row-reverse: flex-start = desno, uz minutu */
 .irow .ev .txt { display: grid; min-width: 0; line-height: 1.25; }
 .irow .ev .txt small { color: var(--muted); font-size: 12px; }
 .irow .sc { font: 700 15px/1 var(--display); padding: 3px 7px; border-radius: 2px; background: var(--surface-2); }
