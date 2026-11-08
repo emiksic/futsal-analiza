@@ -6,7 +6,7 @@
 # Ponovno pokretanje zamijeni postojeće zadatke (ništa se ne duplicira). Brisanje: -Ukloni.
 #
 # Zadaci:
-#   HMNL Semafor  svaki dan od 10:00 do 23:30, svakih 30 min: scripts\semafor_sync.py (s -Upis: --upis)
+#   HMNL Semafor  petak 17-24 h, subota i nedjelja 9-24 h, svakih 30 min: scripts\semafor_sync.py (s -Upis: --upis)
 #   HMNL backup   svaki dan u 04:00: scripts\backup_db.py (zadnjih 40 backupa = ~40 dana)
 # Zapisi: run\semafor_sync.log i run\backup.log. Zadaci rade i kad nisi prijavljen (S4U, bez spremanja lozinke).
 param([switch]$Upis, [switch]$Ukloni)
@@ -33,9 +33,13 @@ function Cmd($script, $arguments, $log) {
         -Argument "/c `"`"$py`" scripts\$script $arguments >> run\$log 2>&1`""
 }
 
-# Semafor: svaki dan u 10:00, pa svakih 30 min sljedećih 13,5 h (do 23:30)
-$t1 = New-ScheduledTaskTrigger -Daily -At 10:00
-$t1.Repetition = (New-ScheduledTaskTrigger -Once -At 10:00 -RepetitionInterval (New-TimeSpan -Minutes 30) -RepetitionDuration (New-TimeSpan -Hours 13 -Minutes 30)).Repetition
+# Semafor: petak 17:00-24:00 te subota i nedjelja 9:00-24:00, svakih 30 min
+function Weekly($day, $at, $hours) {
+    $t = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $day -At $at
+    $t.Repetition = (New-ScheduledTaskTrigger -Once -At $at -RepetitionInterval (New-TimeSpan -Minutes 30) -RepetitionDuration (New-TimeSpan -Hours $hours)).Repetition
+    return $t
+}
+$t1 = @((Weekly Friday 17:00 7), (Weekly Saturday 09:00 15), (Weekly Sunday 09:00 15))
 $mode = if ($Upis) { "--upis" } else { "" }
 Register-ScheduledTask -TaskName "HMNL Semafor" -Description "hmnl.hr: usklađivanje s HNS Semaforom ($(if ($Upis) {'upis'} else {'samo provjera'}))" `
     -Action (Cmd "semafor_sync.py" $mode "semafor_sync.log") -Trigger $t1 -Principal $principal -Settings $settings | Out-Null
