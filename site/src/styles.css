@@ -794,3 +794,11 @@ table.st { font-size: 13px; }
 .rline.dupn .input.num { border-color: var(--live); color: var(--live); font-weight: 700; }
 .tgl.cap[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
 .capk { font-weight: 700; }
+/* Admin: transferi */
+.tsearch { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 240px; }
+.tsearch .input { flex: 1; min-width: 160px; }
+.tsearch ul { list-style: none; margin: 0; padding: 0; width: 100%; border: 1px solid var(--line); border-radius: 2px; }
+.tsearch li button { display: flex; gap: 6px; align-items: center; width: 100%; text-align: left; border: 0; background: var(--surface); padding: 6px 8px; cursor: pointer; font-size: 13px; }
+.tsearch li + li button { border-top: 1px solid var(--line); }
+.tsearch li button:hover { background: var(--surface-2); }
+.prevc { font-size: 12px; }

@@ -37,7 +37,7 @@ const T = {
   leagues: ["id", "name", "category", "zones", "privacy", "sort"],
   clubs: ["id", "name", "full_name", "short", "city", "hall", "kit"],
   comps: ["id", "league", "season", "teams", "rounds"],
-  players: ["id", "club", "season", "cat", "num", "name", "last", "gk"],
+  players: ["id", "club", "season", "cat", "num", "name", "last", "gk", "person"],
   matches: ["id", "comp", "round", "date", "home", "away", "hall", "status", "result", "no_score", "time_tbd", "date_to", "extra",
     "youtube", "tv", "source", "roster", "events", "analysis", "highlights", "stats"],
 };
@@ -80,6 +80,7 @@ async function fetchAll() {
   const players = await get("players", state.isAdmin ? "players" : "players_public");
   // novi stupci koje baza možda još nema
   for (const c of ["highlights", "stats", "date_to"]) { if (matches.length && !(c in matches[0])) missing.add("matches." + c); else missing.delete("matches." + c); }
+  if (players.length && !("person" in players[0])) missing.add("players.person"); else missing.delete("players.person");
   leagues.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)); seasons.sort((a, b) => b.id.localeCompare(a.id));
   return {
     version: SEED_VERSION, site: site[0] ? { name: site[0].name || "", contact: site[0].contact || "" } : { name: "", contact: "" },

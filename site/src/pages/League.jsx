@@ -158,7 +158,7 @@ function Scorers({ db, ix, comp }) {
             <tr key={r.player}>
               <td className="pos">{i + 1}</td>
               <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={24} num={p?.num} />{playerName(p)}</a></td>
-              <td className="l hide-s muted">{c.name}</td>
+              <td className="l hide-s muted">{c.name}{r.prev.length > 0 && <small className="prevc"> (prije {r.prev.map((x) => ix.club[x]?.name).join(", ")})</small>}</td>
               <td className="pts">{r.goals}</td>{hasA && <td>{r.assists}</td>}<td>{r.apps}</td>
             </tr>
           );

@@ -330,19 +330,30 @@ export function comebacks(db, compId) {
     .sort((a, b) => b.c.deficit - a.c.deficit || rank[a.c.res] - rank[b.c.res] || b.m.date.localeCompare(a.m.date));
 }
 
-export function scorers(db, compId) {
+// Transfer: isti igrač u više klubova ima zajednički ključ osobe (players.person); bez njega je svaki zapis zasebna osoba.
+export const personOf = (p) => (p && p.person) || p?.id;
+// Strijelci natjecanja. merge (zadano): povezani igrači (transfer) broje se kao jedan, s klubom iz zadnje utakmice
+// i popisom ranijih klubova (prev). Stranica kluba traži merge: false (samo nastupi za taj klub).
+export function scorers(db, compId, { merge = true } = {}) {
+  const P = Object.fromEntries(db.players.map((p) => [p.id, p]));
+  const keyOf = (pid) => (merge ? personOf(P[pid]) || pid : pid);
   const t = {};
-  for (const m of db.matches) {
-    if (m.comp !== compId || m.status !== "finished") continue;
-    for (const side of ["home", "away"]) for (const pid of m.roster[side]?.players || []) {
-      (t[pid] ||= { player: pid, club: m[side], goals: 0, assists: 0, apps: 0 }).apps++;
-    }
+  const row = (pid, club, date) => {
+    const r = (t[keyOf(pid)] ||= { player: pid, club, goals: 0, assists: 0, apps: 0, last: "", clubs: [] });
+    if (date >= r.last) { r.last = date; r.player = pid; r.club = club; }
+    if (!r.clubs.includes(club)) r.clubs.push(club);
+    return r;
+  };
+  const ms = db.matches.filter((m) => m.comp === compId && m.status === "finished").sort((a, b) => a.date.localeCompare(b.date));
+  for (const m of ms) {
+    for (const side of ["home", "away"]) for (const pid of m.roster[side]?.players || []) row(pid, m[side], m.date).apps++;
     for (const e of m.events) {
-      if (e.type === "goal" && e.player) (t[e.player] ||= { player: e.player, club: m[e.side], goals: 0, assists: 0, apps: 0 }).goals++;
-      if (e.type === "goal" && e.assist) (t[e.assist] ||= { player: e.assist, club: m[e.side], goals: 0, assists: 0, apps: 0 }).assists++;
+      if (e.type === "goal" && e.player) row(e.player, m[e.side], m.date).goals++;
+      if (e.type === "goal" && e.assist) row(e.assist, m[e.side], m.date).assists++;
     }
   }
-  return Object.values(t).filter((x) => x.goals || x.assists).sort((a, b) => b.goals - a.goals || b.assists - a.assists || a.apps - b.apps);
+  return Object.values(t).map(({ last, clubs, ...r }) => ({ ...r, prev: clubs.filter((c) => c !== r.club) }))
+    .filter((x) => x.goals || x.assists).sort((a, b) => b.goals - a.goals || b.assists - a.assists || a.apps - b.apps);
 }
 
 export function fouls(m, side, period) {

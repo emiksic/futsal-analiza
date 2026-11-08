@@ -18,7 +18,7 @@ export function Club({ db, ix, id }) {
   const ms = db.matches.filter((m) => m.comp === compSel && (m.home === id || m.away === id)).sort((a, b) => a.date.localeCompare(b.date));
   const cat = comp ? ix.league[comp.league].category : null;
   const squad = db.players.filter((p) => p.club === id && p.season === cur && p.cat === cat).sort((a, b) => a.num - b.num);
-  const st = comp ? scorers(db, comp.id) : [];
+  const st = comp ? scorers(db, comp.id, { merge: false }) : [];   // samo nastupi za ovaj klub
   const stat = Object.fromEntries(st.map((r) => [r.player, r]));
   const apps = {};
   for (const m of ms) for (const side of ["home", "away"]) if (m[side] === id) for (const pid of m.roster[side]?.players || []) apps[pid] = (apps[pid] || 0) + 1;

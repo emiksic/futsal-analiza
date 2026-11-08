@@ -2,7 +2,98 @@ import { useState } from "react";
 import { href, go } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
 import { Jersey, Icon } from "../components/ui.jsx";
-import { surnameOf } from "../lib/derive.js";
+import { surnameOf, personOf, fmtDate } from "../lib/derive.js";
+
+
+// ---------- transferi ----------
+// Povezani igrači dijele players.person (id jednog od njih). person === vlastiti id = provjereno, zasebna osoba.
+const normName = (t) => (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/gi, "d").toLowerCase().replace(/\s+/g, " ").trim();
+export function linkPlayers(aId, bId) {
+  update((d) => {
+    const a = d.players.find((p) => p.id === aId), b = d.players.find((p) => p.id === bId); if (!a || !b) return;
+    const key = personOf(a), old = personOf(b);
+    for (const p of d.players) if (p.id === a.id || p.id === b.id || personOf(p) === old || personOf(p) === key) p.person = key;
+  });
+}
+export function unlinkPlayer(pid) {
+  update((d) => {
+    const me = d.players.find((p) => p.id === pid); if (!me) return;
+    const key = personOf(me);
+    me.person = me.id;
+    const rest = d.players.filter((p) => p.id !== pid && personOf(p) === key);
+    if (rest.length) { const nk = rest[0].id; for (const p of rest) p.person = nk; }   // ostali ostaju povezani među sobom
+  });
+}
+const markSeparate = (ids) => update((d) => { for (const p of d.players) if (ids.includes(p.id) && !p.person) p.person = p.id; });
+// nastupi igrača: broj utakmica, prva i zadnja (iz zapisnika)
+function appsOf(db, pid) {
+  const ms = db.matches.filter((m) => ["home", "away"].some((s) => m.roster?.[s]?.players?.includes(pid))).sort((a, b) => a.date.localeCompare(b.date));
+  return { n: ms.length, first: ms[0]?.date, last: ms[ms.length - 1]?.date, ids: new Set(ms.map((m) => m.comp + "|" + m.round)) };
+}
+// parovi istog imena u različitim klubovima (ista sezona i kategorija) koji još nisu ni povezani ni odbijeni
+export function transferSuspects(db) {
+  const g = {};
+  for (const p of db.players) { const n = normName(p.name); if (n.split(" ").length < 2) continue; (g[`${p.season}|${p.cat}|${n}`] ||= []).push(p); }
+  const out = [];
+  for (const list of Object.values(g)) for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
+    const a = list[i], b = list[j];
+    if (a.club === b.club || personOf(a) === personOf(b) || (a.person && b.person)) continue;
+    out.push([a, b]);
+  }
+  return out;
+}
+
+function Suspects({ db, ix }) {
+  const list = transferSuspects(db);
+  if (!list.length) return null;
+  return (
+    <section className="panel">
+      <div className="ph"><h2>Mogući transferi ({list.length})</h2></div>
+      <div className="pb small muted" style={{ paddingTop: 0 }}>Isto ime u dva kluba. Ako je isti igrač prešao u drugi klub, klikni „Isti igrač” i njegovi golovi i asistencije zbrajaju se u tablici strijelaca. Ako su to dva različita igrača, klikni „Nisu isti”.</div>
+      <div className="tbl-wrap">
+        <table className="atbl">
+          <thead><tr><th>Igrač</th><th>Prvi klub</th><th>Drugi klub</th><th>Procjena</th><th /></tr></thead>
+          <tbody>{list.map(([a0, b0]) => {
+            let A = appsOf(db, a0.id), B = appsOf(db, b0.id), a = a0, b = b0;
+            if ((B.first || "9") < (A.first || "9")) { [a, b] = [b, a]; [A, B] = [B, A]; }
+            // isto kolo u oba kluba, ili se razdoblja nastupa preklapaju → vjerojatno dva različita igrača
+            const overlap = [...A.ids].some((x) => B.ids.has(x)) || (A.n > 0 && B.n > 0 && A.last > B.first);
+            const cell = (p, S) => <><span className="mt"><Jersey kit={ix.club[p.club]?.kit} size={18} />{ix.club[p.club]?.name} #{p.num}</span>
+              <div className="small muted">{S.n ? `${S.n} utak., ${fmtDate(S.first)}${S.n > 1 ? " – " + fmtDate(S.last) : ""}` : "bez nastupa"}</div></>;
+            return (
+              <tr key={a.id + b.id}>
+                <td><b>{a.name}</b><div className="small muted">{a.cat}</div></td>
+                <td>{cell(a, A)}</td><td>{cell(b, B)}</td>
+                <td className="small">{overlap ? <span className="pill bad">igrali u istom kolu: vjerojatno 2 igrača</span> : A.n && B.n ? <span className="pill done">jedno pa drugo: vjerojatno transfer</span> : <span className="muted">—</span>}</td>
+                <td className="nowrap"><button className="btn sm primary" onClick={() => linkPlayers(a.id, b.id)}>Isti igrač</button>{" "}
+                  <button className="btn sm ghost" onClick={() => markSeparate([a.id, b.id])}>Nisu isti</button></td>
+              </tr>);
+          })}</tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+// u retku igrača: s kim je povezan, ili traži igrača iz drugog kluba
+function TransferCell({ db, ix, p }) {
+  const [open, setOpen] = useState(false); const [q, setQ] = useState("");
+  const linked = db.players.filter((x) => x.id !== p.id && personOf(x) === personOf(p));
+  if (linked.length) return (
+    <span className="small">isti kao {linked.map((x) => <a key={x.id} href={href("admin", "klub", x.club)}>{ix.club[x.club]?.name} #{x.num}</a>).reduce((a, b) => [a, ", ", b])}{" "}
+      <button className="btn sm ghost" onClick={() => unlinkPlayer(p.id)}>Odveži</button></span>);
+  if (!open) return <button className="btn sm ghost" onClick={() => { setOpen(true); setQ(p.name || ""); }}>Isti igrač kao…</button>;
+  const t = normName(q).split(" ").filter(Boolean);
+  const hits = t.length ? db.players.filter((x) => x.club !== p.club && x.season === p.season && x.cat === p.cat && t.every((w) => normName(x.name).includes(w))).slice(0, 8) : [];
+  return (
+    <div className="tsearch">
+      <input className="input sm" autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Ime igrača u drugom klubu" onKeyDown={(e) => e.key === "Escape" && setOpen(false)} />
+      <button className="btn sm ghost" onClick={() => setOpen(false)}>Odustani</button>
+      {hits.length ? <ul>{hits.map((x) => <li key={x.id}><button onClick={() => { linkPlayers(x.id, p.id); setOpen(false); }}>
+        <Jersey kit={ix.club[x.club]?.kit} size={16} />{x.name} · {ix.club[x.club]?.name} #{x.num}</button></li>)}</ul>
+        : t.length ? <div className="small muted">Nema igrača tog imena u drugim klubovima ({p.cat}).</div> : null}
+    </div>);
+}
 
 export function Clubs({ db, ix }) {
   const cur = db.seasons[0].id;
@@ -10,6 +101,7 @@ export function Clubs({ db, ix }) {
   return (
     <>
       <div className="ahead"><h1>Klubovi i igrači</h1><div className="r"><button className="btn primary" onClick={add}>{Icon.plus()} Novi klub</button></div></div>
+      <Suspects db={db} ix={ix} />
       <section className="panel">
         <div className="tbl-wrap">
           <table className="atbl">
@@ -75,13 +167,14 @@ export function ClubEdit({ db, ix, id }) {
           {cats.length > 1 && <div className="seg">{cats.map((k) => <button key={k} aria-pressed={cat === k} onClick={() => setCat(k)}>{k}</button>)}</div>}</div>
         <div className="tbl-wrap">
           <table className="atbl">
-            <thead><tr><th>Broj</th><th>Ime i prezime</th><th>Prezime</th><th>Golman</th><th /></tr></thead>
+            <thead><tr><th>Broj</th><th>Ime i prezime</th><th>Prezime</th><th>Golman</th><th>Transfer</th><th /></tr></thead>
             <tbody>{squad.map((p) => (
               <tr key={p.id}>
                 <td><input className="input sm num" value={p.num} onChange={(e) => up(p.id, (q) => { q.num = e.target.value.replace(/\D/g, "").slice(0, 2); })} aria-label="Broj" /></td>
                 <td><input className="input sm" value={p.name} placeholder="Ime i prezime" onChange={(e) => up(p.id, (q) => { q.name = e.target.value; })} aria-label={`Ime, broj ${p.num}`} /></td>
                 <td><input className="input sm" value={p.last || ""} placeholder={surnameOf({ name: p.name }) || "prezime"} onChange={(e) => up(p.id, (q) => { q.last = e.target.value.trim() || undefined; })} aria-label={`Prezime, broj ${p.num}`} title="Upiši samo ako je automatska procjena prezimena kriva" /></td>
                 <td><input type="checkbox" className="check" checked={p.gk} onChange={(e) => up(p.id, (q) => { q.gk = e.target.checked; })} aria-label="Golman" /></td>
+                <td><TransferCell db={db} ix={ix} p={p} /></td>
                 <td>{used(p.id) ? <span className="small muted">u zapisnicima</span> :
                   <button className="btn sm ghost danger" onClick={() => update((d) => { d.players = d.players.filter((q) => q.id !== p.id); })} aria-label={`Obriši igrača ${p.num}`}>{Icon.trash()}</button>}</td>
               </tr>))}</tbody>

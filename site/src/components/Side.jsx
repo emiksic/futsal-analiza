@@ -46,7 +46,7 @@ export function ScorersCard({ db, ix, comp, limit = 6, title = "Strijelci" }) {
             return (
               <li key={r.player}><a href={href("klub", c.id)}>
                 <span className="rk">{i + 1}</span><Jersey kit={c.kit} size={24} num={p?.num} />
-                <span className="nm">{playerName(p)}<small>{c.name}{r.assists ? `, ${r.assists} asist.` : ""}</small></span>
+                <span className="nm">{playerName(p)}<small>{c.name}{r.prev.length ? ` (prije ${r.prev.map((x) => ix.club[x]?.name).join(", ")})` : ""}{r.assists ? `, ${r.assists} asist.` : ""}</small></span>
                 <span className="g">{r.goals}</span>
               </a></li>
             );
