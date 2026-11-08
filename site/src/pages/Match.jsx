@@ -19,6 +19,7 @@ export function Match({ db, ix: ix0, id, tab }) {
   const m = ix0.match[id];
   const ix = m ? withMatchNumbers(ix0, m) : ix0;   // broj na dresu iz zapisnika ove utakmice
   const A = useAnalysis(m);
+  const adm = useStore().isAdmin;
   if (!m) return <div className="page"><div className="panel empty">Utakmica ne postoji.</div></div>;
   const has = m.analysis?.status === "done";
   const hl = safeYouTube(m.highlights);
@@ -29,6 +30,12 @@ export function Match({ db, ix: ix0, id, tab }) {
   const TABS = [...(live ? vid : []), ...(hl ? [["sazetak", "Sažetak"]] : []), ["detalji", "Detalji"], ["statistika", "Statistika"], ["postave", "Postave"], ["udarci", "Udarci"], ...(live ? [] : vid)];
   return (
     <div className="page">
+      {adm && (
+        <div className="admjump">
+          <span className="small muted">Prijavljen si kao admin.</span>
+          {/* ista kartica u adminu: Detalji → Događaji, Postave → Zapisnik, … */}
+          <a className="btn sm primary" href={href("admin", "utakmica", m.id, { detalji: "dogadaji", postave: "zapisnik", udarci: "udarci", analiza: "analiza" }[t] || "osnovno")}>Uredi u adminu</a>
+        </div>)}
       <Board m={m} ix={ix} />
       <div className={t === "analiza" || t === "udarci" ? "" : "split"}>
       <section className="panel">
