@@ -418,7 +418,7 @@ dl.keys dd { margin: 0; color: var(--muted); }
 .rcol-h .cnt { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
 .cnt .pill.ok { background: color-mix(in srgb, var(--win) 16%, transparent); color: var(--win); border-color: transparent; }
 .cnt .pill.bad { background: color-mix(in srgb, var(--live) 14%, transparent); color: var(--live); border-color: transparent; }
-.rline { display: grid; grid-template-columns: 34px 46px minmax(0, 1fr) auto auto; gap: 8px; align-items: center; padding: 6px 12px; border-bottom: 1px solid var(--line); }
+.rline { display: grid; grid-template-columns: 34px 46px minmax(0, 1fr) auto auto auto; gap: 8px; align-items: center; padding: 6px 12px; border-bottom: 1px solid var(--line); }
 .rline:last-child { border-bottom: 0; }
 .rline.off { opacity: .5; }
 .rline .n { font: 700 18px/1 var(--display); text-align: center; }
@@ -779,3 +779,14 @@ table.st { font-size: 13px; }
 .sw input:checked + .sw-t::after { transform: translateX(16px); background: #fff; }
 .sw input:focus-visible + .sw-t { outline: 2px solid var(--primary); outline-offset: 2px; }
 .sw small { display: block; color: var(--muted); font-size: 12px; }
+
+/* Admin zapisnik: pretraga i brisanje igrača */
+.rsearch { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.rsearch .input { flex: 1; min-width: 0; }
+.rline-empty { padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.rdel-x { border: 0; background: none; color: var(--muted); padding: 4px; cursor: pointer; display: inline-flex; opacity: .35; }
+.rline:hover .rdel-x, .rdel-x:focus-visible { opacity: 1; }
+.rdel-x:hover { color: var(--live); }
+.rline.rdel { display: flex; flex-wrap: wrap; gap: 8px 12px; background: color-mix(in srgb, var(--live) 9%, var(--surface)); font-size: 14px; }
+.rline.rdel > span:first-child { flex: 1 1 260px; }
+.rdel-b { display: flex; gap: 6px; }
