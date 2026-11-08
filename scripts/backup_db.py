@@ -16,7 +16,7 @@ Windows Task Scheduler (svaki ponedjeljak u 7:00, nakon vikenda kad se igra kolo
   schtasks /Create /TN "HMNL backup" /SC WEEKLY /D MON /ST 07:00 ^
     /TR "cmd /c cd /d D:\\futsal-analiza && python scripts\\backup_db.py >> run\\backup.log 2>&1"
 """
-import argparse, gzip, json, os, re, shutil, sys, time, urllib.error, urllib.request
+import argparse, gzip, json, os, re, shutil, sys, time, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -84,6 +84,28 @@ def make_backup(url, key, out_dir=None, copy_to=None, keep=40, quiet=False):
     return path
 
 
+def ntfy(env, title, body, priority=3, tags="floppy_disk"):
+    """Obavijest na mobitel (aplikacija ntfy, tema NTFY_TOPIC u .env). Prioritet: 1-2 tiho, 3 obično, 4-5 glasno."""
+    topic = env.get("NTFY_TOPIC")
+    if not topic: return
+    q = urllib.parse.urlencode({"title": title, "priority": priority, "tags": tags})
+    try:
+        req = urllib.request.Request(f"https://ntfy.sh/{urllib.parse.quote(topic)}?{q}", data=(body or title).encode("utf-8")[:4000], method="POST")
+        urllib.request.urlopen(req, timeout=20).read()
+    except Exception as e: print(f"(ntfy obavijest nije poslana: {e})")
+
+
+def env_only():
+    env = dict(os.environ)
+    f = ROOT / ".env"
+    if f.exists():
+        for line in f.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1); env.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+    return env
+
+
 def last_backup_age_hours():
     files = sorted(backup_dir().glob("hmnl-*.json.gz"))
     return (time.time() - files[-1].stat().st_mtime) / 3600 if files else None
@@ -102,8 +124,16 @@ def main():
         for p in sorted(backup_dir().glob("hmnl-*.json.gz")):
             print(f"{p.name}  {p.stat().st_size / 1024:.0f} kB")
         return
-    url, key = load_env()
-    make_backup(url, key, copy_to=a.kopija or os.environ.get("HMNL_BACKUP_COPY"), keep=a.zadrzi)
+    env = env_only()
+    try:
+        url, key = load_env()
+        path = make_backup(url, key, copy_to=a.kopija or env.get("HMNL_BACKUP_COPY"), keep=a.zadrzi)
+        n = len(sorted(backup_dir().glob("hmnl-*.json.gz")))
+        ntfy(env, "Backup baze OK", f"{path.name} ({path.stat().st_size / 1024:.0f} kB), ukupno backupa: {n}", priority=2)
+    except BaseException as e:                                # i sys.exit (npr. nema ključa)
+        if isinstance(e, KeyboardInterrupt): raise
+        ntfy(env, "Backup baze NIJE uspio", str(e) or repr(e), priority=5, tags="warning")
+        raise
 
 
 if __name__ == "__main__":

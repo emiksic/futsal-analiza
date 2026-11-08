@@ -18,7 +18,7 @@ Ako se Semafor ne učita ili mu se promijeni izgled, javi grešku i ne upisuje n
 
 Izvještaj: ispis u konzolu, zapis u tablicu semafor_log (vidi se u adminu na stranici Utakmice)
 i obavijest na mobitel preko ntfy (u .env: NTFY_TOPIC=nesto-tajno; aplikacija ntfy, pretplata na tu temu).
-Obavijest se šalje samo kad je nešto upisano ili se pojavila nova razlika.
+Obavijest stiže nakon svakog pokretanja: glasno kad je nešto upisano ili je greška, tiho kad nema ništa novo.
 
 Ključ baze: SUPABASE_SECRET_KEY u .env (kao upload_analysis.py).
 S --upis prvo napravi backup baze (scripts/backup_db.py) ako zadnji nije mlađi od 6 sati.
@@ -633,16 +633,13 @@ def report(sync, write, args, env, dbh):
     news = bool(sync.done and write) or (sig != prev.get("sig") and (sync.diffs or sync.errors))
     state_f.parent.mkdir(exist_ok=True)
     state_f.write_text(json.dumps({"sig": sig, "at": time.time()}), encoding="utf-8")
-    if not args.bez_zapisa and (news or args.uvijek_javi):
-        dbh.log({"mode": "upis" if write else "provjera", "summary": summary, "lines": lines})
-    topic = env.get("NTFY_TOPIC")
-    if topic and (news or args.uvijek_javi):
-        body = "\n".join(lines)[:3500] or "Sve se slaže."
-        try:
-            req = urllib.request.Request(f"https://ntfy.sh/{urllib.parse.quote(topic)}", data=body.encode("utf-8"), method="POST",
-                                         headers={"Title": f"Semafor: {summary}".encode("utf-8").decode("latin-1", "ignore"), "Tags": "soccer"})
-            urllib.request.urlopen(req, timeout=20).read()
-        except Exception as e: print(f"(ntfy obavijest nije poslana: {e})")
+    if not args.bez_zapisa:                                   # izvještaj svakog pokretanja ide u admin
+        dbh.log({"mode": "upis" if write else "provjera", "summary": summary + (f", preskočeno {sync.skipped}" if sync.skipped else ""), "lines": lines})
+    # obavijest nakon svakog pokretanja; glasnoća po važnosti (ništa novo = tiho)
+    prio = 5 if sync.errors else 4 if (sync.done and write) else 3 if news else 2
+    tags = "warning" if sync.errors else "white_check_mark" if (sync.done and write) else "soccer"
+    from backup_db import ntfy
+    ntfy(env, f"Semafor: {summary}", "\n".join(lines)[:3500] or f"Sve se slaže, nema ništa novo{f' (preskočeno {sync.skipped})' if sync.skipped else ''}.", prio, tags)
 
 
 def main():
@@ -655,7 +652,7 @@ def main():
     ap.add_argument("--kolo", type=int, help="samo ovo kolo")
     ap.add_argument("--dana", type=int, default=10, help="provjeri odigrane utakmice iz zadnjih N dana (zadano 10)")
     ap.add_argument("--sve", action="store_true", help="sve odigrane utakmice sezone")
-    ap.add_argument("--uvijek-javi", action="store_true", help="pošalji obavijest i kad nema ništa novo")
+    ap.add_argument("--uvijek-javi", action="store_true", help="(zastarjelo: obavijest se sad uvijek šalje)")
     ap.add_argument("--bez-zapisa", action="store_true", help="ne zapisuj izvještaj u bazu")
     ap.add_argument("--bez-cachea", action="store_true", help="ponovno učitaj i već usklađene utakmice")
     a = ap.parse_args()
