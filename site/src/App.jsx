@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useDB } from "./lib/store.js";
+import { useDB, useStore } from "./lib/store.js";
 import { useRoute, href } from "./lib/router.js";
 import { index } from "./lib/derive.js";
 import { Brand } from "./components/ui.jsx";
@@ -27,6 +27,9 @@ function ThemeToggle() {
 
 export default function App() {
   const db = useDB();
+  // Dok baza ne odgovori, ne prikazuj ugrađene (stare) podatke iz koda: inače se par sekundi vidi staro stanje pa "skoči" na novo.
+  // Ako se baza ne javi u 8 s, store prelazi na ugrađene podatke (status offline) i stranica se prikaže.
+  const loading = useStore().status === "loading";
   const ix = useMemo(() => index(db), [db]);
   useEffect(() => { document.title = db.site?.name || "HMNL Statistika"; }, [db.site?.name]);
   const r = useRoute();
@@ -50,12 +53,13 @@ export default function App() {
       {page !== "admin" && page !== "objave" && page !== "izrada" && (
         <div className="demo-bar"><div>Testna verzija. Podaci se još unose i mogu biti nepotpuni.</div></div>
       )}
-      {!page && <Home db={db} ix={ix} />}
-      {page === "liga" && <League db={db} ix={ix} leagueId={rest[0]} seasonId={rest[1] || cur} tab={rest[2]} roundArg={rest[3]} />}
-      {page === "klub" && <Club key={rest[0]} db={db} ix={ix} id={rest[0]} />}
-      {page === "utakmica" && <Match db={db} ix={ix} id={rest[0]} tab={rest[1]} />}
+      {loading && page !== "admin" && page !== "objave" && page !== "privatnost" && <div className="page"><div className="panel loadpanel" role="status"><span className="spin" aria-hidden="true" />Učitavam podatke…</div></div>}
+      {!loading && !page && <Home db={db} ix={ix} />}
+      {!loading && page === "liga" && <League db={db} ix={ix} leagueId={rest[0]} seasonId={rest[1] || cur} tab={rest[2]} roundArg={rest[3]} />}
+      {!loading && page === "klub" && <Club key={rest[0]} db={db} ix={ix} id={rest[0]} />}
+      {!loading && page === "utakmica" && <Match db={db} ix={ix} id={rest[0]} tab={rest[1]} />}
       {page === "admin" && <Admin db={db} ix={ix} route={rest} />}
-      {page === "izrada" && <Render db={db} ix={ix} comp={rest[0]} round={rest[1]} mode={rest[2]} theme={rest[3]} />}
+      {!loading && page === "izrada" && <Render db={db} ix={ix} comp={rest[0]} round={rest[1]} mode={rest[2]} theme={rest[3]} />}
       {page === "objave" && <Admin db={db} ix={ix} route={rest}><Posts db={db} ix={ix} comp={rest[0]} round={rest[1]} /></Admin>}
       {page === "privatnost" && <Privacy db={db} />}
       {page !== "admin" && page !== "objave" && page !== "izrada" && page !== "privatnost" && <Notice name={db.site?.name || "Ova stranica"} />}

@@ -847,3 +847,7 @@ table.st { font-size: 13px; }
 .board-goals .bnm { font-weight: 600; }
 .board-goals em { font-style: normal; opacity: .8; }
 .admjump { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.loadpanel { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 160px; color: var(--muted); font-size: 14px; }
+.spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--primary); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation-duration: 2.4s; } }
