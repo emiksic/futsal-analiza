@@ -244,7 +244,14 @@ def parse_match(html):
             elif kind in EVENT_GOALS:
                 out["goals"].append({"benef": side, "own": False, "name": name, "t": tot, "exact": exact, "pen": EVENT_GOALS[kind]})
             else: out["unknown"].append(f"događaj '{kind}' ({name} {ev.text()})")
-    ep = hdr.first("div", "events_penalties")
+    # "Jedanaesterci": raspucavanje nakon utakmice samo kad zaglavlje ima oznaku kaznenih (npr. "(3:4 - 11m)").
+    # U ligi isti odjeljak navodi kaznene udarce tijekom utakmice (bez minute), pa se tada ne čita.
+    sh = next((x for x in hdr.all("div", "additional_status") if "pen" in x.cls), None)
+    out["shootout_score"] = None
+    if sh:
+        pm = re.search(r"(\d+)\s*:\s*(\d+)", sh.text())
+        if pm: out["shootout_score"] = (int(pm.group(1)), int(pm.group(2)))
+    ep = hdr.first("div", "events_penalties") if sh else None
     for side, ul in zip(("home", "away"), ep.children("ul") if ep else []):
         for li in ul.children("li"):
             ev = li.first("div", "event"); pn = li.first("div", "playerName")
@@ -438,6 +445,10 @@ class Sync:
             if not pid: probs.append(f"izvođač kaznenog '{k['name']}' nije u postavi"); continue
             events.append({"id": rid(), "type": "so", "side": k["side"], "player": pid, "scored": k["scored"], "period": 4, "sec": kick[k["side"]] * 2 + (k["side"] == "away")})
             kick[k["side"]] += 1
+        if d.get("shootout_score"):
+            got = (sum(1 for e in events if e["type"] == "so" and e["side"] == "home" and e["scored"]),
+                   sum(1 for e in events if e["type"] == "so" and e["side"] == "away" and e["scored"]))
+            if got != d["shootout_score"]: probs.append(f"kazneni {got[0]}:{got[1]} ne odgovaraju rezultatu raspucavanja {d['shootout_score'][0]}:{d['shootout_score'][1]}")
         sc = [0, 0]
         for e in events:
             if e["type"] == "goal": sc[e["side"] == "away"] += 1

@@ -229,3 +229,22 @@ def test_missing_and_extra_cards():
     out = db.patches[0][1]["events"]
     assert sum(1 for e in out if e["type"] == "yellow" and e["side"] == "away") == 3       # dopisani
     assert any(e["id"] == "x1" for e in out) and any("nije na Semaforu" in d for d in s.diffs)   # višak ostaje, javljen
+
+
+def test_in_match_penalties_are_not_shootout():
+    """Liga: odjeljak "Jedanaesterci" bez oznake kaznenih u zaglavlju = penali tijekom utakmice, ne raspucavanje."""
+    h = html("utakmica-universitas-crnica.html").replace('<div class="events events_main">',
+        '<h3>Jedanaesterci</h3><div class="events events_penalties"><ul class="events"><li><div class="playerName"><a>Domaći Dva</a></div>'
+        '<div class="event penalty_failed"><div class="icon"></div></div></li></ul><ul class="events"></ul></div><div class="events events_main">')
+    d = S.parse_match(h)
+    assert d["shootout"] == [] and d["shootout_score"] is None
+
+
+def test_shootout_read_when_marked():
+    h = html("utakmica-universitas-crnica.html").replace('<div class="status">', '<div class="additional_status pen">(1:0 - 11m)</div><div class="status">').replace(
+        '<div class="events events_main">',
+        '<div class="events events_penalties"><ul class="events"><li><div class="playerName"><a>Domaći Dva</a></div>'
+        '<div class="event penalty_goal"><div class="icon"></div></div></li></ul><ul class="events"><li><div class="event penalty_saved"><div class="icon"></div></div>'
+        '<div class="playerName"><a>Gostujući Dva</a></div></li></ul></div><div class="events events_main">')
+    d = S.parse_match(h)
+    assert d["shootout_score"] == (1, 0) and [(k["side"], k["scored"]) for k in d["shootout"]] == [("home", True), ("away", False)]
