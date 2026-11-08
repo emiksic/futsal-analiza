@@ -177,11 +177,12 @@ function Incidents({ m, ix }) {
         if (r.head) return <div key={r.k} className="per">{r.head}{r.sc && <b>{r.sc[0]}:{r.sc[1]}</b>}</div>;
         const e = r.e, p = ix.player[e.player], as = ix.player[e.assist];
         let icon, main, sub;
-        if (e.type === "goal" || e.type === "owngoal") { icon = Icon.ball(20); main = <>{playerName(p)}{e.id === cbGoal && <span className="cbtag">preokret</span>}</>; sub = e.type === "owngoal" ? "autogol" : e.pen ? "kazneni udarac" : as ? `asistencija: ${playerName(as)}` : ""; }
+        if (e.type === "goal" || e.type === "owngoal") { icon = Icon.ball(20); main = <>{playerName(p)}{e.id === cbGoal && <span className="cbtag">preokret</span>}</>; sub = e.type === "owngoal" ? "autogol" : e.pen ? `kazneni udarac${e.dist ? ` s ${e.dist} m` : ""}` : as ? `asistencija: ${playerName(as)}` : ""; }
         else if (e.type === "yellow") { icon = <span className="card-y" />; main = e.staff && !p ? "Stožer" : playerName(p); sub = "žuti karton"; }
         else if (e.type === "red") { icon = <span className="card-r" />; main = e.staff && !p ? "Stožer" : playerName(p); sub = e.secondYellow ? "drugi žuti karton" : "crveni karton"; }
         else if (e.type === "timeout") { icon = Icon.timeout(); main = "Time-out"; sub = ix.club[m[e.side]].name; }
         else if (e.type === "so") { icon = e.scored ? Icon.ball(20) : <span className="so-miss" aria-hidden="true">✕</span>; main = playerName(p); sub = e.scored ? "pogođen kazneni udarac" : "promašen kazneni udarac"; }
+        else if (e.type === "penmiss") { icon = <span className="so-miss" aria-hidden="true">✕</span>; main = playerName(p); sub = `promašen kazneni udarac${e.dist ? ` s ${e.dist} m` : ""}`; }
         else if (e.type === "foul") { icon = Icon.whistle(); main = `${r.foulN}. akumulirani prekršaj`; sub = r.foulN >= 6 ? "kazneni udarac s 10 m" : "sljedeći prekršaj donosi udarac s 10 m"; }
         const body = (
           <div className={"ev " + e.side}>

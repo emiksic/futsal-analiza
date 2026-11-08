@@ -373,9 +373,9 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
   );
 }
 
-const ETYPES = [["goal", "Gol"], ["owngoal", "Autogol"], ["foul", "Prekršaj"], ["yellow", "Žuti"], ["red", "Crveni"], ["timeout", "Time-out"]];
+const ETYPES = [["goal", "Gol"], ["owngoal", "Autogol"], ["penmiss", "Promašen penal"], ["foul", "Prekršaj"], ["yellow", "Žuti"], ["red", "Crveni"], ["timeout", "Time-out"]];
 function Events({ ix, m, upd }) {
-  const empty = { type: "goal", side: "home", period: 1, time: "", player: "", assist: "" };
+  const empty = { type: "goal", side: "home", period: 1, time: "", player: "", assist: "", pen: false, dist: "" };
   const [f, setF] = useState(empty);
   const [editing, setEditing] = useState(null);   // id događaja koji se uređuje
   const [sketch, setSketch] = useState(null);     // id gola čija se skica crta
@@ -391,15 +391,17 @@ function Events({ ix, m, upd }) {
   };
   const pt = parse(f.time), sec = pt?.sec ?? null;
   const needsPlayer = !["timeout"].includes(f.type);
+  // kazneni udarac: gol iz penala (pen) ili promašen penal; udaljenost 6 m ili 10 m (deseterac) nije obavezna
+  const penFields = () => (f.type === "penmiss" || (f.type === "goal" && f.pen) ? { ...(f.type === "goal" ? { pen: true } : {}), ...(f.dist ? { dist: +f.dist } : {}) } : {});
   const add = () => {
     if (sec == null) return;
     const side = f.type === "owngoal" ? other(f.side) : f.side;   // autogol: f.side = ekipa kojoj se pripisuje
     if (editing) {
-      upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact"].includes(k))),
-        type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && f.assist ? { assist: f.assist } : {}) }); });
+      upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact", "pen", "dist"].includes(k))),
+        type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields() }); });
       setEditing(null); setF((o) => ({ ...empty, type: o.type, side: o.side })); return;
     }
-    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && f.assist ? { assist: f.assist } : {}) });
+    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields() });
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
     setF((o) => ({ ...o, time: "", player: "", assist: "" }));
   };
@@ -409,7 +411,7 @@ function Events({ ix, m, upd }) {
   const edit = (e) => {
     setEditing(e.id);
     setF({ type: e.type, side: e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side, period: e.period,
-      time: (() => { const t = (e.period - 1) * 1200 + e.sec; return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`; })(), player: e.player || "", assist: e.assist || "" });
+      time: (() => { const t = (e.period - 1) * 1200 + e.sec; return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`; })(), player: e.player || "", assist: e.assist || "", pen: !!e.pen, dist: e.dist ? String(e.dist) : "" });
     document.querySelector(".evform")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
   const setPlayer = (id, pid) => upd((x) => { x.events = x.events.map((q) => q.id !== id ? q : (pid ? { ...q, player: pid } : Object.fromEntries(Object.entries(q).filter(([k]) => k !== "player")))); });
@@ -431,7 +433,13 @@ function Events({ ix, m, upd }) {
           <select className="input" value={f.player} onChange={(e) => set("player", e.target.value)}>
             <option value="">—</option>{pl.map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
           </select></label>}
-        {f.type === "goal" && <label className="field"><span>Asistencija</span>
+        {(f.type === "penmiss" || f.type === "goal") && <div className="field"><span>Kazneni udarac</span>
+          <div className="seg">
+            {f.type === "goal" && <button type="button" aria-pressed={!f.pen} onClick={() => setF((o) => ({ ...o, pen: false, dist: "" }))}>Ne</button>}
+            {[["", f.type === "goal" ? "Da" : "Nepoznato"], ["6", "6 m"], ["10", "10 m"]].map(([k, n]) => (
+              <button type="button" key={k} aria-pressed={(f.type === "penmiss" || f.pen) && f.dist === k} onClick={() => setF((o) => ({ ...o, pen: true, dist: k }))}>{n}</button>))}
+          </div></div>}
+        {f.type === "goal" && !f.pen && <label className="field"><span>Asistencija</span>
           <select className="input" value={f.assist} onChange={(e) => set("assist", e.target.value)}>
             <option value="">—</option>{pl.filter((p) => p.id !== f.player).map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
           </select></label>}
