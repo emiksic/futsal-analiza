@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { href, go, replaceClick, replaceGo } from "../lib/router.js";
 import { positionsByRound } from "../lib/derive.js";
-import { PosChart, POS_COLORS } from "../components/PosChart.jsx";
+import { PosChart, clubColor } from "../components/PosChart.jsx";
 import { standings, scorers, currentRound, fmtDay, dayLabel, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft, leadTable, mins, combinedZones, combinedTable } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
@@ -133,49 +133,32 @@ function Standings({ db: db0, ix, comp, league }) {
         {all && upto < last && <span>Prikazana je tablica nakon {roundName(league, upto).replace(/kolo$/, "kola")}. Strelice: pomak u odnosu na kolo prije.</span>}
         {all && <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova: {league.id === "juniori" ? "plasman kadetske momčadi, " : ""}gol-razlika, više golova, međusobne utakmice, fair-play.</span>}
       </div>
-      {all && played.length > 1 && <Positions db={db0} ix={ix} comp={comp} league={league} played={played} upto={upto} pick={setUpto} />}
+      {all && played.length > 1 && <Positions db={db0} ix={ix} comp={comp} league={league} played={played} />}
     </>
   );
 }
 
 // Mjesto svake ekipe nakon svakog kola (redovi: trenutni poredak). Klik na kolo prikazuje tablicu nakon tog kola.
-function Positions({ db, ix, comp, league, played, upto, pick }) {
+function Positions({ db, ix, comp, league, played }) {
   const PB = positionsByRound(db, comp.id);
-  const pos = played.map((r, k) => Object.fromEntries(PB.order.map((c) => [c, PB.pos[c]?.[k]])));
   const order = PB.order, n = order.length, z = league.zones || {};
-  // graf: odabrani klubovi (zadano prva tri), najviše 5
-  const [sel, setSel] = useState(() => order.slice(0, 3));
-  const toggle = (c) => setSel((S) => (S.includes(c) ? S.filter((x) => x !== c) : S.length >= 5 ? [...S.slice(1), c] : [...S, c]));
-  const colorOf = (c) => POS_COLORS[sel.indexOf(c) % POS_COLORS.length];
+  // zadano su svi klubovi u boji; klikom se klub makne s grafa (ostaje blijeda linija)
+  const [off, setOff] = useState([]);
+  const toggle = (c) => setOff((S) => (S.includes(c) ? S.filter((x) => x !== c) : [...S, c]));
+  const colorOf = (c) => clubColor(order.indexOf(c), n);
+  const on = order.filter((c) => !off.includes(c));
   return (
     <div className="posgrid">
       <h3>Mjesto po kolima</h3>
       <div className="pc-pick" role="group" aria-label="Klubovi na grafu">
-        {order.map((c) => <button key={c} type="button" aria-pressed={sel.includes(c)} style={sel.includes(c) ? { "--sc": colorOf(c) } : undefined} onClick={() => toggle(c)}>
+        {order.map((c) => <button key={c} type="button" aria-pressed={!off.includes(c)} style={{ "--sc": colorOf(c) }} onClick={() => toggle(c)}>
           <Jersey kit={ix.club[c].kit} size={14} />{ix.club[c].short || ix.club[c].name}</button>)}
+        <button type="button" className="pc-all" onClick={() => setOff(off.length ? [] : order)}>{off.length ? "Prikaži sve" : "Sakrij sve"}</button>
       </div>
       <div className="pc-wrap">
         <PosChart played={played} n={n} zones={z}
-          series={[...order.filter((c) => !sel.includes(c)).map((c) => ({ id: c, name: ix.club[c].name, pts: PB.pos[c], faint: true, color: "var(--muted)" })),
-            ...sel.map((c) => ({ id: c, name: ix.club[c].name, pts: PB.pos[c], color: colorOf(c) }))]} />
-      </div>
-      <div className="tbl-wrap">
-        <table className="st pos-t">
-          <thead><tr><th className="l">Klub</th>{played.map((r) => (
-            <th key={r}><button type="button" className={"rbtn" + (r === upto ? " on" : "")} onClick={() => pick(r)} title={`Tablica nakon ${roundName(league, r).replace(/kolo$/, "kola")}`}>{r}.</button></th>))}</tr></thead>
-          <tbody>{order.map((club) => {
-            const c = ix.club[club];
-            return (
-              <tr key={club}>
-                <td className="l"><a className="club" href={href("klub", club)}><Jersey kit={c.kit} size={18} />{c.short || c.name}</a></td>
-                {pos.map((P, k) => {
-                  const p = P[club], prev = k ? pos[k - 1][club] : null;
-                  return <td key={k} className={"pc " + (zoneOf(z, p - 1, n) || "") + (played[k] === upto ? " cur" : "")}
-                    title={`${c.name}, ${roundName(league, played[k])}: ${p}. mjesto${prev && prev !== p ? ` (${prev > p ? "gore" : "dolje"} ${Math.abs(prev - p)})` : ""}`}>{p}</td>;
-                })}
-              </tr>);
-          })}</tbody>
-        </table>
+          series={[...off.map((c) => ({ id: c, name: ix.club[c].name, pts: PB.pos[c], faint: true, color: "var(--muted)" })),
+            ...on.map((c) => ({ id: c, name: ix.club[c].name, pts: PB.pos[c], color: colorOf(c) }))]} />
       </div>
     </div>
   );

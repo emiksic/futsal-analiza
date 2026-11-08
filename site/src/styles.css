@@ -877,3 +877,5 @@ table.st { font-size: 13px; }
 .pc-pick button { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 2px; padding: 4px 8px; cursor: pointer; font: 600 12px/1 var(--body); color: var(--muted); }
 .pc-pick button[aria-pressed="true"] { color: var(--fg); border-color: var(--sc, var(--fg)); box-shadow: inset 3px 0 0 var(--sc, var(--fg)); }
 .pc-wrap { padding: 0 12px 6px; }
+.pc-pick button[aria-pressed="false"] { opacity: .55; text-decoration: line-through; }
+.pc-pick .pc-all { border-style: dashed; color: var(--muted); text-decoration: none !important; opacity: 1 !important; }

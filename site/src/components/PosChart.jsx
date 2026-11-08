@@ -1,6 +1,8 @@
 // Graf mjesta po kolima (kao "standings tracker"): 1. mjesto gore, x os = kola.
 // series: [{ id, name, color, pts: [mjesto po kolu], faint? }]
 export const POS_COLORS = ["#6c8cff", "#3fbf6a", "#e9a23b", "#d562b4", "#2bb5c9"];
+// različita boja za svaki klub (i do 12 klubova): ravnomjerno raspoređene nijanse, naizmjence svjetlije i tamnije
+export const clubColor = (i, n) => `hsl(${Math.round((i * 360) / Math.max(n, 1) + 220) % 360} ${i % 2 ? 62 : 75}% ${i % 2 ? 48 : 60}%)`;
 
 export function PosChart({ series, played, n, zones = {}, height = 240 }) {
   const W = 640, H = height, L = 30, R = 12, T = 12, B = 26;
