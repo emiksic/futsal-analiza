@@ -50,6 +50,26 @@ export function Match({ db, ix: ix0, id, tab }) {
   );
 }
 
+// Strijelci ispod rezultata: jedan red po igraču s minutama ("D. P.  4', 4', 36'").
+// Kad se ime ne prikazuje cijelo (mlađe kategorije: inicijali ili samo broj), broj dresa ide u zasebnu oznaku,
+// da se "#3 4'" ne čita kao 34. minuta.
+function goalGroups(list, ix) {
+  const out = [], by = {};
+  for (const e of list) {
+    const p = ix.player[e.player], og = e.type === "owngoal", key = (og ? "og:" : "") + (e.player || "?" + e.id);
+    if (!by[key]) {
+      let name = shortName(p), num = null;
+      if (p && /^Igrač #/.test(name)) { num = p.num; name = ""; }
+      else if (p && /#\d+$/.test(name)) { num = p.num; name = name.replace(/\s*#\d+$/, ""); }
+      if (!p) name = "nepoznat";
+      by[key] = { key, num, name, og, times: [], title: playerName(p) };
+      out.push(by[key]);
+    }
+    by[key].times.push(goalTime(e) + (e.pen ? " (p)" : ""));
+  }
+  return out;
+}
+
 function Board({ m, ix }) {
   const H = ix.club[m.home], A = ix.club[m.away], s = score(m), comp = ix.comp[m.comp], L = ix.league[comp.league];
   const ht = m.status === "finished" ? score(m, 1199) : null;
@@ -81,7 +101,10 @@ function Board({ m, ix }) {
       {fin && (goals("home").length || goals("away").length) ? (
         <div className="board-goals">
           {["home", "away"].map((side) => (
-            <div key={side}>{goals(side).map((e) => <span key={e.id} title={playerName(ix.player[e.player])}>{shortName(ix.player[e.player])}{e.type === "owngoal" ? " (ag)" : ""} {goalTime(e)}</span>)}</div>
+            <div key={side}>{goalGroups(goals(side), ix).map((g) => (
+              <span key={g.key} className="bg" title={g.title}>
+                {g.num && <b className="bn">{g.num}</b>}<span className="bnm">{g.name}{g.og ? " (autogol)" : ""}</span><em>{g.times.join(", ")}</em>
+              </span>))}</div>
           ))}
         </div>) : null}
       {fin && m.events.some((e) => e.type === "foul") && (

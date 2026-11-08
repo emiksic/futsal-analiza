@@ -393,6 +393,8 @@ function Events({ ix, m, upd }) {
     return { period, sec: tot - (period - 1) * 1200 };
   };
   const pt = parse(f.time), sec = pt?.sec ?? null;
+  // upisane sekunde (npr. 22:10) → vrijeme je točno i prikazuje se s mm:ss; samo minuta (npr. 22) → prikaz minute
+  const exactF = () => (/:\d/.test(f.time) ? { exact: true } : {});
   const needsPlayer = !["timeout"].includes(f.type);
   // kazneni udarac: gol iz penala (pen) ili promašen penal; udaljenost 6 m ili 10 m (deseterac) nije obavezna
   const penFields = () => (f.type === "penmiss" || (f.type === "goal" && f.pen) ? { ...(f.type === "goal" ? { pen: true } : {}), ...(f.dist ? { dist: +f.dist } : {}) } : {});
@@ -401,10 +403,10 @@ function Events({ ix, m, upd }) {
     const side = f.type === "owngoal" ? other(f.side) : f.side;   // autogol: f.side = ekipa kojoj se pripisuje
     if (editing) {
       upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact", "pen", "dist"].includes(k))),
-        type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields() }); });
+        type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...exactF() }); });
       setEditing(null); setF((o) => ({ ...empty, side: o.side })); return;   // nakon upisa uvijek natrag na Gol
     }
-    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields() });
+    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...exactF() });
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
     setF((o) => ({ ...empty, side: o.side }));   // nakon upisa vrsta se vraća na Gol (da prekršaj ne ostane odabran)
   };
@@ -414,7 +416,8 @@ function Events({ ix, m, upd }) {
   const edit = (e) => {
     setEditing(e.id);
     setF({ type: e.type, side: e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side, period: e.period,
-      time: (() => { const t = (e.period - 1) * 1200 + e.sec; return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`; })(), player: e.player || "", assist: e.assist || "", pen: !!e.pen, dist: e.dist ? String(e.dist) : "" });
+      // točno vrijeme (exact) kao mm:ss; inače samo minuta (37:30 sa Semafora → "38"), da uređivanje ne izmisli sekunde
+      time: (() => { const t = (e.period - 1) * 1200 + e.sec; return e.exact ? `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}` : String(parseInt(minute(e), 10)); })(), player: e.player || "", assist: e.assist || "", pen: !!e.pen, dist: e.dist ? String(e.dist) : "" });
     document.querySelector(".evform")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
   const setPlayer = (id, pid) => upd((x) => { x.events = x.events.map((q) => q.id !== id ? q : (pid ? { ...q, player: pid } : Object.fromEntries(Object.entries(q).filter(([k]) => k !== "player")))); });

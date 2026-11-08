@@ -840,3 +840,9 @@ table.st { font-size: 13px; }
   .etl-ev { gap: 6px; }
 }
 .etl-row .min small { display: block; font: 500 11px/1 var(--body); margin-top: 3px; }
+/* strijelci ispod rezultata */
+.board-goals .bg { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.board-goals div:first-child .bg { justify-content: flex-end; }
+.board-goals .bn { font: 700 11px/1 var(--display); padding: 2px 5px; border-radius: 2px; border: 1px solid currentColor; opacity: .85; }
+.board-goals .bnm { font-weight: 600; }
+.board-goals em { font-style: normal; opacity: .8; }
