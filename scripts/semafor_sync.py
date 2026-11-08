@@ -8,9 +8,10 @@ Pokretanje (s korijena repoa):
 
 Pravila (po utakmici, uparenoj po natjecanju, kolu, domaćinu i gostu):
   - utakmica na Semaforu završena, a u bazi nema golova  -> upiše zapisnik, golove, kartone, kaznene, status Kraj
-  - u bazi je već upisana i golovi se slažu               -> samo nadopuni: točne sekunde, kapetane, oznake penala,
-                                                            kartone (samo ako u bazi za tu utakmicu nema nijednog)
-  - u bazi je upisana, ali se razlikuje                   -> NIŠTA ne mijenja, javi razliku
+  - u bazi je već upisana                                  -> dopiše sve što fali (golove, kartone, kaznene, igrače u zapisniku,
+                                                            brojeve, petorku, golmane, kapetana, sekunde, oznake penala)
+  - ono što je u bazi drukčije nego na Semaforu            -> NE prepisuje, samo javi razliku (tvoj upis ostaje)
+    (ako u bazi postoji gol kojeg Semafor nema, golove uopće ne dira, da se ne udvostruče)
   - promijenjen termin (datum/sat) neodigrane utakmice     -> ispravi termin
 Nikad ne briše utakmice, događaje ni igrače. Ne objavljuje ništa na mreže.
 Ako se Semafor ne učita ili mu se promijeni izgled, javi grešku i ne upisuje ništa.
@@ -350,7 +351,7 @@ class Sync:
         if hit: return hit[0]["id"], False
         if not create: return None, False
         pid = f"{club}-{rid('', 7)}"
-        row = {"id": pid, "club": club, "season": SEASON, "cat": cat, "num": num or "", "name": name, "gk": False}
+        row = {"id": pid, "club": club, "season": SEASON, "cat": cat, "num": num or "", "name": name, "gk": False, "_new": True}
         self.squad(club, cat).append(row)
         return pid, row
 
@@ -449,7 +450,7 @@ class Sync:
         keep = [e for e in (m.get("events") or []) if e.get("type") not in ("goal", "owngoal", "yellow", "red", "so", "penmiss")]
         body = {"roster": built["roster"], "events": keep + built["events"], "status": "finished", "source": "HNS Semafor", "result": None}
         if self.write:
-            for p in new_players: self.db.insert_player(p)
+            for p in new_players: self.db.insert_player({k: v for k, v in p.items() if k != "_new"}); p.pop("_new", None)
             self.db.patch_match(m["id"], body)
         g = sum(1 for e in built["events"] if e["type"] in ("goal", "owngoal"))
         c = sum(1 for e in built["events"] if e["type"] in ("yellow", "red"))
@@ -457,64 +458,83 @@ class Sync:
         self.done.append(f"{label} {d['score'][0]}:{d['score'][1]}: upisan zapisnik, {g} gol., {c} kart.{extra}")
 
     def compare(self, label, m, built, d, s):
+        """Utakmica je u bazi: dopiše sve što fali, a ono što se razlikuje samo javi (ne prepisuje tvoj upis)."""
         ev = [dict(e) for e in (m.get("events") or [])]
         roster = json.loads(json.dumps(m.get("roster") or {}))
-        changed, notes, diffs = False, [], []
-        sem = [e for e in built["events"] if e["type"] in ("goal", "owngoal")]
-        mine = [e for e in ev if e.get("type") in ("goal", "owngoal")]
-        # golovi: uparivanje po strani, vrsti, igraču i minuti (±1 zbog zaokruživanja)
-        used = set()
-        pairs = []
-        for e in sem:
-            hit = next((i for i, x in enumerate(mine) if i not in used and x.get("side") == e["side"] and x.get("type") == e["type"]
-                        and x.get("player") == e["player"] and abs(ev_minute(x) - ev_minute(e)) <= 1), None)
-            if hit is None:
-                hit = next((i for i, x in enumerate(mine) if i not in used and x.get("side") == e["side"] and x.get("type") == e["type"]
-                            and abs(ev_minute(x) - ev_minute(e)) <= 1), None)
-                if hit is not None: diffs.append(f"gol {ev_minute(e)}' strijelac se razlikuje")
-            if hit is None: diffs.append(f"gol {ev_minute(e)}' ({'domaćin' if e['side'] == 'home' else 'gost'}) nije u bazi"); continue
-            used.add(hit); pairs.append((mine[hit], e))
-        for i, x in enumerate(mine):
-            if i not in used: diffs.append(f"gol {ev_minute(x)}' u bazi nije na Semaforu")
-        if diffs:                                               # golovi se ne slažu: ništa ne diramo
-            self.diffs.append(f"{label}: " + "; ".join(diffs)); return
-        # nadopune
-        for x, e in pairs:
-            if e.get("exact") and not x.get("exact"):
-                x.update(period=e["period"], sec=e["sec"], exact=True); changed = True; notes.append("sekunde")
-            if e.get("pen") and not x.get("pen"):
-                x["pen"] = True; changed = True; notes.append("penal")
-            if e.get("dist") and not x.get("dist") and x.get("pen"):
-                x["dist"] = e["dist"]; changed = True
+        notes, diffs = [], []
+        side_hr = lambda sd: "domaćin" if sd == "home" else "gost"
+
+        def match_list(sem, mine, same):
+            """Upari događaje Semafora s onima u bazi (ista vrsta, strana, igrač, minuta ±1). Vraća parove i neuparene."""
+            used, pairs, miss = set(), [], []
+            for e in sem:
+                hit = next((i for i, x in enumerate(mine) if i not in used and same(x, e) and abs(ev_minute(x) - ev_minute(e)) <= 1), None)
+                if hit is None: miss.append(e)
+                else: used.add(hit); pairs.append((mine[hit], e))
+            return pairs, miss, [x for i, x in enumerate(mine) if i not in used]
+
+        # --- golovi
+        same_goal = lambda x, e: x.get("side") == e["side"] and x.get("type") == e["type"] and x.get("player") == e.get("player")
+        g_pairs, g_miss, g_extra = match_list([e for e in built["events"] if e["type"] in ("goal", "owngoal")],
+                                              [e for e in ev if e.get("type") in ("goal", "owngoal")], same_goal)
+        if g_extra:                                             # u bazi je gol kojeg Semafor nema (npr. drugi strijelac): golove ne diramo
+            diffs += [f"gol {ev_minute(x)}' ({side_hr(x.get('side'))}) u bazi se ne slaže sa Semaforom" for x in g_extra]
+            diffs += [f"gol {ev_minute(e)}' ({side_hr(e['side'])}, {self.pname(m[e['side']], e.get('player'))}) nije u bazi" for e in g_miss]
+        else:
+            for x, e in g_pairs:                               # sekunde i oznake penala
+                if e.get("exact") and not x.get("exact"): x.update(period=e["period"], sec=e["sec"], exact=True); notes.append("sekunde")
+                if e.get("pen") and not x.get("pen"): x["pen"] = True; notes.append("penal")
+                if e.get("dist") and not x.get("dist") and x.get("pen"): x["dist"] = e["dist"]
+            if g_miss: ev += g_miss; notes.append(f"golovi ({len(g_miss)})")
+        # --- kartoni (igrači i stožer)
+        same_card = lambda x, e: x.get("side") == e["side"] and x.get("type") == e["type"] and (x.get("player") == e.get("player") or (e.get("staff") and x.get("staff")))
+        c_pairs, c_miss, c_extra = match_list([e for e in built["events"] if e["type"] in ("yellow", "red")],
+                                              [e for e in ev if e.get("type") in ("yellow", "red")], same_card)
+        for x, e in c_pairs:
+            if e.get("exact") and not x.get("exact"): x.update(period=e["period"], sec=e["sec"], exact=True)
+            if e.get("secondYellow") and not x.get("secondYellow"): x["secondYellow"] = True
+        if c_miss: ev += c_miss; notes.append(f"kartoni ({len(c_miss)})")
+        if c_extra: diffs += [f"karton {ev_minute(x)}' ({side_hr(x.get('side'))}) u bazi nije na Semaforu" for x in c_extra]
+        # --- kazneni nakon utakmice (kup): samo ako ih u bazi nema
+        so = [e for e in built["events"] if e["type"] == "so"]
+        if so and not any(e.get("type") == "so" for e in ev): ev += so; notes.append("kaznene")
+        # --- zapisnik
         for side in ("home", "away"):
-            R, S = roster.get(side) or {}, built["roster"].get(side) or {}
-            if S.get("cap") and not R.get("cap") and S["cap"] in (R.get("players") or []):
-                R["cap"] = S["cap"]; changed = True; notes.append("kapetan")
-            # zapisnik: samo usporedba
-            mine_p, sem_p = set(R.get("players") or []), set(S.get("players") or [])
+            S = built["roster"].get(side) or {}
+            if not S.get("players"): continue
+            R = roster.get(side) or {}
             name = self.club_name.get(m[side], m[side])
-            if mine_p and sem_p and mine_p != sem_p:
-                diffs.append(f"{name}: zapisnik ima {len(mine_p)} igrača, Semafor {len(sem_p)}"
-                             + (f" (fali {len(sem_p - mine_p)})" if sem_p - mine_p else "") + (f" (višak {len(mine_p - sem_p)})" if mine_p - sem_p else ""))
-            for pid in mine_p & sem_p:
-                a, b = str((R.get("num") or {}).get(pid, "")), str(S["num"].get(pid, ""))
-                if a and b and a != b: diffs.append(f"{name}: broj {a} u bazi, {b} na Semaforu ({self.pname(m[side], pid)})")
-            if set(R.get("start") or []) != set(S.get("start") or []) and R.get("start"): diffs.append(f"{name}: petorka se razlikuje")
-            if set(R.get("gk") or []) != set(S.get("gk") or []): diffs.append(f"{name}: golmani se razlikuju")
-            if roster.get(side): roster[side] = R
-        # kartoni: samo usporedba (broj po vrsti i strani)
-        def cards(lst): return sorted((e["side"], e["type"]) for e in lst if e.get("type") in ("yellow", "red"))
-        cs, cm = cards(built["events"]), cards(ev)
-        if cs and not cm:                                       # u bazi nema nijednog kartona: upiši ih sa Semafora
-            ev += [e for e in built["events"] if e["type"] in ("yellow", "red")]
-            ev.sort(key=lambda e: (e.get("period", 0), e.get("sec", 0)))
-            changed = True; notes.append(f"kartoni ({len(cs)})")
-        elif cs != cm:
-            diffs.append(f"kartoni: u bazi {len(cm)}, na Semaforu {len(cs)}")
+            if not R.get("players"):                            # zapisnika nema: cijeli sa Semafora
+                roster[side] = S; notes.append("zapisnik"); continue
+            R.setdefault("num", {}); R.setdefault("start", []); R.setdefault("gk", [])
+            new = [p for p in S["players"] if p not in R["players"]]
+            for pid in new:
+                R["players"].append(pid); R["num"][pid] = S["num"].get(pid, "")
+                if pid in S.get("gk", []) and pid not in R["gk"]: R["gk"].append(pid)
+            if new: notes.append(f"igrači u zapisniku ({len(new)})")
+            extra = [p for p in R["players"] if p not in S["players"]]
+            if extra: diffs.append(f"{name}: u zapisniku je {len(extra)} igrač(a) kojih nema na Semaforu ({', '.join(self.pname(m[side], p) for p in extra)})")
+            for pid in S["players"]:
+                a, b = str(R["num"].get(pid, "") or ""), str(S["num"].get(pid, "") or "")
+                if not a and b: R["num"][pid] = b; notes.append("brojevi")
+                elif a and b and a != b: diffs.append(f"{name}: broj {a} u bazi, {b} na Semaforu ({self.pname(m[side], pid)})")
+            if not R["start"] and S.get("start"): R["start"] = list(S["start"]); notes.append("petorka")
+            elif set(R["start"]) != set(S.get("start") or []): diffs.append(f"{name}: petorka se razlikuje")
+            if not R["gk"] and S.get("gk"): R["gk"] = list(S["gk"]); notes.append("golmani")
+            elif set(R["gk"]) != set(S.get("gk") or []): diffs.append(f"{name}: golmani se razlikuju")
+            if S.get("cap") and not R.get("cap") and S["cap"] in R["players"]: R["cap"] = S["cap"]; notes.append("kapetan")
+            roster[side] = R
         if diffs: self.diffs.append(f"{label}: " + "; ".join(diffs))
-        if changed:
-            if self.write: self.db.patch_match(m["id"], {"events": ev, "roster": roster})
-            self.done.append(f"{label}: nadopunjeno ({', '.join(sorted(set(notes)))})")
+        if notes:
+            ev.sort(key=lambda e: (e.get("period", 0), e.get("sec", 0)))
+            new_players = [p for side in ("home", "away") for p in self.squad(m[side], self.cat_of(m)) if p.get("_new")]
+            if self.write:
+                for p in new_players: self.db.insert_player({k: v for k, v in p.items() if k != "_new"}); p.pop("_new", None)
+                self.db.patch_match(m["id"], {"events": ev, "roster": roster})
+            self.done.append(f"{label}: nadopunjeno ({', '.join(dict.fromkeys(notes))})")
+
+    def cat_of(self, m):
+        return COMPS.get(m.get("comp"), {}).get("cat", "Seniori")
 
     def pname(self, club, pid):
         for (c, _), lst in self.players.items():

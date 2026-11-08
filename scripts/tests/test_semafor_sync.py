@@ -157,13 +157,39 @@ def test_existing_matching_fills_seconds_and_captain():
     assert out["roster"]["home"]["cap"] == "universitas-p9" and out["roster"]["away"]["cap"] == "crnica-p10"
 
 
-def test_existing_different_reports_only():
+def test_missing_goals_are_added():
     s1, db1 = run(BASE)
     body = db1.patches[0][1]
-    ev = [e for e in body["events"] if not (e["type"] == "goal" and e["side"] == "home")][:]   # u bazi fale golovi domaćina
+    ev = [e for e in body["events"] if not (e["type"] == "goal" and e["side"] == "home")]   # u bazi fale golovi domaćina
     m = dict(BASE, status="finished", events=ev, roster=body["roster"])
-    s, db = run(m)
-    assert not db.patches and s.diffs and "nije u bazi" in s.diffs[0]
+    s, db = run(m, extra_players=db1.inserted)
+    assert not s.diffs, s.diffs
+    out = db.patches[0][1]["events"]
+    assert sum(1 for e in out if e["type"] == "goal" and e["side"] == "home") == 4 and "golovi (4)" in s.done[0]
+
+
+def test_conflicting_goal_reports_and_keeps_goals():
+    s1, db1 = run(BASE)
+    body = db1.patches[0][1]
+    ev = [dict(e) for e in body["events"]]
+    g = next(e for e in ev if e["type"] == "goal" and e["side"] == "home"); g["player"] = "universitas-p12"   # drugi strijelac
+    m = dict(BASE, status="finished", events=ev, roster=body["roster"])
+    s, db = run(m, extra_players=db1.inserted)
+    assert s.diffs and "ne slaže" in s.diffs[0]
+    assert not db.patches or sum(1 for e in db.patches[0][1]["events"] if e["type"] in ("goal", "owngoal")) == 10
+
+
+def test_roster_fills_missing_player_and_reports_number():
+    s1, db1 = run(BASE)
+    body = db1.patches[0][1]
+    roster = copy.deepcopy(body["roster"]); A = roster["away"]
+    gone = A["players"].pop(); A["num"].pop(gone, None)                  # igrač fali u zapisniku
+    A["num"][A["players"][1]] = "99"                                     # i jedan broj je drukčiji
+    m = dict(BASE, status="finished", events=body["events"], roster=roster)
+    s, db = run(m, extra_players=db1.inserted)
+    out = db.patches[0][1]["roster"]["away"]
+    assert gone in out["players"] and out["num"][A["players"][1]] == "99"
+    assert any("broj 99 u bazi" in d for d in s.diffs)
 
 
 def test_schedule_time_update():
@@ -193,10 +219,13 @@ def test_cards_filled_when_none_in_db():
     assert sum(1 for e in out if e["type"] in ("yellow", "red")) == 7 and "kartoni (7)" in s.done[0]
 
 
-def test_cards_different_reports_only():
+def test_missing_and_extra_cards():
     s1, db1 = run(BASE)
     body = db1.patches[0][1]
     ev = [e for e in body["events"] if not (e["type"] == "yellow" and e["side"] == "away")]   # dio kartona fali
+    ev.append({"id": "x1", "type": "yellow", "side": "home", "period": 1, "sec": 30, "player": "universitas-p3"})   # višak
     m = dict(BASE, status="finished", events=ev, roster=body["roster"])
     s, db = run(m, extra_players=db1.inserted)
-    assert not db.patches and any("kartoni" in d for d in s.diffs)
+    out = db.patches[0][1]["events"]
+    assert sum(1 for e in out if e["type"] == "yellow" and e["side"] == "away") == 3       # dopisani
+    assert any(e["id"] == "x1" for e in out) and any("nije na Semaforu" in d for d in s.diffs)   # višak ostaje, javljen
