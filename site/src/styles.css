@@ -790,3 +790,5 @@ table.st { font-size: 13px; }
 .rline.rdel { display: flex; flex-wrap: wrap; gap: 8px 12px; background: color-mix(in srgb, var(--live) 9%, var(--surface)); font-size: 14px; }
 .rline.rdel > span:first-child { flex: 1 1 260px; }
 .rdel-b { display: flex; gap: 6px; }
+.rline.dupn { background: color-mix(in srgb, var(--live) 12%, var(--surface)); box-shadow: inset 3px 0 0 var(--live); }
+.rline.dupn .input.num { border-color: var(--live); color: var(--live); font-weight: 700; }

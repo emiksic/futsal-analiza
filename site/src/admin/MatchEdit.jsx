@@ -43,6 +43,12 @@ export function MatchEdit(props) {
   return <MatchEditInner key={props.id} {...props} />;
 }
 
+// Dupli broj na dresu unutar jednog zapisnika (broj s ove utakmice) → [{ side, nums }]
+const numsOf = (m, side, players) => { const R = m.roster?.[side]; return (R?.players || []).map((pid) => String(R.num?.[pid] ?? players.find((p) => p.id === pid)?.num ?? "")).filter(Boolean); };
+export function rosterDups(m, players) {
+  return ["home", "away"].map((side) => { const n = numsOf(m, side, players); return { side, nums: [...new Set(n.filter((x, i) => n.indexOf(x) !== i))] }; }).filter((d) => d.nums.length);
+}
+
 // Prekidač "Uživo": isključen = izmjene ostaju samo u ovom pregledniku dok se ne klikne "Spremi u bazu".
 // Odlazak na drugu stranicu (ili zatvaranje kartice) s nespremljenim izmjenama pita za potvrdu i odbacuje ih.
 function useHold(id) {
@@ -62,17 +68,20 @@ function useHold(id) {
     return () => { off(); removeEventListener("beforeunload", unload); };
   }, [id, st.held]);
   const toLive = async () => {
+    if (st.held > 0 && h.dups?.length) { alert("Dva igrača u zapisniku imaju isti broj. Ispravi to prije spremanja u bazu."); return; }
     if (st.held > 0) {
       if (!confirm(`Spremiti ${st.held} neposlanih izmjena u bazu i nastaviti uživo?`)) return;
       try { await holdCommit(); } catch { return; }
     }
     setLive(true);
   };
-  return { st, remote, live, toLive, toHold: () => setLive(false) };
+  const h = { st, remote, live, toLive, toHold: () => setLive(false) };
+  return h;
 }
 
-function LiveBar({ h }) {
+function LiveBar({ h, ix }) {
   const { st, live } = h;
+  const bad = h.dups || [];
   const [busy, setBusy] = useState(false);
   if (!h.remote) return null;
   const save = async () => { setBusy(true); try { await holdCommit(true); } catch { /* poruka je u st.syncError */ } setBusy(false); };
@@ -88,7 +97,8 @@ function LiveBar({ h }) {
           <span className="small" role="status" style={{ color: st.sync === "error" ? "var(--live)" : undefined }}>
             {st.sync === "error" ? `Greška: ${st.syncError}` : st.held ? `${st.held} ${st.held === 1 ? "izmjena nije spremljena" : "izmjena nije spremljeno"}` : "Nema neposlanih izmjena"}</span>
           <button className="btn sm ghost" disabled={!st.held || busy} onClick={() => { if (confirm("Odbaciti sve neposlane izmjene?")) { holdDiscard(); h.toHold(); holdStart(h.id); } }}>Odbaci</button>
-          <button className="btn sm primary" disabled={!st.held || busy} onClick={save}>{busy ? "Spremam…" : "Spremi u bazu"}</button>
+          {bad.length > 0 && <span className="pill bad">Isti broj ({bad.map((d) => `${ix.club[h.m[d.side]].name}: ${d.nums.join(", ")}`).join("; ")}) — ispravi prije spremanja</span>}
+          <button className="btn sm primary" disabled={!st.held || busy || bad.length > 0} title={bad.length ? "Dva igrača u zapisniku imaju isti broj" : undefined} onClick={save}>{busy ? "Spremam…" : "Spremi u bazu"}</button>
         </div>)}
     </section>
   );
@@ -99,6 +109,7 @@ function MatchEditInner({ db, ix: ix0, id, tab = "osnovno" }) {
   const m = ix0.match[id];
   if (!m) return <div className="panel empty">Utakmica ne postoji.</div>;
   const ix = withMatchNumbers(ix0, m);   // broj na dresu iz zapisnika ove utakmice
+  h.m = m; h.dups = rosterDups(m, db.players);
   const upd = (fn) => update((d) => fn(d.matches.find((x) => x.id === id), d));
   const s = score(m);
   const TABS = [["osnovno", "Osnovno"], ["zapisnik", "Zapisnik"], ["dogadaji", "Događaji"], ["udarci", "Udarci"], ["analiza", "Video analiza"]];
@@ -112,7 +123,7 @@ function MatchEditInner({ db, ix: ix0, id, tab = "osnovno" }) {
         <div className="r">
           {m.draft ? (
             <>
-              <button className="btn primary" onClick={async () => { upd((x) => { delete x.draft; }); try { await holdCommit(); } catch { return; } go("admin", "utakmice"); }}>Dodaj utakmicu</button>
+              <button className="btn primary" disabled={h.dups.length > 0} title={h.dups.length ? "Dva igrača u zapisniku imaju isti broj" : undefined} onClick={async () => { upd((x) => { delete x.draft; }); try { await holdCommit(); } catch { return; } go("admin", "utakmice"); }}>Dodaj utakmicu</button>
               <button className="btn" onClick={() => { holdDiscard(); update((d) => { d.matches = d.matches.filter((x) => x.id !== id); }); go("admin", "utakmice"); }}>Odustani</button>
             </>
           ) : (
@@ -123,7 +134,7 @@ function MatchEditInner({ db, ix: ix0, id, tab = "osnovno" }) {
           )}
         </div>
       </div>
-      <LiveBar h={h} />
+      <LiveBar h={h} ix={ix} />
       <section className="panel" key={h.st.holdRev}>
         <nav className="tabs" aria-label="Uređivanje">
           {TABS.map(([k, n]) => <a key={k} href={href("admin", "utakmica", id, k)} onClick={replaceClick} aria-current={tab === k ? "page" : undefined}>{n}</a>)}
@@ -245,10 +256,12 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
   const on = new Set(r.players), st = new Set(r.start), gk = new Set(r.gk);
   const fix = (R) => { R.num = Object.fromEntries(R.players.map((pid) => [pid, R.num?.[pid] ?? base(pid)?.num ?? ""])); };
   const ed = (fn) => upd((x) => { x.roster[side] ||= { players: [], start: [], gk: [] }; fn(x.roster[side], x); fix(x.roster[side]); });
-  const togglePlayer = (p) => ed((R) => {
+  const takenBy = (num, except) => r.players.filter((pid) => pid !== except).map((pid) => db.players.find((p) => p.id === pid)).find((p) => p && String(r.num?.[p.id] ?? p.num) === String(num));
+  const okNum = (num, except) => { const t = takenBy(num, except); return !t || confirm(`Broj ${num} u ovom zapisniku već ima ${t.name || "drugi igrač"}. Dva igrača ne smiju imati isti broj, pa spremanje neće biti moguće dok to ne ispraviš.\n\nDodati svejedno?`); };
+  const togglePlayer = (p) => { if (!on.has(p.id) && !okNum(numOf(p), p.id)) return; ed((R) => {
     if (R.players.includes(p.id)) { R.players = R.players.filter((i) => i !== p.id); R.start = R.start.filter((i) => i !== p.id); R.gk = R.gk.filter((i) => i !== p.id); }
     else if (R.players.length < MAX_ROSTER) { R.players.push(p.id); if (p.gk) R.gk.push(p.id); if (R.start.length < 5) R.start.push(p.id); }   // prvih 5 dodanih = početna petorka
-  });
+  }); };
   const toggle = (key, p) => ed((R) => { if (R[key].includes(p.id)) R[key] = R[key].filter((i) => i !== p.id); else if (key !== "start" || R.start.length < 5) R[key].push(p.id); });
   const setPlayer = (pid, fn) => update((d) => fn(d.players.find((p) => p.id === pid)));
   const latest = (pid) => !db.matches.some((q) => q.id !== m.id && q.date > m.date && ["home", "away"].some((sd) => q.roster?.[sd]?.players?.includes(pid)));
@@ -261,7 +274,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
     });
   };
   const addPlayer = () => {
-    const num = nn.trim(); if (!num) return;
+    const num = nn.trim(); if (!num || !okNum(num)) return;
     const id = uid(`${club.id}-`);
     update((d) => { d.players.push({ id, club: club.id, season, cat, num, name: nm.trim(), gk: false });
       const x = d.matches.find((q) => q.id === m.id); x.roster[side] ||= { players: [], start: [], gk: [] };
@@ -296,7 +309,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
   };
   const gkStart = r.start.filter((p) => gk.has(p)).length;
   const ok5 = r.start.length === 5, okGk = gkStart === 1;
-  const dup = (() => { const nums = r.players.map((p) => ix.player[p]?.num); return nums.filter((n, i) => nums.indexOf(n) !== i); })();
+  const dup = rosterDups(m, db.players).find((d) => d.side === side)?.nums || [];
   return (
     <div className="rcol">
       <div className="rcol-h">
@@ -340,7 +353,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
             </div>);
         }
         return (
-          <div key={p.id} className={"rline" + (inR ? "" : " off")}>
+          <div key={p.id} className={"rline" + (inR ? "" : " off") + (inR && dup.includes(String(numOf(p))) ? " dupn" : "")} title={inR && dup.includes(String(numOf(p))) ? `Broj ${numOf(p)} ima više igrača u ovom zapisniku` : undefined}>
             <input type="checkbox" className="check" checked={inR} onChange={() => togglePlayer(p)} aria-label={`U zapisniku: broj ${p.num}`} />
             <input className="input sm num" value={numOf(p)} onChange={(e) => setNum(p, e.target.value)} aria-label="Broj na dresu" title={inR && r.num?.[p.id] != null && r.num[p.id] !== p.num ? `Na ovoj utakmici #${r.num[p.id]}, sada nosi #${p.num}` : undefined} />
             <input className="input sm" value={p.name} placeholder="Ime i prezime" onChange={(e) => setPlayer(p.id, (q) => { q.name = e.target.value; })} aria-label={`Ime igrača s brojem ${p.num}`} />
