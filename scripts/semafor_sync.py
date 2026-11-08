@@ -574,6 +574,9 @@ def report(sync, write, args, env, dbh):
 
 
 def main():
+    for st in (sys.stdout, sys.stderr):           # Windows: ispis u log (cmd >>) inače puca na č, ć, ž
+        try: st.reconfigure(encoding="utf-8", errors="replace")
+        except Exception: pass
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--upis", action="store_true", help="upisuj u bazu (bez toga samo provjera)")
     ap.add_argument("--natjecanje", choices=list(COMPS), action="append", help="samo ovo natjecanje (može više puta)")

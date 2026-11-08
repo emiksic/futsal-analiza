@@ -90,6 +90,9 @@ def last_backup_age_hours():
 
 
 def main():
+    for st in (sys.stdout, sys.stderr):           # Windows: ispis u log (cmd >>) inače puca na č, ć, ž
+        try: st.reconfigure(encoding="utf-8", errors="replace")
+        except Exception: pass
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--kopija", help="mapa za dodatnu kopiju (npr. OneDrive)")
     ap.add_argument("--zadrzi", type=int, default=40, help="koliko zadnjih backupa zadržati (zadano 40)")

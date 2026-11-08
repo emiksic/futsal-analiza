@@ -79,6 +79,9 @@ def upsert(url, key, table, rows):
 
 
 def main():
+    for st in (sys.stdout, sys.stderr):           # Windows: ispis u log (cmd >>) inače puca na č, ć, ž
+        try: st.reconfigure(encoding="utf-8", errors="replace")
+        except Exception: pass
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--datoteka", help="backup (zadano: zadnji u backups/)")
     ap.add_argument("--utakmica", action="append", help="id utakmice (može više puta)")
