@@ -59,7 +59,16 @@ export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roun
 }
 
 const VIEWS = [["all", "Ukupno"], ["home", "Doma"], ["away", "U gostima", "Gosti"], ["h1", "1. poluvrijeme", "1. pol."], ["h2", "2. poluvrijeme", "2. pol."]];
-function Standings({ db, ix, comp, league }) {
+function Standings({ db: db0, ix, comp, league }) {
+  // tablica nakon odabranog kola (zadano: trenutna) i pomak u odnosu na kolo prije
+  const played = [...new Set(db0.matches.filter((m) => m.comp === comp.id && m.status === "finished").map((m) => m.round))].sort((a, b) => a - b);
+  const last = played[played.length - 1] || 0;
+  const [upto0, setUpto] = useState(null);
+  const upto = upto0 && upto0 <= last ? upto0 : last;
+  const cut = (n) => ({ ...db0, matches: db0.matches.filter((m) => m.comp !== comp.id || m.round <= n) });
+  const db = upto < last ? cut(upto) : db0;
+  const prevRows = upto > 1 ? standings(cut(upto - 1), comp.id) : [];
+  const prevPos = prevRows.some((r) => r.p) ? Object.fromEntries(prevRows.map((r, i) => [r.club, i])) : null;
   const [view, setView0] = useState(() => { try { return sessionStorage.getItem("tbl-view") || "all"; } catch { return "all"; } });
   const setView = (v) => { setView0(v); try { sessionStorage.setItem("tbl-view", v); } catch { /* */ } };
   const all = view === "all";
@@ -69,9 +78,18 @@ function Standings({ db, ix, comp, league }) {
   const R = all ? combinedZones(db, comp.id) : {}, youth = Object.keys(R).length > 0;
   const CT = youth ? combinedTable(db, comp.id) : [];
   const ctPos = (club) => CT.findIndex((r) => r.club === club) + 1;
-  if (!standings(db, comp.id).some((r) => r.p)) return <div className="empty">Rezultati za ovu ligu još nisu uneseni.</div>;
+  if (!standings(db0, comp.id).some((r) => r.p)) return <div className="empty">Rezultati za ovu ligu još nisu uneseni.</div>;
   return (
     <>
+      {played.length > 1 && (
+        <div className="tbl-round">
+          <label className="small muted" htmlFor="tbl-upto">Tablica nakon</label>
+          <button type="button" className="btn sm ghost" disabled={upto <= played[0]} onClick={() => setUpto(played[played.indexOf(upto) - 1])} aria-label="Kolo prije">‹</button>
+          <select id="tbl-upto" className="select sm" value={upto} onChange={(e) => setUpto(+e.target.value)}>
+            {played.map((r) => <option key={r} value={r}>{roundName(league, r)}{r === last ? " (trenutno)" : ""}</option>)}
+          </select>
+          <button type="button" className="btn sm ghost" disabled={upto >= last} onClick={() => setUpto(played[played.indexOf(upto) + 1])} aria-label="Sljedeće kolo">›</button>
+        </div>)}
       <div className="seg tbl-views" role="tablist" aria-label="Vrsta tablice">
         {VIEWS.map(([k, n, sh]) => <button key={k} type="button" role="tab" aria-selected={view === k} onClick={() => setView(k)} aria-label={n}>
           {sh ? <><span className="lg-only">{n}</span><span className="sm-only">{sh}</span></> : n}</button>)}
@@ -89,7 +107,8 @@ function Standings({ db, ix, comp, league }) {
               const ct = R[r.club] ? CT.find((x) => x.club === r.club) : null;
               return (
                 <tr key={r.club} className={zone} title={ct ? `Zbirna tablica: ${ctPos(r.club)}. mjesto, ${ct.pts} bod.` : undefined}>
-                  <td className="pos"><span>{i + 1}</span></td>
+                  <td className="pos"><span>{i + 1}</span>{all && prevPos && r.club in prevPos && prevPos[r.club] !== i &&
+                    <small className={prevPos[r.club] > i ? "mv up" : "mv down"} title={`Prije ovog kola: ${prevPos[r.club] + 1}. mjesto`}>{prevPos[r.club] > i ? "▲" : "▼"}{Math.abs(prevPos[r.club] - i)}</small>}</td>
                   <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={22} />{c.name}</a></td>
                   <td>{r.p}</td><td>{r.w}</td><td>{r.d}</td><td>{r.l}</td>
                   <td className="hide-s">{r.gf}:{r.ga}</td><td>{r.gd > 0 ? "+" + r.gd : r.gd}</td><td className="pts">{r.pts}</td>
@@ -109,9 +128,41 @@ function Standings({ db, ix, comp, league }) {
           : z.note ? <span>{z.note}</span> : null}
         {!all && <span>{view === "home" ? "Samo utakmice kod kuće." : view === "away" ? "Samo utakmice u gostima." : `Bodovi kao da je utakmica trajala samo ${view === "h1" ? "prvo" : "drugo"} poluvrijeme.`}
           {V.skipped ? ` Nije uračunato ${V.skipped} utakmica bez minuta svih golova.` : ""} Poredak po bodovima, gol-razlici i golovima.</span>}
+        {all && upto < last && <span>Prikazana je tablica nakon {roundName(league, upto).replace(/kolo$/, "kola")}. Strelice: pomak u odnosu na kolo prije.</span>}
         {all && <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova: {league.id === "juniori" ? "plasman kadetske momčadi, " : ""}gol-razlika, više golova, međusobne utakmice, fair-play.</span>}
       </div>
+      {all && played.length > 1 && <Positions db={db0} ix={ix} comp={comp} league={league} played={played} upto={upto} pick={setUpto} />}
     </>
+  );
+}
+
+// Mjesto svake ekipe nakon svakog kola (redovi: trenutni poredak). Klik na kolo prikazuje tablicu nakon tog kola.
+function Positions({ db, ix, comp, league, played, upto, pick }) {
+  const cut = (n) => ({ ...db, matches: db.matches.filter((m) => m.comp !== comp.id || m.round <= n) });
+  const pos = played.map((r) => Object.fromEntries(standings(cut(r), comp.id).map((x, i) => [x.club, i + 1])));
+  const order = standings(db, comp.id).map((x) => x.club), n = order.length, z = league.zones || {};
+  return (
+    <div className="posgrid">
+      <h3>Mjesto po kolima</h3>
+      <div className="tbl-wrap">
+        <table className="st pos-t">
+          <thead><tr><th className="l">Klub</th>{played.map((r) => (
+            <th key={r}><button type="button" className={"rbtn" + (r === upto ? " on" : "")} onClick={() => pick(r)} title={`Tablica nakon ${roundName(league, r).replace(/kolo$/, "kola")}`}>{r}.</button></th>))}</tr></thead>
+          <tbody>{order.map((club) => {
+            const c = ix.club[club];
+            return (
+              <tr key={club}>
+                <td className="l"><a className="club" href={href("klub", club)}><Jersey kit={c.kit} size={18} />{c.short || c.name}</a></td>
+                {pos.map((P, k) => {
+                  const p = P[club], prev = k ? pos[k - 1][club] : null;
+                  return <td key={k} className={"pc " + (zoneOf(z, p - 1, n) || "") + (played[k] === upto ? " cur" : "")}
+                    title={`${c.name}, ${roundName(league, played[k])}: ${p}. mjesto${prev && prev !== p ? ` (${prev > p ? "gore" : "dolje"} ${Math.abs(prev - p)})` : ""}`}>{p}</td>;
+                })}
+              </tr>);
+          })}</tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 

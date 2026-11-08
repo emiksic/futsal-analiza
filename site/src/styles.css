@@ -851,3 +851,20 @@ table.st { font-size: 13px; }
 .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--primary); animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spin { animation-duration: 2.4s; } }
+/* tablica nakon kola i mjesto po kolima */
+.tbl-round { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 0 16px 10px; }
+.tbl-round .select { min-width: 150px; }
+.st .pos small.mv { display: block; font: 700 10px/1 var(--body); margin-top: 2px; }
+.st .pos small.mv.up { color: var(--win, #1f9d55); }
+.st .pos small.mv.down { color: var(--loss, var(--live)); }
+.posgrid { padding: 6px 0 12px; }
+.posgrid h3 { font: 600 14px/1.2 var(--body); margin: 8px 16px; }
+.pos-t th, .pos-t td.pc { text-align: center; min-width: 34px; }
+.pos-t td.pc { font: 600 13px/1 var(--display); }
+.pos-t td.pc.cur { outline: 2px solid var(--primary); outline-offset: -2px; }
+.rbtn { border: 0; background: none; font: inherit; color: inherit; cursor: pointer; padding: 2px 4px; }
+.rbtn.on, .rbtn:hover { color: var(--primary); text-decoration: underline; }
+.pos-t td.pc.z-a { background: color-mix(in srgb, var(--zone-a) 22%, transparent); }
+.pos-t td.pc.z-a2 { background: color-mix(in srgb, var(--zone-a2) 28%, transparent); }
+.pos-t td.pc.z-q { background: color-mix(in srgb, var(--zone-q) 22%, transparent); }
+.pos-t td.pc.z-b { background: color-mix(in srgb, var(--zone-b) 22%, transparent); }
