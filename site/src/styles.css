@@ -429,8 +429,8 @@ dl.keys dd { margin: 0; color: var(--muted); }
 .tgl:disabled { opacity: .35; cursor: default; }
 .addp { display: grid; grid-template-columns: 64px 1fr auto; gap: 8px; padding: 10px 12px; background: var(--surface-2); }
 .evform { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); padding: 0 16px 16px; align-items: end; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r-ctl); overflow: hidden; }
-.seg button { border: 0; background: var(--surface); padding: 8px 11px; cursor: pointer; font-weight: 600; font-size: 14px; border-right: 1px solid var(--line); }
+.seg { display: inline-flex; flex-wrap: wrap; max-width: 100%; border: 1px solid var(--line); border-radius: var(--r-ctl); overflow: hidden; }
+.seg button { border: 0; background: var(--surface); padding: 8px 14px; white-space: nowrap; cursor: pointer; font-weight: 600; font-size: 14px; border-right: 1px solid var(--line); }
 .seg button:last-child { border-right: 0; }
 .seg button[aria-pressed="true"], .seg button[aria-selected="true"] { background: var(--fg); color: var(--bg); }
 .code { font: 12.5px/1.5 ui-monospace, "SFMono-Regular", Menlo, monospace; background: var(--surface-2); border: 1px solid var(--line); border-radius: 2px; padding: 12px; overflow: auto; max-height: 340px; white-space: pre; margin: 0; }

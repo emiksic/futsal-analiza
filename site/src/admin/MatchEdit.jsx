@@ -433,7 +433,7 @@ function Events({ ix, m, upd }) {
           <select className="input" value={f.player} onChange={(e) => set("player", e.target.value)}>
             <option value="">—</option>{pl.map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
           </select></label>}
-        {(f.type === "penmiss" || f.type === "goal") && <div className="field"><span>Kazneni udarac</span>
+        {(f.type === "penmiss" || f.type === "goal") && <div className="field" style={{ gridColumn: "1 / -1" }}><span>Kazneni udarac</span>
           <div className="seg">
             {f.type === "goal" && <button type="button" aria-pressed={!f.pen} onClick={() => setF((o) => ({ ...o, pen: false, dist: "" }))}>Ne</button>}
             {[["", f.type === "goal" ? "Da" : "Nepoznato"], ["6", "6 m"], ["10", "10 m"]].map(([k, n]) => (
