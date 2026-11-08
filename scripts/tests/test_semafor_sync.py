@@ -1,4 +1,5 @@
 """Testovi za scripts/semafor_sync.py (bez mreže): python -m pytest scripts/tests/test_semafor_sync.py -q
+Imena igrača u fiksturama su izmišljena (mlađe kategorije: stvarna imena ne idu u repo).
 Fiksture u tests/semafor/ složene su po oznakama stvarnih stranica Semafora."""
 import copy, sys
 from pathlib import Path
@@ -33,17 +34,17 @@ def test_match():
     assert d["score"] == (4, 6) and not d["unknown"]
     assert len(d["goals"]) == 10
     og = [g for g in d["goals"] if g["own"]][0]
-    assert og == {"benef": "away", "own": True, "name": "Ante Romić", "t": 27 * 60 + 36, "exact": True}
+    assert og == {"benef": "away", "own": True, "name": "Domaći Golman", "t": 27 * 60 + 36, "exact": True}
     pen = [g for g in d["goals"] if g.get("pen")]
-    assert len(pen) == 1 and pen[0]["name"] == "Nino Nakić" and pen[0]["pen"] == 10
+    assert len(pen) == 1 and pen[0]["name"] == "Gostujući Tri" and pen[0]["pen"] == 10
     H, A = d["teams"]["home"], d["teams"]["away"]
     assert len([r for r in H if not r["staff"]]) == 13 and len([r for r in A if not r["staff"]]) == 14
     assert [r["num"] for r in H if r["start"]] == ["2", "7", "9", "13", "14"]
-    assert [r["name"] for r in H if r["cap"]] == ["Toma Goleš"] and [r["name"] for r in A if r["gk"]] == ["Luka Dujić", "Gabriel Nikšić"]
-    mar = next(r for r in H if r["name"] == "Vlade Marasović")
+    assert [r["name"] for r in H if r["cap"]] == ["Domaći Kapetan"] and [r["name"] for r in A if r["gk"]] == ["Gostujući Golman", "Gostujući Rezerva"]
+    mar = next(r for r in H if r["name"] == "Domaći Tri")
     assert [c["card"] for c in mar["events"]] == ["yellow", "red2"]
     coach = next(r for r in A if r["staff"])
-    assert coach["name"] == "Ivica Podrug" and coach["events"][0]["card"] == "yellow"
+    assert coach["name"] == "Gostujući Trener" and coach["events"][0]["card"] == "yellow"
 
 
 def test_time():
@@ -66,10 +67,10 @@ CLUBS = [{"id": "universitas", "name": "Universitas Split", "full_name": "AMNK U
          {"id": "osijek", "name": "Osijek", "full_name": None, "short": "OSI"},
          {"id": "futsal-dinamo", "name": "Futsal Dinamo", "full_name": None, "short": "DIN"},
          {"id": "rijeka", "name": "Rijeka", "full_name": None, "short": "RIJ"}]
-U_NAMES = ["Ante Romić", "Benjamin Ademi", "Vlade Marasović", "Josip Veljača", "Josip Matkovac", "Ante Lisica", "Josip Lijić",
-           "Ivor Dujmović Šućur", "Miro Šarac", "Toma Goleš", "Jan Sekulović", "Marko Vranješ", "Roko Jelčić"]
-C_NAMES = ["Luka Dujić", "Marko Kandido", "Nino Nakić", "Ivan Buva", "Mauro Dragović", "Gabriel Nikšić", "Toni Mijić", "Zvonimir Papak",
-           "Kristijan Svirčić", "Ivan Matić", "Stipe Filipović", "Vito Protega", "Toni Gerbec"]   # Duje Braica fali -> novi igrač
+U_NAMES = ["Domaći Golman", "Domaći Dva", "Domaći Tri", "Domaći Četiri", "Domaći Pet", "Domaći Rezerva", "Domaći Šest",
+           "Domaći Šućur Sedam", "Domaći Osam", "Domaći Kapetan", "Domaći Devet", "Domaći Deset", "Domaći Jedanaest"]
+C_NAMES = ["Gostujući Golman", "Gostujući Dva", "Gostujući Tri", "Gostujući Četiri", "Gostujući Pet", "Gostujući Rezerva", "Gostujući Šest", "Gostujući Sedam",
+           "Gostujući Osam", "Gostujući Devet", "Gostujući Kapetan", "Gostujući Deset", "Gostujući Jedanaest"]   # Gostujući Novi fali -> novi igrač
 
 
 class FakeDB:
@@ -126,7 +127,7 @@ def test_fresh_entry():
     assert any(e.get("staff") for e in ev)
     R = body["roster"]["away"]
     assert len(R["players"]) == 14 and R["num"][R["start"][0]] == "1" and R["cap"] == "crnica-p10"
-    assert [p["name"] for p in db.inserted] == ["Duje Braica"]
+    assert [p["name"] for p in db.inserted] == ["Gostujući Novi"]
     assert body["roster"]["home"]["cap"] == "universitas-p9"
 
 
