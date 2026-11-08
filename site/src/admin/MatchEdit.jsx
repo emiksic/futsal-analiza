@@ -35,6 +35,8 @@ function GoalVideo({ m, e, upd }) {
 const toLocal = (iso) => { const d = new Date(iso), p = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
 const MAX_ROSTER = 14;
+// vrijeme gola: upisuju se samo znamenke, dvotočka ide sama ("0344" → "03:44", "512" → "5:12")
+const fmtClock = (t) => { const d = t.replace(/\D/g, "").slice(0, 4); return d.length > 2 ? d.slice(0, -2) + ":" + d.slice(-2) : d; };
 const fmtHms = (s) => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
 const parseHms = (t) => { if (!t.trim()) return null; const p = t.trim().split(":").map(Number); if (p.some(isNaN)) return null; return p.reduce((a, b) => a * 60 + b, 0); };
 
@@ -379,7 +381,7 @@ function Events({ ix, m, upd }) {
   const [sketch, setSketch] = useState(null);     // id gola čija se skica crta
   const set = (k, v) => setF((o) => ({ ...o, [k]: v, ...(k === "side" || k === "type" ? { player: "", assist: "" } : {}) }));
   const roster = (side) => (m.roster[side]?.players || []).map((p) => ix.player[p]).filter(Boolean).sort((a, b) => a.num - b.num);
-  const parse = (t) => { const mm = /^(\d{1,2})(?::(\d{1,2}))?$/.exec(t.trim()); if (!mm) return null; const sec = +mm[1] * 60 + (+mm[2] || 0); return sec <= 1200 ? sec : null; };
+  const parse = (t) => { const mm = /^(\d{1,2})(?::(\d{1,2}))?$/.exec(t.trim()); if (!mm) return null; if (+(mm[2] || 0) > 59) return null; const sec = +mm[1] * 60 + (+mm[2] || 0); return sec <= 1200 ? sec : null; };
   const sec = parse(f.time);
   const needsPlayer = !["timeout"].includes(f.type);
   const add = () => {
@@ -416,8 +418,8 @@ function Events({ ix, m, upd }) {
         <div className="field"><span>Poluvrijeme</span>
           <div className="seg">{[[1, "1."], [2, "2."], [3, "Prod."]].map(([k, n]) => <button type="button" key={k} aria-pressed={+f.period === k} onClick={() => set("period", k)}>{n}</button>)}</div></div>
         <label className="field"><span>Vrijeme (mm:ss)</span>
-          <input className="input" value={f.time} onChange={(e) => set("time", e.target.value)} placeholder="12:34" inputMode="numeric" aria-invalid={f.time && sec == null} />
-          <small>{f.time && sec == null ? "Upiši vrijeme do 20:00." : "proteklo vrijeme u poluvremenu"}</small></label>
+          <input className="input" value={f.time} onChange={(e) => set("time", fmtClock(e.target.value))} placeholder="12:34" inputMode="numeric" aria-invalid={f.time && sec == null} />
+          <small>{f.time && sec == null ? "Upiši vrijeme do 20:00 (sekunde 00–59)." : "proteklo vrijeme u poluvremenu"}</small></label>
         {needsPlayer && <label className="field"><span>{f.type === "owngoal" ? `Zabio u svoju mrežu (${ix.club[m[plSide]].short})` : "Igrač"}</span>
           <select className="input" value={f.player} onChange={(e) => set("player", e.target.value)}>
             <option value="">—</option>{pl.map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
