@@ -9,6 +9,11 @@ import { Jersey, Icon, CourtLines } from "../components/ui.jsx";
 import { MiniTable } from "../components/Side.jsx";
 import { Shots } from "./Shots.jsx";
 import { Player } from "../components/Player.jsx";
+import { useStore } from "../lib/store.js";
+
+// Kretanje igrača (prijeđeni metri, toplinske mape) još nije dovoljno točno za javnost: zasad ga vidi samo admin.
+const MOVEMENT_PUBLIC = false;
+const useMovement = () => { const st = useStore(); return MOVEMENT_PUBLIC || st.isAdmin; };
 
 export function Match({ db, ix: ix0, id, tab }) {
   const m = ix0.match[id];
@@ -367,7 +372,8 @@ function Stats({ m, ix, A }) {
   const c = (type, side) => m.events.filter((e) => e.type === type && e.side === side).length;
   const s = score(m) || [0, 0];
   const st = A.D ? analysisStats(A.D, teamOrder(A.D, m)) : null;
-  const per = perPlayerAllowed(ix, m.comp);
+  const mv = useMovement();
+  const per = mv && perPlayerAllowed(ix, m.comp);
   const keyClub = st ? Object.fromEntries(Object.entries(m.analysis.teamMap || {}).map(([k, v]) => [k, v === "home" ? H : Aw])) : {};
   return (
     <>
@@ -385,11 +391,12 @@ function Stats({ m, ix, A }) {
         <Cmp label="Golovi" a={s[0]} b={s[1]} ca={ca} cb={cb} />
         {m.events.some((e) => e.type === "foul") && <Cmp label="Prekršaji" a={c("foul", "home")} b={c("foul", "away")} ca={ca} cb={cb} />}
         <Cmp label="Žuti kartoni" a={c("yellow", "home")} b={c("yellow", "away")} ca={ca} cb={cb} />
-        {!st && <div className="src">Posjed i kretanje igrača pojavljuju se kad utakmica ima video analizu.</div>}
+        {!st && <div className="src">Posjed se pojavljuje kad utakmica ima video analizu.</div>}
       </div>
       {m.stats?.tempo && <Tempo T={m.stats.tempo} />}
-      {A.D && <TeamHeat m={m} ix={ix} D={A.D} order={teamOrder(A.D, m)} />}
-      {st && !per && <div className="pb"><div className="note">U kadetskoj ligi ne prikazujemo podatke o kretanju pojedinih igrača.</div></div>}
+      {mv && !MOVEMENT_PUBLIC && (A.D || st) && <div className="pb"><div className="note">Toplinske mape i prijeđeni metri vidljivi su samo adminu dok ih ne doradimo.</div></div>}
+      {mv && A.D && <TeamHeat m={m} ix={ix} D={A.D} order={teamOrder(A.D, m)} />}
+      {st && mv && !per && <div className="pb"><div className="note">U kadetskoj ligi ne prikazujemo podatke o kretanju pojedinih igrača.</div></div>}
       {st && per && st.players.length > 0 && (
         <div className="pb">
           <h4 style={{ font: "600 13px/1 var(--body)", color: "var(--muted)", margin: "4px 0 8px" }}>Kretanje igrača s prepoznatim brojem</h4>
@@ -428,7 +435,8 @@ function Lineups({ m, ix, A }) {
   const H = ix.club[m.home], Aw = ix.club[m.away];
   const r = m.roster;
   const cv = useRef(null);
-  const per = perPlayerAllowed(ix, m.comp);
+  const mv = useMovement();
+  const per = mv && perPlayerAllowed(ix, m.comp);
   const D = per ? A.D : null, order = D ? teamOrder(D, m) : null;
   const keyOf = (side, pid) => {
     if (!D) return null; const p = ix.player[pid]; if (!p) return null;
