@@ -466,3 +466,14 @@ export function leadTable(db, compId) {
   return Object.values(T).filter((r) => r.n).map((r) => ({ ...r, pct: r.lead / (r.n * REG) }))
     .sort((a, b) => b.pct - a.pct || a.trail - b.trail || a.club.localeCompare(b.club));
 }
+
+// Mjesto svake ekipe nakon svakog odigranog kola: { played: [kola], order: [klubovi po trenutnom poretku], pos: { klub: [mjesto po kolu] } }
+export function positionsByRound(db, compId) {
+  const played = [...new Set(db.matches.filter((m) => m.comp === compId && m.status === "finished").map((m) => m.round))].sort((a, b) => a - b);
+  const pos = {};
+  for (const r of played) {
+    const rows = standings({ ...db, matches: db.matches.filter((m) => m.comp !== compId || m.round <= r) }, compId);
+    rows.forEach((x, i) => { (pos[x.club] ||= []).push(i + 1); });
+  }
+  return { played, order: standings(db, compId).map((x) => x.club), pos };
+}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { href } from "../lib/router.js";
-import { standings, scorers, compName, playerName, isCup } from "../lib/derive.js";
+import { standings, scorers, compName, playerName, isCup, positionsByRound } from "../lib/derive.js";
+import { PosChart, POS_COLORS } from "../components/PosChart.jsx";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Jersey } from "../components/ui.jsx";
 
@@ -38,6 +39,7 @@ export function Club({ db, ix, id }) {
           </nav>
           <div className="mlist">{ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} showDay />)}</div>
         </section>
+        {comp && !isCup(ix.league[comp.league]) && <ClubPositions db={db} ix={ix} comp={comp} id={id} />}
       </main>
       <aside className="col">
         {comp && <Position db={db} ix={ix} comp={comp} id={id} />}
@@ -72,4 +74,21 @@ function Position({ db, ix, comp, id }) {
       </div>
     </section>
   );
+}
+
+// mjesto kluba po kolima (ostali klubovi blijedo u pozadini)
+function ClubPositions({ db, ix, comp, id }) {
+  const PB = positionsByRound(db, comp.id);
+  if (PB.played.length < 2 || !PB.pos[id]) return null;
+  const L = ix.league[comp.league], now = PB.pos[id][PB.pos[id].length - 1];
+  const best = Math.min(...PB.pos[id]), worst = Math.max(...PB.pos[id]);
+  return (
+    <section className="panel">
+      <div className="ph"><h2>Mjesto po kolima</h2><span className="aside">{now}. mjesto · najbolje {best}. · najlošije {worst}.</span></div>
+      <div className="pc-wrap" style={{ paddingTop: 8 }}>
+        <PosChart played={PB.played} n={PB.order.length} zones={L.zones || {}}
+          series={[...PB.order.filter((c) => c !== id).map((c) => ({ id: c, name: ix.club[c].name, pts: PB.pos[c], faint: true, color: "var(--muted)" })),
+            { id, name: ix.club[id].name, pts: PB.pos[id], color: POS_COLORS[0] }]} />
+      </div>
+    </section>);
 }

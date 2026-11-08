@@ -868,3 +868,12 @@ table.st { font-size: 13px; }
 .pos-t td.pc.z-a2 { background: color-mix(in srgb, var(--zone-a2) 28%, transparent); }
 .pos-t td.pc.z-q { background: color-mix(in srgb, var(--zone-q) 22%, transparent); }
 .pos-t td.pc.z-b { background: color-mix(in srgb, var(--zone-b) 22%, transparent); }
+/* graf mjesta po kolima */
+.poschart { width: 100%; height: auto; display: block; }
+.poschart .pc-grid { stroke: var(--line); stroke-dasharray: 3 4; }
+.poschart .pc-ax { fill: var(--muted); font: 600 11px/1 var(--body); }
+.poschart .pc-faint polyline { stroke: var(--muted); opacity: .22; }
+.pc-pick { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 16px 10px; }
+.pc-pick button { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 2px; padding: 4px 8px; cursor: pointer; font: 600 12px/1 var(--body); color: var(--muted); }
+.pc-pick button[aria-pressed="true"] { color: var(--fg); border-color: var(--sc, var(--fg)); box-shadow: inset 3px 0 0 var(--sc, var(--fg)); }
+.pc-wrap { padding: 0 12px 6px; }

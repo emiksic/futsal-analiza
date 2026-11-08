@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { href, go, replaceClick, replaceGo } from "../lib/router.js";
+import { positionsByRound } from "../lib/derive.js";
+import { PosChart, POS_COLORS } from "../components/PosChart.jsx";
 import { standings, scorers, currentRound, fmtDay, dayLabel, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft, leadTable, mins, combinedZones, combinedTable } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
@@ -138,12 +140,25 @@ function Standings({ db: db0, ix, comp, league }) {
 
 // Mjesto svake ekipe nakon svakog kola (redovi: trenutni poredak). Klik na kolo prikazuje tablicu nakon tog kola.
 function Positions({ db, ix, comp, league, played, upto, pick }) {
-  const cut = (n) => ({ ...db, matches: db.matches.filter((m) => m.comp !== comp.id || m.round <= n) });
-  const pos = played.map((r) => Object.fromEntries(standings(cut(r), comp.id).map((x, i) => [x.club, i + 1])));
-  const order = standings(db, comp.id).map((x) => x.club), n = order.length, z = league.zones || {};
+  const PB = positionsByRound(db, comp.id);
+  const pos = played.map((r, k) => Object.fromEntries(PB.order.map((c) => [c, PB.pos[c]?.[k]])));
+  const order = PB.order, n = order.length, z = league.zones || {};
+  // graf: odabrani klubovi (zadano prva tri), najviše 5
+  const [sel, setSel] = useState(() => order.slice(0, 3));
+  const toggle = (c) => setSel((S) => (S.includes(c) ? S.filter((x) => x !== c) : S.length >= 5 ? [...S.slice(1), c] : [...S, c]));
+  const colorOf = (c) => POS_COLORS[sel.indexOf(c) % POS_COLORS.length];
   return (
     <div className="posgrid">
       <h3>Mjesto po kolima</h3>
+      <div className="pc-pick" role="group" aria-label="Klubovi na grafu">
+        {order.map((c) => <button key={c} type="button" aria-pressed={sel.includes(c)} style={sel.includes(c) ? { "--sc": colorOf(c) } : undefined} onClick={() => toggle(c)}>
+          <Jersey kit={ix.club[c].kit} size={14} />{ix.club[c].short || ix.club[c].name}</button>)}
+      </div>
+      <div className="pc-wrap">
+        <PosChart played={played} n={n} zones={z}
+          series={[...order.filter((c) => !sel.includes(c)).map((c) => ({ id: c, name: ix.club[c].name, pts: PB.pos[c], faint: true, color: "var(--muted)" })),
+            ...sel.map((c) => ({ id: c, name: ix.club[c].name, pts: PB.pos[c], color: colorOf(c) }))]} />
+      </div>
       <div className="tbl-wrap">
         <table className="st pos-t">
           <thead><tr><th className="l">Klub</th>{played.map((r) => (
