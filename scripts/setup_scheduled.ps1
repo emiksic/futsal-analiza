@@ -13,7 +13,8 @@ param([switch]$Upis, [switch]$Ukloni)
 $ErrorActionPreference = "Stop"
 
 $repo = Split-Path -Parent $PSScriptRoot
-$py = (Get-Command python -ErrorAction SilentlyContinue).Source
+$py = Join-Path $repo ".venv\Scripts\python.exe"   # venv u repou ima prednost
+if (-not (Test-Path $py)) { $py = (Get-Command python -ErrorAction SilentlyContinue).Source }
 if (-not $py) { $py = (Get-Command py -ErrorAction SilentlyContinue).Source }
 if (-not $py) { throw "Python nije pronađen u PATH-u." }
 New-Item -ItemType Directory -Force -Path (Join-Path $repo "run") | Out-Null
