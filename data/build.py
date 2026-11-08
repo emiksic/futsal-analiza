@@ -111,13 +111,13 @@ for ln in open(os.path.join(D, "schedule.txt"), encoding="utf-8"):
             name_side = {}
             for side in ("home", "away"):
                 club, R = m[side], {"players": [], "start": [], "gk": []}
-                if YOUTH: R["num"] = {}
+                R["num"] = {}     # broj na dresu na ovoj utakmici (zaključan po utakmici)
                 for num, name, gk, st in det[side]:
                     pid = player_id(club, name)     # isti broj zna nositi više igrača tijekom sezone
                     pl = players.setdefault(pid, {"id": pid, "club": club, "season": SEASON, "cat": CAT, "num": num, "name": name, "gk": gk})
                     if pl["num"] != num: problems.append(f"{mid}: {name} ({club}) broj {pl['num']} -> {num}")
                     pl["num"] = num; pl["gk"] = pl["gk"] or gk
-                    if YOUTH: R["num"][pid] = num
+                    R["num"][pid] = num
                     R["players"].append(pid); (R["gk"].append(pid) if gk else None); (R["start"].append(pid) if st else None)
                     name_side[(side, name)] = pid
                 m["roster"][side] = R

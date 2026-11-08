@@ -1,7 +1,7 @@
 import { Fragment, useState, useRef, useEffect } from "react";
 import { href, go, replaceClick, setLeaveGuard } from "../lib/router.js";
 import { update, uid, useStore, holdStart, holdDiscard, holdCommit, isHolding } from "../lib/store.js";
-import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL } from "../lib/derive.js";
+import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL, withMatchNumbers } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
 import { Jersey, Icon, Toast, NumInput, DateTimeInput } from "../components/ui.jsx";
 import { ShotTagger } from "./ShotTagger.jsx";
@@ -94,10 +94,11 @@ function LiveBar({ h }) {
   );
 }
 
-function MatchEditInner({ db, ix, id, tab = "osnovno" }) {
+function MatchEditInner({ db, ix: ix0, id, tab = "osnovno" }) {
   const h = useHold(id); h.id = id;
-  const m = ix.match[id];
+  const m = ix0.match[id];
   if (!m) return <div className="panel empty">Utakmica ne postoji.</div>;
+  const ix = withMatchNumbers(ix0, m);   // broj na dresu iz zapisnika ove utakmice
   const upd = (fn) => update((d) => fn(d.matches.find((x) => x.id === id), d));
   const s = score(m);
   const TABS = [["osnovno", "Osnovno"], ["zapisnik", "Zapisnik"], ["dogadaji", "Događaji"], ["udarci", "Udarci"], ["analiza", "Video analiza"]];
@@ -231,25 +232,39 @@ function Roster({ db, ix, m, upd }) {
   );
 }
 
+// Broj na dresu pamti se po utakmici (roster[side].num = {igrač: broj}), pa promjena u novom kolu ne mijenja stare utakmice.
+// Igračev glavni broj (players.num, za nove zapisnike i popis kluba) mijenja se samo ako je ovo njegova najnovija utakmica.
 function RosterCol({ db, ix, m, upd, side, season, cat }) {
   const club = ix.club[m[side]];
   const [nn, setNn] = useState(""); const [nm, setNm] = useState("");
   const r = m.roster[side] || { players: [], start: [], gk: [] };
-  const squad = db.players.filter((p) => p.club === club.id && p.season === season && p.cat === cat).sort((a, b) => a.num - b.num);
+  const base = (pid) => db.players.find((p) => p.id === pid);
+  const numOf = (p) => r.num?.[p.id] ?? p.num;
+  const squad = db.players.filter((p) => p.club === club.id && p.season === season && p.cat === cat).sort((a, b) => numOf(a) - numOf(b));
   const on = new Set(r.players), st = new Set(r.start), gk = new Set(r.gk);
-  const ed = (fn) => upd((x) => { x.roster[side] ||= { players: [], start: [], gk: [] }; fn(x.roster[side], x); });
+  const fix = (R) => { R.num = Object.fromEntries(R.players.map((pid) => [pid, R.num?.[pid] ?? base(pid)?.num ?? ""])); };
+  const ed = (fn) => upd((x) => { x.roster[side] ||= { players: [], start: [], gk: [] }; fn(x.roster[side], x); fix(x.roster[side]); });
   const togglePlayer = (p) => ed((R) => {
     if (R.players.includes(p.id)) { R.players = R.players.filter((i) => i !== p.id); R.start = R.start.filter((i) => i !== p.id); R.gk = R.gk.filter((i) => i !== p.id); }
     else if (R.players.length < MAX_ROSTER) { R.players.push(p.id); if (p.gk) R.gk.push(p.id); }
   });
   const toggle = (key, p) => ed((R) => { if (R[key].includes(p.id)) R[key] = R[key].filter((i) => i !== p.id); else if (key !== "start" || R.start.length < 5) R[key].push(p.id); });
   const setPlayer = (pid, fn) => update((d) => fn(d.players.find((p) => p.id === pid)));
+  const latest = (pid) => !db.matches.some((q) => q.id !== m.id && q.date > m.date && ["home", "away"].some((sd) => q.roster?.[sd]?.players?.includes(pid)));
+  const setNum = (p, raw) => {
+    const n = raw.replace(/\D/g, "").slice(0, 2);
+    update((d) => {
+      const x = d.matches.find((q) => q.id === m.id);
+      if (on.has(p.id)) { x.roster[side].num ||= {}; x.roster[side].num[p.id] = n; }
+      if (!on.has(p.id) || latest(p.id)) d.players.find((q) => q.id === p.id).num = n;
+    });
+  };
   const addPlayer = () => {
     const num = nn.trim(); if (!num) return;
     const id = uid(`${club.id}-`);
     update((d) => { d.players.push({ id, club: club.id, season, cat, num, name: nm.trim(), gk: false });
       const x = d.matches.find((q) => q.id === m.id); x.roster[side] ||= { players: [], start: [], gk: [] };
-      if (x.roster[side].players.length < MAX_ROSTER) x.roster[side].players.push(id); });
+      if (x.roster[side].players.length < MAX_ROSTER) { x.roster[side].players.push(id); x.roster[side].num = { ...(x.roster[side].num || {}), [id]: num }; } });
     setNn(""); setNm("");
   };
   const copyPrev = () => {
@@ -257,7 +272,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
       .sort((a, b) => b.date.localeCompare(a.date)).find((q) => q.roster[q.home === club.id ? "home" : "away"]?.players?.length);
     if (!prev) return;
     const src = prev.roster[prev.home === club.id ? "home" : "away"];
-    ed((R) => { R.players = [...src.players]; R.start = [...src.start]; R.gk = [...src.gk]; });
+    ed((R) => { R.players = [...src.players]; R.start = [...src.start]; R.gk = [...src.gk]; R.num = {}; });   // brojevi: igračev sadašnji
   };
   const gkStart = r.start.filter((p) => gk.has(p)).length;
   const ok5 = r.start.length === 5, okGk = gkStart === 1;
@@ -283,7 +298,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
         return (
           <div key={p.id} className={"rline" + (inR ? "" : " off")}>
             <input type="checkbox" className="check" checked={inR} onChange={() => togglePlayer(p)} aria-label={`U zapisniku: broj ${p.num}`} />
-            <input className="input sm num" value={p.num} onChange={(e) => setPlayer(p.id, (q) => { q.num = e.target.value.replace(/\D/g, "").slice(0, 2); })} aria-label="Broj na dresu" />
+            <input className="input sm num" value={numOf(p)} onChange={(e) => setNum(p, e.target.value)} aria-label="Broj na dresu" title={inR && r.num?.[p.id] != null && r.num[p.id] !== p.num ? `Na ovoj utakmici #${r.num[p.id]}, sada nosi #${p.num}` : undefined} />
             <input className="input sm" value={p.name} placeholder="Ime i prezime" onChange={(e) => setPlayer(p.id, (q) => { q.name = e.target.value; })} aria-label={`Ime igrača s brojem ${p.num}`} />
             <button className="tgl" aria-pressed={st.has(p.id)} disabled={!inR || (!st.has(p.id) && r.start.length >= 5)} onClick={() => toggle("start", p)} title="Početna petorka">5</button>
             <button className="tgl gk" aria-pressed={gk.has(p.id)} disabled={!inR} onClick={() => toggle("gk", p)} title="Golman">GK</button>
