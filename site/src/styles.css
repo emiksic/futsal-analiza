@@ -418,7 +418,7 @@ dl.keys dd { margin: 0; color: var(--muted); }
 .rcol-h .cnt { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
 .cnt .pill.ok { background: color-mix(in srgb, var(--win) 16%, transparent); color: var(--win); border-color: transparent; }
 .cnt .pill.bad { background: color-mix(in srgb, var(--live) 14%, transparent); color: var(--live); border-color: transparent; }
-.rline { display: grid; grid-template-columns: 34px 46px minmax(0, 1fr) auto auto auto; gap: 8px; align-items: center; padding: 6px 12px; border-bottom: 1px solid var(--line); }
+.rline { display: grid; grid-template-columns: 34px 46px minmax(0, 1fr) auto auto auto auto; gap: 8px; align-items: center; padding: 6px 12px; border-bottom: 1px solid var(--line); }
 .rline:last-child { border-bottom: 0; }
 .rline.off { opacity: .5; }
 .rline .n { font: 700 18px/1 var(--display); text-align: center; }
@@ -792,3 +792,5 @@ table.st { font-size: 13px; }
 .rdel-b { display: flex; gap: 6px; }
 .rline.dupn { background: color-mix(in srgb, var(--live) 12%, var(--surface)); box-shadow: inset 3px 0 0 var(--live); }
 .rline.dupn .input.num { border-color: var(--live); color: var(--live); font-weight: 700; }
+.tgl.cap[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
+.capk { font-weight: 700; }

@@ -261,9 +261,10 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
   const takenBy = (num, except) => r.players.filter((pid) => pid !== except).map((pid) => db.players.find((p) => p.id === pid)).find((p) => p && String(r.num?.[p.id] ?? p.num) === String(num));
   const okNum = (num, except) => { const t = takenBy(num, except); return !t || confirm(`Broj ${num} u ovom zapisniku već ima ${t.name || "drugi igrač"}. Dva igrača ne smiju imati isti broj, pa spremanje neće biti moguće dok to ne ispraviš.\n\nDodati svejedno?`); };
   const togglePlayer = (p) => { if (!on.has(p.id) && !okNum(numOf(p), p.id)) return; ed((R) => {
-    if (R.players.includes(p.id)) { R.players = R.players.filter((i) => i !== p.id); R.start = R.start.filter((i) => i !== p.id); R.gk = R.gk.filter((i) => i !== p.id); }
+    if (R.players.includes(p.id)) { R.players = R.players.filter((i) => i !== p.id); R.start = R.start.filter((i) => i !== p.id); R.gk = R.gk.filter((i) => i !== p.id); if (R.cap === p.id) delete R.cap; }
     else if (R.players.length < MAX_ROSTER) { R.players.push(p.id); if (p.gk) R.gk.push(p.id); if (R.start.length < 5) R.start.push(p.id); }   // prvih 5 dodanih = početna petorka
   }); };
+  const toggleCap = (p) => ed((R) => { if (R.cap === p.id) delete R.cap; else R.cap = p.id; });   // jedan kapetan po ekipi, po utakmici
   const toggle = (key, p) => ed((R) => { if (R[key].includes(p.id)) R[key] = R[key].filter((i) => i !== p.id); else if (key !== "start" || R.start.length < 5) R[key].push(p.id); });
   const setPlayer = (pid, fn) => update((d) => fn(d.players.find((p) => p.id === pid)));
   const latest = (pid) => !db.matches.some((q) => q.id !== m.id && q.date > m.date && ["home", "away"].some((sd) => q.roster?.[sd]?.players?.includes(pid)));
@@ -289,7 +290,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
       .sort((a, b) => b.date.localeCompare(a.date)).find((q) => q.roster[q.home === club.id ? "home" : "away"]?.players?.length);
     if (!prev) return;
     const src = prev.roster[prev.home === club.id ? "home" : "away"];
-    ed((R) => { R.players = [...src.players]; R.start = [...src.start]; R.gk = [...src.gk]; R.num = {}; });   // brojevi: igračev sadašnji
+    ed((R) => { R.players = [...src.players]; R.start = [...src.start]; R.gk = [...src.gk]; R.num = {}; if (src.cap) R.cap = src.cap; else delete R.cap; });   // brojevi: igračev sadašnji
   };
   // pretraga: po imenu (bez obzira na kvačice i velika slova) ili broju
   const norm = (t) => (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
@@ -303,7 +304,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
       d.players = d.players.filter((p) => p.id !== pid);
       for (const x of d.matches) for (const sd of ["home", "away"]) {
         const R = x.roster?.[sd]; if (!R?.players?.includes(pid)) continue;
-        R.players = R.players.filter((i) => i !== pid); R.start = (R.start || []).filter((i) => i !== pid); R.gk = (R.gk || []).filter((i) => i !== pid);
+        R.players = R.players.filter((i) => i !== pid); R.start = (R.start || []).filter((i) => i !== pid); R.gk = (R.gk || []).filter((i) => i !== pid); if (R.cap === pid) delete R.cap;
         if (R.num) delete R.num[pid];
       }
     });
@@ -319,6 +320,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
         <span className="cnt">
           <span className={"pill " + (r.players.length ? "ok" : "")}>{r.players.length}/{MAX_ROSTER} u zapisniku</span>
           <span className={"pill " + (ok5 ? "ok" : r.start.length ? "bad" : "")}>{r.start.length}/5 početna</span>
+          {r.players.length > 0 && !r.cap && <span className="pill warn">nema kapetana</span>}
           {r.start.length > 0 && <span className={"pill " + (okGk ? "ok" : "bad")}>{okGk ? "golman u petorci" : "petorka bez jednog golmana"}</span>}
           {dup.length > 0 && <span className="pill bad">isti broj: {[...new Set(dup)].join(", ")}</span>}
         </span>
@@ -326,7 +328,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
       <div className="toolbar" style={{ padding: "8px 12px", borderBottom: "1px solid var(--line)" }}>
         <button className="btn sm" onClick={copyPrev}>Kopiraj s prošle utakmice</button>
         <button className="btn sm ghost" onClick={() => ed((R) => { R.players = squad.slice(0, MAX_ROSTER).map((p) => p.id); R.gk = squad.filter((p) => p.gk).map((p) => p.id).filter((i) => R.players.includes(i)); })}>Označi sve</button>
-        <button className="btn sm ghost" onClick={() => ed((R) => { R.players = []; R.start = []; R.gk = []; })}>Očisti</button>
+        <button className="btn sm ghost" onClick={() => ed((R) => { R.players = []; R.start = []; R.gk = []; delete R.cap; })}>Očisti</button>
       </div>
       <div className="rsearch">
         <input className="input sm" type="search" value={q} placeholder="Traži igrača (ime ili broj)…" aria-label={`Traži igrača: ${club.name}`}
@@ -361,6 +363,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
             <input className="input sm" value={p.name} placeholder="Ime i prezime" onChange={(e) => setPlayer(p.id, (q) => { q.name = e.target.value; })} aria-label={`Ime igrača s brojem ${p.num}`} />
             <button className="tgl" aria-pressed={st.has(p.id)} disabled={!inR || (!st.has(p.id) && r.start.length >= 5)} onClick={() => toggle("start", p)} title="Početna petorka">5</button>
             <button className="tgl gk" aria-pressed={gk.has(p.id)} disabled={!inR} onClick={() => toggle("gk", p)} title="Golman">GK</button>
+            <button className="tgl cap" aria-pressed={r.cap === p.id} disabled={!inR} onClick={() => toggleCap(p)} title="Kapetan">K</button>
             <button className="rdel-x" onClick={() => setDel(p.id)} title="Obriši igrača" aria-label={`Obriši igrača ${p.name || "#" + numOf(p)}`}>{Icon.trash()}</button>
           </div>);
       })}

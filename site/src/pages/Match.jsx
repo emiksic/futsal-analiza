@@ -462,7 +462,7 @@ drawHeat(ctx, c, pts, 3.2, A.D?.court || { L: 40, W: 20 });
             return (
               <button key={side + pid} className="pp" style={pos(side === "home" ? x : -x, side === "home" ? y : -y)} aria-pressed={sel?.pid === pid}
                 onClick={() => click(side, pid)} title={keyOf(side, pid) ? "Prikaži toplinsku mapu" : playerName(p)}>
-                <Jersey kit={k2} size={34} num={p?.num} /><span>{(p?.name && !playerName(p).startsWith("Igrač #") ? playerName(p).replace(/ #\d+$/, "") : "") || (gk ? "golman" : "")}</span>
+                <Jersey kit={k2} size={34} num={p?.num} /><span>{(p?.name && !playerName(p).startsWith("Igrač #") ? playerName(p).replace(/ #\d+$/, "") : "") || (gk ? "golman" : "")}{r[side].cap === pid && <b className="capk" title="Kapetan"> (K)</b>}</span>
               </button>);
           }))}
         </div>
@@ -478,7 +478,7 @@ drawHeat(ctx, c, pts, 3.2, A.D?.court || { L: 40, W: 20 });
               <h4><Jersey kit={c.kit} size={20} />{c.name}, klupa</h4>
               <ul>{list.map((p) => (
                 <li key={p.id}><button onClick={() => click(side, p.id)} aria-pressed={sel?.pid === p.id}>
-                  <span className="n">{p.num}</span><span>{playerName(p)}</span>{r[side].gk.includes(p.id) ? <span className="tag">GK</span> : <span />}
+                  <span className="n">{p.num}</span><span>{playerName(p)}{r[side].cap === p.id && <b className="capk" title="Kapetan"> (K)</b>}</span>{r[side].gk.includes(p.id) ? <span className="tag">GK</span> : <span />}
                 </button></li>))}</ul>
             </div>);
         })}
