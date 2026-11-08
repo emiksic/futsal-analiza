@@ -8,7 +8,8 @@ Pokretanje (s korijena repoa):
 
 Pravila (po utakmici, uparenoj po natjecanju, kolu, domaćinu i gostu):
   - utakmica na Semaforu završena, a u bazi nema golova  -> upiše zapisnik, golove, kartone, kaznene, status Kraj
-  - u bazi je već upisana i golovi se slažu               -> samo nadopuni: točne sekunde, kapetane, oznake penala
+  - u bazi je već upisana i golovi se slažu               -> samo nadopuni: točne sekunde, kapetane, oznake penala,
+                                                            kartone (samo ako u bazi za tu utakmicu nema nijednog)
   - u bazi je upisana, ali se razlikuje                   -> NIŠTA ne mijenja, javi razliku
   - promijenjen termin (datum/sat) neodigrane utakmice     -> ispravi termin
 Nikad ne briše utakmice, događaje ni igrače. Ne objavljuje ništa na mreže.
@@ -503,8 +504,12 @@ class Sync:
             if roster.get(side): roster[side] = R
         # kartoni: samo usporedba (broj po vrsti i strani)
         def cards(lst): return sorted((e["side"], e["type"]) for e in lst if e.get("type") in ("yellow", "red"))
-        if cards(ev) != cards(built["events"]):
-            cs, cm = cards(built["events"]), cards(ev)
+        cs, cm = cards(built["events"]), cards(ev)
+        if cs and not cm:                                       # u bazi nema nijednog kartona: upiši ih sa Semafora
+            ev += [e for e in built["events"] if e["type"] in ("yellow", "red")]
+            ev.sort(key=lambda e: (e.get("period", 0), e.get("sec", 0)))
+            changed = True; notes.append(f"kartoni ({len(cs)})")
+        elif cs != cm:
             diffs.append(f"kartoni: u bazi {len(cm)}, na Semaforu {len(cs)}")
         if diffs: self.diffs.append(f"{label}: " + "; ".join(diffs))
         if changed:

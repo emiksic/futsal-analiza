@@ -180,3 +180,23 @@ def test_schedule_time_update():
 def test_broken_page_writes_nothing():
     s, db = run(BASE, fetch_map={MATCH_URL: "<html><main>nešto drugo</main></html>"})
     assert s.errors and not db.patches
+
+
+def test_cards_filled_when_none_in_db():
+    s1, db1 = run(BASE)
+    body = db1.patches[0][1]
+    ev = [e for e in body["events"] if e["type"] not in ("yellow", "red")]      # utakmica bez kartona (npr. stari uvoz kupa)
+    m = dict(BASE, status="finished", events=ev, roster=body["roster"])
+    s, db = run(m, extra_players=db1.inserted)
+    assert not s.diffs, s.diffs
+    out = db.patches[0][1]["events"]
+    assert sum(1 for e in out if e["type"] in ("yellow", "red")) == 7 and "kartoni (7)" in s.done[0]
+
+
+def test_cards_different_reports_only():
+    s1, db1 = run(BASE)
+    body = db1.patches[0][1]
+    ev = [e for e in body["events"] if not (e["type"] == "yellow" and e["side"] == "away")]   # dio kartona fali
+    m = dict(BASE, status="finished", events=ev, roster=body["roster"])
+    s, db = run(m, extra_players=db1.inserted)
+    assert not db.patches and any("kartoni" in d for d in s.diffs)
