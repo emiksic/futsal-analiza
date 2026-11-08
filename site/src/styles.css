@@ -802,3 +802,41 @@ table.st { font-size: 13px; }
 .tsearch li + li button { border-top: 1px solid var(--line); }
 .tsearch li button:hover { background: var(--surface-2); }
 .prevc { font-size: 12px; }
+
+/* Admin: popis događaja (domaći lijevo, gosti desno) */
+.etl { border-top: 1px solid var(--line); }
+.etl-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 16px; flex-wrap: wrap; }
+.etl-head { display: grid; grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); gap: 8px; padding: 8px 16px; font-weight: 700; border-block: 1px solid var(--line); }
+.etl-head span { display: flex; align-items: center; gap: 8px; }
+.etl-head span:first-child { justify-content: flex-end; }
+.etl-per { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 12px; align-items: center; padding: 8px 16px; background: var(--surface-2); border-bottom: 1px solid var(--line); font: 600 13px/1.2 var(--body); color: var(--muted); text-align: center; }
+.etl-per b { color: var(--fg); }
+.etl-per .fl:first-child { text-align: right; }
+.etl-per .fl:last-child { text-align: left; }
+.etl-per .fl.hot, .etl .hot { color: var(--live); font-weight: 700; }
+.etl-row { display: grid; grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); gap: 8px; align-items: center; padding: 7px 16px; border-bottom: 1px solid var(--line); }
+.etl-row.minor { padding-block: 4px; }
+.etl-row .min { font: 700 15px/1 var(--display); text-align: center; color: var(--muted); }
+.etl-ev { display: flex; gap: 10px; align-items: flex-start; min-width: 0; padding: 4px 6px; border-radius: 2px; }
+.etl-ev.home { flex-direction: row-reverse; text-align: right; }
+.etl-ev.editing { outline: 2px solid var(--primary); background: var(--primary-soft); }
+.etl-ev .ico { flex: none; display: inline-grid; place-items: center; width: 22px; min-height: 22px; }
+.etl-ev .txt { display: grid; gap: 2px; min-width: 0; line-height: 1.3; }
+.etl-ev .txt small { color: var(--muted); font-size: 12px; }
+.etl-ev.t-goal .main, .etl-ev.t-owngoal .main { font-weight: 600; }
+.etl-ev .esc { font-family: var(--display); margin-left: 4px; }
+.etl-ev .acts { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; }
+.etl-ev.home .acts { justify-content: flex-end; }
+.etl-ev .acts.confirm { align-items: center; gap: 6px; }
+.etl-ev .input.sm { max-width: 220px; }
+.etl-ev.home .input.sm { justify-self: end; }
+.lnk { border: 0; background: none; padding: 0; color: var(--muted); cursor: pointer; font: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.lnk:hover, .lnk[aria-pressed="true"] { color: var(--fg); }
+.lnk.danger:hover { color: var(--live); }
+.etl-sketch { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.etl .pnum { font-family: var(--display); }
+@media (max-width: 560px) {
+  .etl-row, .etl-head { grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr); padding-inline: 8px; gap: 4px; }
+  .etl-ev { gap: 6px; }
+}
+.etl-row .min small { display: block; font: 500 11px/1 var(--body); margin-top: 3px; }

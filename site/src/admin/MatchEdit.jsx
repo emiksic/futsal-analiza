@@ -402,11 +402,11 @@ function Events({ ix, m, upd }) {
     if (editing) {
       upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact", "pen", "dist"].includes(k))),
         type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields() }); });
-      setEditing(null); setF((o) => ({ ...empty, type: o.type, side: o.side })); return;
+      setEditing(null); setF((o) => ({ ...empty, side: o.side })); return;   // nakon upisa uvijek natrag na Gol
     }
     upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields() });
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
-    setF((o) => ({ ...o, time: "", player: "", assist: "" }));
+    setF((o) => ({ ...empty, side: o.side }));   // nakon upisa vrsta se vraća na Gol (da prekršaj ne ostane odabran)
   };
   // najnovije gore; u istoj minuti/sekundi ono upisano kasnije ide iznad (redoslijed upisa = redoslijed u utakmici)
   const order = new Map(m.events.map((e, i) => [e.id, i]));
@@ -452,38 +452,9 @@ function Events({ ix, m, upd }) {
           </div></div>}
       </form>
       {!pl.length && needsPlayer && <div className="pb"><div className="callout warn">Zapisnik za {ix.club[m[plSide]].name} nije unesen, pa igrača nije moguće odabrati.</div></div>}
-      <div className="tbl-wrap">
-        <table className="atbl">
-          <thead><tr><th>Min.</th><th>Vrsta</th><th>Ekipa</th><th>Igrač</th><th /></tr></thead>
-          <tbody>{evs.map((e) => (<Fragment key={e.id}>
-            <tr>
-              <td style={{ font: "700 16px/1 var(--display)" }}>{minute(e)}</td>
-              <td>{L[e.type]}</td>
-              <td><span className="mt">{(() => { const s = e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side; return <><Jersey kit={ix.club[m[s]].kit} size={18} />{ix.club[m[s]].short}</>; })()}</span></td>
-              <td>{e.type === "timeout" ? "" : (
-                <span style={{ display: "inline-flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
-                  <select className="input sm" value={e.player || ""} onChange={(ev) => setPlayer(e.id, ev.target.value)} aria-label="Igrač" style={{ minWidth: 190 }}>
-                    <option value="">— nije upisan —</option>{roster(e.side).map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
-                  </select>
-                  {e.type === "owngoal" ? <span className="muted small">({ix.club[m[e.side]].short}, u svoju mrežu)</span> : null}
-                  {e.assist ? <span className="muted small">asist. {ix.player[e.assist]?.num}</span> : null}
-                </span>)}</td>
-              <td className="nowrap">{e.type === "goal" && <button className="btn sm ghost" onClick={() => setSketch(sketch === e.id ? null : e.id)} aria-pressed={sketch === e.id}>Skica{e.map ? " ✓" : ""}</button>}
-                <button className="btn sm ghost" onClick={() => edit(e)} aria-pressed={editing === e.id}>Uredi</button>
-                <button className="btn sm ghost danger" onClick={() => { if (editing === e.id) { setEditing(null); setF(empty); } upd((x) => { x.events = x.events.filter((q) => q.id !== e.id); }); }} aria-label="Obriši događaj">{Icon.trash()}</button></td>
-            </tr>
-            {sketch === e.id && <tr><td colSpan={5}>
-              <div style={{ display: "flex", gap: 12, alignItems: "flex-start", flexWrap: "wrap", padding: "6px 0" }}>
-                <GoalSketch map={e.map} color={e.side === "home" ? "var(--primary)" : "var(--signal)"} onChange={(mp) => upd((x) => { const q = x.events.find((z) => z.id === e.id); q.map = mp; })} />
-                <div className="muted small" style={{ maxWidth: 260 }}>Ekipa uvijek napada <b>desni</b> gol: ako na videu napada ulijevo, klikni zrcalno. Prvi klik: gdje je strijelac pucao. Drugi klik (neobavezno): gdje je bio dodavač. Treći klik kreće ispočetka.
-                  {e.map?.auto && <div style={{ marginTop: 6 }}>Skica je automatska. Kad je promijeniš, postaje ručna i analiza je više ne mijenja.</div>}
-                  <div style={{ marginTop: 8 }}><button className="btn sm ghost" onClick={() => upd((x) => { delete x.events.find((z) => z.id === e.id).map; })}>Obriši skicu</button></div></div>
-                <GoalVideo m={m} e={e} upd={upd} />
-              </div></td></tr>}
-          </Fragment>))}</tbody>
-        </table>
-        {!evs.length && <div className="empty">Još nema događaja.</div>}
-      </div>
+      <EventTimeline ix={ix} m={m} evs={evs} order={order} roster={roster} editing={editing} edit={edit} setPlayer={setPlayer}
+        sketch={sketch} setSketch={setSketch} upd={upd}
+        onDelete={(e) => { if (editing === e.id) { setEditing(null); setF(empty); } upd((x) => { x.events = x.events.filter((q) => q.id !== e.id); }); }} />
     </>
   );
 }
@@ -553,6 +524,98 @@ function Analysis({ ix, m, upd }) {
         <div><button className="btn sm" onClick={copy}>Kopiraj</button></div>
         <small>Dok nema zajedničke baze, ovo se sprema kao JSON uz video. Kasnije ga skripta sama povlači.</small></div>
       <Toast msg={toast} />
+    </div>
+  );
+}
+
+// Popis događaja kao na javnoj stranici: domaći lijevo, gosti desno, minuta u sredini, najnovije gore.
+// Uz gol stanje rezultata, uz prekršaj redni broj u poluvremenu (od 5. upozorenje za udarac s 10 m).
+function EventTimeline({ ix, m, evs, order, roster, editing, edit, setPlayer, sketch, setSketch, upd, onDelete }) {
+  const [ask, setAsk] = useState(null);           // id događaja za koji se traži potvrda brisanja
+  const [showFouls, setShowFouls] = useState(true);
+  // kronološki prolaz: stanje nakon svakog gola, redni broj prekršaja po ekipi i poluvremenu
+  const info = {}, sc = [0, 0], fc = {}, perEnd = {};
+  for (const e of [...evs].sort((a, b) => absSec(a) - absSec(b) || order.get(a.id) - order.get(b.id))) {
+    if (e.type === "goal") sc[e.side === "home" ? 0 : 1]++;
+    if (e.type === "owngoal") sc[e.side === "home" ? 1 : 0]++;
+    if (e.type === "goal" || e.type === "owngoal") info[e.id] = { sc: [...sc] };
+    if (e.type === "foul") { const k = e.side + e.period; fc[k] = (fc[k] || 0) + 1; info[e.id] = { foulN: fc[k] }; }
+    perEnd[e.period] = [...sc];
+  }
+  const club = (side) => ix.club[m[side]];
+  const pl = (id) => ix.player[id];
+  const who = (p) => p ? <><b className="pnum">{p.num}</b> {p.name || "(bez imena)"}</> : null;
+  const shown = showFouls ? evs : evs.filter((e) => e.type !== "foul");
+  const periods = [...new Set(shown.map((e) => e.period))];
+  const PER = { 1: "1. poluvrijeme", 2: "2. poluvrijeme", 3: "Produžeci" };
+  const cnt = (side, per) => fc[side + per] || 0;
+  if (!evs.length) return <div className="empty">Još nema događaja.</div>;
+  return (
+    <div className="etl">
+      <div className="etl-bar">
+        <span className="small muted">{shown.length} događaja{!showFouls && evs.length !== shown.length ? ` (${evs.length - shown.length} prekršaja skriveno)` : ""}</span>
+        <label className="small" style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>
+          <input type="checkbox" className="check" checked={showFouls} onChange={(e) => setShowFouls(e.target.checked)} />prikaži prekršaje</label>
+      </div>
+      <div className="etl-head"><span><Jersey kit={club("home").kit} size={20} />{club("home").name}</span><span /><span>{club("away").name}<Jersey kit={club("away").kit} size={20} /></span></div>
+      {periods.map((per) => (
+        <Fragment key={per}>
+          <div className="etl-per">
+            <span className={cnt("home", per) >= 5 ? "fl hot" : "fl"} title="Akumulirani prekršaji domaćina">{cnt("home", per)} prek.</span>
+            <span>{PER[per] || `${per}. dio`}{perEnd[per] && <b> {perEnd[per][0]}:{perEnd[per][1]}</b>}</span>
+            <span className={cnt("away", per) >= 5 ? "fl hot" : "fl"} title="Akumulirani prekršaji gosta">{cnt("away", per)} prek.</span>
+          </div>
+          {shown.filter((e) => e.period === per).map((e) => {
+            const side = e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side;   // autogol stoji kod ekipe kojoj se pripisuje
+            const p = pl(e.player), I = info[e.id] || {};
+            let icon, main, sub = null;
+            if (e.type === "goal" || e.type === "owngoal") {
+              icon = Icon.ball(18);
+              main = <>{who(p) || <span className="muted">igrač nije upisan</span>} <b className="esc">({I.sc[0]}:{I.sc[1]})</b></>;
+              sub = e.type === "owngoal" ? `autogol, ${club(e.side).short} u svoju mrežu` : e.pen ? `kazneni udarac${e.dist ? ` s ${e.dist} m` : ""}` : e.assist ? <>asist. {who(pl(e.assist))}</> : null;
+            } else if (e.type === "yellow") { icon = <span className="card-y" />; main = who(p) || (e.staff ? "Stožer" : <span className="muted">igrač nije upisan</span>); sub = "žuti karton"; }
+            else if (e.type === "red") { icon = <span className="card-r" />; main = who(p) || (e.staff ? "Stožer" : <span className="muted">igrač nije upisan</span>); sub = e.secondYellow ? "drugi žuti" : "crveni karton"; }
+            else if (e.type === "penmiss") { icon = <span className="so-miss">✕</span>; main = who(p) || <span className="muted">igrač nije upisan</span>; sub = `promašen kazneni udarac${e.dist ? ` s ${e.dist} m` : ""}`; }
+            else if (e.type === "foul") { icon = Icon.whistle(16); main = <span className={I.foulN >= 5 ? "hot" : ""}>{I.foulN}. prekršaj</span>; sub = I.foulN >= 5 ? "sljedeći donosi udarac s 10 m" : null; }
+            else if (e.type === "timeout") { icon = Icon.timeout(16); main = "Time-out"; }
+            const needsP = ["goal", "owngoal", "yellow", "red", "penmiss"].includes(e.type) && !e.player && !e.staff;
+            const card = (
+              <div className={`etl-ev ${side} t-${e.type}` + (editing === e.id ? " editing" : "")}>
+                <span className="ico">{icon}</span>
+                <span className="txt">
+                  <span className="main">{main}</span>
+                  {sub && <small>{sub}</small>}
+                  {needsP && <select className="input sm" value="" onChange={(ev) => setPlayer(e.id, ev.target.value)} aria-label="Odaberi igrača">
+                    <option value="">odaberi igrača…</option>{roster(e.side).map((q) => <option key={q.id} value={q.id}>{q.num} {q.name}</option>)}</select>}
+                  {ask === e.id ? (
+                    <span className="acts confirm">Obrisati? <button className="btn sm danger" onClick={() => { onDelete(e); setAsk(null); }}>Obriši</button>
+                      <button className="btn sm ghost" autoFocus onClick={() => setAsk(null)}>Ne</button></span>
+                  ) : (
+                    <span className="acts">
+                      <button className="lnk" onClick={() => edit(e)} aria-pressed={editing === e.id}>Uredi</button>
+                      {e.type === "goal" && <button className="lnk" onClick={() => setSketch(sketch === e.id ? null : e.id)} aria-pressed={sketch === e.id}>Skica{e.map ? " ✓" : ""}</button>}
+                      <button className="lnk danger" onClick={() => setAsk(e.id)} aria-label="Obriši događaj">Obriši</button>
+                    </span>)}
+                </span>
+              </div>);
+            return (
+              <Fragment key={e.id}>
+                <div className={"etl-row" + (e.type === "foul" ? " minor" : "")}>
+                  {side === "home" ? card : <span />}
+                  <span className="min">{minute(e)}<small>{(() => { const t = absSec(e); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`; })()}</small></span>
+                  {side === "away" ? card : <span />}
+                </div>
+                {sketch === e.id && (
+                  <div className="etl-sketch">
+                    <GoalSketch map={e.map} color={e.side === "home" ? "var(--primary)" : "var(--signal)"} onChange={(mp) => upd((x) => { const q = x.events.find((z) => z.id === e.id); q.map = mp; })} />
+                    <div className="muted small" style={{ maxWidth: 260 }}>Ekipa uvijek napada <b>desni</b> gol: ako na videu napada ulijevo, klikni zrcalno. Prvi klik: gdje je strijelac pucao. Drugi klik (neobavezno): gdje je bio dodavač. Treći klik kreće ispočetka.
+                      {e.map?.auto && <div style={{ marginTop: 6 }}>Skica je automatska. Kad je promijeniš, postaje ručna i analiza je više ne mijenja.</div>}
+                      <div style={{ marginTop: 8 }}><button className="btn sm ghost" onClick={() => upd((x) => { delete x.events.find((z) => z.id === e.id).map; })}>Obriši skicu</button></div></div>
+                    <GoalVideo m={m} e={e} upd={upd} />
+                  </div>)}
+              </Fragment>);
+          })}
+        </Fragment>))}
     </div>
   );
 }
