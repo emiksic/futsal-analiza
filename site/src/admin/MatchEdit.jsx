@@ -403,7 +403,9 @@ function Events({ ix, m, upd }) {
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
     setF((o) => ({ ...o, time: "", player: "", assist: "" }));
   };
-  const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(b) - absSec(a));
+  // najnovije gore; u istoj minuti/sekundi ono upisano kasnije ide iznad (redoslijed upisa = redoslijed u utakmici)
+  const order = new Map(m.events.map((e, i) => [e.id, i]));
+  const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(b) - absSec(a) || order.get(b.id) - order.get(a.id));
   const edit = (e) => {
     setEditing(e.id);
     setF({ type: e.type, side: e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side, period: e.period,

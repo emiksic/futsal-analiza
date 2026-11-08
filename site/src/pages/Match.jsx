@@ -136,7 +136,8 @@ function Incidents({ m, ix }) {
   useEffect(() => { if (!sk) return; const k = (ev) => ev.key === "Escape" && setSk(null); addEventListener("keydown", k); return () => removeEventListener("keydown", k); }, [sk]);
   const cbGoal = comeback(m)?.goal;
   if (m.status !== "finished" && !m.events.length) return <div className="empty">Utakmica još nije odigrana.</div>;
-  const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(a) - absSec(b));
+  const order = new Map(m.events.map((e, i) => [e.id, i]));   // isto vrijeme → redoslijed upisa
+  const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(a) - absSec(b) || order.get(a.id) - order.get(b.id));
   const cnt = { home: {}, away: {} }, sc = [0, 0], so = [0, 0], kick = { home: 0, away: 0 }, rows = [];
   const PER = { 3: "Produžeci", 4: "Kazneni udarci" };
   let per = 0;
