@@ -19,6 +19,7 @@ i obavijest na mobitel preko ntfy (u .env: NTFY_TOPIC=nesto-tajno; aplikacija nt
 Obavijest se šalje samo kad je nešto upisano ili se pojavila nova razlika.
 
 Ključ baze: SUPABASE_SECRET_KEY u .env (kao upload_analysis.py).
+S --upis prvo napravi backup baze (scripts/backup_db.py) ako zadnji nije mlađi od 6 sati.
 
 Windows Task Scheduler (subota i nedjelja svakih 30 min od 12 do 23 h; prilagodi putanje):
   schtasks /Create /TN "HMNL Semafor" /SC WEEKLY /D SAT,SUN /ST 12:00 /RI 30 /DU 11:00 ^
@@ -584,6 +585,13 @@ def main():
     a = ap.parse_args()
     env = load_env()
     dbh = DB(env["SUPABASE_URL"], env.get("SUPABASE_SECRET_KEY") or env.get("SUPABASE_SERVICE_ROLE_KEY"))
+    if a.upis:                                    # sigurnosni backup prije upisa (najviše jednom u 6 sati)
+        try:
+            from backup_db import make_backup, last_backup_age_hours
+            age = last_backup_age_hours()
+            if age is None or age > 6: make_backup(dbh.url, dbh.key, quiet=True)
+        except Exception as e:
+            sys.exit(f"Backup prije upisa nije uspio ({e}); ništa nije upisano.")
     sync = Sync(dbh, write=a.upis)
     for comp in (a.natjecanje or list(COMPS)):
         try: sync.run_comp(comp, COMPS[comp], a.kolo, a.dana, a.sve)

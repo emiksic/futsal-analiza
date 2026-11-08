@@ -32,3 +32,6 @@ data/private/
 
 # tajni ključevi (Supabase secret key) - nikad u repo
 .env
+
+# backupi baze (puna imena igrača): samo lokalno
+/backups/
