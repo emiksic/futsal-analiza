@@ -153,6 +153,25 @@ def ev_minute(e):
     t = ev_total(e); return max(1, -(-t // 60))
 
 
+CACHE_HOURS = 24
+CACHE_FILE = ROOT / "run" / "semafor_cache.json"
+
+
+def match_sig(m):
+    """Potpis utakmice u bazi: promijeni se čim netko izmijeni događaje, zapisnik ili status."""
+    return hashlib.sha1(json.dumps([m.get("status"), m.get("events"), m.get("roster"), m.get("result")], sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:16]
+
+
+def load_cache():
+    try: return json.loads(CACHE_FILE.read_text(encoding="utf-8"))
+    except Exception: return {}
+
+
+def save_cache(c):
+    CACHE_FILE.parent.mkdir(exist_ok=True)
+    tmp = CACHE_FILE.with_suffix(".tmp"); tmp.write_text(json.dumps(c, ensure_ascii=False), encoding="utf-8"); tmp.replace(CACHE_FILE)
+
+
 def rid(prefix="e", n=7):
     return prefix + "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(n))
 
@@ -328,8 +347,11 @@ class DB:
 
 # ---------------------------------------------------------------- usklađivanje
 class Sync:
-    def __init__(self, db, write=False):
+    def __init__(self, db, write=False, cache=None):
         self.db, self.write = db, write
+        # utakmice koje su već usklađene: ne učitavaju se ponovno dok se ne promijeni rezultat na Semaforu
+        # ili utakmica u bazi (tvoja izmjena), a najkasnije nakon CACHE_HOURS ponovno se provjere
+        self.cache = cache if cache is not None else {}
         self.done, self.diffs, self.errors, self.info = [], [], [], []
         clubs = db.get("clubs?select=id,name,full_name,short")
         self.club_by_key = {}
@@ -338,6 +360,7 @@ class Sync:
                 if n: self.club_by_key.setdefault(club_key(n), c["id"])
         self.club_name = {c["id"]: c["name"] for c in clubs}
         self.players = {}           # (club, cat) -> [igrači]
+        self.skipped = 0
 
     def club(self, sem_name):
         if sem_name in CLUB_ALIASES: return CLUB_ALIASES[sem_name]
@@ -369,6 +392,19 @@ class Sync:
         if not s["score"]:                                      # neodigrana: samo termin
             return self.sync_time(label, s, m)
         if not s["url"]: self.info.append(f"{label}: Semafor ima rezultat, ali nema stranicu utakmice"); return
+        key, dbsig = s["url"], match_sig(m)
+        c = self.cache.get(key)
+        if c and c.get("score") == list(s["score"]) + list(s.get("pen") or []) and c.get("db") == dbsig and time.time() - c.get("at", 0) < CACHE_HOURS * 3600:
+            self.diffs += c.get("diffs", []); self.info += c.get("info", []); self.skipped += 1
+            return
+        n_done, n_err, n_diff, n_info = len(self.done), len(self.errors), len(self.diffs), len(self.info)
+        self._sync_page(label, cat, cup, s, m)
+        if len(self.done) == n_done and len(self.errors) == n_err:   # ništa za upisati: zapamti (s razlikama, da se i dalje javljaju)
+            self.cache[key] = {"score": list(s["score"]) + list(s.get("pen") or []), "db": dbsig, "at": time.time(),
+                               "diffs": self.diffs[n_diff:], "info": self.info[n_info:]}
+        else: self.cache.pop(key, None)
+
+    def _sync_page(self, label, cat, cup, s, m):
         try: d = parse_match(fetch(s["url"]))
         except SemaforError as e: self.errors.append(f"{label}: {e}"); return
         for u in d["unknown"]: self.info.append(f"{label}: nepoznat {u}")
@@ -586,7 +622,7 @@ def report(sync, write, args, env, dbh):
     if sync.info: lines += ["NAPOMENE:"] + [f"  {x}" for x in sync.info]
     summary = (f"{'Upisano' if write else 'Za upis'}: {len(sync.done)}, razlike: {len(sync.diffs)}"
                + (f", greške: {len(sync.errors)}" if sync.errors else ""))
-    print(time.strftime("%Y-%m-%d %H:%M"), "·", summary)
+    print(time.strftime("%Y-%m-%d %H:%M"), "·", summary + (f" · preskočeno (već usklađeno): {sync.skipped}" if sync.skipped else ""))
     for ln in lines: print(ln)
     if not lines: print("Sve se slaže, nema ništa novo.")
     # stanje prošlog pokretanja: obavijest samo kad je nešto novo
@@ -621,6 +657,7 @@ def main():
     ap.add_argument("--sve", action="store_true", help="sve odigrane utakmice sezone")
     ap.add_argument("--uvijek-javi", action="store_true", help="pošalji obavijest i kad nema ništa novo")
     ap.add_argument("--bez-zapisa", action="store_true", help="ne zapisuj izvještaj u bazu")
+    ap.add_argument("--bez-cachea", action="store_true", help="ponovno učitaj i već usklađene utakmice")
     a = ap.parse_args()
     env = load_env()
     dbh = DB(env["SUPABASE_URL"], env.get("SUPABASE_SECRET_KEY") or env.get("SUPABASE_SERVICE_ROLE_KEY"))
@@ -631,11 +668,12 @@ def main():
             if age is None or age > 6: make_backup(dbh.url, dbh.key, quiet=True)
         except Exception as e:
             sys.exit(f"Backup prije upisa nije uspio ({e}); ništa nije upisano.")
-    sync = Sync(dbh, write=a.upis)
+    sync = Sync(dbh, write=a.upis, cache={} if a.bez_cachea else load_cache())
     for comp in (a.natjecanje or list(COMPS)):
         try: sync.run_comp(comp, COMPS[comp], a.kolo, a.dana, a.sve)
         except SemaforError as e: sync.errors.append(f"{sync.label(comp)}: {e}")
         except RuntimeError as e: sync.errors.append(f"{sync.label(comp)}: baza: {e}")
+    if a.upis or not sync.done: save_cache(sync.cache)        # u provjeri se ne pamte utakmice koje bi tek trebalo upisati
     report(sync, a.upis, a, env, dbh)
     sys.exit(1 if sync.errors else 0)
 

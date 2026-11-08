@@ -248,3 +248,24 @@ def test_shootout_read_when_marked():
         '<div class="playerName"><a>Gostujući Dva</a></div></li></ul></div><div class="events events_main">')
     d = S.parse_match(h)
     assert d["shootout_score"] == (1, 0) and [(k["side"], k["scored"]) for k in d["shootout"]] == [("home", True), ("away", False)]
+
+
+def test_cache_skips_synced_match_and_rechecks_after_db_change():
+    s1, db1 = run(BASE)
+    body = db1.patches[0][1]
+    m = dict(BASE, status="finished", events=body["events"], roster=body["roster"], source="HNS Semafor")
+    cache, fetched = {}, []
+    pages = {S.COMPS["juniori-2026-27"]["url"]: html("natjecanje-juniori.html"), MATCH_URL: html("utakmica-universitas-crnica.html")}
+    orig = S.fetch
+    S.fetch = lambda url, tries=3: (fetched.append(url), pages[url])[1]
+    try:
+        for _ in range(2):
+            s = S.Sync(FakeDB(copy.deepcopy(m), db1.inserted), write=True, cache=cache)
+            s.run_comp("juniori-2026-27", S.COMPS["juniori-2026-27"], only_round=4)
+        assert fetched.count(MATCH_URL) == 1 and s.skipped == 1       # drugi put stranica utakmice nije učitana
+        m2 = dict(m, events=m["events"][:-1])                          # izmjena u bazi -> ponovna provjera
+        s = S.Sync(FakeDB(copy.deepcopy(m2), db1.inserted), write=True, cache=cache)
+        s.run_comp("juniori-2026-27", S.COMPS["juniori-2026-27"], only_round=4)
+        assert fetched.count(MATCH_URL) == 2
+    finally:
+        S.fetch = orig
