@@ -402,11 +402,11 @@ function Events({ ix, m, upd }) {
     if (sec == null) return;
     const side = f.type === "owngoal" ? other(f.side) : f.side;   // autogol: f.side = ekipa kojoj se pripisuje
     if (editing) {
-      upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact", "pen", "dist"].includes(k))),
-        type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...exactF() }); });
+      upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact", "pen", "dist", "staff"].includes(k))),
+        type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...exactF() }); });
       setEditing(null); setF((o) => ({ ...empty, side: o.side })); return;   // nakon upisa uvijek natrag na Gol
     }
-    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player ? { player: f.player } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...exactF() });
+    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...exactF() });
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
     setF((o) => ({ ...empty, side: o.side }));   // nakon upisa vrsta se vraća na Gol (da prekršaj ne ostane odabran)
   };
@@ -417,7 +417,7 @@ function Events({ ix, m, upd }) {
     setEditing(e.id);
     setF({ type: e.type, side: e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side, period: e.period,
       // točno vrijeme (exact) kao mm:ss; inače samo minuta (37:30 sa Semafora → "38"), da uređivanje ne izmisli sekunde
-      time: (() => { const t = (e.period - 1) * 1200 + e.sec; return e.exact ? `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}` : String(parseInt(minute(e), 10)); })(), player: e.player || "", assist: e.assist || "", pen: !!e.pen, dist: e.dist ? String(e.dist) : "" });
+      time: (() => { const t = (e.period - 1) * 1200 + e.sec; return e.exact ? `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}` : String(parseInt(minute(e), 10)); })(), player: e.staff && !e.player ? "__staff" : e.player || "", assist: e.assist || "", pen: !!e.pen, dist: e.dist ? String(e.dist) : "" });
     document.querySelector(".evform")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
   const setPlayer = (id, pid) => upd((x) => { x.events = x.events.map((q) => q.id !== id ? q : (pid ? { ...q, player: pid } : Object.fromEntries(Object.entries(q).filter(([k]) => k !== "player")))); });
@@ -438,6 +438,7 @@ function Events({ ix, m, upd }) {
         {needsPlayer && <label className="field"><span>{f.type === "owngoal" ? `Zabio u svoju mrežu (${ix.club[m[plSide]].short})` : "Igrač"}</span>
           <select className="input" value={f.player} onChange={(e) => set("player", e.target.value)}>
             <option value="">—</option>{pl.map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
+            {(f.type === "yellow" || f.type === "red") && <option value="__staff">Stožer (trener, službena osoba)</option>}
           </select></label>}
         {f.type === "goal" && !f.pen && <label className="field"><span>Asistencija</span>
           <select className="input" value={f.assist} onChange={(e) => set("assist", e.target.value)}>
