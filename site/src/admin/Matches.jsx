@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { href, go } from "../lib/router.js";
-import { update, uid } from "../lib/store.js";
+import { update, uid, fetchSemaforLog } from "../lib/store.js";
 import { score, fmtDay, fmtTime, currentRound, compName, roundName } from "../lib/derive.js";
 import { Jersey, Icon, analysisPill } from "../components/ui.jsx";
 
@@ -25,6 +25,7 @@ export function Matches({ db, ix }) {
   return (
     <>
       <div className="ahead"><h1>Utakmice</h1><div className="r"><button className="btn primary" onClick={add}>{Icon.plus()} Nova utakmica</button></div></div>
+      <SemaforLog />
       {queue.length > 0 && (
         <section className="panel">
           <div className="ph"><h2>Red za video analizu</h2><span className="aside">obrađuje se na laptopu ili PC-ju</span></div>
@@ -75,5 +76,28 @@ export function Matches({ db, ix }) {
         </div>
       </section>
     </>
+  );
+}
+
+// Zadnja provjera sa HNS Semaforom (scripts/semafor_sync.py na PC-ju zapisuje izvještaj u tablicu semafor_log)
+function SemaforLog() {
+  const [rows, setRows] = useState(null);
+  const [open, setOpen] = useState(false);
+  useEffect(() => { let on = true; fetchSemaforLog(5).then((r) => on && setRows(r)); return () => { on = false; }; }, []);
+  if (!rows || !rows.length) return null;
+  const r = rows[0];
+  const when = new Date(r.at).toLocaleString("hr-HR", { weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" });
+  const bad = (r.lines || []).some((l) => /^(GREŠKE|RAZLIKE)/.test(l));
+  return (
+    <section className="panel">
+      <div className="ph"><h2>Provjera sa Semaforom</h2>
+        <span className="aside">{when} · {r.mode === "upis" ? "upis" : "samo provjera"}</span></div>
+      <div className="pb" style={{ paddingTop: 0 }}>
+        <div className={"small" + (bad ? "" : " muted")} style={{ fontWeight: 600 }}>{r.summary}</div>
+        {(r.lines || []).length > 0 && <button className="lnk small" onClick={() => setOpen(!open)}>{open ? "Sakrij detalje" : "Prikaži detalje"}</button>}
+        {open && <pre className="semlog">{(r.lines || []).join("\n")}</pre>}
+        {open && rows.length > 1 && <div className="small muted" style={{ marginTop: 6 }}>Prije: {rows.slice(1).map((x) => `${new Date(x.at).toLocaleString("hr-HR", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" })} (${x.summary})`).join(" · ")}</div>}
+      </div>
+    </section>
   );
 }

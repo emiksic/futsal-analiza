@@ -248,6 +248,13 @@ export async function holdCommit(keepHolding = false) {
 }
 export const isHolding = () => !!hold && state.held > 0;
 
+// zadnji izvještaji skripte scripts/semafor_sync.py (samo admin)
+export async function fetchSemaforLog(n = 5) {
+  if (!sb || !state.isAdmin) return [];
+  const { data, error } = await sb.from("semafor_log").select("id,at,mode,summary,lines").order("at", { ascending: false }).limit(n);
+  return error ? [] : data;
+}
+
 export async function importSeed() {
   const s = clone(seed);
   for (const t of ORDER) {

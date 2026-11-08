@@ -879,3 +879,4 @@ table.st { font-size: 13px; }
 .pc-wrap { padding: 0 12px 6px; }
 .pc-pick button[aria-pressed="false"] { opacity: .55; text-decoration: line-through; }
 .pc-pick .pc-all { border-style: dashed; color: var(--muted); text-decoration: none !important; opacity: 1 !important; }
+.semlog { white-space: pre-wrap; font: 12px/1.5 ui-monospace, Consolas, monospace; background: var(--surface-2); border: 1px solid var(--line); padding: 10px; margin: 8px 0 0; max-height: 360px; overflow: auto; }
