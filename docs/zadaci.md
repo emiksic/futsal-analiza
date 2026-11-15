@@ -1,5 +1,7 @@
 # Zakazani zadaci: satnica, YouTube i rezultati (sva natjecanja)
 
+> **15. 11. 2026.: usklađivanje sa Semaforom je ukinuto.** HNS Semafor na automatsko povlačenje podataka stalno vraća 403, pa su `scripts/semafor_sync.py` i zakazani zadatak „HMNL Semafor” uklonjeni. Dijelovi ovih uputa koji čitaju Semafor ne vrijede dok se to ne promijeni; podaci se upisuju ručno u adminu.
+
 Upute za Claudeove zakazane zadatke. Ponašanje se mijenja ovdje, ne u zadacima.
 
 Postoje tri vrste zadataka:
