@@ -138,7 +138,9 @@ def tparse(t):
 
 
 def to_ev_time(tot, exact):
-    """Ukupne sekunde -> poluvrijeme i sekunda u njemu (kao admin: do 20:00 prvo, do 40:00 drugo, dalje produžeci)."""
+    """Ukupne sekunde -> poluvrijeme i sekunda u njemu (kao admin: do 20:00 prvo, do 40:00 drugo, dalje produžeci).
+    Bez minute (karton kojem Semafor ne navodi minutu): noTime, na kraj 2. poluvremena radi redoslijeda."""
+    if tot is None: return {"period": 2, "sec": 1200, "noTime": True}
     per = 1 if tot <= 1200 else 2 if tot <= 2400 else 3
     e = {"period": per, "sec": tot - (per - 1) * 1200}
     if exact: e["exact"] = True
@@ -151,6 +153,10 @@ def ev_total(e):
 
 def ev_minute(e):
     t = ev_total(e); return max(1, -(-t // 60))
+
+
+def ev_label(e):
+    return "bez minute" if e.get("noTime") else f"{ev_minute(e)}'"
 
 
 CACHE_HOURS = 24
@@ -453,14 +459,12 @@ class Sync:
                 if r["gk"]: R["gk"].append(pid)
                 if r["cap"]: R["cap"] = pid
                 for c in r["events"]:
-                    if c["t"] is None: continue
                     e = {"id": rid(), "type": "yellow" if c["card"] == "yellow" else "red", "side": side, "player": pid, **to_ev_time(c["t"], c["exact"])}
                     if c["card"] == "red2": e["secondYellow"] = True
                     events.append(e)
             for r in d["teams"].get(side, []):                  # kartoni stožeru
                 if r["staff"]:
                     for c in r["events"]:
-                        if c["t"] is None: continue
                         e = {"id": rid(), "type": "yellow" if c["card"] == "yellow" else "red", "side": side, "staff": True, **to_ev_time(c["t"], c["exact"])}
                         if c["card"] == "red2": e["secondYellow"] = True
                         events.append(e)
@@ -515,7 +519,8 @@ class Sync:
             """Upari događaje Semafora s onima u bazi (ista vrsta, strana, igrač, minuta ±1). Vraća parove i neuparene."""
             used, pairs, miss = set(), [], []
             for e in sem:
-                hit = next((i for i, x in enumerate(mine) if i not in used and same(x, e) and abs(ev_minute(x) - ev_minute(e)) <= 1), None)
+                near = lambda x: x.get("noTime") or e.get("noTime") or abs(ev_minute(x) - ev_minute(e)) <= 1   # bez minute: po igraču i vrsti
+                hit = next((i for i, x in enumerate(mine) if i not in used and same(x, e) and near(x)), None)
                 if hit is None: miss.append(e)
                 else: used.add(hit); pairs.append((mine[hit], e))
             return pairs, miss, [x for i, x in enumerate(mine) if i not in used]
@@ -538,10 +543,12 @@ class Sync:
         c_pairs, c_miss, c_extra = match_list([e for e in built["events"] if e["type"] in ("yellow", "red")],
                                               [e for e in ev if e.get("type") in ("yellow", "red")], same_card)
         for x, e in c_pairs:
+            if x.get("noTime") and not e.get("noTime"):          # Semafor je naknadno dobio minutu
+                x.pop("noTime"); x.pop("exact", None); x.update({k: e[k] for k in ("period", "sec", "exact") if k in e}); notes.append("minuta kartona")
             if e.get("exact") and not x.get("exact"): x.update(period=e["period"], sec=e["sec"], exact=True)
             if e.get("secondYellow") and not x.get("secondYellow"): x["secondYellow"] = True
         if c_miss: ev += c_miss; notes.append(f"kartoni ({len(c_miss)})")
-        if c_extra: diffs += [f"karton {ev_minute(x)}' ({side_hr(x.get('side'))}) u bazi nije na Semaforu" for x in c_extra]
+        if c_extra: diffs += [f"karton {ev_label(x)} ({side_hr(x.get('side'))}) u bazi nije na Semaforu" for x in c_extra]
         # --- kazneni nakon utakmice (kup): samo ako ih u bazi nema
         so = [e for e in built["events"] if e["type"] == "so"]
         if so and not any(e.get("type") == "so" for e in ev): ev += so; notes.append("kaznene")

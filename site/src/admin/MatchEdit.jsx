@@ -1,7 +1,7 @@
 import { Fragment, useState, useRef, useEffect } from "react";
 import { href, go, replaceClick, setLeaveGuard } from "../lib/router.js";
 import { update, uid, useStore, holdStart, holdDiscard, holdCommit, isHolding } from "../lib/store.js";
-import { score, absSec, minute, playerName, compName, ANALYSIS_LABEL, withMatchNumbers } from "../lib/derive.js";
+import { score, absSec, minute, NO_TIME, playerName, compName, ANALYSIS_LABEL, withMatchNumbers } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
 import { Jersey, Icon, Toast, NumInput, DateTimeInput } from "../components/ui.jsx";
 import { ShotTagger } from "./ShotTagger.jsx";
@@ -396,19 +396,22 @@ function Events({ ix, m, upd }) {
   // upisane sekunde (npr. 22:10) → vrijeme je točno i prikazuje se s mm:ss; samo minuta (npr. 22) → prikaz minute
   const exactF = () => (/:\d/.test(f.time) ? { exact: true } : {});
   const needsPlayer = !["timeout"].includes(f.type);
+  // karton smije bez minute (Semafor je ponekad nema): prazno polje → noTime, na popisu ide na kraj
+  const noTime = (f.type === "yellow" || f.type === "red") && !f.time.trim();
+  const tf = () => (noTime ? NO_TIME : { period: pt?.period, sec, ...exactF() });
   // kazneni udarac: gol iz penala (pen) ili promašen penal; udaljenost 6 m ili 10 m (deseterac) nije obavezna
   const penFields = () => (f.type === "penmiss" || (f.type === "goal" && f.pen) ? { ...(f.type === "goal" ? { pen: true } : {}), ...(f.dist ? { dist: +f.dist } : {}) } : {});
   // crveni karton: direktni ili zbog drugog žutog (secondYellow)
   const syField = () => (f.type === "red" && f.sy ? { secondYellow: true } : {});
   const add = () => {
-    if (sec == null) return;
+    if (sec == null && !noTime) return;
     const side = f.type === "owngoal" ? other(f.side) : f.side;   // autogol: f.side = ekipa kojoj se pripisuje
     if (editing) {
-      upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact", "pen", "dist", "staff", "secondYellow"].includes(k))),
-        type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...syField(), ...exactF() }); });
+      upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact", "pen", "dist", "staff", "secondYellow", "noTime"].includes(k))),
+        type: f.type, side, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...syField(), ...tf() }); });
       setEditing(null); setF((o) => ({ ...empty, side: o.side })); return;   // nakon upisa uvijek natrag na Gol
     }
-    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...syField(), ...exactF() });
+    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...syField(), ...tf() });
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
     setF((o) => ({ ...empty, side: o.side }));   // nakon upisa vrsta se vraća na Gol (da prekršaj ne ostane odabran)
   };
@@ -419,7 +422,7 @@ function Events({ ix, m, upd }) {
     setEditing(e.id);
     setF({ type: e.type, side: e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side, period: e.period,
       // točno vrijeme (exact) kao mm:ss; inače samo minuta (37:30 sa Semafora → "38"), da uređivanje ne izmisli sekunde
-      time: (() => { const t = (e.period - 1) * 1200 + e.sec; return e.exact ? `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}` : String(parseInt(minute(e), 10)); })(), player: e.staff && !e.player ? "__staff" : e.player || "", assist: e.assist || "", pen: !!e.pen, dist: e.dist ? String(e.dist) : "", sy: !!e.secondYellow });
+      time: (() => { if (e.noTime) return ""; const t = (e.period - 1) * 1200 + e.sec; return e.exact ? `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}` : String(parseInt(minute(e), 10)); })(), player: e.staff && !e.player ? "__staff" : e.player || "", assist: e.assist || "", pen: !!e.pen, dist: e.dist ? String(e.dist) : "", sy: !!e.secondYellow });
     document.querySelector(".evform")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
   const setPlayer = (id, pid) => upd((x) => { x.events = x.events.map((q) => q.id !== id ? q : (pid ? { ...q, player: pid } : Object.fromEntries(Object.entries(q).filter(([k]) => k !== "player")))); });
@@ -436,7 +439,7 @@ function Events({ ix, m, upd }) {
           <div className="seg">{["home", "away"].map((s) => <button type="button" key={s} aria-pressed={f.side === s} onClick={() => set("side", s)}>{ix.club[m[s]].short}</button>)}</div></div>
         <label className="field"><span>Minuta utakmice (mm:ss)</span>
           <input className="input" value={f.time} onChange={(e) => set("time", fmtClock(e.target.value))} placeholder="12:34" inputMode="numeric" aria-invalid={f.time && sec == null} />
-          <small>{f.time && sec == null ? "Upiši vrijeme do 50:00 (sekunde 00–59)." : pt ? ["", "1. poluvrijeme", "2. poluvrijeme", "produžeci"][pt.period] : "npr. 2210 = 22:10, 2. poluvrijeme"}</small></label>
+          <small>{f.time && sec == null ? "Upiši vrijeme do 50:00 (sekunde 00–59)." : noTime ? "Karton bez minute: ostavi prazno." : pt ? ["", "1. poluvrijeme", "2. poluvrijeme", "produžeci"][pt.period] : "npr. 2210 = 22:10, 2. poluvrijeme"}</small></label>
         {needsPlayer && <label className="field"><span>{f.type === "owngoal" ? `Zabio u svoju mrežu (${ix.club[m[plSide]].short})` : "Igrač"}</span>
           <select className="input" value={f.player} onChange={(e) => set("player", e.target.value)}>
             <option value="">—</option>{pl.map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
@@ -447,7 +450,7 @@ function Events({ ix, m, upd }) {
             <option value="">—</option>{pl.filter((p) => p.id !== f.player).map((p) => <option key={p.id} value={p.id}>{p.num} {p.name}</option>)}
           </select></label>}
         <div style={{ display: "flex", gap: 8, alignItems: "end" }}>
-          <button className="btn primary" type="submit" disabled={sec == null}>{editing ? "Spremi izmjene" : "Dodaj događaj"}</button>
+          <button className="btn primary" type="submit" disabled={sec == null && !noTime}>{editing ? "Spremi izmjene" : "Dodaj događaj"}</button>
           {editing && <button className="btn ghost" type="button" onClick={() => { setEditing(null); setF(empty); }}>Odustani</button>}
         </div>
         {(f.type === "penmiss" || f.type === "goal") && <div className="field" style={{ gridColumn: "1 / -1" }}><span>Kazneni udarac</span>
@@ -614,7 +617,7 @@ function EventTimeline({ ix, m, evs, order, roster, editing, edit, setPlayer, sk
               <Fragment key={e.id}>
                 <div className={"etl-row" + (e.type === "foul" ? " minor" : "")}>
                   {side === "home" ? card : <span />}
-                  <span className="min">{minute(e)}<small>{(() => { const t = absSec(e); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`; })()}</small></span>
+                  <span className="min">{e.noTime ? "–" : minute(e)}<small>{e.noTime ? "bez minute" : (() => { const t = absSec(e); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`; })()}</small></span>
                   {side === "away" ? card : <span />}
                 </div>
                 {sketch === e.id && (

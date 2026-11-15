@@ -65,7 +65,9 @@ export const absSec = (e) => (e.period - 1) * 1200 + e.sec;
 const minOf = (sec) => Math.max(1, Math.ceil(sec / 60));
 export const minute = (e) => e.period > 2 ? `${40 + minOf(e.sec)}'` : `${(e.period - 1) * 20 + minOf(e.sec)}'`;
 // vrijeme gola: s točnom sekundom kad je poznata (e.exact: Semafor sa sekundama ili očitano sa snimke), inače minuta
-export const goalTime = (e) => e.exact && e.period <= 2 ? `${(e.period - 1) * 20 + Math.floor(e.sec / 60)}:${String(e.sec % 60).padStart(2, "0")}` : minute(e);
+// karton bez minute (Semafor je nema): e.noTime, period/sec su tada kraj 2. poluvremena samo radi redoslijeda
+export const NO_TIME = { period: 2, sec: 1200, noTime: true };
+export const goalTime = (e) => e.noTime ? "–" : e.exact && e.period <= 2 ? `${(e.period - 1) * 20 + Math.floor(e.sec / 60)}:${String(e.sec % 60).padStart(2, "0")}` : minute(e);
 export const clock = (sec) => `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
 
 // Kup: liga s zones.cup; kola su faze natjecanja
