@@ -339,7 +339,7 @@ function facts(ms, ix, L, db, compId, round) {
   put("big", bw.map((m) => ({ ...pair(m), value: score2(m), note: recW ? "najveća pobjeda sezone" : "" })));
   const mg = ties(fin, sum), recG = mg.length && sum(mg[0]) >= sMax((s) => s[0] + s[1]) && season.length > fin.length;
   put("most", mg.map((m) => ({ ...pair(m), value: golova(sum(m)), note: recG ? "rekord sezone" : "" })));
-  put("least", ties(fin, sum, false).map((m) => ({ ...pair(m), value: score2(m) })));
+  put("least", ties(fin, sum, false).map((m) => ({ ...pair(m), value: golova(sum(m)) })));
 
   // golovi s poznatim vremenom
   const goals = fin.flatMap((m) => m.events.filter((e) => (e.type === "goal" || e.type === "owngoal") && Number.isFinite(e.sec) && e.period <= 2)
