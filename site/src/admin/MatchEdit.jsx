@@ -378,7 +378,7 @@ function RosterCol({ db, ix, m, upd, side, season, cat }) {
 
 const ETYPES = [["goal", "Gol"], ["owngoal", "Autogol"], ["penmiss", "Promašen penal"], ["foul", "Prekršaj"], ["yellow", "Žuti"], ["red", "Crveni"], ["timeout", "Time-out"]];
 function Events({ ix, m, upd }) {
-  const empty = { type: "goal", side: "home", period: 1, time: "", player: "", assist: "", pen: false, dist: "" };
+  const empty = { type: "goal", side: "home", period: 1, time: "", player: "", assist: "", pen: false, dist: "", sy: false };
   const [f, setF] = useState(empty);
   const [editing, setEditing] = useState(null);   // id događaja koji se uređuje
   const [sketch, setSketch] = useState(null);     // id gola čija se skica crta
@@ -398,15 +398,17 @@ function Events({ ix, m, upd }) {
   const needsPlayer = !["timeout"].includes(f.type);
   // kazneni udarac: gol iz penala (pen) ili promašen penal; udaljenost 6 m ili 10 m (deseterac) nije obavezna
   const penFields = () => (f.type === "penmiss" || (f.type === "goal" && f.pen) ? { ...(f.type === "goal" ? { pen: true } : {}), ...(f.dist ? { dist: +f.dist } : {}) } : {});
+  // crveni karton: direktni ili zbog drugog žutog (secondYellow)
+  const syField = () => (f.type === "red" && f.sy ? { secondYellow: true } : {});
   const add = () => {
     if (sec == null) return;
     const side = f.type === "owngoal" ? other(f.side) : f.side;   // autogol: f.side = ekipa kojoj se pripisuje
     if (editing) {
-      upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact", "pen", "dist", "staff"].includes(k))),
-        type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...exactF() }); });
+      upd((x) => { x.events = x.events.map((q) => q.id !== editing ? q : { ...Object.fromEntries(Object.entries(q).filter(([k]) => !["player", "assist", "exact", "pen", "dist", "staff", "secondYellow"].includes(k))),
+        type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...syField(), ...exactF() }); });
       setEditing(null); setF((o) => ({ ...empty, side: o.side })); return;   // nakon upisa uvijek natrag na Gol
     }
-    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...exactF() });
+    upd((x) => { x.events.push({ id: uid("e"), type: f.type, side, period: pt?.period, sec, ...(needsPlayer && f.player && f.player !== "__staff" ? { player: f.player } : {}), ...(f.player === "__staff" && (f.type === "yellow" || f.type === "red") ? { staff: true } : {}), ...(f.type === "goal" && !f.pen && f.assist ? { assist: f.assist } : {}), ...penFields(), ...syField(), ...exactF() });
       if (f.type === "goal" || f.type === "owngoal") x.status = x.status === "scheduled" ? "finished" : x.status; });
     setF((o) => ({ ...empty, side: o.side }));   // nakon upisa vrsta se vraća na Gol (da prekršaj ne ostane odabran)
   };
@@ -417,7 +419,7 @@ function Events({ ix, m, upd }) {
     setEditing(e.id);
     setF({ type: e.type, side: e.type === "owngoal" ? (e.side === "home" ? "away" : "home") : e.side, period: e.period,
       // točno vrijeme (exact) kao mm:ss; inače samo minuta (37:30 sa Semafora → "38"), da uređivanje ne izmisli sekunde
-      time: (() => { const t = (e.period - 1) * 1200 + e.sec; return e.exact ? `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}` : String(parseInt(minute(e), 10)); })(), player: e.staff && !e.player ? "__staff" : e.player || "", assist: e.assist || "", pen: !!e.pen, dist: e.dist ? String(e.dist) : "" });
+      time: (() => { const t = (e.period - 1) * 1200 + e.sec; return e.exact ? `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}` : String(parseInt(minute(e), 10)); })(), player: e.staff && !e.player ? "__staff" : e.player || "", assist: e.assist || "", pen: !!e.pen, dist: e.dist ? String(e.dist) : "", sy: !!e.secondYellow });
     document.querySelector(".evform")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
   const setPlayer = (id, pid) => upd((x) => { x.events = x.events.map((q) => q.id !== id ? q : (pid ? { ...q, player: pid } : Object.fromEntries(Object.entries(q).filter(([k]) => k !== "player")))); });
@@ -454,6 +456,12 @@ function Events({ ix, m, upd }) {
             {[["", f.type === "goal" ? "Da" : "Nepoznato"], ["6", "6 m"], ["10", "10 m"]].map(([k, n]) => (
               <button type="button" key={k} aria-pressed={(f.type === "penmiss" || f.pen) && f.dist === k} onClick={() => setF((o) => ({ ...o, pen: true, dist: k }))}>{n}</button>))}
           </div></div>}
+        {f.type === "red" && <div className="field" style={{ gridColumn: "1 / -1" }}><span>Crveni karton</span>
+          <div className="seg">
+            <button type="button" aria-pressed={!f.sy} onClick={() => setF((o) => ({ ...o, sy: false }))}>Direktni</button>
+            <button type="button" aria-pressed={f.sy} onClick={() => setF((o) => ({ ...o, sy: true }))}>Drugi žuti</button>
+          </div>
+          {f.sy && <small>Prvi žuti ostaje upisan kao zaseban žuti karton; ovaj crveni zamjenjuje drugi žuti.</small>}</div>}
       </form>
       {!pl.length && needsPlayer && <div className="pb"><div className="callout warn">Zapisnik za {ix.club[m[plSide]].name} nije unesen, pa igrača nije moguće odabrati.</div></div>}
       <EventTimeline ix={ix} m={m} evs={evs} order={order} roster={roster} editing={editing} edit={edit} setPlayer={setPlayer}
