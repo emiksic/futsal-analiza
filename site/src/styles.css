@@ -941,3 +941,30 @@ table.st { font-size: 13px; }
   .vcard-opts { gap: 8px; }
   .vcard-opts button { height: 44px; padding: 0 10px; }
 }
+
+/* ---------- mobitel: popravci iz pregleda (studeni 2026.) ---------- */
+.lnav .ln-short { display: none; }
+.start-m { display: none; }
+@media (max-width: 560px) {
+  /* zaglavlje: kratki nazivi liga da sve četiri stanu (SS HMNL, juniori, kadeti, kup) */
+  .lnav .ln-full { display: none; }
+  .lnav .ln-short { display: inline; }
+  .lnav { justify-content: space-between; }
+  /* početna: naziv lige i kolo u jednom redu, datumi ispod */
+  .mgroup-t { flex-wrap: wrap; row-gap: 3px; }
+  .mgroup-t > a { flex: 1 1 auto; white-space: nowrap; }
+  .mgroup-t .mg-tog { order: 2; }
+  .mgroup-t .r { order: 3; flex-basis: 100%; margin-left: 30px; }
+  /* semafor: "Satnica još nije objavljena" / "Kraj, poluvrijeme …" smije u dva reda umjesto da gura imena klubova */
+  .bstate { max-width: 128px; text-align: center; line-height: 1.25; }
+  /* postave: na terenu samo dresovi s brojevima, imena u popisu "petorka" ispod */
+  .pp span { display: none; }
+  .start-m { display: block; margin-bottom: 12px; }
+  /* kartoni: oznaka kazne smije u dva reda */
+  .pill.failed, .pill.warn { white-space: normal; line-height: 1.25; }
+}
+@media (max-width: 480px) {
+  /* vrijeme u vodstvu: bez stupca "Ut." da stane postotak */
+  .lead-tbl th:nth-child(2), .lead-tbl td:nth-child(2) { display: none; }
+  .lead-col { min-width: 110px; }
+}

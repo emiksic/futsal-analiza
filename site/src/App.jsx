@@ -71,7 +71,7 @@ export default function App() {
         <div className="top-in">
           <Brand name={db.site?.name} />
           <nav className="lnav" aria-label="Lige">
-            {db.leagues.filter((l) => db.comps.some((c) => c.league === l.id && c.season === cur)).map((l) => <a key={l.id} href={href("liga", l.id, cur)} aria-current={activeLeague === l.id ? "page" : undefined}>{l.name}</a>)}
+            {db.leagues.filter((l) => db.comps.some((c) => c.league === l.id && c.season === cur)).map((l) => <a key={l.id} href={href("liga", l.id, cur)} aria-current={activeLeague === l.id ? "page" : undefined}><span className="ln-full">{l.name}</span><span className="ln-short">{l.id === "kup" ? "Kup" : l.name.replace(/^1\. HMNL /i, "")}</span></a>)}
           </nav>
           <ThemeToggle />
           <a className="adm" href={href("admin")} aria-current={page === "admin" || page === "objave" ? "page" : undefined}>Admin</a>

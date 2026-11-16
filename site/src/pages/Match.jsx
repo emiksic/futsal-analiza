@@ -517,6 +517,14 @@ drawHeat(ctx, c, pts, 3.2, A.D?.court || { L: 40, W: 20 });
             .sort((a, b) => (r[side].gk.includes(b.id) - r[side].gk.includes(a.id)) || (+a.num - +b.num));   // golmani prvi, zatim po broju
           return (
             <div key={side}>
+              {/* na mobitelu se imena na terenu preklapaju, pa je petorka i kao popis (vidi .start-m u CSS-u) */}
+              <div className="start-m">
+                <h4><Jersey kit={c.kit} size={20} />{c.name}, petorka</h4>
+                <ul>{startOrd(side).map((pid) => { const p = ix.player[pid]; return (
+                  <li key={pid}><button onClick={() => click(side, pid)} aria-pressed={sel?.pid === pid}>
+                    <span className="n">{p?.num}</span><span>{playerName(p)}{r[side].cap === pid && <b className="capk" title="Kapetan"> (K)</b>}</span>{r[side].gk.includes(pid) ? <span className="tag">GK</span> : <span />}
+                  </button></li>); })}</ul>
+              </div>
               <h4><Jersey kit={c.kit} size={20} />{c.name}, klupa</h4>
               <ul>{list.map((p) => (
                 <li key={p.id}><button onClick={() => click(side, p.id)} aria-pressed={sel?.pid === p.id}>
