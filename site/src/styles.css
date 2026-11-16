@@ -897,3 +897,19 @@ table.st { font-size: 13px; }
 .install-bar .btn { flex: none; }
 .install-x { flex: none; width: 30px; height: 30px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; }
 .install-x:hover { color: var(--fg); }
+
+/* Uputa za instalaciju na iPhoneu (donji list sa strelicom prema traci Safarija) */
+.ios-sheet-bg { position: fixed; inset: 0; z-index: 60; background: rgba(5, 10, 20, .55); display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+  padding: 0 10px calc(6px + env(safe-area-inset-bottom, 0px)); animation: iosFade .18s ease; }
+.ios-sheet { width: min(460px, 100%); background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .35); animation: iosUp .22s ease; }
+.ios-sheet-h { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.ios-sheet-h img { border-radius: 9px; flex: none; }
+.ios-sheet-h > div { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.ios-sheet-h b { font: 700 18px/1.15 var(--display); }
+.ios-sheet-h span { font-size: 13px; color: var(--muted); }
+.ios-sheet ol { margin: 6px 0 12px; padding-left: 22px; display: grid; gap: 8px; font-size: 14.5px; line-height: 1.4; }
+.ios-arrow { font: 700 34px/1 var(--display); color: #fff; margin-top: 6px; text-shadow: 0 2px 8px rgba(0, 0, 0, .5); animation: iosBob 1s ease-in-out infinite alternate; }
+@keyframes iosFade { from { opacity: 0; } }
+@keyframes iosUp { from { transform: translateY(24px); opacity: 0; } }
+@keyframes iosBob { to { transform: translateY(8px); } }

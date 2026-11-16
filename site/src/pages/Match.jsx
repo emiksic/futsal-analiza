@@ -23,11 +23,11 @@ export function Match({ db, ix: ix0, id, tab }) {
   if (!m) return <div className="page"><div className="panel empty">Utakmica ne postoji.</div></div>;
   const has = m.analysis?.status === "done";
   const hl = safeYouTube(m.highlights);
-  // Video (prijenos + mini-mapa) je glavna kartica samo dok je utakmica uživo; poslije sažetak, ako postoji, inače detalji.
+  // Detalji su uvijek prva i zadana kartica; dok je utakmica uživo, odmah iza njih je prijenos.
   const live = m.status === "live" && !!m.youtube;
-  const t = tab || (live ? "analiza" : hl ? "sazetak" : "detalji");
+  const t = tab || "detalji";   // zadano uvijek Detalji
   const vid = (has || m.youtube) ? [["analiza", live ? "Uživo" : "Video"]] : [];
-  const TABS = [...(live ? vid : []), ...(hl ? [["sazetak", "Sažetak"]] : []), ["detalji", "Detalji"], ["statistika", "Statistika"], ["postave", "Postave"], ["udarci", "Udarci"], ...(live ? [] : vid)];
+  const TABS = [["detalji", "Detalji"], ...(live ? vid : []), ...(hl ? [["sazetak", "Sažetak"]] : []), ["statistika", "Statistika"], ["postave", "Postave"], ["udarci", "Udarci"], ...(live ? [] : vid)];
   return (
     <div className="page">
       {adm && (
