@@ -46,7 +46,10 @@ export function Match({ db, ix: ix0, id, tab }) {
         {t !== "analiza" && <div style={{ height: 6 }} />}
         {t === "analiza" && <AnalysisTab m={m} ix={ix} A={A} />}
         {t === "sazetak" && hl && <div className="pb" style={{ paddingTop: 16, display: "grid", gap: 10, maxWidth: 980 }}><Player youtube={hl} /><div className="note">Službeni sažetak utakmice.</div></div>}
+        {/* glasanje: prije utakmice na vrhu Detalja, poslije ispod događaja */}
+        {t === "detalji" && m.status === "scheduled" && <Vote m={m} ix={ix} />}
         {t === "detalji" && <Incidents m={m} ix={ix} />}
+        {t === "detalji" && m.status !== "scheduled" && <Vote m={m} ix={ix} />}
         {t === "statistika" && <Stats m={m} ix={ix} A={A} />}
         {t === "udarci" && <Shots m={m} ix={ix} />}
         {t === "postave" && <Suspended db={db} m={m} ix={ix} />}
@@ -119,7 +122,6 @@ function Board({ m, ix }) {
         <div className="board-fouls" title="Akumulirani prekršaji po poluvremenu. Od 6. prekršaja u poluvremenu izvodi se kazneni udarac s 10 m.">
           {fp.map((f, i) => <Fragment key={i}><FoulBar n={f[0]} /><span>Akumulirani prekršaji<br />{i + 1}. poluvrijeme</span><FoulBar n={f[1]} /></Fragment>)}
         </div>)}
-      <Vote m={m} ix={ix} />
     </section>
   );
 }

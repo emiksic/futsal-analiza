@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { voteCounts, castVote } from "../lib/store.js";
 import { winner } from "../lib/derive.js";
+import { Jersey } from "./ui.jsx";
 
 // Glasanje "Tko pobjeđuje?" bez prijave (vidi supabase/glasanje-2026-11-16.sql).
 // Svi mogu glasati; postoci se vide tek nakon glasanja, a nakon zatvaranja (početak utakmice) svima.
@@ -67,9 +68,9 @@ export function Vote({ m, ix }) {
   if (!on) return null;
   const H = ix.club[m.home], A = ix.club[m.away];
   const opts = [
-    { k: "1", label: H.name, short: H.short || H.name, color: barColor(H.kit) },
-    ...(cup ? [] : [{ k: "X", label: "Neriješeno", short: "X", color: "color-mix(in srgb, var(--muted) 45%, transparent)" }]),
-    { k: "2", label: A.name, short: A.short || A.name, color: barColor(A.kit) },
+    { k: "1", label: H.name, kit: H.kit },
+    ...(cup ? [] : [{ k: "X", label: "Neriješeno" }]),
+    { k: "2", label: A.name, kit: A.kit },
   ];
   const total = counts ? opts.reduce((a, o) => a + counts[o.k], 0) : 0;
   if (!open && !total) return null;             // zatvoreno, a nitko nije glasao: ništa ne prikazujemo
@@ -83,39 +84,37 @@ export function Vote({ m, ix }) {
     if (busy || mine || !open) return;
     setBusy(k); setErr("");
     try { const r = await castVote(m.id, voterId(), k); setCounts(r.counts); setMine(r.mine); savePick(m.id, r.mine); }
-    catch (e) { setErr(e.message || "Glas nije spremljen."); }
+    catch (e) { setErr(e.message || "Glas nije spremljen. Pokušaj ponovno."); }
     finally { setBusy(null); }
   }
 
   const q = cup ? "Tko prolazi dalje?" : "Tko pobjeđuje?";
-  const note = err || (done && mine ? (mine === right ? "Pogodio si" : "Nisi pogodio") : total ? glasova(total) : "");
+  const sub = err || (open
+    ? (mine ? `Hvala na glasu · ${glasova(total)}` : "Glasaj prije početka utakmice!")
+    : done && mine ? `${mine === right ? "Pogodio si" : "Nisi pogodio"} · ${glasova(total)}`
+    : `Glasanje je završeno · ${glasova(total)}`);
   return (
-    <div className={`bvote${reveal ? " res" : ""}`} aria-label={q}>
-      <span className="bvote-q">{q}</span>
-      {!reveal ? (
-        <div className="bvote-btns" role="group">
-          {opts.map((o) => (
-            <button key={o.k} type="button" className={busy === o.k ? "busy" : ""} disabled={!open || !!busy} onClick={() => vote(o.k)}
-              title={`${o.label} · glas se ne može promijeniti`}>
-              <span className="lg">{o.k === "X" ? "Neriješeno" : o.label}</span><span className="sm">{o.short}</span>
-            </button>))}
-        </div>
-      ) : (
-        <div className="bvote-res">
-          <div className="bvote-bar" role="img" aria-label={opts.map((o) => `${o.label} ${P[o.k] ?? 0} %`).join(", ")}>
-            {opts.map((o) => <i key={o.k} style={{ flexGrow: P[o.k] ?? 0, background: o.color }} />)}
-          </div>
-          <div className="bvote-lab">
-            {opts.map((o) => (
-              <span key={o.k} className={[mine === o.k && "mine", right === o.k && "right"].filter(Boolean).join(" ")}
-                title={[mine === o.k && "Tvoj glas", right === o.k && "Ishod utakmice"].filter(Boolean).join(" · ") || undefined}>
-                <span className="lg">{o.k === "X" ? "X" : o.label}</span><span className="sm">{o.short}</span> <b>{P[o.k] ?? 0}%</b>
-                {right === o.k && " ✓"}
-              </span>))}
-          </div>
-        </div>
-      )}
-      {note && <span className={`bvote-n${err ? " err" : ""}`}>{note}</span>}
+    <div className="vcard" aria-label={q}>
+      <div className="vcard-h">
+        <h3>{q}</h3>
+        <div className={`vcard-sub${err ? " err" : ""}`}>{sub}</div>
+      </div>
+      <div className={`vcard-opts${reveal ? " res" : ""}`} role="group">
+        {opts.map((o) => {
+          const p = P[o.k] ?? 0;
+          const cls = [mine === o.k && "mine", reveal && right === o.k && "right", busy === o.k && "busy"].filter(Boolean).join(" ");
+          return (
+            <button key={o.k} type="button" className={cls} disabled={!open || !!mine || !!busy} onClick={() => vote(o.k)}
+              title={open && !mine ? `${o.label} · glas se ne može promijeniti` : o.label}
+              aria-pressed={mine === o.k} aria-label={reveal ? `${o.label}: ${p} %` : `Glasaj: ${o.label}`}>
+              {reveal && <i className="vcard-fill" style={{ width: `${p}%` }} />}
+              <span className="vcard-ic">{o.kit ? <Jersey kit={o.kit} size={26} /> : "X"}</span>
+              {reveal && <b className="vcard-p">{p}%</b>}
+              {reveal && right === o.k && <span className="vcard-ok" aria-hidden>✓</span>}
+            </button>);
+        })}
+      </div>
+      {open && !mine && <div className="vcard-note">Glas se ne može promijeniti. Postoci se vide nakon glasanja.</div>}
     </div>
   );
 }
