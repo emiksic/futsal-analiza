@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDB, useStore } from "./lib/store.js";
 import { useRoute, href } from "./lib/router.js";
 import { index } from "./lib/derive.js";
@@ -26,6 +26,26 @@ function ThemeToggle() {
   );
 }
 
+// Zaglavlje na mobitelu: skrij pri skrolanju prema dolje, pokaži pri skrolanju prema gore ili blizu vrha.
+function useHideOnScroll() {
+  const [hide, setHide] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY, ticking = false;
+    const run = () => {
+      ticking = false;
+      const y = window.scrollY, d = y - last;
+      if (y < 120) setHide(false);
+      else if (d > 6) setHide(true);
+      else if (d < -6) setHide(false);
+      if (Math.abs(d) > 6 || y < 120) last = y;
+    };
+    const on = () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } };
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
+  return hide;
+}
+
 export default function App() {
   const db = useDB();
   // Dok baza ne odgovori, ne prikazuj ugrađene (stare) podatke iz koda: inače se par sekundi vidi staro stanje pa "skoči" na novo.
@@ -40,13 +60,14 @@ export default function App() {
   }, [theme]);
   const r = useRoute();
   const [page, ...rest] = r;
+  const hideTop = useHideOnScroll();
   const cur = db.seasons[0].id;
   let activeLeague = null;
   if (page === "liga") activeLeague = rest[0];
   if (page === "utakmica" && ix.match[rest[0]]) activeLeague = ix.comp[ix.match[rest[0]].comp].league;
   return (
     <>
-      <header className="top">
+      <header className={`top${hideTop ? " hide" : ""}`} onFocusCapture={(e) => e.currentTarget.classList.remove("hide")}>
         <div className="top-in">
           <Brand name={db.site?.name} />
           <nav className="lnav" aria-label="Lige">
