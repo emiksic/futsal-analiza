@@ -10,11 +10,11 @@ export function ScorersCard({ db, ix, comp, limit = 6, title = "Strijelci" }) {
       <div className="ph"><h2>{title}</h2><a className="more" href={href("liga", ix.comp[comp].league, ix.comp[comp].season, "strijelci")}>Svi</a></div>
       {!list.length ? <div className="empty">Nema golova u ovoj sezoni.</div> :
         <ol className="scorers">
-          {list.map((r, i) => {
+          {list.map((r) => {
             const p = ix.player[r.player], c = ix.club[r.club];
             return (
               <li key={r.player}><a href={href("klub", c.id)}>
-                <span className="rk">{i + 1}</span><Jersey kit={c.kit} size={24} num={p?.num} />
+                <span className="rk">{r.rank}</span><Jersey kit={c.kit} size={24} num={p?.num} />
                 <span className="nm">{playerName(p)}<small>{c.name}{r.prev.length ? ` (prije ${r.prev.map((x) => ix.club[x]?.name).join(", ")})` : ""}{r.assists ? `, ${r.assists} asist.` : ""}</small></span>
                 <span className="g">{r.goals}</span>
               </a></li>

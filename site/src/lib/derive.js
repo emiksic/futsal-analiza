@@ -354,8 +354,11 @@ export function scorers(db, compId, { merge = true } = {}) {
       if (e.type === "goal" && e.assist) row(e.assist, m[e.side], m.date).assists++;
     }
   }
-  return Object.values(t).map(({ last, clubs, ...r }) => ({ ...r, prev: clubs.filter((c) => c !== r.club) }))
+  const list = Object.values(t).map(({ last, clubs, ...r }) => ({ ...r, prev: clubs.filter((c) => c !== r.club) }))
     .filter((x) => x.goals || x.assists).sort((a, b) => b.goals - a.goals || b.assists - a.assists || a.apps - b.apps);
+  // mjesto: isti broj golova = isto mjesto, sljedeći preskače (1, 1, 1, 4, …)
+  list.forEach((r, i) => { r.rank = i && list[i - 1].goals === r.goals ? list[i - 1].rank : i + 1; });
+  return list;
 }
 
 export function fouls(m, side, period) {

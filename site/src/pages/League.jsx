@@ -199,11 +199,11 @@ function Scorers({ db, ix, comp }) {
     <div className="tbl-wrap">
       <table className="st">
         <thead><tr><th>#</th><th className="l">Igrač</th><th className="l hide-s">Klub</th><th title="Golovi">G</th>{hasA && <th title="Asistencije">A</th>}<th title="Utakmice u zapisniku">Nast.</th></tr></thead>
-        <tbody>{list.slice(0, 40).map((r, i) => {
+        <tbody>{list.slice(0, 40).map((r) => {
           const p = ix.player[r.player], c = ix.club[r.club];
           return (
             <tr key={r.player}>
-              <td className="pos">{i + 1}</td>
+              <td className="pos">{r.rank}</td>
               <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={24} num={p?.num} />{playerName(p)}</a></td>
               <td className="l hide-s muted">{c.name}{r.prev.length > 0 && <small className="prevc"> (prije {r.prev.map((x) => ix.club[x]?.name).join(", ")})</small>}</td>
               <td className="pts">{r.goals}</td>{hasA && <td>{r.assists}</td>}<td>{r.apps}</td>
