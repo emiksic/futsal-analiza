@@ -38,7 +38,6 @@ export function Match({ db, ix: ix0, id, tab }) {
           <a className="btn sm primary" href={href("admin", "utakmica", m.id, { detalji: "dogadaji", postave: "zapisnik", udarci: "udarci", analiza: "analiza" }[t] || "osnovno")}>Uredi u adminu</a>
         </div>)}
       <Board m={m} ix={ix} />
-      <Vote m={m} ix={ix} />
       <div className={t === "analiza" || t === "udarci" ? "" : "split"}>
       <section className="panel">
         <nav className="tabs" aria-label="Utakmica">
@@ -120,6 +119,7 @@ function Board({ m, ix }) {
         <div className="board-fouls" title="Akumulirani prekršaji po poluvremenu. Od 6. prekršaja u poluvremenu izvodi se kazneni udarac s 10 m.">
           {fp.map((f, i) => <Fragment key={i}><FoulBar n={f[0]} /><span>Akumulirani prekršaji<br />{i + 1}. poluvrijeme</span><FoulBar n={f[1]} /></Fragment>)}
         </div>)}
+      <Vote m={m} ix={ix} />
     </section>
   );
 }
