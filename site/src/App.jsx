@@ -12,6 +12,7 @@ import { Posts } from "./admin/Posts.jsx";
 import { Render } from "./pages/Render.jsx";
 import { Privacy } from "./pages/Privacy.jsx";
 import { Notice } from "./components/Notice.jsx";
+import { InstallHint } from "./components/InstallHint.jsx";
 import { useTheme, toggleTheme } from "./lib/theme.js";
 
 function ThemeToggle() {
@@ -32,6 +33,11 @@ export default function App() {
   const loading = useStore().status === "loading";
   const ix = useMemo(() => index(db), [db]);
   useEffect(() => { document.title = db.site?.name || "HMNL Statistika"; }, [db.site?.name]);
+  const theme = useTheme();
+  useEffect(() => {   // boja trake preglednika / statusne trake mobitela = boja zaglavlja u odabranoj temi
+    const band = getComputedStyle(document.documentElement).getPropertyValue("--band").trim();
+    if (band) document.querySelectorAll('meta[name="theme-color"]').forEach((m) => { m.content = band; });
+  }, [theme]);
   const r = useRoute();
   const [page, ...rest] = r;
   const cur = db.seasons[0].id;
@@ -53,6 +59,7 @@ export default function App() {
       {page !== "admin" && page !== "objave" && page !== "izrada" && (
         <div className="demo-bar"><div>Testna verzija. Podaci se još unose i mogu biti nepotpuni.</div></div>
       )}
+      {page !== "admin" && page !== "objave" && page !== "izrada" && <InstallHint />}
       {loading && page !== "admin" && page !== "objave" && page !== "privatnost" && <div className="page"><div className="panel loadpanel" role="status"><span className="spin" aria-hidden="true" />Učitavam podatke…</div></div>}
       {!loading && !page && <Home db={db} ix={ix} />}
       {!loading && page === "liga" && <League db={db} ix={ix} leagueId={rest[0]} seasonId={rest[1] || cur} tab={rest[2]} roundArg={rest[3]} />}
