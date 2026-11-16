@@ -175,7 +175,7 @@ export const signIn = async (email, password) => {
 export const signOut = () => sb?.auth.signOut();
 
 // ---------- glasanje "Tko pobjeđuje?" (bez prijave, vidi supabase/glasanje-2026-11-16.sql) ----------
-// Vraća { [matchId]: { "1": n, X: n, "2": n } }.
+// voteCounts vraća { [matchId]: { "1": n, X: n, "2": n } }; castVote { mine, counts } (glas se ne može promijeniti).
 const voteMap = (rows) => {
   const o = {};
   for (const r of rows || []) (o[r.match_id] ||= { 1: 0, X: 0, 2: 0 })[r.pick] = r.n;
@@ -191,7 +191,7 @@ export async function castVote(matchId, voter, pick) {
   if (!sb) throw new Error("Baza nije dostupna.");
   const { data, error } = await sb.rpc("cast_vote", { p_match: matchId, p_voter: voter, p_pick: pick });
   if (error) throw new Error(error.message);
-  return voteMap(data)[matchId] || { 1: 0, X: 0, 2: 0 };
+  return { mine: data?.mine || pick, counts: voteMap(data?.counts)[matchId] || { 1: 0, X: 0, 2: 0 } };
 }
 
 // ---------- pisanje ----------

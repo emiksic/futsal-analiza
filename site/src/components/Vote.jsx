@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useStore, voteCounts, castVote } from "../lib/store.js";
+import { voteCounts, castVote } from "../lib/store.js";
 import { winner } from "../lib/derive.js";
+import { Jersey } from "./ui.jsx";
 
-// Glasanje "Tko pobjeđuje?" bez prijave. Zasad ga vidi samo admin; kad je spremno za javnost, stavi na true.
-export const VOTES_PUBLIC = false;
-export const useVotesVisible = () => { const st = useStore(); return VOTES_PUBLIC || st.isAdmin; };
-
+// Glasanje "Tko pobjeđuje?" bez prijave (vidi supabase/glasanje-2026-11-16.sql).
+// Svi mogu glasati; postoci se vide tek nakon glasanja, a nakon zatvaranja (početak utakmice) svima.
+// Glas se ne može promijeniti.
 const LEAGUES = ["1-hmnl", "kup"];          // samo seniori; u kupu nema X (ide se do pobjednika)
 const OPEN_DAYS = 8;
 const VOTER_KEY = "hmnl-glasac", PICKS_KEY = "hmnl-glasovi";
@@ -31,78 +31,92 @@ export function voteOpen(m, now = Date.now()) {
   return now >= t - OPEN_DAYS * 864e5 && (m.timeTbd || now < t);
 }
 
+// boja trake: dres, a ako je dres skoro bijel, rukavi; ako je i to svijetlo, siva
+const light = (hex) => {
+  const h = /^#?([0-9a-f]{6})$/i.exec(hex || ""); if (!h) return true;
+  const n = parseInt(h[1], 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.82;
+};
+const barColor = (kit) => (!light(kit?.shirt) ? kit.shirt : !light(kit?.trim) ? kit.trim : "var(--muted)");
+
+// postoci koji uvijek daju zbroj 100 (najveći ostatak)
+function percents(keys, counts) {
+  const total = keys.reduce((a, k) => a + (counts?.[k] || 0), 0); if (!total) return {};
+  const raw = keys.map((k) => (counts[k] / total) * 100), fl = raw.map(Math.floor);
+  let left = 100 - fl.reduce((a, b) => a + b, 0);
+  raw.map((r, i) => [r - fl[i], i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (left > 0) { fl[i]++; left--; } });
+  return Object.fromEntries(keys.map((k, i) => [k, fl[i]]));
+}
+
 export function Vote({ m, ix }) {
-  const visible = useVotesVisible();
-  const adm = useStore().isAdmin;
   const league = ix.comp[m.comp]?.league;
   const cup = league === "kup";
   const open = voteOpen(m);
   const [counts, setCounts] = useState(null);
   const [mine, setMine] = useState(() => myPicks()[m.id] || null);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(null);       // glas koji se upravo šalje
   const [err, setErr] = useState("");
-  const on = visible && LEAGUES.includes(league) && (open || m.status !== "scheduled");
+  const on = LEAGUES.includes(league) && (open || m.status !== "scheduled");
 
   useEffect(() => {
     if (!on) return;
     let live = true;
-    voteCounts([m.id]).then((c) => live && setCounts(c[m.id] || { 1: 0, X: 0, 2: 0 }))
-      .catch((e) => live && (setCounts(null), setErr(e.message)));
+    voteCounts([m.id]).then((c) => live && setCounts(c[m.id] || { 1: 0, X: 0, 2: 0 })).catch(() => live && setCounts(null));
     return () => { live = false; };
   }, [on, m.id, m.status]);
 
   if (!on) return null;
-  const total = counts ? counts[1] + counts.X + counts[2] : 0;
-  if (!open && !total) return adm && err ? <div className="note" style={{ marginTop: 8 }}>Glasanje: {err}</div> : null;
-
   const H = ix.club[m.home], A = ix.club[m.away];
-  const opts = [["1", H.name], ...(cup ? [] : [["X", "Neriješeno"]]), ["2", A.name]];
-  const showBars = !!counts && (!!mine || !open);
-  const w = winner(m), right = w == null ? null : w === 1 ? "1" : w === -1 ? "2" : "X";
-  // postoci koji uvijek daju zbroj 100 (najveći ostatak)
-  const P = (() => {
-    const ks = opts.map((o) => o[0]); if (!total) return {};
-    const raw = ks.map((k) => (counts[k] / total) * 100), fl = raw.map(Math.floor);
-    let left = 100 - fl.reduce((a, b) => a + b, 0);
-    raw.map((r, i) => [r - fl[i], i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (left > 0) { fl[i]++; left--; } });
-    return Object.fromEntries(ks.map((k, i) => [k, fl[i]]));
-  })();
-  const pct = (k) => P[k] || 0;
+  const opts = [
+    { k: "1", label: H.name, kit: H.kit, color: barColor(H.kit) },
+    ...(cup ? [] : [{ k: "X", label: "Neriješeno", color: "var(--muted)" }]),
+    { k: "2", label: A.name, kit: A.kit, color: barColor(A.kit) },
+  ];
+  const total = counts ? opts.reduce((a, o) => a + counts[o.k], 0) : 0;
+  if (!open && !total) return null;             // zatvoreno, a nitko nije glasao: ništa ne prikazujemo
 
-  async function vote(p) {
-    if (busy) return;
-    setBusy(true); setErr("");
-    try { const c = await castVote(m.id, voterId(), p); setCounts(c); setMine(p); savePick(m.id, p); }
-    catch (e) { setErr(e.message); }
-    finally { setBusy(false); }
+  const reveal = !!counts && (!!mine || !open);
+  const P = reveal ? percents(opts.map((o) => o.k), counts) : {};
+  const w = winner(m), right = w == null ? null : w === 1 ? "1" : w === -1 ? "2" : "X";
+  const done = m.status === "finished";
+
+  async function vote(k) {
+    if (busy || mine || !open) return;
+    setBusy(k); setErr("");
+    try { const r = await castVote(m.id, voterId(), k); setCounts(r.counts); setMine(r.mine); savePick(m.id, r.mine); }
+    catch (e) { setErr(e.message || "Glas nije spremljen. Pokušaj ponovno."); }
+    finally { setBusy(null); }
   }
 
+  const sub = open
+    ? (mine ? "Tvoj glas je zabilježen." : "Glas se ne može promijeniti. Rezultati se vide nakon glasanja.")
+    : done ? (mine ? (mine === right ? "Pogodio si." : "Nisi pogodio.") : "Glasanje je završeno.")
+    : "Glasanje je zatvoreno.";
+
   return (
-    <section className="panel vote" aria-label="Tko pobjeđuje?">
-      <div className="vote-h">
-        <b>{cup ? "Tko prolazi dalje?" : "Tko pobjeđuje?"}</b>
-        <span className="note">
-          {!VOTES_PUBLIC && "Vidi samo admin · "}
-          {open ? (mine ? "Glas možeš promijeniti do početka utakmice." : "Glasaj prije početka utakmice.") : "Glasanje je zatvoreno."}
-          {counts && total > 0 && ` · ${glasova(total)}`}
-        </span>
-      </div>
-      <div className={`vote-opts n${opts.length}`}>
-        {opts.map(([k, label]) => {
-          const p = pct(k);
-          const cls = ["vote-opt", mine === k && "mine", right === k && "right", showBars && "res"].filter(Boolean).join(" ");
+    <section className="panel vote" aria-label={cup ? "Tko prolazi dalje?" : "Tko pobjeđuje?"}>
+      <header className="vote-h">
+        <h2>{cup ? "Tko prolazi dalje?" : "Tko pobjeđuje?"}</h2>
+        {total > 0 && <span className="vote-n">{glasova(total)}</span>}
+      </header>
+      <div className={`vote-opts n${opts.length}${reveal ? " res" : ""}`} role="group">
+        {opts.map((o) => {
+          const p = P[o.k] ?? 0;
+          const cls = ["vote-opt", mine === o.k && "mine", reveal && right === o.k && "right", busy === o.k && "busy",
+            reveal && mine && mine !== o.k && "other"].filter(Boolean).join(" ");
           return (
-            <button key={k} type="button" className={cls} disabled={!open || busy} onClick={() => vote(k)}
-              aria-pressed={mine === k} title={open ? `Glasaj: ${label}` : undefined}>
-              {showBars && <i style={{ width: `${p}%` }} />}
-              <span className="vote-k">{k}</span>
-              <span className="vote-l">{label}</span>
-              {showBars && <span className="vote-p">{p}%</span>}
+            <button key={o.k} type="button" className={cls} disabled={!open || !!mine || !!busy} onClick={() => vote(o.k)}
+              aria-pressed={mine === o.k} aria-label={reveal ? `${o.label}: ${p} %` : `Glasaj: ${o.label}`}>
+              <span className="vote-ic">{o.kit ? <Jersey kit={o.kit} size={30} /> : <b>X</b>}</span>
+              <span className="vote-l">{o.label}</span>
+              {reveal && <span className="vote-p">{p}<small>%</small></span>}
+              {reveal && <span className="vote-bar"><i style={{ width: `${p}%`, background: mine === o.k ? "var(--primary)" : o.color }} /></span>}
+              {mine === o.k && <span className="vote-tag">Tvoj glas</span>}
+              {reveal && right === o.k && <span className="vote-tag ok">Ishod</span>}
             </button>);
         })}
       </div>
-      {right && total > 0 && <div className="note" style={{ marginTop: 8 }}>Točno je pogodilo {pct(right)}% glasača.</div>}
-      {err && <div className="note" style={{ marginTop: 8, color: "var(--live)" }}>{err}</div>}
+      <div className={`vote-sub${err ? " err" : ""}`}>{err || sub}</div>
     </section>
   );
 }
