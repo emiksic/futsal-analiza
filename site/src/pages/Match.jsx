@@ -10,6 +10,7 @@ import { MiniTable } from "../components/Side.jsx";
 import { Shots } from "./Shots.jsx";
 import { Player } from "../components/Player.jsx";
 import { useStore } from "../lib/store.js";
+import { Vote } from "../components/Vote.jsx";
 
 // Kretanje igrača (prijeđeni metri, toplinske mape) još nije dovoljno točno za javnost: zasad ga vidi samo admin.
 const MOVEMENT_PUBLIC = false;
@@ -45,7 +46,10 @@ export function Match({ db, ix: ix0, id, tab }) {
         {t !== "analiza" && <div style={{ height: 6 }} />}
         {t === "analiza" && <AnalysisTab m={m} ix={ix} A={A} />}
         {t === "sazetak" && hl && <div className="pb" style={{ paddingTop: 16, display: "grid", gap: 10, maxWidth: 980 }}><Player youtube={hl} /><div className="note">Službeni sažetak utakmice.</div></div>}
+        {/* glasanje: prije utakmice na vrhu Detalja, poslije ispod događaja */}
+        {t === "detalji" && m.status === "scheduled" && <Vote m={m} ix={ix} />}
         {t === "detalji" && <Incidents m={m} ix={ix} />}
+        {t === "detalji" && m.status !== "scheduled" && <Vote m={m} ix={ix} />}
         {t === "statistika" && <Stats m={m} ix={ix} A={A} />}
         {t === "udarci" && <Shots m={m} ix={ix} />}
         {t === "postave" && <Suspended db={db} m={m} ix={ix} />}
