@@ -6,18 +6,18 @@ import { standings, scorers, currentRound, fmtDay, dayLabel, playerName, zoneOf,
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
-import { AnalysedCard, ScorersCard, MiniTable } from "../components/Side.jsx";
+import { ScorersCard, MiniTable } from "../components/Side.jsx";
 import { Jersey, LeagueBadge, Form, Icon } from "../components/ui.jsx";
 
-const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["preokreti", "Preokreti"], ["vodstvo", "Vodstvo"], ["minute", "Po minutama"], ["kartoni", "Kartoni"], ["analize", "Video analize"], ["pravila", "Pravila"]];
+const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["preokreti", "Preokreti"], ["vodstvo", "Vodstvo"], ["minute", "Po minutama"], ["kartoni", "Kartoni"], ["pravila", "Pravila"]];
 
 export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roundArg }) {
   const L = ix.league[leagueId], cup = isCup(L);
-  const tab = cup && tab0 === "tablica" ? "rezultati" : tab0;   // kup nema tablicu
+  const tab = tab0 === "analize" ? (cup ? "rezultati" : "tablica")   // stara poveznica na uklonjene video analize
+    : cup && tab0 === "tablica" ? "rezultati" : tab0;   // kup nema tablicu
   const comp = db.comps.find((c) => c.league === leagueId && c.season === seasonId) || db.comps.find((c) => c.league === leagueId);
   if (!L || !comp) return <div className="page"><div className="panel empty">Liga ne postoji.</div></div>;
   const seasonsOf = db.comps.filter((c) => c.league === leagueId).map((c) => ix.season[c.season]);
-  const analysed = db.matches.filter((m) => m.comp === comp.id && m.analysis?.status === "done").length;
   return (
     <div className="page three">
       <Rail db={db} active={comp.id} />
@@ -38,7 +38,7 @@ export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roun
           </div>
           <nav className="tabs" aria-label="Liga">
             {TABS.filter(([k]) => !(cup && k === "tablica")).map(([k, t]) => <a key={k} href={href("liga", leagueId, comp.season, k)} onClick={replaceClick} aria-current={tab === k ? "page" : undefined}>
-              {t}{k === "analize" && analysed ? ` (${analysed})` : ""}</a>)}
+              {t}</a>)}
           </nav>
           {tab === "tablica" && <Standings db={db} ix={ix} comp={comp} league={L} />}
           {tab === "rezultati" && <Rounds db={db} ix={ix} comp={comp} league={L} round={roundArg ? +roundArg : null} />}
@@ -47,14 +47,12 @@ export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roun
           {tab === "vodstvo" && <LeadTime db={db} ix={ix} comp={comp} />}
           {tab === "minute" && <Minutes db={db} ix={ix} comp={comp} />}
           {tab === "kartoni" && <Cards db={db} ix={ix} comp={comp} league={L} />}
-          {tab === "analize" && <Analysed db={db} ix={ix} comp={comp} />}
           {tab === "pravila" && <Rules league={L} season={comp.season} />}
         </section>
       </main>
       <aside className="ctx col">
         {tab === "tablica" ? <RoundCard db={db} ix={ix} comp={comp} league={L} /> : <MiniTable db={db} ix={ix} comp={comp.id} />}
         {tab !== "strijelci" && <ScorersCard db={db} ix={ix} comp={comp.id} limit={5} />}
-        {tab !== "analize" && <AnalysedCard db={db} ix={ix} comp={comp.id} limit={2} />}
       </aside>
     </div>
   );
@@ -395,12 +393,6 @@ function LeadTime({ db, ix, comp }) {
       <div className="zones"><span>Koliko je od 40 minuta svake utakmice klub vodio, bilo je neriješeno ili je gubio (poredano po udjelu vremena u vodstvu). Najduže: najduže neprekinuto vodstvo u jednoj utakmici (klik vodi na utakmicu). Kad je poznata samo minuta gola, gol se računa u sredini te minute. Računaju se samo utakmice za koje su uneseni svi golovi.</span></div>
     </>
   );
-}
-
-function Analysed({ db, ix, comp }) {
-  const ms = db.matches.filter((m) => m.comp === comp.id && m.analysis && m.analysis.status !== "none").sort((a, b) => b.date.localeCompare(a.date));
-  if (!ms.length) return <div className="empty">Još nema video analiza u ovoj sezoni. Utakmice za analizu dodaju se u adminu.</div>;
-  return <div className="mlist">{ms.map((m) => <MatchRow key={m.id} m={m} ix={ix} showDay />)}</div>;
 }
 
 function RoundCard({ db, ix, comp, league }) {

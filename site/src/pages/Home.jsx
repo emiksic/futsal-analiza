@@ -3,7 +3,7 @@ import { href } from "../lib/router.js";
 import { currentRound, dayLabel, roundName } from "../lib/derive.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
-import { AnalysedCard, ScorersCard } from "../components/Side.jsx";
+import { ScorersCard } from "../components/Side.jsx";
 import { LeagueBadge, Icon } from "../components/ui.jsx";
 
 // odabir (zadnje / sljedeće kolo) se pamti dok je kartica otvorena, pa ga povratak s utakmice ne poništi
@@ -55,7 +55,6 @@ export function Home({ db, ix }) {
         </section>
       </main>
       <aside className="ctx col">
-        <AnalysedCard db={db} ix={ix} />
         <ScorersCard db={db} ix={ix} comp={`1-hmnl-${cur}`} title={`Strijelci ${ix.league["1-hmnl"]?.name || "SS HMNL"}`} limit={5} />
       </aside>
     </div>
