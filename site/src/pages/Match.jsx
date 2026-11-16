@@ -10,6 +10,7 @@ import { MiniTable } from "../components/Side.jsx";
 import { Shots } from "./Shots.jsx";
 import { Player } from "../components/Player.jsx";
 import { useStore } from "../lib/store.js";
+import { Vote } from "../components/Vote.jsx";
 
 // Kretanje igrača (prijeđeni metri, toplinske mape) još nije dovoljno točno za javnost: zasad ga vidi samo admin.
 const MOVEMENT_PUBLIC = false;
@@ -37,6 +38,7 @@ export function Match({ db, ix: ix0, id, tab }) {
           <a className="btn sm primary" href={href("admin", "utakmica", m.id, { detalji: "dogadaji", postave: "zapisnik", udarci: "udarci", analiza: "analiza" }[t] || "osnovno")}>Uredi u adminu</a>
         </div>)}
       <Board m={m} ix={ix} />
+      <Vote m={m} ix={ix} />
       <div className={t === "analiza" || t === "udarci" ? "" : "split"}>
       <section className="panel">
         <nav className="tabs" aria-label="Utakmica">

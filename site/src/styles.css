@@ -879,3 +879,24 @@ table.st { font-size: 13px; }
 .pc-wrap { padding: 0 12px 6px; }
 .pc-pick button[aria-pressed="false"] { opacity: .55; text-decoration: line-through; }
 .pc-pick .pc-all { border-style: dashed; color: var(--muted); text-decoration: none !important; opacity: 1 !important; }
+
+/* Glasanje "Tko pobjeđuje?" */
+.vote { margin-top: 12px; padding: 12px 16px 14px; }
+.vote-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 10px; }
+.vote-h b { font: 600 17px/1.1 var(--display); letter-spacing: .02em; }
+.vote-opts { display: grid; gap: 8px; }
+.vote-opts.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.vote-opts.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.vote-opt { position: relative; overflow: hidden; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px;
+  border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--surface); color: var(--fg); font: inherit; text-align: left; cursor: pointer; }
+.vote-opt:hover:not(:disabled) { background: var(--surface-2); }
+.vote-opt:disabled { cursor: default; }
+.vote-opt > i { position: absolute; inset: 0 auto 0 0; background: var(--surface-2); transition: width .4s ease; }
+.vote-opt > span { position: relative; }
+.vote-k { font: 700 15px/1 var(--display); color: var(--muted); min-width: 12px; }
+.vote-l { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.vote-p { font: 700 15px/1 var(--display); font-variant-numeric: tabular-nums; }
+.vote-opt.mine { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
+.vote-opt.mine > i { background: color-mix(in srgb, var(--primary) 22%, transparent); }
+.vote-opt.right .vote-l::after { content: " ✓"; color: var(--primary); }
+@media (max-width: 560px) { .vote-opts.n3 { grid-template-columns: 1fr; } }
