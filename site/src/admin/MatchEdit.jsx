@@ -1,7 +1,7 @@
 import { Fragment, useState, useRef, useEffect } from "react";
 import { href, go, replaceClick, setLeaveGuard } from "../lib/router.js";
 import { update, uid, useStore, holdStart, holdDiscard, holdCommit, isHolding } from "../lib/store.js";
-import { score, absSec, minute, NO_TIME, playerName, compName, ANALYSIS_LABEL, withMatchNumbers } from "../lib/derive.js";
+import { score, absSec, minute, NO_TIME, playerName, compName, ANALYSIS_LABEL, withMatchNumbers, matchIssues } from "../lib/derive.js";
 import { useAnalysis } from "../lib/analysis.js";
 import { Jersey, Icon, Toast, NumInput, DateTimeInput } from "../components/ui.jsx";
 import { ShotTagger } from "./ShotTagger.jsx";
@@ -106,6 +106,17 @@ function LiveBar({ h, ix }) {
   );
 }
 
+// upozorenja (rezultat ≠ golovi, igrač izvan zapisnika, Kraj bez zapisnika…) s poveznicom na karticu gdje se popravlja
+function Issues({ m, ix, id }) {
+  const list = matchIssues(m, ix);
+  if (!list.length) return null;
+  return (
+    <section className="panel issues-box" role="status">
+      <b>Za provjeru</b>
+      <ul>{list.map((x, i) => <li key={i}><a href={href("admin", "utakmica", id, x.tab)} onClick={replaceClick}>{x.text}</a></li>)}</ul>
+    </section>);
+}
+
 function MatchEditInner({ db, ix: ix0, id, tab = "osnovno" }) {
   const h = useHold(id); h.id = id;
   const m = ix0.match[id];
@@ -137,6 +148,7 @@ function MatchEditInner({ db, ix: ix0, id, tab = "osnovno" }) {
         </div>
       </div>
       <LiveBar h={h} ix={ix} />
+      <Issues m={m} ix={ix} id={id} />
       <section className="panel" key={h.st.holdRev}>
         <nav className="tabs" aria-label="Uređivanje">
           {TABS.map(([k, n]) => <a key={k} href={href("admin", "utakmica", id, k)} onClick={replaceClick} aria-current={tab === k ? "page" : undefined}>{n}</a>)}

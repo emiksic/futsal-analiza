@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { href, go } from "../lib/router.js";
 import { update, uid } from "../lib/store.js";
-import { score, fmtDay, fmtTime, currentRound, compName, roundName } from "../lib/derive.js";
+import { score, fmtDay, fmtTime, currentRound, compName, roundName, matchIssues } from "../lib/derive.js";
 import { Jersey, Icon, analysisPill } from "../components/ui.jsx";
 
 export function Matches({ db, ix }) {
@@ -22,6 +22,10 @@ export function Matches({ db, ix }) {
     go("admin", "utakmica", id, "osnovno");
   };
   const rosterOk = (m) => m.roster?.home?.players?.length && m.roster?.away?.players?.length;
+  // provjere za cijelo natjecanje (sva kola), da se ništa ne propusti
+  const issues = db.matches.filter((m) => m.comp === comp && !m.draft).map((m) => ({ m, list: matchIssues(m, ix) })).filter((x) => x.list.length)
+    .sort((a, b) => a.m.date.localeCompare(b.m.date));
+  const issueOf = Object.fromEntries(issues.map((x) => [x.m.id, x.list]));
   return (
     <>
       <div className="ahead"><h1>Utakmice</h1><div className="r"><button className="btn primary" onClick={add}>{Icon.plus()} Nova utakmica</button></div></div>
@@ -40,6 +44,17 @@ export function Matches({ db, ix }) {
               </div>))}
             <div className="qrow"><span className="small muted">Pokretanje obrade: <code>python scripts/analyze.py --queue</code>. Skripta sama preuzima utakmice iz reda i vraća rezultate.</span></div>
           </div>
+        </section>)}
+      {issues.length > 0 && (
+        <section className="panel">
+          <div className="ph"><h2>Provjere</h2><span className="aside">{compName(ix, comp)}: {issues.length} {issues.length === 1 ? "utakmica" : "utakmica"} za provjeru</span></div>
+          <ul className="issues">
+            {issues.map(({ m, list }) => (
+              <li key={m.id}>
+                <a href={href("admin", "utakmica", m.id, list[0].tab)}><b>{ix.club[m.home].name} – {ix.club[m.away].name}</b> <span className="muted small">{roundName(ix.league[C.league], m.round)}</span></a>
+                <ul>{list.map((x, i) => <li key={i}><a href={href("admin", "utakmica", m.id, x.tab)}>{x.text}</a></li>)}</ul>
+              </li>))}
+          </ul>
         </section>)}
       <section className="panel">
         <div className="toolbar" style={{ paddingTop: 14 }}>
@@ -65,7 +80,8 @@ export function Matches({ db, ix }) {
                   <td className="nowrap">{fmtDay(m.date)}<div className="small muted">{m.timeTbd ? "termin nepoznat" : fmtTime(m.date)}</div></td>
                   <td><span className="mt"><Jersey kit={ix.club[m.home].kit} size={18} />{ix.club[m.home].name}<span className="muted">–</span><Jersey kit={ix.club[m.away].kit} size={18} />{ix.club[m.away].name}</span></td>
                   <td className="nowrap" style={{ font: "700 17px/1 var(--display)" }}>{s && m.status === "finished" ? `${s[0]}:${s[1]}` : <span className="muted small" style={{ fontFamily: "var(--body)", fontWeight: 400 }}>zakazano</span>}</td>
-                  <td>{rosterOk(m) ? <span className="pill done">unesen</span> : <span className="pill">nema</span>}</td>
+                  <td>{rosterOk(m) ? <span className="pill done">unesen</span> : <span className="pill">nema</span>}
+                    {issueOf[m.id] && <span className="pill warn" style={{ marginLeft: 6 }} title={issueOf[m.id].map((x) => x.text).join("\n")}>⚠ {issueOf[m.id].length}</span>}</td>
                   <td>{analysisPill(m.analysis) || (m.tv === "YouTube" && !m.youtube ? <span className="pill warn" title="Dodaj YouTube link ili prebaci prijenos na MAXsport">nema linka</span>
                     : <span className="small muted">{m.youtube ? "ima snimku" : m.tv === "MAXsport" ? "MAXsport" : "—"}</span>)}</td>
                   <td className="nowrap"><a className="btn sm" href={href("admin", "utakmica", m.id, "osnovno")}>Uredi</a></td>

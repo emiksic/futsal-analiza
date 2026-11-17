@@ -28,5 +28,10 @@ const csp = () => ({ name: "csp", apply: "build", transformIndexHtml: (html) => 
 export default defineConfig(({ mode }) => ({
   base: "./",
   plugins: [react(), ...(mode === "single" ? [viteSingleFile()] : [csp()])],
-  build: { outDir: mode === "single" ? "dist-single" : "dist" },
+  build: {
+    outDir: mode === "single" ? "dist-single" : "dist",
+    // biblioteke u zasebnim datotekama: mijenjaju se rijetko, pa ih preglednik nakon nove objave stranice ne skida ponovno
+    rollupOptions: mode === "single" ? {} : { output: { manualChunks: (id) =>
+      /node_modules\/(react|react-dom|scheduler)\//.test(id) ? "react" : /node_modules\/@supabase\//.test(id) ? "supabase" : undefined } },
+  },
 }));

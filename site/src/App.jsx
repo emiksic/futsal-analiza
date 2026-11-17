@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useDB, useStore } from "./lib/store.js";
 import { useRoute, href } from "./lib/router.js";
 import { index } from "./lib/derive.js";
@@ -7,14 +7,16 @@ import { Home } from "./pages/Home.jsx";
 import { League } from "./pages/League.jsx";
 import { Club } from "./pages/Club.jsx";
 import { Match } from "./pages/Match.jsx";
-import { Admin } from "./admin/Admin.jsx";
-import { Posts } from "./admin/Posts.jsx";
-import { Render } from "./pages/Render.jsx";
 import { Privacy } from "./pages/Privacy.jsx";
 import { PlayerPage } from "./pages/PlayerPage.jsx";
 import { Notice } from "./components/Notice.jsx";
 import { InstallHint } from "./components/InstallHint.jsx";
 import { Skeleton } from "./components/Skeleton.jsx";
+// admin, objave i izrada slika učitavaju se tek kad zatrebaju (posjetitelji ih ne preuzimaju)
+const Admin = lazy(() => import("./admin/Admin.jsx").then((m) => ({ default: m.Admin })));
+const Posts = lazy(() => import("./admin/Posts.jsx").then((m) => ({ default: m.Posts })));
+const Render = lazy(() => import("./pages/Render.jsx").then((m) => ({ default: m.Render })));
+const Wait = () => <div className="page"><div className="panel loadpanel" role="status"><span className="spin" aria-hidden="true" />Učitavam…</div></div>;
 import { useTheme, toggleTheme } from "./lib/theme.js";
 
 function ThemeToggle() {
@@ -89,9 +91,9 @@ export default function App() {
       {!loading && page === "klub" && <Club key={rest[0]} db={db} ix={ix} id={rest[0]} />}
       {!loading && page === "utakmica" && <Match db={db} ix={ix} id={rest[0]} tab={rest[1]} />}
       {!loading && page === "igrac" && <PlayerPage key={rest[0]} db={db} ix={ix} id={rest[0]} />}
-      {page === "admin" && <Admin db={db} ix={ix} route={rest} />}
-      {!loading && page === "izrada" && <Render db={db} ix={ix} comp={rest[0]} round={rest[1]} mode={rest[2]} theme={rest[3]} />}
-      {page === "objave" && <Admin db={db} ix={ix} route={rest}><Posts db={db} ix={ix} comp={rest[0]} round={rest[1]} /></Admin>}
+      {page === "admin" && <Suspense fallback={<Wait />}><Admin db={db} ix={ix} route={rest} /></Suspense>}
+      {!loading && page === "izrada" && <Suspense fallback={null}><Render db={db} ix={ix} comp={rest[0]} round={rest[1]} mode={rest[2]} theme={rest[3]} /></Suspense>}
+      {page === "objave" && <Suspense fallback={<Wait />}><Admin db={db} ix={ix} route={rest}><Posts db={db} ix={ix} comp={rest[0]} round={rest[1]} /></Admin></Suspense>}
       {page === "privatnost" && <Privacy db={db} />}
       {page !== "admin" && page !== "objave" && page !== "izrada" && page !== "privatnost" && <Notice name={db.site?.name || "Ova stranica"} />}
       {page !== "admin" && page !== "objave" && page !== "izrada" && (

@@ -1,17 +1,24 @@
-// Traka "Instaliraj aplikaciju" (PWA). Android/Chrome: gumb koji otvara sistemski prozor za instalaciju.
-// iPhone/iPad (Safari): Apple ne dopušta gumb, pa samo uputa Dijeli → Dodaj na početni zaslon.
-// Ne prikazuje se ako je stranica već otvorena kao instalirana aplikacija ili ako je korisnik traku zatvorio (30 dana).
+// Traka "Instaliraj aplikaciju" (PWA), samo na mobitelu/tabletu:
+//  - Android (Chrome, Samsung, Edge): gumb koji otvara sistemski prozor za instalaciju; ako ga preglednik ne ponudi, uputa za izbornik
+//  - Android u Instagram/Facebook pregledniku: "otvori u Chromeu"
+//  - iPhone/iPad Safari: uputa Dijeli (donja traka) → Dodaj na početni zaslon; Chrome na iPhoneu: Dijeli gore desno
+//  - iPhone u Instagram/Facebook, Firefoxu i sl.: "otvori u Safariju"
+// Ne prikazuje se na računalu, u instaliranoj aplikaciji ni kad je korisnik traku zatvorio (30 dana).
 import { useEffect, useState } from "react";
 import { useStore } from "../lib/store.js";
 
-// Zasad vidi samo admin (testiranje); kad je spremno za javnost, stavi na true.
-const INSTALL_PUBLIC = false;
+// Traka je javna od 17. 11. 2026.; false = vidi samo admin.
+const INSTALL_PUBLIC = true;
 const OFF_KEY = "install-hint-off";
 const OFF_DAYS = 30;
 
 const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
 const isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
-const inApp = /FBAN|FBAV|Instagram|Line\/|TikTok/i.test(ua);           // ugrađeni preglednici (Instagram, Facebook…) ne mogu instalirati
+const isAndroid = /Android/i.test(ua);
+const inApp = /FBAN|FBAV|FB_IAB|Instagram|Line\/|TikTok|Snapchat|; wv\)/i.test(ua);   // ugrađeni preglednici (Instagram, Facebook…) ne mogu instalirati
+const iosChrome = isIOS && /CriOS/.test(ua);
+const iosSafari = isIOS && !inApp && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA\//.test(ua);
+const andFirefox = isAndroid && /Firefox/.test(ua);
 const standalone = () => window.matchMedia?.("(display-mode: standalone)").matches || navigator.standalone === true;
 const dismissed = () => { try { return Date.now() - Number(localStorage.getItem(OFF_KEY) || 0) < OFF_DAYS * 864e5; } catch { return false; } };
 
@@ -25,12 +32,13 @@ const Dots = () => (
 const PlusBox = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ verticalAlign: "-2px" }}><rect x="4" y="4" width="16" height="16" rx="3" /><path d="M12 8v8M8 12h8" /></svg>);
 
-// Uputa za iPhone: Safari ne dopušta stranici da sama doda ikonu, pa pokažemo korake i strelicu prema donjoj traci Safarija.
-function IOSSheet({ onClose }) {
-  const [shareErr, setShareErr] = useState("");
+// Uputa za iPhone: stranica ne može sama dodati ikonu, pa pokažemo korake i strelicu prema gumbu Dijeli
+// (Safari: donja traka; Chrome: gore desno u adresnoj traci).
+function IOSSheet({ onClose, chrome }) {
   useEffect(() => { const k = (e) => e.key === "Escape" && onClose(); window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k); }, [onClose]);
   return (
-    <div className="ios-sheet-bg" onClick={onClose}>
+    <div className={"ios-sheet-bg" + (chrome ? " top" : "")} onClick={onClose}>
+      {chrome && <div className="ios-arrow up" aria-hidden="true">↑</div>}
       <div className="ios-sheet" role="dialog" aria-modal="true" aria-labelledby="ios-sheet-t" onClick={(e) => e.stopPropagation()}>
         <div className="ios-sheet-h">
           <img src="icon-192.png" width="40" height="40" alt="" />
@@ -38,19 +46,14 @@ function IOSSheet({ onClose }) {
           <button type="button" className="install-x" onClick={onClose} aria-label="Zatvori">×</button>
         </div>
         <ol>
-          <li>U donjoj traci Safarija dodirni <ShareIcon /> <b>Dijeli</b> (ili prvo <Dots /> pa <b>Dijeli</b>).</li>
+          {chrome
+            ? <li>Gore desno, u adresnoj traci, dodirni <ShareIcon /> <b>Dijeli</b>.</li>
+            : <li>U donjoj traci Safarija dodirni <ShareIcon /> <b>Dijeli</b> (ili prvo <Dots /> pa <b>Dijeli</b>).</li>}
           <li>Skrolaj dolje i odaberi <PlusBox /> <b>Dodaj na početni zaslon</b>.</li>
-          <li>Dodirni <b>Dodaj</b> u gornjem desnom kutu.</li>
+          <li>Dodirni <b>Dodaj</b>.</li>
         </ol>
-        {navigator.share && (
-          <button type="button" className="btn sm" onClick={async () => {
-            setShareErr("");
-            try { await navigator.share({ title: "HMNL Statistika", url: location.origin + "/" }); }
-            catch (e) { if (e?.name !== "AbortError") setShareErr("Dijeljenje nije uspjelo."); }
-          }}>Otvori Dijeli</button>)}
-        {shareErr && <div className="small muted" style={{ marginTop: 6 }}>{shareErr}</div>}
       </div>
-      <div className="ios-arrow" aria-hidden="true">↓</div>
+      {!chrome && <div className="ios-arrow" aria-hidden="true">↓</div>}
     </div>
   );
 }
@@ -60,6 +63,9 @@ export function InstallHint() {
   const [sheet, setSheet] = useState(false);
   const [prompt, setPrompt] = useState(() => window.__installPrompt || null);
   const [off, setOff] = useState(() => dismissed() || standalone());
+  // Chrome na Androidu javi da se može instalirati odmah po učitavanju; ako ne javi ni nakon 4 s, pokaži ručnu uputu
+  const [late, setLate] = useState(false);
+  useEffect(() => { if (!isAndroid) return; const t = setTimeout(() => setLate(true), 4000); return () => clearTimeout(t); }, []);
 
   useEffect(() => {
     const on = () => setPrompt(window.__installPrompt || null);
@@ -73,15 +79,15 @@ export function InstallHint() {
   const close = () => { try { localStorage.setItem(OFF_KEY, String(Date.now())); } catch { /* */ } setOff(true); };
 
   let body = null;
-  if (isIOS && inApp) {
-    body = <span>Za instalaciju otvori stranicu u Safariju (izbornik ⋯ → Otvori u pregledniku).</span>;
-  } else if (isIOS) {
-    body = <>
-      <span>Instaliraj HMNL Statistiku na iPhone: ikona na početnom zaslonu, bez adresne trake.</span>
-      <button type="button" className="btn sm primary" onClick={() => setSheet(true)}>Instaliraj</button>
-    </>;
-  } else if (prompt) {
-    body = <>
+  const iosBtn = <>
+    <span>Instaliraj HMNL Statistiku na {/iPad/.test(ua) ? "iPad" : "iPhone"}: ikona na početnom zaslonu, bez adresne trake.</span>
+    <button type="button" className="btn sm primary" onClick={() => setSheet(true)}>Instaliraj</button>
+  </>;
+  if (isIOS) {
+    if (iosSafari || iosChrome) body = iosBtn;
+    else body = <span>Za instalaciju na početni zaslon otvori hmnl.hr u <b>Safariju</b>{inApp ? " (izbornik ⋯ → Otvori u pregledniku)" : ""}.</span>;
+  } else if (isAndroid) {
+    if (prompt) body = <>
       <span>Instaliraj HMNL Statistiku na mobitel: brže otvaranje, bez adresne trake.</span>
       <button type="button" className="btn sm primary" onClick={async () => {
         prompt.prompt();
@@ -90,6 +96,8 @@ export function InstallHint() {
         if (r?.outcome === "accepted") setOff(true);
       }}>Instaliraj</button>
     </>;
+    else if (inApp) body = <span>Za instalaciju otvori hmnl.hr u <b>Chromeu</b> (izbornik ⋮ → Otvori u pregledniku).</span>;
+    else if (andFirefox || late) body = <span>Instaliraj na mobitel: izbornik <b>⋮</b> → <b>Instaliraj</b> ili <b>Dodaj na početni zaslon</b>.</span>;
   }
   if (!body) return null;
   return (
@@ -99,7 +107,7 @@ export function InstallHint() {
         {body}
         <button type="button" className="install-x" onClick={close} aria-label="Zatvori">×</button>
       </div>
-      {sheet && <IOSSheet onClose={() => setSheet(false)} />}
+      {sheet && <IOSSheet chrome={iosChrome} onClose={() => setSheet(false)} />}
     </div>
   );
 }

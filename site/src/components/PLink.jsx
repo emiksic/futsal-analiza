@@ -3,8 +3,8 @@
 import { href } from "../lib/router.js";
 import { useStore } from "../lib/store.js";
 
-// Zasad poveznice vidi samo admin (pregled); kad je spremno za javnost, stavi na true.
-export const PLAYERS_PUBLIC = false;
+// Poveznice na stranice igrača (javno od 17. 11. 2026.); false = vidi samo admin.
+export const PLAYERS_PUBLIC = true;
 export const PLAYER_CATS = ["Seniori"];
 export const hasPlayerPage = (p) => !!p && PLAYER_CATS.includes(p.cat) && !!(p.name || "").trim();
 

@@ -482,3 +482,37 @@ export function positionsByRound(db, compId) {
   }
   return { played, order: standings(db, compId).map((x) => x.club), pos };
 }
+
+// ---------- provjere za admin ----------
+// Vraća popis upozorenja za utakmicu: [{ text, tab }] (tab = kartica u uređivanju gdje se popravlja).
+export function matchIssues(m, ix, now = Date.now()) {
+  const out = [];
+  const nm = (pid) => (ix.player[pid] ? playerName(ix.player[pid]) : "nepoznat igrač");
+  const team = (side) => ix.club[m[side]]?.name || side;
+  const R = m.roster || {};
+  const hasRoster = (side) => (R[side]?.players || []).length > 0;
+  const t = new Date(m.date).getTime();
+  if (m.status === "scheduled" && !m.timeTbd && now - t > 3 * 3600e3) out.push({ text: "Utakmica je prošla, a status je i dalje Zakazano", tab: "osnovno" });
+  if (m.status === "live" && now - t > 4 * 3600e3) out.push({ text: "Utakmica je i dalje označena kao Uživo (više od 4 h od početka)", tab: "osnovno" });
+  if (m.status !== "finished") return out;
+  if (!hasRoster("home") || !hasRoster("away")) out.push({ text: `Kraj bez zapisnika: ${[!hasRoster("home") && team("home"), !hasRoster("away") && team("away")].filter(Boolean).join(" i ")}`, tab: "zapisnik" });
+  if (m.noScore) return out;
+  const g = [0, 0];
+  for (const e of m.events) {
+    if (e.type === "goal") g[e.side === "home" ? 0 : 1]++;
+    if (e.type === "owngoal") g[e.side === "home" ? 1 : 0]++;
+  }
+  if (m.result && (g[0] || g[1] || m.result[0] || m.result[1]) && (g[0] !== m.result[0] || g[1] !== m.result[1])) {
+    out.push({ text: g[0] + g[1] === 0 ? `Rezultat ${m.result[0]}:${m.result[1]}, a nije upisan nijedan gol` : `Rezultat ${m.result[0]}:${m.result[1]}, a upisani golovi daju ${g[0]}:${g[1]}`, tab: "dogadaji" });
+  }
+  const noScorer = m.events.filter((e) => e.type === "goal" && !e.player).length;
+  if (noScorer) out.push({ text: `${noScorer} ${noScorer === 1 ? "gol nema" : "gola nemaju"} upisanog strijelca`, tab: "dogadaji" });
+  const LBL = { goal: "Strijelac", owngoal: "Autogol", yellow: "Žuti karton", red: "Crveni karton", penmiss: "Promašen penal", so: "Kazneni udarac" };
+  for (const e of m.events) {
+    const side = e.side; if (!hasRoster(side)) continue;
+    const inR = (pid) => R[side].players.includes(pid);
+    if (e.player && LBL[e.type] && !e.staff && !inR(e.player)) out.push({ text: `${LBL[e.type]} ${minute(e)}: ${nm(e.player)} nije u zapisniku (${team(side)})`, tab: "dogadaji" });
+    if (e.type === "goal" && e.assist && !inR(e.assist)) out.push({ text: `Asistencija ${minute(e)}: ${nm(e.assist)} nije u zapisniku (${team(side)})`, tab: "dogadaji" });
+  }
+  return out;
+}

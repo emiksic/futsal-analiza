@@ -11,6 +11,7 @@ import { Shots } from "./Shots.jsx";
 import { Player } from "../components/Player.jsx";
 import { useStore } from "../lib/store.js";
 import { Vote } from "../components/Vote.jsx";
+import { Preview } from "../components/Preview.jsx";
 import { PLink, usePlayerHref } from "../components/PLink.jsx";
 
 // Kretanje igrača (prijeđeni metri, toplinske mape) još nije dovoljno točno za javnost: zasad ga vidi samo admin.
@@ -49,7 +50,7 @@ export function Match({ db, ix: ix0, id, tab }) {
         {t === "sazetak" && hl && <div className="pb" style={{ paddingTop: 16, display: "grid", gap: 10, maxWidth: 980 }}><Player youtube={hl} /><div className="note">Službeni sažetak utakmice.</div></div>}
         {/* glasanje: prije utakmice na vrhu Detalja, poslije ispod događaja */}
         {t === "detalji" && m.status === "scheduled" && <Vote m={m} ix={ix} />}
-        {t === "detalji" && <Incidents m={m} ix={ix} />}
+        {t === "detalji" && <Incidents db={db} m={m} ix={ix} />}
         {t === "detalji" && m.status !== "scheduled" && <Vote m={m} ix={ix} />}
         {t === "statistika" && <Stats m={m} ix={ix} A={A} />}
         {t === "udarci" && <Shots m={m} ix={ix} />}
@@ -176,11 +177,11 @@ function AnalysisTab({ m, ix, A }) {
   );
 }
 
-function Incidents({ m, ix }) {
+function Incidents({ db, m, ix }) {
   const [sk, setSk] = useState(null);           // gol čija je skica otvorena
   useEffect(() => { if (!sk) return; const k = (ev) => ev.key === "Escape" && setSk(null); addEventListener("keydown", k); return () => removeEventListener("keydown", k); }, [sk]);
   const cbGoal = comeback(m)?.goal;
-  if (m.status !== "finished" && !m.events.length) return <div className="empty">Utakmica još nije odigrana.</div>;
+  if (m.status !== "finished" && !m.events.length) return m.status === "scheduled" ? <Preview db={db} ix={ix} m={m} /> : <div className="empty">Utakmica je počela, još nema događaja.</div>;
   const order = new Map(m.events.map((e, i) => [e.id, i]));   // isto vrijeme → redoslijed upisa
   const evs = m.events.filter((e) => e.type !== "shot").sort((a, b) => absSec(a) - absSec(b) || order.get(a.id) - order.get(b.id));
   const cnt = { home: {}, away: {} }, sc = [0, 0], so = [0, 0], kick = { home: 0, away: 0 }, rows = [];

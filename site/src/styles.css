@@ -1037,3 +1037,44 @@ table.st { font-size: 13px; }
 .sk-board-m { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-top: 22px; }
 .sk-board-m > div { display: grid; justify-items: center; gap: 10px; }
 @media (max-width: 560px) { .sk-row, .sk-tabs, .sk-group, .sk-head, .sk-trow { padding-inline: 12px; } .sk-board-m > .sk { width: 80px !important; } }
+.ios-sheet-bg.top { justify-content: flex-start; padding: calc(6px + env(safe-area-inset-top, 0px)) 10px 0; }
+.ios-arrow.up { align-self: flex-end; margin: 0 18px 6px 0; animation-name: iosBobUp; }
+@keyframes iosBobUp { to { transform: translateY(-8px); } }
+
+/* admin: provjere utakmica */
+.issues { list-style: none; margin: 0; padding: 4px 16px 14px; display: grid; gap: 10px; }
+.issues > li > a { color: inherit; }
+.issues ul, .issues-box ul { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 3px; font-size: 13.5px; }
+.issues ul a, .issues-box a { color: color-mix(in srgb, var(--signal) 55%, var(--fg)); }
+.issues ul a:hover, .issues-box a:hover { text-decoration: underline; }
+.issues-box { margin-top: 12px; padding: 10px 16px 12px; border-left: 3px solid var(--signal); background: color-mix(in srgb, var(--signal) 10%, var(--surface)); }
+
+/* ---------- najava utakmice (Detalji prije početka) ---------- */
+.prev { display: grid; }
+.prev > section { padding: 12px 16px 14px; border-top: 1px solid var(--line); }
+.prev > section:first-child { border-top: 0; }
+.prev h3 { margin: 0 0 10px; font: 700 13px/1 var(--body); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.prev h3 .small { text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: 6px; }
+.prev-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; max-width: 640px; }
+.prev-pos, .prev-form { display: flex; align-items: center; gap: 10px; color: inherit; }
+.prev-pos > span { display: grid; gap: 2px; }
+.prev-pos b { font: 700 18px/1 var(--display); }
+.prev-pos small { font-size: 12px; color: var(--muted); }
+.prev-pos:hover b { text-decoration: underline; }
+.prev-h2h { display: grid; max-width: 640px; }
+.prev-h2h a { display: grid; grid-template-columns: 96px minmax(0, 1fr) 44px minmax(0, 1fr); align-items: center; gap: 8px; padding: 7px 0; border-top: 1px solid var(--line); color: inherit; font-size: 14px; }
+.prev-h2h a:first-child { border-top: 0; }
+.prev-h2h a > span:nth-child(2) { text-align: right; }
+.prev-h2h a > b { text-align: center; font: 700 16px/1 var(--display); }
+.prev-h2h .b { font-weight: 700; }
+.prev-h2h a:hover { background: var(--surface-2); }
+.prev-empty { padding: 2px 0; }
+.prev-club { display: flex; align-items: center; gap: 6px; font-size: 13.5px; margin-bottom: 4px; }
+.prev ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: 14px; }
+.prev-sc li { display: flex; justify-content: space-between; gap: 8px; }
+@media (max-width: 560px) {
+  .prev > section { padding: 12px; }
+  .prev-two { gap: 10px 12px; }
+  .prev-h2h a { grid-template-columns: 74px minmax(0, 1fr) 38px minmax(0, 1fr); font-size: 13px; gap: 6px; }
+  .prev-pos small { font-size: 11px; }
+}

@@ -4,7 +4,9 @@
 // Sučelje za ostatak aplikacije: useDB(), update(fn), useSession(), …
 import { useSyncExternalStore } from "react";
 import { createClient } from "@supabase/supabase-js";
-import seed, { SEED_VERSION } from "./seed.js";
+import { SEED_VERSION, baseDB } from "./seedBase.js";
+// puni ugrađeni podaci (~500 kB) učitavaju se tek kad zatrebaju
+const loadSeed = () => import("./seed.js").then((m) => m.default);
 import { SUPABASE_URL, SUPABASE_KEY } from "./config.js";
 
 const clone = (x) => JSON.parse(JSON.stringify(x));
@@ -26,7 +28,13 @@ let hold = null;   // upis bez slanja: { base, ids: Set(id utakmica koje se ure�
 const set = (p) => { state = { ...state, ...p }; emit(); };
 function loadLocal() {
   try { const s = localStorage.getItem(KEY); if (s) { const d = JSON.parse(s); if (d.version === SEED_VERSION) return d; } } catch { /* */ }
-  return clone(seed);
+  return baseDB();
+}
+let hasLocal = false;
+try { hasLocal = !!localStorage.getItem(KEY); } catch { /* */ }
+async function goOffline(extra = {}) {
+  const db = hasLocal ? state.db : clone(await loadSeed());
+  set({ db, status: "offline", ...extra });
 }
 const persistLocal = () => { try { localStorage.setItem(KEY, JSON.stringify(state.db)); } catch { /* */ } };
 
@@ -96,20 +104,20 @@ async function checkAdmin() {
 }
 
 export async function refresh() {
-  if (!sb) { set({ status: "offline" }); return; }
+  if (!sb) { await goOffline(); return; }
   if (hold) { hold.refreshLater = true; return; }   // ne gazi neobjavljene izmjene; osvježi kad se spreme ili odbace
   try {
     const d = await fetchAll();
     if (!d.matches.length) { set({ mode: "remote", status: "empty" }); return; }
     set({ db: d, mode: "remote", status: "ready" });
   } catch (e) {
-    set({ mode: "local", status: "offline" });       // npr. pregled bez pristupa mreži
+    await goOffline({ mode: "local" });       // npr. pregled bez pristupa mreži
   }
 }
 
 if (sb) {
   // ako se baza ne javi u 8 s, radi dalje s ugrađenim podacima
-  const guard = setTimeout(() => { if (state.status === "loading") set({ status: "offline" }); }, 8000);
+  const guard = setTimeout(() => { if (state.status === "loading") goOffline(); }, 8000);
   (async () => {
     // javni podaci odmah, bez čekanja na prijavu
     const { data } = await sb.auth.getSession().catch(() => ({ data: {} }));
@@ -133,7 +141,7 @@ if (sb) {
       state.session = session; state.isAdmin = session ? await checkAdmin() : false; emit(); await refresh();
     }, 0);
   });
-} else set({ status: "offline" });
+} else goOffline();
 
 // ---------- uživo (Supabase Realtime) ----------
 // Svaka promjena u tablici matches (admin, program za analizu, unos uživo) odmah stiže svim posjetiteljima.
@@ -269,7 +277,7 @@ export async function holdCommit(keepHolding = false) {
 export const isHolding = () => !!hold && state.held > 0;
 
 export async function importSeed() {
-  const s = clone(seed);
+  const s = clone(await loadSeed());
   for (const t of ORDER) {
     const rows = s[t].map((x, i) => toRow(t, x, i));
     for (let i = 0; i < rows.length; i += 400) {
@@ -282,7 +290,7 @@ export async function importSeed() {
 
 // dodaje u bazu samo redove koji još ne postoje (postojeće izmjene ostaju netaknute)
 export async function importMissing() {
-  const s = clone(seed); let added = 0;
+  const s = clone(await loadSeed()); let added = 0;
   for (const t of ORDER) {
     const have = new Set();
     for (let from = 0; ; from += 1000) {
@@ -299,7 +307,7 @@ export async function importMissing() {
   return added;
 }
 
-export function resetDB() { if (state.mode === "local") { set({ db: clone(seed) }); try { localStorage.removeItem(KEY); } catch { /* */ } } }
+export async function resetDB() { if (state.mode === "local") { set({ db: clone(await loadSeed()) }); try { localStorage.removeItem(KEY); } catch { /* */ } } }
 
 // ---------- React ----------
 const subscribe = (f) => { subs.add(f); return () => subs.delete(f); };
