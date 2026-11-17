@@ -26,7 +26,7 @@ export function buildPost(db, ix, compId, round, mode = "auto", factKeys = FACTS
   const C = ix.comp[compId], L = ix.league[C.league];
   const pal = PALETTE[C.league] || (isCup(L) ? PALETTE.kup : PALETTE["1-hmnl"]);
   const ms = db.matches.filter((m) => m.comp === compId && m.round === round).sort((a, b) => a.date.localeCompare(b.date));
-  // odgođena = bez satnice dok ostale u kolu imaju termin (npr. jedna utakmica tek u siječnju)
+  // kasnija = bez satnice dok ostale u kolu imaju termin (npr. jedna utakmica kola igra se tek u siječnju)
   const known = ms.some((m) => !m.timeTbd);
   const later = (m) => known && m.timeTbd && m.status !== "finished";
   const allFin = ms.some((m) => m.status === "finished") && ms.every((m) => m.status === "finished" || later(m));
@@ -83,9 +83,9 @@ function caption(post, lid, L, rn, rows, slides) {
   const clubs = [...new Set(rows.flatMap((r) => [r.home.name, r.away.name]))].slice(0, 12).map(tag);
   const tags = ["#futsal", "#malinogomet", "#futsalhrvatska", ...(TAGS[lid] || []), ...clubs, "#hmnlhr"].slice(0, 30).join(" ");
   const head = `${lid === "1-hmnl" ? "SS HMNL" : L.name} · ${rn}`;
-  // odgođene utakmice idu u zaseban blok na kraju, bez dvorane
+  // utakmice bez termina idu u zaseban blok na kraju, bez dvorane
   const late = rows.filter((r) => r.later), now = rows.filter((r) => !r.later);
-  const lateTxt = late.length ? `\n\n⏳ ${late.length === 1 ? "Odgođena utakmica, termin" : "Odgođene utakmice, termin"} naknadno:\n${late.map((r) => `▫️ ${r.home.name} – ${r.away.name}`).join("\n")}` : "";
+  const lateTxt = late.length ? `\n\n⏳ Termin naknadno:\n${late.map((r) => `▫️ ${r.home.name} – ${r.away.name}`).join("\n")}` : "";
   if (!post.res) {
     const lines = now.map((r) => `▫️ ${r.home.name} – ${r.away.name}${r.s ? ` ${r.s[0]}:${r.s[1]}` : r.time ? ` · ${r.day} ${r.time}` : " · termin naknadno"}${r.city ? ` · ${r.city}` : ""}`);
     return `📅 ${head} | ${post.dates}\n\n${lines.join("\n")}${lateTxt}\n\n📊 Rezultati i statistika na hmnl.hr\n\n${tags}`;
