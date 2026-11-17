@@ -2,7 +2,7 @@ import { useState } from "react";
 import { href, go, replaceClick, replaceGo } from "../lib/router.js";
 import { positionsByRound } from "../lib/derive.js";
 import { PosChart, clubColor } from "../components/PosChart.jsx";
-import { standings, scorers, currentRound, fmtDay, dayLabel, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft, leadTable, mins, combinedZones, combinedTable } from "../lib/derive.js";
+import { standings, scorers, currentRound, fmtDay, dayLabel, playerName, zoneOf, formStats, comebacks, fmtDate, sideScore, isCup, roundName, standingsView, cardsTable, YELLOW_BAN, suspendedNext, goalBins, BINS, htft, leadTable, mins, combinedZones, combinedTable, seasonRecords } from "../lib/derive.js";
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
@@ -10,7 +10,7 @@ import { ScorersCard, MiniTable } from "../components/Side.jsx";
 import { usePlayerHref } from "../components/PLink.jsx";
 import { Jersey, LeagueBadge, Form, Icon } from "../components/ui.jsx";
 
-const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["preokreti", "Preokreti"], ["vodstvo", "Vodstvo"], ["minute", "Po minutama"], ["kartoni", "Kartoni"], ["pravila", "Pravila"]];
+const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["preokreti", "Preokreti"], ["vodstvo", "Vodstvo"], ["rekordi", "Rekordi"], ["minute", "Po minutama"], ["kartoni", "Kartoni"], ["pravila", "Pravila"]];
 
 export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roundArg }) {
   const L = ix.league[leagueId], cup = isCup(L);
@@ -46,6 +46,7 @@ export function League({ db, ix, leagueId, seasonId, tab: tab0 = "tablica", roun
           {tab === "strijelci" && <Scorers db={db} ix={ix} comp={comp} />}
           {tab === "preokreti" && <Comebacks db={db} ix={ix} comp={comp} />}
           {tab === "vodstvo" && <LeadTime db={db} ix={ix} comp={comp} />}
+          {tab === "rekordi" && <Records db={db} ix={ix} comp={comp} />}
           {tab === "minute" && <Minutes db={db} ix={ix} comp={comp} />}
           {tab === "kartoni" && <Cards db={db} ix={ix} comp={comp} league={L} />}
           {tab === "pravila" && <Rules league={L} season={comp.season} />}
@@ -394,6 +395,35 @@ function LeadTime({ db, ix, comp }) {
         </table>
       </div>
       <div className="zones"><span>Koliko je od 40 minuta svake utakmice klub vodio, bilo je neriješeno ili je gubio (poredano po udjelu vremena u vodstvu). Najduže: najduže neprekinuto vodstvo u jednoj utakmici (klik vodi na utakmicu). Kad je poznata samo minuta gola, gol se računa u sredini te minute. Računaju se samo utakmice za koje su uneseni svi golovi.</span></div>
+    </>
+  );
+}
+
+// Rekordi sezone: najveća pobjeda, najbrži gol, najduži nizovi… (izjednačeni se prikazuju zajedno)
+function Records({ db, ix, comp }) {
+  const R = seasonRecords(db, ix, comp.id);
+  const ph = usePlayerHref();
+  if (!R) return <div className="empty">Još nema odigranih utakmica.</div>;
+  return (
+    <>
+      <div className="ptiles rec-tiles">
+        <div><b>{R.n}</b><span>Utakmica</span></div>
+        <div><b>{R.goals}</b><span>Golova</span></div>
+        <div><b>{R.avg.toFixed(1).replace(".", ",")}</b><span>Po utakmici</span></div>
+        <div title="Pobjede domaćina · neriješeno · pobjede gosta"><b>{R.wdl.join(" · ")}</b><span><span className="rt-l">Domaćin · N · gost</span><span className="rt-s">D · N · G</span></span></div>
+      </div>
+      <div className="recs">
+        {R.recs.map((r) => (
+          <section key={r.key} className="rec">
+            <div className="rec-h"><h3>{r.label}</h3><b>{r.value}</b></div>
+            <ul>{r.rows.map((x, i) => {
+              const p = x.player && ix.player[x.player], link = (p && ph(p)) || (x.m ? href("utakmica", x.m.id) : x.club ? href("klub", x.club) : null);
+              return (
+                <li key={i}>{x.club && <Jersey kit={ix.club[x.club]?.kit} size={18} />}
+                  <span>{link ? <a href={link}>{x.text}</a> : x.text}<small>{x.sub}{x.m && p ? <> · <a href={href("utakmica", x.m.id)}>utakmica</a></> : null}</small></span></li>);
+            })}{r.more > 0 && <li className="muted small">i još {r.more}</li>}</ul>
+          </section>))}
+      </div>
     </>
   );
 }

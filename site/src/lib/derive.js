@@ -516,3 +516,86 @@ export function matchIssues(m, ix, now = Date.now()) {
   }
   return out;
 }
+
+// ---------- rekordi sezone (kartica Rekordi u ligi) ----------
+// Svaki rekord: { key, label, value (broj za usporedbu), rows: [{ m, text, sub, value }] } — izjednačeni su svi u rows (najviše 3 + ostatak u more).
+export function seasonRecords(db, ix, compId) {
+  const L = ix.league[ix.comp[compId]?.league]; if (!L) return null;
+  const cup = !!L.zones?.cup;
+  const fin = db.matches.filter((m) => m.comp === compId && m.status === "finished" && score(m)).sort((a, b) => a.date.localeCompare(b.date));
+  if (!fin.length) return null;
+  const per = perPlayerAllowed(ix, compId);
+  const S = new Map(fin.map((m) => [m, score(m)]));
+  const nm = (id) => ix.club[id]?.name || "";
+  const vs = (m) => `${nm(m.home)} ${S.get(m)[0]}:${S.get(m)[1]} ${nm(m.away)}`;
+  const rnd = (m) => (m.round ? roundName(L, m.round) : fmtDate(m.date));
+  const top = (arr, key, max = true) => {
+    if (!arr.length) return [];
+    const v = arr.reduce((x, y) => (max ? Math.max : Math.min)(x, key(y)), max ? -Infinity : Infinity);
+    return arr.filter((x) => key(x) === v);
+  };
+  const recs = [];
+  const add = (key, label, list, fmt) => {
+    if (!list.length) return;
+    recs.push({ key, label, value: fmt.value(list[0]), rows: list.slice(0, 3).map(fmt.row), more: Math.max(0, list.length - 3) });
+  };
+  const golova = (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "gol" : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? "gola" : "golova"}`;
+  const diff = (m) => Math.abs(S.get(m)[0] - S.get(m)[1]), sum = (m) => S.get(m)[0] + S.get(m)[1];
+
+  add("big", "Najveća pobjeda", top(fin, diff).filter((m) => diff(m) > 0), { value: (m) => `+${diff(m)}`, row: (m) => ({ m, text: vs(m), sub: rnd(m) }) });
+  add("most", "Najviše golova na utakmici", top(fin, sum).filter((m) => sum(m) > 0), { value: (m) => golova(sum(m)), row: (m) => ({ m, text: vs(m), sub: rnd(m) }) });
+  const tg = fin.flatMap((m) => [["home", 0], ["away", 1]].map(([side, i]) => ({ m, side, n: S.get(m)[i] })));
+  add("team", "Najviše golova jednog kluba", top(tg, (x) => x.n).filter((x) => x.n > 0), { value: (x) => golova(x.n), row: (x) => ({ m: x.m, club: x.m[x.side], text: nm(x.m[x.side]), sub: `protiv ${nm(x.m[x.side === "home" ? "away" : "home"])}, ${rnd(x.m)}` }) });
+
+  const goals = fin.flatMap((m) => m.events.filter((e) => (e.type === "goal" || e.type === "owngoal") && Number.isFinite(e.sec) && !e.noTime && e.period <= 2)
+    .map((e) => ({ m, e, side: (e.side === "home") !== (e.type === "owngoal") ? "home" : "away" })));
+  const gRow = (g) => {
+    const p = per && g.e.type === "goal" ? ix.player[g.e.player] : null, c = g.m[g.side], o = g.m[g.side === "home" ? "away" : "home"];
+    return { m: g.m, club: c, player: p?.id, text: p ? playerName(p) : nm(c), sub: `${p ? nm(c) + ", " : ""}protiv ${nm(o)}${g.e.type === "owngoal" ? " (autogol)" : ""}, ${rnd(g.m)}` };
+  };
+  add("fast", "Najbrži gol", top(goals, (g) => absSec(g.e), false), { value: (g) => goalTime(g.e), row: gRow });
+  add("late", "Najkasniji gol", top(goals, (g) => absSec(g.e)), { value: (g) => goalTime(g.e), row: gRow });
+
+  const halves = fin.flatMap((m) => [1, 2].map((p) => ({ m, p, n: m.events.filter((e) => (e.type === "goal" || e.type === "owngoal") && e.period === p).length })));
+  add("half", "Najviše golova u poluvremenu", top(halves, (x) => x.n).filter((x) => x.n > 0), { value: (x) => golova(x.n), row: (x) => ({ m: x.m, text: vs(x.m), sub: `${x.p}. poluvrijeme, ${rnd(x.m)}` }) });
+
+  const cbs = fin.map((m) => ({ m, c: comeback(m) })).filter((x) => x.c);
+  add("comeback", "Najveći preokret", top(cbs, (x) => x.c.deficit), { value: (x) => `iz −${x.c.deficit}`, row: ({ m, c }) => {
+    const fr = c.side === "home" ? c.from : [c.from[1], c.from[0]];
+    return { m, club: m[c.side], text: nm(m[c.side]), sub: `s ${fr[0]}:${fr[1]} do pobjede protiv ${nm(m[c.side === "home" ? "away" : "home"])}, ${rnd(m)}` };
+  } });
+
+  if (per) {
+    const pm = fin.flatMap((m) => { const t = {}; for (const e of m.events) if (e.type === "goal" && e.player) (t[e.player] ||= { m, p: e.player, side: e.side, n: 0 }).n++; return Object.values(t); });
+    add("player", "Najviše golova igrača na utakmici", top(pm, (x) => x.n).filter((x) => x.n >= 2), { value: (x) => golova(x.n), row: (x) => ({ m: x.m, club: x.m[x.side], player: x.p, text: playerName(ix.player[x.p]), sub: `${nm(x.m[x.side])}, protiv ${nm(x.m[x.side === "home" ? "away" : "home"])}, ${rnd(x.m)}` }) });
+    const hat = pm.filter((x) => x.n >= 3);
+    if (hat.length) recs.push({ key: "hat", label: "Hat-trickovi", value: String(hat.length), rows: hat.slice(-3).reverse().map((x) => ({ m: x.m, club: x.m[x.side], player: x.p, text: playerName(ix.player[x.p]), sub: `${golova(x.n)} protiv ${nm(x.m[x.side === "home" ? "away" : "home"])}, ${rnd(x.m)}` })), more: Math.max(0, hat.length - 3) });
+  }
+
+  if (!cup) {
+    // nizovi po klubu, redom po datumu
+    const streak = (test) => {
+      const best = [];
+      for (const club of new Set(fin.flatMap((m) => [m.home, m.away]))) {
+        let run = [], top0 = [];
+        for (const m of fin) {
+          if (m.home !== club && m.away !== club) continue;
+          const w = winner(m), r = w === 0 ? "D" : (w === 1) === (m.home === club) ? "W" : "L";
+          if (test(r)) { run.push(m); if (run.length > top0.length) top0 = [...run]; } else run = [];
+        }
+        if (top0.length) best.push({ club, n: top0.length, from: top0[0], to: top0[top0.length - 1], open: run.length === top0.length && run.length > 0 });
+      }
+      return top(best, (x) => x.n);
+    };
+    const sRow = (x) => ({ club: x.club, text: nm(x.club), sub: `${rnd(x.from)} – ${rnd(x.to)}${x.open ? " · niz traje" : ""}` });
+    const nUt = (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "utakmica" : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? "utakmice" : "utakmica"}`;
+    add("wins", "Najduži niz pobjeda", streak((r) => r === "W").filter((x) => x.n >= 2), { value: (x) => nUt(x.n), row: sRow });
+    add("unbeaten", "Najduži niz bez poraza", streak((r) => r !== "L").filter((x) => x.n >= 2), { value: (x) => nUt(x.n), row: sRow });
+  }
+  const cardsOf = (m) => m.events.filter((e) => e.type === "yellow" || e.type === "red").length;
+  add("cards", "Najviše kartona na utakmici", top(fin, cardsOf).filter((m) => cardsOf(m) > 0), { value: (m) => String(cardsOf(m)), row: (m) => ({ m, text: vs(m), sub: rnd(m) }) });
+
+  const total = fin.reduce((a, m) => a + sum(m), 0);
+  const wdl = [0, 0, 0]; for (const m of fin) { const [h, a] = S.get(m); wdl[h > a ? 0 : h === a ? 1 : 2]++; }
+  return { n: fin.length, goals: total, avg: total / fin.length, wdl, recs };
+}
