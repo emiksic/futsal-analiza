@@ -553,7 +553,6 @@ export function seasonRecords(db, ix, compId) {
     const p = per && g.e.type === "goal" ? ix.player[g.e.player] : null, c = g.m[g.side], o = g.m[g.side === "home" ? "away" : "home"];
     return { m: g.m, club: c, player: p?.id, text: p ? playerName(p) : nm(c), sub: `${p ? nm(c) + ", " : ""}protiv ${nm(o)}${g.e.type === "owngoal" ? " (autogol)" : ""}, ${rnd(g.m)}` };
   };
-  add("late", "Najkasniji gol", top(goals, (g) => absSec(g.e)), { value: (g) => goalTime(g.e), row: gRow });
 
   const halves = fin.flatMap((m) => [1, 2].map((p) => ({ m, p, n: m.events.filter((e) => (e.type === "goal" || e.type === "owngoal") && e.period === p).length })));
   add("half", "Najviše golova u poluvremenu", top(halves, (x) => x.n).filter((x) => x.n > 0), { value: (x) => golova(x.n), row: (x) => ({ m: x.m, text: vs(x.m), sub: `${x.p}. poluvrijeme, ${rnd(x.m)}` }) });
