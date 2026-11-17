@@ -14,6 +14,7 @@ import { Privacy } from "./pages/Privacy.jsx";
 import { PlayerPage } from "./pages/PlayerPage.jsx";
 import { Notice } from "./components/Notice.jsx";
 import { InstallHint } from "./components/InstallHint.jsx";
+import { Skeleton } from "./components/Skeleton.jsx";
 import { useTheme, toggleTheme } from "./lib/theme.js";
 
 function ThemeToggle() {
@@ -82,7 +83,7 @@ export default function App() {
         <div className="demo-bar"><div>Testna verzija. Podaci se još unose i mogu biti nepotpuni.</div></div>
       )}
       {page !== "admin" && page !== "objave" && page !== "izrada" && <InstallHint />}
-      {loading && page !== "admin" && page !== "objave" && page !== "privatnost" && <div className="page"><div className="panel loadpanel" role="status"><span className="spin" aria-hidden="true" />Učitavam podatke…</div></div>}
+      {loading && page !== "admin" && page !== "objave" && page !== "privatnost" && <Skeleton page={page} />}
       {!loading && !page && <Home db={db} ix={ix} />}
       {!loading && page === "liga" && <League db={db} ix={ix} leagueId={rest[0]} seasonId={rest[1] || cur} tab={rest[2]} roundArg={rest[3]} />}
       {!loading && page === "klub" && <Club key={rest[0]} db={db} ix={ix} id={rest[0]} />}
