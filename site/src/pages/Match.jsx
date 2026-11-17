@@ -11,6 +11,7 @@ import { Shots } from "./Shots.jsx";
 import { Player } from "../components/Player.jsx";
 import { useStore } from "../lib/store.js";
 import { Vote } from "../components/Vote.jsx";
+import { PLink, usePlayerHref } from "../components/PLink.jsx";
 
 // Kretanje igrača (prijeđeni metri, toplinske mape) još nije dovoljno točno za javnost: zasad ga vidi samo admin.
 const MOVEMENT_PUBLIC = false;
@@ -61,6 +62,11 @@ export function Match({ db, ix: ix0, id, tab }) {
   );
 }
 
+// Red u popisu postava: s video analizom klik prikazuje toplinsku mapu, bez nje vodi na stranicu igrača (ako postoji).
+function RowBtn({ go, onClick, pressed, children }) {
+  return go ? <a className="rowbtn" href={go}>{children}</a> : <button onClick={onClick} aria-pressed={pressed}>{children}</button>;
+}
+
 // Strijelci ispod rezultata: jedan red po igraču s minutama ("D. P.  4', 4', 36'").
 // Kad se ime ne prikazuje cijelo (mlađe kategorije: inicijali ili samo broj), broj dresa ide u zasebnu oznaku,
 // da se "#3 4'" ne čita kao 34. minuta.
@@ -73,7 +79,7 @@ function goalGroups(list, ix) {
       if (p && /^Igrač #/.test(name)) { num = p.num; name = ""; }
       else if (p && /#\d+$/.test(name)) { num = p.num; name = name.replace(/\s*#\d+$/, ""); }
       if (!p) name = "nepoznat";
-      by[key] = { key, num, name, og, times: [], title: playerName(p) };
+      by[key] = { key, p, num, name, og, times: [], title: playerName(p) };
       out.push(by[key]);
     }
     by[key].times.push(goalTime(e) + (e.pen ? " (p)" : ""));
@@ -114,7 +120,7 @@ function Board({ m, ix }) {
           {["home", "away"].map((side) => (
             <div key={side}>{goalGroups(goals(side), ix).map((g) => (
               <span key={g.key} className="bg" title={g.title}>
-                {g.num && <b className="bn">{g.num}</b>}<span className="bnm">{g.name}{g.og ? " (autogol)" : ""}</span><em>{g.times.join(", ")}</em>
+                {g.num && <b className="bn">{g.num}</b>}<span className="bnm"><PLink p={g.p}>{g.name}</PLink>{g.og ? " (autogol)" : ""}</span><em>{g.times.join(", ")}</em>
               </span>))}</div>
           ))}
         </div>) : null}
@@ -216,9 +222,9 @@ function Incidents({ m, ix }) {
         if (r.head) return <div key={r.k} className="per">{r.head}{r.sc && <b>{r.sc[0]}:{r.sc[1]}</b>}</div>;
         const e = r.e, p = ix.player[e.player], as = ix.player[e.assist];
         let icon, main, sub;
-        if (e.type === "goal" || e.type === "owngoal") { icon = Icon.ball(20); main = <>{playerName(p)}{e.id === cbGoal && <span className="cbtag">preokret</span>}</>; sub = e.type === "owngoal" ? "autogol" : e.pen ? `kazneni udarac${e.dist ? ` s ${e.dist} m` : ""}` : as ? `asistencija: ${playerName(as)}` : ""; }
-        else if (e.type === "yellow") { icon = <span className="card-y" />; main = e.staff && !p ? "Stožer" : playerName(p); sub = "žuti karton"; }
-        else if (e.type === "red") { icon = <span className="card-r" />; main = e.staff && !p ? "Stožer" : playerName(p); sub = e.secondYellow ? "drugi žuti karton" : "crveni karton"; }
+        if (e.type === "goal" || e.type === "owngoal") { icon = Icon.ball(20); main = <><PLink p={p}>{playerName(p)}</PLink>{e.id === cbGoal && <span className="cbtag">preokret</span>}</>; sub = e.type === "owngoal" ? "autogol" : e.pen ? `kazneni udarac${e.dist ? ` s ${e.dist} m` : ""}` : as ? <>asistencija: <PLink p={as}>{playerName(as)}</PLink></> : ""; }
+        else if (e.type === "yellow") { icon = <span className="card-y" />; main = e.staff && !p ? "Stožer" : <PLink p={p}>{playerName(p)}</PLink>; sub = "žuti karton"; }
+        else if (e.type === "red") { icon = <span className="card-r" />; main = e.staff && !p ? "Stožer" : <PLink p={p}>{playerName(p)}</PLink>; sub = e.secondYellow ? "drugi žuti karton" : "crveni karton"; }
         else if (e.type === "timeout") { icon = Icon.timeout(); main = "Time-out"; sub = ix.club[m[e.side]].name; }
         else if (e.type === "so") { icon = e.scored ? Icon.ball(20) : <span className="so-miss" aria-hidden="true">✕</span>; main = playerName(p); sub = e.scored ? "pogođen kazneni udarac" : "promašen kazneni udarac"; }
         else if (e.type === "penmiss") { icon = <span className="so-miss" aria-hidden="true">✕</span>; main = playerName(p); sub = `promašen kazneni udarac${e.dist ? ` s ${e.dist} m` : ""}`; }
@@ -488,6 +494,7 @@ drawHeat(ctx, c, pts, 3.2, A.D?.court || { L: 40, W: 20 });
   }, [sel, D]);
   if (!r?.home || !r?.away) return <div className="empty">Zapisnik za ovu utakmicu još nije unesen.</div>;
   const pos = (x, y) => ({ left: `${(x + 21.2) / 42.4 * 100}%`, top: `${(y + 11.2) / 22.4 * 100}%` });
+  const ph = usePlayerHref();
   const startOrd = (side) => { const st = r[side].start, gk = st.filter((p) => r[side].gk.includes(p)); return [...gk.slice(0, 1), ...st.filter((p) => p !== gk[0])]; };
   const click = (side, pid) => { const key = keyOf(side, pid); setSel(sel?.pid === pid ? null : { pid, side, key }); };
   const selInfo = sel ? (sel.key ? `Toplinska mapa: ${playerName(ix.player[sel.pid])}, ${ix.club[m[sel.side]].name} (iz isječka analize)` : `${playerName(ix.player[sel.pid])}: nema podataka o kretanju u analizi.`) : null;
@@ -521,15 +528,15 @@ drawHeat(ctx, c, pts, 3.2, A.D?.court || { L: 40, W: 20 });
               <div className="start-m">
                 <h4><Jersey kit={c.kit} size={20} />{c.name}, petorka</h4>
                 <ul>{startOrd(side).map((pid) => { const p = ix.player[pid]; return (
-                  <li key={pid}><button onClick={() => click(side, pid)} aria-pressed={sel?.pid === pid}>
+                  <li key={pid}><RowBtn go={!D && ph(p)} onClick={() => click(side, pid)} pressed={sel?.pid === pid}>
                     <span className="n">{p?.num}</span><span>{playerName(p)}{r[side].cap === pid && <b className="capk" title="Kapetan"> (K)</b>}</span>{r[side].gk.includes(pid) ? <span className="tag">GK</span> : <span />}
-                  </button></li>); })}</ul>
+                  </RowBtn></li>); })}</ul>
               </div>
               <h4><Jersey kit={c.kit} size={20} />{c.name}, klupa</h4>
               <ul>{list.map((p) => (
-                <li key={p.id}><button onClick={() => click(side, p.id)} aria-pressed={sel?.pid === p.id}>
+                <li key={p.id}><RowBtn go={!D && ph(p)} onClick={() => click(side, p.id)} pressed={sel?.pid === p.id}>
                   <span className="n">{p.num}</span><span>{playerName(p)}{r[side].cap === p.id && <b className="capk" title="Kapetan"> (K)</b>}</span>{r[side].gk.includes(p.id) ? <span className="tag">GK</span> : <span />}
-                </button></li>))}</ul>
+                </RowBtn></li>))}</ul>
             </div>);
         })}
       </div>

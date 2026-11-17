@@ -7,6 +7,7 @@ import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
 import { ScorersCard, MiniTable } from "../components/Side.jsx";
+import { usePlayerHref } from "../components/PLink.jsx";
 import { Jersey, LeagueBadge, Form, Icon } from "../components/ui.jsx";
 
 const TABS = [["tablica", "Tablica"], ["rezultati", "Utakmice"], ["strijelci", "Strijelci"], ["preokreti", "Preokreti"], ["vodstvo", "Vodstvo"], ["minute", "Po minutama"], ["kartoni", "Kartoni"], ["pravila", "Pravila"]];
@@ -193,6 +194,7 @@ function Rounds({ db, ix, comp, league, round }) {
 
 function Scorers({ db, ix, comp }) {
   const list = scorers(db, comp.id);
+  const ph = usePlayerHref();
   if (!list.length) return <div className="empty">Nema golova u ovoj sezoni.</div>;
   const hasA = list.some((r) => r.assists);
   return (
@@ -204,7 +206,7 @@ function Scorers({ db, ix, comp }) {
           return (
             <tr key={r.player}>
               <td className="pos">{r.rank}</td>
-              <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={24} num={p?.num} />{playerName(p)}</a></td>
+              <td className="l"><a className="club" href={ph(p) || href("klub", c.id)}><Jersey kit={c.kit} size={24} num={p?.num} />{playerName(p)}</a></td>
               <td className="l hide-s muted">{c.name}{r.prev.length > 0 && <small className="prevc"> (prije {r.prev.map((x) => ix.club[x]?.name).join(", ")})</small>}</td>
               <td className="pts">{r.goals}</td>{hasA && <td>{r.assists}</td>}<td>{r.apps}</td>
             </tr>
@@ -224,8 +226,9 @@ function Cards({ db, ix, comp, league }) {
   const team = {};
   for (const r of rows) { const t = (team[r.club] ||= { club: r.club, y: 0, r: 0 }); t.y += r.y; t.r += r.r; }
   const teams = Object.values(team).map((t) => ({ ...t, fp: t.y + 3 * t.r })).sort((a, b) => a.fp - b.fp);
+  const ph = usePlayerHref();
   const P = (r) => { const p = ix.player[r.player], c = ix.club[r.club];
-    return <a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={22} num={p?.num} />{playerName(p)}</a>; };
+    return <a className="club" href={ph(p) || href("klub", c.id)}><Jersey kit={c.kit} size={22} num={p?.num} />{playerName(p)}</a>; };
   return (
     <>
       {!cup && (

@@ -4,6 +4,7 @@ import { standings, scorers, compName, playerName, isCup, positionsByRound } fro
 import { PosChart, POS_COLORS } from "../components/PosChart.jsx";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Jersey } from "../components/ui.jsx";
+import { PLink } from "../components/PLink.jsx";
 
 export function Club({ db, ix, id }) {
   const c = ix.club[id];
@@ -50,7 +51,7 @@ export function Club({ db, ix, id }) {
             <tbody>{squad.map((p) => (
               <tr key={p.id}>
                 <td className="n">{p.num}</td>
-                <td>{playerName(p)} {p.gk && <span className="tag">GK</span>}</td>
+                <td><PLink p={p}>{playerName(p)}</PLink> {p.gk && <span className="tag">GK</span>}</td>
                 <td className="c">{apps[p.id] || 0}</td><td className="c">{stat[p.id]?.goals || 0}</td><td className="c">{stat[p.id]?.assists || 0}</td>
               </tr>))}</tbody>
           </table>

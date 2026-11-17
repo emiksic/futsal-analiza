@@ -11,6 +11,7 @@ import { Admin } from "./admin/Admin.jsx";
 import { Posts } from "./admin/Posts.jsx";
 import { Render } from "./pages/Render.jsx";
 import { Privacy } from "./pages/Privacy.jsx";
+import { PlayerPage } from "./pages/PlayerPage.jsx";
 import { Notice } from "./components/Notice.jsx";
 import { InstallHint } from "./components/InstallHint.jsx";
 import { useTheme, toggleTheme } from "./lib/theme.js";
@@ -86,6 +87,7 @@ export default function App() {
       {!loading && page === "liga" && <League db={db} ix={ix} leagueId={rest[0]} seasonId={rest[1] || cur} tab={rest[2]} roundArg={rest[3]} />}
       {!loading && page === "klub" && <Club key={rest[0]} db={db} ix={ix} id={rest[0]} />}
       {!loading && page === "utakmica" && <Match db={db} ix={ix} id={rest[0]} tab={rest[1]} />}
+      {!loading && page === "igrac" && <PlayerPage key={rest[0]} db={db} ix={ix} id={rest[0]} />}
       {page === "admin" && <Admin db={db} ix={ix} route={rest} />}
       {!loading && page === "izrada" && <Render db={db} ix={ix} comp={rest[0]} round={rest[1]} mode={rest[2]} theme={rest[3]} />}
       {page === "objave" && <Admin db={db} ix={ix} route={rest}><Posts db={db} ix={ix} comp={rest[0]} round={rest[1]} /></Admin>}
