@@ -1011,3 +1011,5 @@ table.st { font-size: 13px; }
   .ptiles b { font-size: 22px; }
   .ptiles span { font-size: 11px; }
 }
+.pcomp-key { padding: 8px 16px 12px; }
+@media (max-width: 560px) { .pcomp-key { padding: 8px 12px 12px; } }

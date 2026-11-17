@@ -79,6 +79,7 @@ export function PlayerPage({ db, ix, id }) {
                 <tr key={c}><td><a className="plink" href={href("liga", ix.comp[c].league, ix.comp[c].season, "strijelci")}>{ix.league[ix.comp[c].league].name} {ix.season[ix.comp[c].season]?.name || ""}</a></td>
                   <td className="c">{s.n}</td><td className="c"><b>{s.g}</b></td>{hasA && <td className="c">{s.a}</td>}<td className="c">{s.y}</td><td className="c">{s.r}</td></tr>))}</tbody>
             </table>)}
+          {byComp.length > 1 && <div className="note pcomp-key">N – nastupi, G – golovi{hasA ? ", A – asistencije" : ""}, Ž – žuti kartoni, C – crveni kartoni</div>}
         </section>
 
         <section className="panel">
