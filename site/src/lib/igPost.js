@@ -26,7 +26,10 @@ export function buildPost(db, ix, compId, round, mode = "auto", factKeys = FACTS
   const C = ix.comp[compId], L = ix.league[C.league];
   const pal = PALETTE[C.league] || (isCup(L) ? PALETTE.kup : PALETTE["1-hmnl"]);
   const ms = db.matches.filter((m) => m.comp === compId && m.round === round).sort((a, b) => a.date.localeCompare(b.date));
-  const allFin = ms.length > 0 && ms.every((m) => m.status === "finished");
+  // odgođena = bez satnice dok ostale u kolu imaju termin (npr. jedna utakmica tek u siječnju)
+  const known = ms.some((m) => !m.timeTbd);
+  const later = (m) => known && m.timeTbd && m.status !== "finished";
+  const allFin = ms.some((m) => m.status === "finished") && ms.every((m) => m.status === "finished" || later(m));
   const res = mode === "auto" ? allFin : mode === "rezultati";
   const rows = ms.map((m) => {
     const d = new Date(m.date), s = m.status === "finished" ? score(m) : null;
@@ -34,11 +37,11 @@ export function buildPost(db, ix, compId, round, mode = "auto", factKeys = FACTS
     return {
       home: ix.club[m.home], away: ix.club[m.away], s, so: s ? shootout(m) : null, w: s ? winner(m) : 0,
       day: DAYS[d.getDay()], time: m.timeTbd ? null : `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`,
-      city: hall?.name || hall?.city || "", tv: m.youtube || m.tv === "YouTube" ? "YouTube" : m.tv || null,
+      later: later(m), city: hall?.name || hall?.city || "", tv: m.youtube || m.tv === "YouTube" ? "YouTube" : m.tv || null,
     };
   });
   const per = rows.length <= MAX_PER_PAGE ? MAX_PER_PAGE : 5;
-  const rn = roundName(L, round), dates = span(ms), rnG = rn.replace(/kolo$/, "kola");
+  const rn = roundName(L, round), dates = span(ms.filter((m) => !later(m))), rnG = rn.replace(/kolo$/, "kola");
   const slides = [];
   for (let i = 0; i < rows.length; i += per) slides.push({ kind: "matches", rows: rows.slice(i, i + per), title: [rn, res ? "Rezultati" : "Raspored"] });
   if (!slides.length) slides.push({ kind: "matches", rows: [], title: [rn, "Raspored"] });
@@ -80,13 +83,16 @@ function caption(post, lid, L, rn, rows, slides) {
   const clubs = [...new Set(rows.flatMap((r) => [r.home.name, r.away.name]))].slice(0, 12).map(tag);
   const tags = ["#futsal", "#malinogomet", "#futsalhrvatska", ...(TAGS[lid] || []), ...clubs, "#hmnlhr"].slice(0, 30).join(" ");
   const head = `${lid === "1-hmnl" ? "SS HMNL" : L.name} · ${rn}`;
+  // odgođene utakmice idu u zaseban blok na kraju, bez dvorane
+  const late = rows.filter((r) => r.later), now = rows.filter((r) => !r.later);
+  const lateTxt = late.length ? `\n\n⏳ ${late.length === 1 ? "Odgođena utakmica, termin" : "Odgođene utakmice, termin"} naknadno:\n${late.map((r) => `▫️ ${r.home.name} – ${r.away.name}`).join("\n")}` : "";
   if (!post.res) {
-    const lines = rows.map((r) => `▫️ ${r.home.name} – ${r.away.name}${r.s ? ` ${r.s[0]}:${r.s[1]}` : r.time ? ` · ${r.day} ${r.time}` : " · termin naknadno"}${r.city ? ` · ${r.city}` : ""}`);
-    return `📅 ${head} | ${post.dates}\n\n${lines.join("\n")}\n\n📊 Rezultati i statistika na hmnl.hr\n\n${tags}`;
+    const lines = now.map((r) => `▫️ ${r.home.name} – ${r.away.name}${r.s ? ` ${r.s[0]}:${r.s[1]}` : r.time ? ` · ${r.day} ${r.time}` : " · termin naknadno"}${r.city ? ` · ${r.city}` : ""}`);
+    return `📅 ${head} | ${post.dates}\n\n${lines.join("\n")}${lateTxt}\n\n📊 Rezultati i statistika na hmnl.hr\n\n${tags}`;
   }
-  const lines = rows.map((r) => `${r.home.name} ${r.s ? `${r.s[0]}:${r.s[1]}` : "–"} ${r.away.name}${r.so ? ` (11 m ${r.so[0]}:${r.so[1]})` : ""}`);
+  const lines = now.map((r) => `${r.home.name} ${r.s ? `${r.s[0]}:${r.s[1]}` : "–"} ${r.away.name}${r.so ? ` (11 m ${r.so[0]}:${r.so[1]})` : ""}`);
   const extra = slides.some((x) => x.kind === "table") ? `📊 ${slides.some((x) => x.kind === "scorers") ? "Tablica i strijelci" : "Tablica"} u objavi ➡️\n` : "";
-  return `⚽ ${head}: rezultati\n\n${lines.join("\n")}\n\n${extra}Strijelci po minutama i detaljna statistika na hmnl.hr\n\n${tags}`;
+  return `⚽ ${head}: rezultati\n\n${lines.join("\n")}${lateTxt}\n\n${extra}Strijelci po minutama i detaljna statistika na hmnl.hr\n\n${tags}`;
 }
 
 function span(ms) {

@@ -21,6 +21,8 @@ export function Matches({ db, ix }) {
       hall: ix.club[C.teams[0]].hall, status: "scheduled", youtube: "", tv: "YouTube", roster: { home: null, away: null }, events: [], analysis: null }); });
     go("admin", "utakmica", id, "osnovno");
   };
+  const [ask, setAsk] = useState(null);
+  const del = (id) => { update((d) => { d.matches = d.matches.filter((x) => x.id !== id); }); setAsk(null); };
   const rosterOk = (m) => m.roster?.home?.players?.length && m.roster?.away?.players?.length;
   // provjere za cijelo natjecanje (sva kola), da se ništa ne propusti
   const issues = db.matches.filter((m) => m.comp === comp && !m.draft).map((m) => ({ m, list: matchIssues(m, ix) })).filter((x) => x.list.length)
@@ -84,7 +86,13 @@ export function Matches({ db, ix }) {
                     {issueOf[m.id] && <span className="pill warn" style={{ marginLeft: 6 }} title={issueOf[m.id].map((x) => x.text).join("\n")}>⚠ {issueOf[m.id].length}</span>}</td>
                   <td>{analysisPill(m.analysis) || (m.tv === "YouTube" && !m.youtube ? <span className="pill warn" title="Dodaj YouTube link ili prebaci prijenos na MAXsport">nema linka</span>
                     : <span className="small muted">{m.youtube ? "ima snimku" : m.tv === "MAXsport" ? "MAXsport" : "—"}</span>)}</td>
-                  <td className="nowrap"><a className="btn sm" href={href("admin", "utakmica", m.id, "osnovno")}>Uredi</a></td>
+                  <td className="nowrap">{ask === m.id ? (
+                    <span className="confirm">Obrisati?
+                      <button className="btn sm danger" onClick={() => del(m.id)}>Obriši</button>
+                      <button className="btn sm ghost" autoFocus onClick={() => setAsk(null)}>Ne</button></span>
+                  ) : (<>
+                    <a className="btn sm" href={href("admin", "utakmica", m.id, "osnovno")}>Uredi</a>{" "}
+                    <button className="btn sm ghost danger" onClick={() => setAsk(m.id)} title="Obriši utakmicu" aria-label={`Obriši utakmicu ${ix.club[m.home].name} – ${ix.club[m.away].name}`}>{Icon.trash()}</button></>)}</td>
                 </tr>);
             })}</tbody>
           </table>
