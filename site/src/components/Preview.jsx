@@ -20,7 +20,10 @@ export function Preview({ db, ix, m }) {
   const tbl = cup ? [] : standings(db, m.comp);
   const pos = (club) => { const i = tbl.findIndex((r) => r.club === club); return i < 0 || !tbl[i].p ? null : { n: i + 1, r: tbl[i] }; };
   const F = Object.fromEntries(sides.map((s) => [s, form(db, m, m[s])]));
-  const h2h = db.matches.filter((x) => x.id !== m.id && x.status === "finished" && ((x.home === m.home && x.away === m.away) || (x.home === m.away && x.away === m.home)))
+  // ista kategorija (seniori: liga i kup; juniori; kadeti): klubovi imaju isti id u svim kategorijama
+  const cat = (x) => ix.league[ix.comp[x.comp]?.league]?.category;
+  const h2h = db.matches.filter((x) => x.id !== m.id && x.status === "finished" && cat(x) === L.category
+    && ((x.home === m.home && x.away === m.away) || (x.home === m.away && x.away === m.home)))
     .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
   const S = suspensions(db, m);
   const per = perPlayerAllowed(ix, m.comp);
