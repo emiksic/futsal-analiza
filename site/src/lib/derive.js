@@ -93,6 +93,30 @@ export function result(m, side) {
   return a > b ? "W" : a === b ? "D" : "L";
 }
 
+// Odgođena utakmica kola: nije gotova, a ostale u kolu imaju termin dok ona nema (time_tbd)
+// ili joj je datum više od 3 dana nakon ostalih utakmica tog kola (npr. prebačena u siječanj).
+export function postponed(m, roundMs) {
+  if (m.status === "finished") return false;
+  const others = roundMs.filter((x) => x !== m && x.id !== m.id && !x.timeTbd);
+  if (!others.length) return false;
+  if (m.timeTbd) return true;
+  const last = Math.max(...others.map((x) => +new Date(x.date)));
+  return +new Date(m.date) - last > 3 * 86400e3;
+}
+// Utakmice manje po klubu (za oznaku "(-1)" u tablici): neodigrane utakmice iz kola prije
+// zadnjeg odigranog kola + odgođene utakmice zadnjeg odigranog kola.
+export function gamesBehind(db, compId) {
+  const ms = db.matches.filter((m) => m.comp === compId && Number.isFinite(m.round));
+  const fin = ms.filter((m) => m.status === "finished").map((m) => m.round);
+  if (!fin.length) return {};
+  const last = Math.max(...fin), out = {};
+  for (const m of ms) {
+    if (m.status === "finished" || m.round > last) continue;
+    if (m.round === last && !postponed(m, ms.filter((x) => x.round === last))) continue;
+    for (const c of [m.home, m.away]) out[c] = (out[c] || 0) + 1;
+  }
+  return out;
+}
 export function standings(db, compId) {
   const comp = db.comps.find((c) => c.id === compId); if (!comp) return [];
   const row = Object.fromEntries(comp.teams.map((t) => [t, { club: t, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0, form: [] }]));
@@ -136,7 +160,8 @@ export function standings(db, compId) {
     if (kc) standings(db, kc.id).forEach((r, i) => { K[r.club] = i; });
   }
   const kr = (c) => (c in K ? K[c] : 99);
-  return rows.map((r) => ({ ...r, fp: fp[r.club] || 0 })).sort((a, b) => b.pts - a.pts || kr(a.club) - kr(b.club) || b.gd - a.gd || b.gf - a.gf
+  const gb = gamesBehind(db, compId);
+  return rows.map((r) => ({ ...r, fp: fp[r.club] || 0, behind: gb[r.club] || 0 })).sort((a, b) => b.pts - a.pts || kr(a.club) - kr(b.club) || b.gd - a.gd || b.gf - a.gf
     || (H[b.club] || z).pts - (H[a.club] || z).pts || (H[b.club] || z).gd - (H[a.club] || z).gd
     || a.fp - b.fp || a.club.localeCompare(b.club));
 }

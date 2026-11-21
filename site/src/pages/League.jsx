@@ -6,7 +6,7 @@ import { standings, scorers, currentRound, fmtDay, dayLabel, playerName, zoneOf,
 import { RULES } from "../lib/rules.js";
 import { MatchRow } from "../components/MatchRow.jsx";
 import { Rail } from "../components/Rail.jsx";
-import { ScorersCard, MiniTable } from "../components/Side.jsx";
+import { ScorersCard, MiniTable, Behind } from "../components/Side.jsx";
 import { usePlayerHref } from "../components/PLink.jsx";
 import { Jersey, LeagueBadge, Form, Icon } from "../components/ui.jsx";
 
@@ -76,6 +76,7 @@ function Standings({ db: db0, ix, comp, league }) {
   const all = view === "all";
   const V = all ? { rows: standings(db, comp.id), skipped: 0 } : standingsView(db, comp.id, view);
   const rows = V.rows, z = all ? league.zones || {} : {};
+  const bh = Object.fromEntries(standings(db, comp.id).map((r) => [r.club, r.behind]));   // utakmice manje (odgođene)
   // juniori/kadeti: ispadanje po zbirnoj tablici, oznaka na klubu bez obzira na mjesto u ovoj tablici
   const R = all ? combinedZones(db, comp.id) : {}, youth = Object.keys(R).length > 0;
   const CT = youth ? combinedTable(db, comp.id) : [];
@@ -111,7 +112,7 @@ function Standings({ db: db0, ix, comp, league }) {
                 <tr key={r.club} className={zone} title={ct ? `Zbirna tablica: ${ctPos(r.club)}. mjesto, ${ct.pts} bod.` : undefined}>
                   <td className="pos"><span>{i + 1}</span>{all && prevPos && r.club in prevPos && prevPos[r.club] !== i &&
                     <small className={prevPos[r.club] > i ? "mv up" : "mv down"} title={`Prije ovog kola: ${prevPos[r.club] + 1}. mjesto`}>{prevPos[r.club] > i ? "▲" : "▼"}{Math.abs(prevPos[r.club] - i)}</small>}</td>
-                  <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={22} />{c.name}</a></td>
+                  <td className="l"><a className="club" href={href("klub", c.id)}><Jersey kit={c.kit} size={22} />{c.name}</a>{bh[r.club] ? <Behind n={bh[r.club]} /> : null}</td>
                   <td>{r.p}</td><td>{r.w}</td><td>{r.d}</td><td>{r.l}</td>
                   <td className="hide-s">{r.gf}:{r.ga}</td><td>{r.gd > 0 ? "+" + r.gd : r.gd}</td><td className="pts">{r.pts}</td>
                   <td className="hide-s l"><Form items={r.form} /></td>
@@ -132,6 +133,7 @@ function Standings({ db: db0, ix, comp, league }) {
           {V.skipped ? ` Nije uračunato ${V.skipped} utakmica bez minuta svih golova.` : ""} Poredak po bodovima, gol-razlici i golovima.</span>}
         {all && upto < last && <span>Prikazana je tablica nakon {roundName(league, upto).replace(/kolo$/, "kola")}. Strelice: pomak u odnosu na kolo prije.</span>}
         {all && <span>Pobjeda 3 boda, neriješeno 1. Kod istog broja bodova: {league.id === "juniori" ? "plasman kadetske momčadi, " : ""}gol-razlika, više golova, međusobne utakmice, fair-play.</span>}
+        {rows.some((r) => bh[r.club]) && <span>(-1) = utakmica manje, odgođena utakmica igra se naknadno.</span>}
       </div>
       {all && played.length > 1 && <Positions db={db0} ix={ix} comp={comp} league={league} played={played} />}
     </>

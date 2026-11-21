@@ -39,10 +39,13 @@ export function MiniTable({ db, ix, comp, mark = [] }) {
         <tbody>{rows.map((r, i) => (
           <tr key={r.club} className={mark.includes(r.club) ? "hl" : ""}>
             <td className="pos">{i + 1}</td>
-            <td className="l"><a className="club" href={href("klub", r.club)}><Jersey kit={ix.club[r.club].kit} size={18} />{ix.club[r.club].short}</a></td>
+            <td className="l"><a className="club" href={href("klub", r.club)}><Jersey kit={ix.club[r.club].kit} size={18} />{ix.club[r.club].short}</a>{r.behind ? <Behind n={r.behind} /> : null}</td>
             <td>{r.p}</td><td>{r.gd > 0 ? "+" + r.gd : r.gd}</td><td className="pts">{r.pts}</td>
           </tr>))}</tbody>
       </table>
     </section>
   );
 }
+
+// oznaka "(-1)" uz klub koji zbog odgođene utakmice ima utakmicu manje
+export const Behind = ({ n }) => <small className="behind" title={n === 1 ? "Utakmica manje (odgođena)" : `${n} utakmice manje (odgođene)`}>(-{n})</small>;

@@ -1106,3 +1106,6 @@ table.st { font-size: 13px; }
 @media (max-width: 560px) { .today-none { padding: 10px 12px; font-size: 13.5px; } }
 .rec-tiles .rt-s { display: none; }
 @media (max-width: 560px) { .rec-tiles .rt-l { display: none; } .rec-tiles .rt-s { display: inline; } }
+
+/* utakmica manje (odgođena) uz klub u tablici */
+.st .behind { color: var(--muted); font-weight: 600; margin-left: 6px; white-space: nowrap; }

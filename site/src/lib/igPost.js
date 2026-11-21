@@ -1,6 +1,6 @@
 // Instagram objava za kolo (raspored ili rezultati), 1080×1350, crta se na canvas pa se preuzme kao PNG.
 // Boja po kategoriji: seniori žuta, juniori zelena, kadeti narančasta, kup crvena. Tema tamna ili svijetla.
-import { score, shootout, winner, roundName, isCup, standings, scorers, playerName, zoneOf, combinedZones, absSec, goalTime, comeback } from "./derive.js";
+import { score, shootout, winner, roundName, isCup, standings, postponed, scorers, playerName, zoneOf, combinedZones, absSec, goalTime, comeback } from "./derive.js";
 
 export const W = 1080, H = 1350;
 const PAD = 56;
@@ -27,8 +27,7 @@ export function buildPost(db, ix, compId, round, mode = "auto", factKeys = FACTS
   const pal = PALETTE[C.league] || (isCup(L) ? PALETTE.kup : PALETTE["1-hmnl"]);
   const ms = db.matches.filter((m) => m.comp === compId && m.round === round).sort((a, b) => a.date.localeCompare(b.date));
   // kasnija = bez satnice dok ostale u kolu imaju termin (npr. jedna utakmica kola igra se tek u siječnju)
-  const known = ms.some((m) => !m.timeTbd);
-  const later = (m) => known && m.timeTbd && m.status !== "finished";
+  const later = (m) => postponed(m, ms);
   const allFin = ms.some((m) => m.status === "finished") && ms.every((m) => m.status === "finished" || later(m));
   const res = mode === "auto" ? allFin : mode === "rezultati";
   const rows = ms.map((m) => {
@@ -85,7 +84,15 @@ function caption(post, lid, L, rn, rows, slides) {
   const head = `${lid === "1-hmnl" ? "SS HMNL" : L.name} · ${rn}`;
   // utakmice bez termina idu u zaseban blok na kraju, bez dvorane
   const late = rows.filter((r) => r.later), now = rows.filter((r) => !r.later);
-  const lateTxt = late.length ? `\n\n⏳ Termin naknadno:\n${late.map((r) => `▫️ ${r.home.name} – ${r.away.name}`).join("\n")}` : "";
+  const lateList = late.map((r) => `▫️ ${r.home.name} – ${r.away.name}`).join("\n");
+  let lateTxt = late.length ? `\n\n⏳ Termin naknadno:\n${lateList}` : "";
+  // rezultati s tablicom: odgođena utakmica ovog kola -> ti klubovi imaju utakmicu manje (u tablici "(-1)")
+  if (late.length && post.res && slides.some((x) => x.kind === "table")) {
+    const cl = [...new Set(late.flatMap((r) => [r.home.name, r.away.name]))];
+    const who = cl.length > 1 ? `${cl.slice(0, -1).join(", ")} i ${cl[cl.length - 1]}` : cl[0];
+    const one = late.length === 1;
+    lateTxt = `\n\n⏳ ${one ? "Odgođena utakmica, igra se" : "Odgođene utakmice, igraju se"} naknadno:\n${lateList}\n${who} zato u tablici ${cl.length > 1 ? "imaju" : "ima"} utakmicu manje (-1).`;
+  }
   if (!post.res) {
     const lines = now.map((r) => `▫️ ${r.home.name} – ${r.away.name}${r.s ? ` ${r.s[0]}:${r.s[1]}` : r.time ? ` · ${r.day} ${r.time}` : " · termin naknadno"}${r.city ? ` · ${r.city}` : ""}`);
     return `📅 ${head} | ${post.dates}\n\n${lines.join("\n")}${lateTxt}\n\n📊 Rezultati i statistika na hmnl.hr\n\n${tags}`;
@@ -272,8 +279,12 @@ function drawTable(ctx, P, { T, light, row, deep, top, bottom }, slide) {
       text(ctx, String(Math.abs(r.move)), ax, mid + 24, { font: `700 21px ${RC}`, color: c, align: "center" });
     } else if (r.move === 0) { ctx.fillStyle = T.muted; ctx.fillRect(ax - 7, mid - 2, 14, 3); }
     jersey(ctx, r.c?.kit, x0 + 100, mid - 21, 42);
-    const nf = fit(ctx, r.c?.name || r.club, 700, 30, 18, cx(0) - 40 - (x0 + 160));
-    text(ctx, r.c?.name || r.club, x0 + 160, mid + nf * 0.36, { font: `700 ${nf}px ${RC}`, color: T.fg, upper: true });
+    // utakmica manje (odgođena): "(-1)" iza imena kluba
+    const bt = r.behind ? `(-${r.behind})` : "", bf = `700 24px ${RC}`;
+    ctx.font = bf; const bw = bt ? ctx.measureText(bt).width + 12 : 0;
+    const nf = fit(ctx, r.c?.name || r.club, 700, 30, 18, cx(0) - 40 - (x0 + 160) - bw);
+    const nw = text(ctx, r.c?.name || r.club, x0 + 160, mid + nf * 0.36, { font: `700 ${nf}px ${RC}`, color: T.fg, upper: true });
+    if (bt) text(ctx, bt, x0 + 160 + nw + 12, mid + nf * 0.36, { font: bf, color: T.muted });
     cols.forEach(([, k], j) => {
       const last = j === cols.length - 1, v = k === "gd" && r.gd > 0 ? "+" + r.gd : String(r[k]);
       if (last) { ctx.fillStyle = P.acc; ctx.fillRect(x1 - 110, y, 110, rh); }
